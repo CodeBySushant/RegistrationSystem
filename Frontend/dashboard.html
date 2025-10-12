@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ne">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard - नागार्जुन नगरपालिका</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="/Assets/govlogo.png" alt="Logo" />
+      </div>
+      <ul class="nav-menu">
+        <li>गृहपृष्ठ</li>
+        <li>निवेदन</li>
+        <li class="active">व्यवसाय दर्ता</li>
+        <li>व्यवसाय सिफारिस</li>
+        <li>नेपाली नागरिकता</li>
+        <li>घर / जग्गा जमिन</li>
+        <li>संघ / संस्था</li>
+        <li>सहकारी संस्था</li>
+        <li>शैक्षिक</li>
+        <li>भौतिक निर्माण</li>
+        <li class="lang">English Format</li>
+        <li>अधिक</li>
+        <li>सामाजिक / पारिवारिक</li>
+        <li>ज्येष्ठ नागरिक समिति</li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Navbar -->
+      <header class="navbar">
+        <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+        <div class="date-info">
+          <span>२०७८-०६-२७</span> | <span>2021/XX/XX</span>
+        </div>
+        <div class="title-area">
+          <h2>
+            नागार्जुन नगरपालिका, नगर कार्यपालिकाको कार्यालय<br />बागमती प्रदेश,
+            नेपाल
+          </h2>
+        </div>
+        <div class="user">warduser1</div>
+      </header>
+
+      <!-- Dashboard Cards -->
+      <section class="dashboard-grid">
+        <div class="card orange">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>दर्ता</h4>
+            <p>4</p>
+          </div>
+        </div>
+        <div class="card green">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>चलानी</h4>
+            <p>90</p>
+          </div>
+        </div>
+        <div class="card red">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>सूचना</h4>
+            <p>0</p>
+          </div>
+        </div>
+        <div class="card blue">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>सिफारिस</h4>
+            <p>73</p>
+          </div>
+        </div>
+        <div class="card orange">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>अनुसूची</h4>
+            <p>28</p>
+          </div>
+        </div>
+        <div class="card red">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>व्यवसाय दर्ता</h4>
+            <p>2</p>
+          </div>
+        </div>
+        <div class="card blue">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>व्यवसाय नविकरण गर्न बाँकी</h4>
+            <p>2</p>
+          </div>
+        </div>
+        <div class="card orange">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>व्यवसाय नविकरण भइसकेको</h4>
+            <p>0</p>
+          </div>
+        </div>
+        <div class="card green">
+          <div class="icon">📄</div>
+          <div class="text">
+            <h4>प्रमाण पत्र</h4>
+            <p>1</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('hidden');
+        }
+    </script>
+
+  </body>
+</html>
