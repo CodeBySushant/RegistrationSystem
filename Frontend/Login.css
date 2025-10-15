@@ -30,7 +30,6 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Header section for logo + titles side-by-side */
 .header {
     display: flex;
     align-items: center;
@@ -61,7 +60,6 @@ body {
     margin-top: 3px;
 }
 
-/* Form styling */
 form input {
     width: 100%;
     padding: 12px;
@@ -71,7 +69,6 @@ form input {
     font-size: 14px;
 }
 
-/* Button styling */
 button {
     width: 30%;
     padding: 12px;
