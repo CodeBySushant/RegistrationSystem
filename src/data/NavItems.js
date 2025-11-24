@@ -96,7 +96,7 @@ export const NAV_ITEMS = [
         id: 'english-format',
         label: 'English Format',
         icon: FileText,
-        children: ['Birth Certificate (Eng)', 'Marriage Certificate (Eng)', 'Character Certificate (Eng)']
+        children: ['Relationship Verification', 'Scholarship Verification', 'Power of Attorney', 'Birth Date Verification', 'Occupation Verification', 'Unmarried Verification', 'Address Verification', 'Tax Clearance Certificate', 'Economic Status', 'Annual Income Certificate', 'Property Valuation Report', 'Marriage Certificate', 'Same Person Certificate', 'Certification of Occupation', 'Tax Cler Basic', 'Digital Verification', 'Occupation Verification New', 'Address Verification New', 'Birth Certification New', 'Verify Revised Emblem New', 'Tax Clearance New Format New', 'Annual Income Verification New', 'Surname Verification Certificate', 'Surname Verification After Marriage']
     },
     {
         id: 'financial',
