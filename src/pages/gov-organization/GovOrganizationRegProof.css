@@ -1,0 +1,155 @@
+/* Page background */
+body {
+  margin: 0;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 300px 300px;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+}
+
+.gov-proof-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.gov-proof-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px 4px;
+}
+
+.gov-proof-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.gov-proof-back {
+  font-size: 14px;
+  text-decoration: none;
+  color: #000;
+}
+
+/* Buttons row */
+.gov-proof-btn-row {
+  display: flex;
+  gap: 12px;
+  padding: 4px 24px 10px;
+}
+
+.gov-proof-btn {
+  background-color: #007b8c;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 3px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Filter bar */
+.gov-proof-filter-bar {
+  background-color: #171f33;
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  gap: 16px;
+}
+
+.gov-proof-filters {
+  display: flex;
+  flex: 1;
+  gap: 40px;
+  align-items: center;
+}
+
+.gov-proof-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gov-proof-filter-group label {
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.gov-proof-filter-group input {
+  width: 220px;
+  padding: 7px 8px;
+  border-radius: 2px;
+  border: 1px solid #cfd4da;
+  font-size: 14px;
+}
+
+.gov-proof-filter-group.wide input {
+  width: 260px;
+}
+
+.gov-proof-search-btn {
+  border: none;
+  background-color: #007bff;
+  color: #ffffff;
+  font-size: 18px;
+  padding: 7px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* Table */
+.gov-proof-table-wrapper {
+  margin: 10px 24px 0;
+}
+
+.gov-proof-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.gov-proof-table thead {
+  background-color: #192236;
+  color: #ffffff;
+}
+
+.gov-proof-table th,
+.gov-proof-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #d5d5d5;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.gov-proof-table th:first-child,
+.gov-proof-table td:first-child {
+  text-align: center;
+  width: 50px;
+}
+
+/* Row colors like sample */
+.gov-proof-even {
+  background-color: #f3f3f3;
+}
+
+.gov-proof-odd {
+  background-color: #c7c7c7;
+}
+
+/* Last column */
+.gov-proof-center {
+  text-align: center;
+}
+
+.gov-proof-eye {
+  font-size: 18px;
+}
+
+/* Footer */
+.gov-proof-footer {
+  margin-top: 18px;
+  margin-bottom: 16px;
+  padding-right: 24px;
+  text-align: right;
+  font-size: 13px;
+}

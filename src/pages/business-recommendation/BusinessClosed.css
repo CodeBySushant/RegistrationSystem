@@ -1,0 +1,232 @@
+/* Background */
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.bc-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top breadcrumb bar */
+.bc-topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 24px 4px;
+  font-size: 14px;
+}
+
+.bc-top-left {
+  font-weight: 600;
+}
+
+.bc-top-right {
+  color: #555;
+}
+
+/* Main paper */
+.bc-paper {
+  margin: 0 24px 20px;
+  padding: 30px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 300px 300px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Letterhead */
+.bc-letterhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bc-logo img {
+  width: 90px;
+  height: 90px;
+}
+
+.bc-head-text {
+  text-align: center;
+  flex: 1;
+}
+
+.bc-head-main {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.bc-head-ward {
+  font-size: 28px;
+  font-weight: 700;
+  color: #e60000;
+}
+
+.bc-head-sub {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.bc-head-meta {
+  text-align: right;
+  font-size: 13px;
+}
+
+.bc-small-input {
+  width: 110px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Reference numbers */
+.bc-ref-row {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.bc-ref-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.bc-ref-block input {
+  width: 160px;
+  padding: 5px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Subject */
+.bc-subject-row {
+  display: flex;
+  align-items: center;
+  margin-top: 25px;
+  font-size: 15px;
+}
+
+.bc-subject-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.bc-subject-text {
+  text-decoration: underline;
+}
+
+/* Salutation & body */
+.bc-salutation {
+  margin-top: 22px;
+  font-size: 14px;
+}
+
+.bc-address-line {
+  margin-top: 10px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bc-address-line select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.bc-ward-input {
+  width: 50px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.bc-body-text {
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+/* Table */
+.bc-table-wrapper {
+  margin-top: 20px;
+}
+
+.bc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.bc-table th,
+.bc-table td {
+  border: 1px solid #c2c2c2;
+  padding: 6px 4px;
+  text-align: left;
+}
+
+.bc-table th {
+  background-color: #f0f0f0;
+  text-align: center;
+}
+
+.bc-table td input {
+  width: 100%;
+  border: none;
+  padding: 4px;
+  outline: none;
+}
+
+/* Applicant section */
+.bc-section-title {
+  margin-top: 30px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.bc-applicant-box {
+  margin-top: 12px;
+  border: 1px solid #d3d3d3;
+  padding: 18px 18px 8px;
+}
+
+.bc-field {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  max-width: 320px;
+}
+
+.bc-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.bc-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit button */
+.bc-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.bc-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.bc-footer {
+  margin-bottom: 18px;
+  text-align: right;
+  padding-right: 24px;
+  font-size: 13px;
+}

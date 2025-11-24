@@ -1,0 +1,252 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.cr-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.cr-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.cr-top-left {
+  font-weight: 600;
+}
+
+.cr-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.cr-paper {
+  margin: 0 24px 20px;
+  padding: 28px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Letterhead */
+.cr-letterhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cr-logo img {
+  width: 90px;
+  height: 90px;
+}
+
+.cr-head-text {
+  flex: 1;
+  text-align: center;
+}
+
+.cr-head-main {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cr-head-ward {
+  font-size: 28px;
+  font-weight: 700;
+  color: #e60000;
+}
+
+.cr-head-sub {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.cr-head-meta {
+  font-size: 13px;
+  text-align: right;
+}
+
+.cr-meta-line {
+  margin-bottom: 4px;
+}
+
+.cr-small-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* पत्र / चलानी */
+.cr-ref-row {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.cr-ref-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cr-ref-block input {
+  width: 180px;
+  padding: 5px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.cr-to-block {
+  margin-top: 22px;
+  font-size: 14px;
+}
+
+.cr-long-input {
+  width: 260px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+  margin: 0 4px;
+}
+
+.cr-to-second {
+  margin-top: 4px;
+}
+
+/* Subject */
+.cr-subject-row {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 15px;
+}
+
+.cr-sub-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.cr-subject-text {
+  text-decoration: underline;
+}
+
+/* Body */
+.cr-body {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.cr-body input,
+.cr-body select {
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+.cr-select {
+  min-width: 110px;
+}
+
+.cr-bold {
+  font-weight: 600;
+}
+
+.cr-tiny-input {
+  width: 60px;
+}
+
+.cr-small-inline {
+  width: 100px;
+}
+
+.cr-medium-input {
+  width: 190px;
+}
+
+/* Blank middle section (light area under paragraph) */
+.cr-blank-area {
+  margin-top: 20px;
+  border: 1px solid #e0e0e0;
+  min-height: 240px;
+}
+
+/* Signature */
+.cr-sign-top {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.cr-sign-name {
+  width: 200px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.cr-post-select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.cr-section-title {
+  margin-top: 26px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cr-applicant-box {
+  margin-top: 10px;
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+}
+
+.cr-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.cr-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.cr-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.cr-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.cr-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.cr-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

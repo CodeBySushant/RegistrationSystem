@@ -1,0 +1,207 @@
+/* --- Main Container --- */
+.health-insurance-container {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 30px 50px;
+  background-color: rgba(255, 255, 255, 0.5); /* Transparent parchment feel */
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  color: #000;
+  position: relative;
+}
+
+/* --- Utility Classes --- */
+.bold-text { font-weight: bold; }
+.underline-text { text-decoration: underline; }
+.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: sub;}
+.bg-gray-text { background-color: #eee; padding: 2px 5px; border-radius: 3px; margin: 0 5px; }
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.ml-20 { margin-left: 20px; }
+
+/* --- Top Bar --- */
+.top-bar-title {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.top-right-bread {
+  font-size: 0.9rem;
+  color: #777;
+  font-weight: normal;
+}
+
+/* --- Date (Right Aligned) --- */
+.header-right-date {
+    text-align: right;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+/* --- Addressee Section --- */
+.addressee-section { margin-bottom: 20px; font-size: 1.05rem; }
+.addressee-row { margin-top: 5px; }
+.line-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; margin: 0 5px; padding: 0 5px; }
+.medium-input { width: 200px; }
+
+/* --- Subject --- */
+.subject-section { text-align: center; margin: 20px 0; font-size: 1.1rem; font-weight: bold; }
+
+/* --- Body Paragraph & Inputs --- */
+.form-body {
+  font-size: 1.05rem;
+  line-height: 2.6;
+  text-align: justify;
+  margin-bottom: 20px;
+}
+
+.inline-box-input {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 4px 8px;
+  border-radius: 3px;
+  margin: 0 5px;
+  font-size: 1rem;
+  outline: none;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* --- Tables Section --- */
+.tapsil-container { margin-bottom: 30px; }
+.table-responsive { overflow-x: auto; margin-bottom: 10px; }
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgba(255,255,255,0.6);
+}
+
+.details-table th {
+  background-color: #e0e0e0;
+  border: 1px solid #555;
+  padding: 8px;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap;
+}
+
+.details-table td {
+  border: 1px solid #555;
+  padding: 5px;
+}
+
+.table-input {
+  width: 90%;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 4px;
+  font-size: 1rem;
+  color: #000;
+}
+
+.action-cell { text-align: center; }
+.add-btn {
+    background-color: blue;
+    color: white;
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+/* Fake scrollbar */
+.fake-scrollbar {
+    height: 8px;
+    background: #999;
+    border-radius: 5px;
+    margin-top: 2px;
+    position: relative;
+    width: 70%;
+}
+.scroll-thumb {
+    height: 100%;
+    width: 100%; 
+    background: #666;
+    border-radius: 5px;
+}
+
+/* --- Financial & Other Details --- */
+.form-row { margin-bottom: 10px; display: flex; align-items: center; flex-wrap: wrap; }
+.radio-group { display: flex; align-items: center; margin-bottom: 10px; }
+.radio-group input { margin-right: 5px; }
+.details-textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+/* --- Applicant Signature Section --- */
+.applicant-signature-section {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.sig-row { margin-bottom: 10px; }
+
+/* --- Applicant Details Box --- */
+.applicant-details-box {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.4);
+  margin-top: 20px;
+  border-radius: 4px;
+}
+
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.bg-gray { background-color: #eef2f5; } 
+
+/* --- Footer --- */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn {
+  background-color: #34495e;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.save-print-btn:hover { background-color: #2c3e50; }
+.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }

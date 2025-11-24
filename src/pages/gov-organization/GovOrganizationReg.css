@@ -1,0 +1,86 @@
+/* Global setup */
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", sans-serif;
+  background: #d6d7da;
+}
+
+.form-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Background form container */
+.form-container {
+  width: 90%;
+  padding: 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: cover;
+  box-shadow: 0 0 6px rgba(0,0,0,0.25);
+  margin-top: 10px;
+}
+
+/* Headers */
+.header-title {
+  width: 90%;
+  padding: 15px 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.sub-header {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 10px;
+  line-height: 26px;
+}
+
+/* Text + Inputs */
+.section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.section input {
+  margin-bottom: 12px;
+  padding: 8px;
+  border: 1px solid #bbb;
+  width: 50%;
+}
+
+.inline-row input {
+  width: 80px;
+  margin: 0 10px;
+}
+
+.section-title {
+  font-weight: bold;
+  margin-top: 30px;
+}
+
+/* Submit Button */
+.submit-box {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.submit-btn {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* Footer */
+.footer {
+  margin-top: 25px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #333;
+}

@@ -1,0 +1,216 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", sans-serif;
+  background: #d6d7da;
+}
+
+.usc-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topbar */
+.usc-topbar {
+  background: #111827;
+  color: white;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.usc-top-left {
+  font-weight: 600;
+}
+
+/* Paper */
+.usc-paper {
+  margin: 0 24px 20px;
+  padding: 30px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 250px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.25);
+}
+
+/* Title Block */
+.usc-title-block {
+  text-align: center;
+  line-height: 1.6;
+}
+
+.usc-title-bold {
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* Date */
+.usc-date-row {
+  text-align: right;
+  margin-top: 12px;
+}
+
+.usc-date-input {
+  width: 120px;
+  padding: 4px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.usc-to-row {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.usc-long {
+  width: 260px;
+  padding: 5px;
+  border: 1px solid #c1c1c1;
+}
+
+.margin-top {
+  margin-top: 6px;
+}
+
+/* Subject */
+.usc-subject-row {
+  margin-top: 24px;
+  display: flex;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.usc-sub-label {
+  font-weight: 600;
+}
+
+.usc-subject-bold {
+  text-decoration: underline;
+}
+
+/* Body */
+.usc-body {
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Input widths */
+.usc-small { width: 110px; }
+.usc-medium { width: 170px; }
+.usc-tiny { width: 60px; }
+
+/* Table */
+.usc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.usc-table th, .usc-table td {
+  border: 1px solid #c2c2c2;
+  padding: 8px 6px;
+}
+
+.usc-table th {
+  background: #f0f0f0;
+}
+
+/* Add Row */
+.usc-add-btn {
+  background: #1276d1;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Signature box */
+.usc-sign-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.usc-sign-box {
+  border: 1px solid #c1c1c1;
+  padding: 12px;
+  width: 260px;
+  font-size: 13px;
+}
+
+.usc-sign-label {
+  text-align: right;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.usc-sign-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.usc-sign-field input {
+  flex: 1;
+  border: 1px solid #c1c1c1;
+  padding: 4px;
+}
+
+/* Docs List */
+.usc-subheader {
+  margin-top: 26px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.usc-doc-list {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.usc-doc-list li {
+  margin-bottom: 4px;
+}
+
+/* Applicant Section */
+.usc-applicant-box {
+  border: 1px solid #d3d3d3;
+  padding: 16px;
+  margin-top: 10px;
+  max-width: 360px;
+}
+
+.usc-field {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.usc-field input {
+  padding: 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.usc-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.usc-submit-btn {
+  background: #222;
+  color: white;
+  padding: 10px 22px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Footer */
+.usc-footer {
+  text-align: right;
+  padding: 12px 24px;
+  font-size: 13px;
+}

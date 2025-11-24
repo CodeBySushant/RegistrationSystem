@@ -1,0 +1,278 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.ucn-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.ucn-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.ucn-top-left {
+  font-weight: 600;
+}
+
+.ucn-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.ucn-paper {
+  margin: 0 24px 20px;
+  padding: 28px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Annex heading */
+.ucn-annex {
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ucn-annex-title {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* Date row */
+.ucn-date-row {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.ucn-date-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.ucn-to-block {
+  margin-top: 22px;
+  font-size: 14px;
+}
+
+.ucn-long-input {
+  width: 280px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+  margin: 0 4px;
+}
+
+.ucn-medium-input {
+  width: 150px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+  margin-left: 6px;
+}
+
+/* Subject */
+.ucn-subject-row {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 15px;
+}
+
+.ucn-subject-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.ucn-subject-text {
+  text-decoration: underline;
+}
+
+/* Body */
+.ucn-body {
+  margin-top: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.ucn-small-input {
+  width: 110px;
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+.ucn-tiny-input {
+  width: 60px;
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Reasons list */
+.ucn-reasons {
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.ucn-reasons-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ucn-reasons ol {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+
+/* Editor mock */
+.ucn-editor-wrapper {
+  margin-top: 14px;
+  border: 1px solid #c1c1c1;
+}
+
+.ucn-editor-toolbar {
+  padding: 4px 6px;
+  border-bottom: 1px solid #c1c1c1;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.ucn-editor-toolbar button {
+  border: 1px solid #c1c1c1;
+  background: #ffffff;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.ucn-toolbar-label {
+  margin-left: 8px;
+}
+
+.ucn-editor-area {
+  width: 100%;
+  border: none;
+  padding: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 140px;
+}
+
+/* Docs + sign section */
+.ucn-bottom-grid {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+  gap: 20px;
+}
+
+.ucn-docs {
+  font-size: 14px;
+  flex: 1;
+}
+
+.ucn-docs-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ucn-docs ol {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+
+/* Signature box */
+.ucn-sign-box {
+  border: 1px solid #c1c1c1;
+  padding: 10px 12px;
+  font-size: 13px;
+  min-width: 230px;
+}
+
+.ucn-sign-caption {
+  text-align: right;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.ucn-sign-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.ucn-sign-field span {
+  white-space: nowrap;
+}
+
+.ucn-sign-field input {
+  flex: 1;
+  padding: 4px 5px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.ucn-section-title {
+  margin-top: 26px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ucn-applicant-box {
+  margin-top: 10px;
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+}
+
+.ucn-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.ucn-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.ucn-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.ucn-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.ucn-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.ucn-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

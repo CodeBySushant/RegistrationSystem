@@ -1,0 +1,281 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.orp-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.orp-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.orp-top-left {
+  font-weight: 600;
+}
+
+.orp-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.orp-paper {
+  margin: 0 24px 20px;
+  padding: 28px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Letterhead */
+.orp-letterhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.orp-logo img {
+  width: 90px;
+  height: 90px;
+}
+
+.orp-head-text {
+  flex: 1;
+  text-align: center;
+}
+
+.orp-head-main {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.orp-head-ward {
+  font-size: 28px;
+  font-weight: 700;
+  color: #e60000;
+}
+
+.orp-head-sub {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.orp-head-meta {
+  font-size: 13px;
+  text-align: right;
+}
+
+.orp-meta-line {
+  margin-bottom: 4px;
+}
+
+.orp-small-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* पत्र / चलानी */
+.orp-ref-row {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.orp-ref-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.orp-ref-block input {
+  width: 180px;
+  padding: 5px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.orp-to-block {
+  margin-top: 22px;
+  font-size: 14px;
+}
+
+.orp-long-input {
+  width: 260px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+  margin: 0 4px;
+}
+
+.orp-to-second {
+  margin-top: 4px;
+}
+
+/* Subject */
+.orp-subject-row {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 15px;
+}
+
+.orp-sub-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.orp-subject-text {
+  text-decoration: underline;
+}
+
+/* Body */
+.orp-body {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.orp-body input {
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+.orp-bold {
+  font-weight: 600;
+}
+
+/* Table */
+.orp-table-title {
+  margin-top: 14px;
+  text-align: center;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.orp-table-wrapper {
+  margin-top: 10px;
+  border: 1px solid #cfcfcf;
+}
+
+.orp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.orp-table th,
+.orp-table td {
+  border: 1px solid #cfcfcf;
+  padding: 4px 6px;
+  text-align: center;
+}
+
+.orp-table td input {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 3px 4px;
+  box-sizing: border-box;
+}
+
+.orp-subheader-row th {
+  font-weight: 500;
+}
+
+.orp-table-actions {
+  width: 40px;
+}
+
+.orp-add-row-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: #0050a0;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* Signature */
+.orp-sign-top {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.orp-sign-name {
+  width: 200px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.orp-post-select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.orp-section-title {
+  margin-top: 26px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.orp-applicant-box {
+  margin-top: 10px;
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+}
+
+.orp-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.orp-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.orp-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.orp-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.orp-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.orp-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

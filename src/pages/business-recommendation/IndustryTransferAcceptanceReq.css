@@ -1,0 +1,248 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.itar-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.itar-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.itar-top-left {
+  font-weight: 600;
+}
+
+.itar-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.itar-paper {
+  margin: 0 24px 20px;
+  padding: 26px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Annex heading */
+.itar-annex {
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.itar-annex-title {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* Date */
+.itar-date-row {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.itar-date-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.itar-to-block {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.itar-long-input {
+  width: 260px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+  margin: 0 4px;
+}
+
+.itar-to-second {
+  margin-top: 6px;
+}
+
+/* Subject */
+.itar-subject-row {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 15px;
+}
+
+.itar-sub-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.itar-subject-text {
+  text-decoration: underline;
+}
+
+/* Body */
+.itar-body {
+  margin-top: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.itar-small-input {
+  width: 110px;
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+.itar-tiny-input {
+  width: 60px;
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+.itar-medium-input {
+  width: 170px;
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Reason textarea */
+.itar-reason-block {
+  margin-top: 14px;
+}
+
+.itar-reason-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.itar-reason-textarea {
+  width: 100%;
+  border: 1px solid #c1c1c1;
+  padding: 8px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* Docs + sign */
+.itar-bottom-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.itar-docs {
+  font-size: 14px;
+  flex: 1;
+}
+
+.itar-docs-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.itar-docs ol {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+
+/* Signature box */
+.itar-sign-box {
+  border: 1px solid #c1c1c1;
+  padding: 10px 12px;
+  font-size: 13px;
+  min-width: 260px;
+}
+
+.itar-sign-title {
+  text-align: right;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.itar-sign-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.itar-sign-field span {
+  white-space: nowrap;
+}
+
+.itar-sign-field input {
+  flex: 1;
+  padding: 4px 5px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.itar-section-title {
+  margin-top: 26px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.itar-applicant-box {
+  margin-top: 10px;
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+}
+
+.itar-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.itar-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.itar-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.itar-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.itar-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.itar-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

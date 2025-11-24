@@ -1,0 +1,235 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.praf-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.praf-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.praf-top-left {
+  font-weight: 600;
+}
+
+.praf-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.praf-paper {
+  margin: 0 24px 20px;
+  padding: 28px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Title + date */
+.praf-main-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.praf-date-row {
+  text-align: right;
+  font-size: 14px;
+}
+
+.praf-date-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.praf-to-block {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.praf-long-input {
+  width: 260px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+  margin-left: 6px;
+}
+
+.praf-to-second {
+  margin-top: 6px;
+}
+
+/* Subject */
+.praf-subject-row {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+}
+
+.praf-sub-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.praf-subject-text {
+  text-decoration: underline;
+}
+
+/* Body */
+.praf-body {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Sections */
+.praf-section {
+  margin-top: 18px;
+}
+
+.praf-subtitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* Field rows */
+.praf-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.praf-field-row input,
+.praf-field-row select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Width helpers */
+.praf-small-input { width: 80px; }
+.praf-medium-input { width: 160px; }
+.praf-wide-input { flex: 1; min-width: 230px; }
+
+.praf-select {
+  min-width: 80px;
+}
+
+/* Tables */
+.praf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.praf-table th,
+.praf-table td {
+  border: 1px solid #c1c1c1;
+  padding: 6px 5px;
+  vertical-align: middle;
+}
+
+.praf-table th {
+  background-color: #f0f0f0;
+  text-align: center;
+}
+
+.praf-table td input {
+  width: 100%;
+  border: none;
+  padding: 3px 4px;
+  outline: none;
+}
+
+/* Add button */
+.praf-add-btn {
+  background-color: #1276d1;
+  border: none;
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+/* Note section */
+.praf-note-section {
+  border-top: 1px dashed #b7b7b7;
+  padding-top: 10px;
+}
+
+.praf-note-text {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+/* Bullet list for deed section */
+.praf-points {
+  font-size: 14px;
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+/* Applicant box */
+.praf-applicant-box {
+  border: 1px solid #d3d3d3;
+  padding: 16px;
+  max-width: 360px;
+  margin-top: 6px;
+}
+
+.praf-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.praf-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.praf-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.praf-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.praf-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.praf-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

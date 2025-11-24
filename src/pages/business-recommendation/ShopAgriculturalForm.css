@@ -1,0 +1,156 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.saf-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top dark bar */
+.saf-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 24px;
+  font-size: 14px;
+}
+
+.saf-top-left {
+  font-weight: 600;
+}
+
+.saf-top-right {
+  opacity: 0.9;
+}
+
+/* Paper area */
+.saf-paper {
+  margin: 0 24px 20px;
+  padding: 26px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Title */
+.saf-main-title {
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+/* Inline rows of text + inputs */
+.saf-inline-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.saf-inline-row select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.saf-inline-row input {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Specific width helpers */
+.saf-small {
+  width: 70px;
+}
+
+.saf-tiny {
+  width: 50px;
+}
+
+.saf-medium {
+  width: 160px;
+}
+
+/* Body paragraph */
+.saf-body {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Subtitles */
+.saf-subtitle {
+  margin-top: 26px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Tapsil rows */
+.saf-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.saf-field-row input {
+  flex: 1;
+  max-width: 320px;
+  padding: 5px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.saf-applicant-box {
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+  margin-top: 6px;
+}
+
+.saf-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.saf-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.saf-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.saf-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.saf-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.saf-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

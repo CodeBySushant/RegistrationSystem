@@ -1,0 +1,110 @@
+/* --- Main Container --- */
+.report-list-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fff;
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Header --- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #fff;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #000;
+  font-weight: bold;
+}
+
+.back-link {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+
+/* --- Search Bar --- */
+.search-bar-wrapper {
+  background-color: #1f2a38; /* Dark Navy/Black shade */
+  padding: 25px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.search-inputs {
+  display: flex;
+  gap: 30px; /* Spacing between inputs */
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.search-field {
+  height: 42px;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 2px;
+  font-size: 1rem;
+  color: #555;
+  background-color: #e6e6e6; /* Light gray input background */
+  width: 220px; /* Fixed width for uniformity */
+  box-sizing: border-box;
+}
+
+.search-field.dropdown {
+  background-color: #fff; /* White background for dropdowns */
+  width: 250px;
+  cursor: pointer;
+}
+
+/* Search Button */
+.search-submit-btn {
+  background-color: #2d7ab5; /* Bootstrap Primary Blue shade */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 45px;
+  height: 42px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-submit-btn:hover {
+  background-color: #205d8d;
+}
+
+/* --- Content Placeholder --- */
+.content-placeholder {
+  flex-grow: 1;
+  background-color: #cfd3d8; /* The large gray area color */
+  width: 100%;
+  min-height: 500px; /* Ensures it takes up screen space */
+  border-top: 1px solid #ccc;
+}
+
+/* --- Footer --- */
+.page-footer {
+  text-align: right;
+  padding: 15px 30px;
+  font-size: 0.85rem;
+  color: #555;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+}

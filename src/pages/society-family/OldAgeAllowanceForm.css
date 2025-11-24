@@ -1,0 +1,152 @@
+/* --- Main Container --- */
+.old-age-allowance-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px 50px;
+  background-color: #fff; /* White background as seen in the image */
+  font-family: 'Kalimati', 'Kokila', sans-serif; /* Use a Nepali font */
+  color: #000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* --- Utility Classes --- */
+.bold-text { font-weight: bold; }
+.underline-text { text-decoration: underline; }
+.red { color: red; font-weight: bold; margin-left: 2px; }
+.center-text { text-align: center; }
+.pt-20 { padding-top: 20px; }
+
+/* --- Top Bar --- */
+.top-bar-title {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.top-right-bread {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* --- Header Section --- */
+.form-header-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.main-title {
+  font-size: 1.8rem;
+  margin: 0;
+  font-weight: bold;
+}
+.sub-title {
+  font-size: 1rem;
+  margin: 5px 0 0 0;
+  font-weight: normal;
+}
+
+/* --- Salutation & Date --- */
+.salutation-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+.ward-row {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+/* --- Input Styles --- */
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.input-group label {
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.line-input {
+  border: none;
+  border-bottom: 1px solid #000;
+  background: transparent;
+  outline: none;
+  padding: 2px 5px;
+  font-family: inherit;
+  font-size: 1rem;
+  margin-left: 5px;
+}
+.small-input { width: 60px; text-align: center;}
+.medium-input { width: 150px; }
+.full-width { width: 100%; }
+
+.styled-select {
+    border: 1px solid #ccc;
+    padding: 5px;
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+    margin-left: 10px;
+}
+
+/* --- Subject --- */
+.subject-section {
+  text-align: center;
+  margin: 30px 0;
+  font-size: 1.2rem;
+}
+
+/* --- Body Paragraph --- */
+.form-body {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-align: justify;
+  margin-bottom: 30px;
+}
+.body-paragraph {
+    margin-top: 10px;
+}
+
+/* --- Target Group --- */
+.target-group-section {
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+/* --- Applicant Details Section --- */
+.section-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+}
+.applicant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+.grid-column {
+    display: flex;
+    flex-direction: column;
+}
+.grid-column .input-group {
+    justify-content: flex-start;
+}
+.grid-column .input-group label {
+    min-width: 90px;
+}
+
+/* --- Footer --- */
+.copyright-footer {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 50px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}

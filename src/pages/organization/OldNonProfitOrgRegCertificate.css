@@ -1,0 +1,240 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.onp-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.onp-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.onp-top-left {
+  font-weight: 600;
+}
+
+.onp-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.onp-paper {
+  margin: 0 24px 20px;
+  padding: 28px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Letterhead */
+.onp-letterhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.onp-logo img {
+  width: 90px;
+  height: 90px;
+}
+
+.onp-head-text {
+  flex: 1;
+  text-align: center;
+}
+
+.onp-head-main {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.onp-head-ward {
+  font-size: 28px;
+  font-weight: 700;
+  color: #e60000;
+}
+
+.onp-head-sub {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.onp-head-meta {
+  font-size: 13px;
+  text-align: right;
+}
+
+.onp-meta-line {
+  margin-bottom: 4px;
+}
+
+.onp-fy-select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.onp-small-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Subject + stamp */
+.onp-subject-block {
+  margin-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.onp-subject-wrap {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+}
+
+.onp-sub-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.onp-subject-text {
+  text-decoration: underline;
+}
+
+.onp-stamp-box {
+  border: 1px solid #c1c1c1;
+  width: 120px;
+  height: 120px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Sections / fields */
+.onp-section {
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+.onp-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.onp-field-row label {
+  min-width: 230px;
+}
+
+.onp-field-row input {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.onp-medium-input {
+  width: 180px;
+}
+
+.onp-wide-input {
+  flex: 1;
+  min-width: 220px;
+}
+
+/* Sign line & post */
+.onp-sign-line-row {
+  margin-top: 26px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.onp-sign-line {
+  width: 210px;
+  border-bottom: 1px solid #000;
+}
+
+.onp-sign-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.onp-sign-name {
+  width: 200px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.onp-post-select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.onp-section-title {
+  margin-top: 26px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.onp-applicant-box {
+  margin-top: 10px;
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+}
+
+.onp-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.onp-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.onp-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.onp-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.onp-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.onp-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}
