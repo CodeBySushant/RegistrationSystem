@@ -1,0 +1,172 @@
+/* Basic container styling */
+.birthdate-container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 25px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Times New Roman', Times, serif;
+  background-color: #fdfaf5; /* A slight parchment color */
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #8B0000; /* Dark red, common in official docs */
+}
+.header .logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+.header h2 {
+  margin: 5px 0;
+  font-size: 20px;
+}
+.header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* General Form Layout */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.form-group {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+.form-group label {
+  font-weight: bold;
+  margin-right: 8px;
+}
+.form-group input {
+  width: 200px; /* Fixed width for top fields */
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Subject Line */
+.subject-line {
+  text-align: center;
+  margin: 25px 0;
+  font-size: 16px;
+}
+
+/* Main Certificate Body Styling */
+.certificate-body {
+  line-height: 2.8; /* Increased line-height for better spacing */
+  font-size: 16px;
+  text-align: justify;
+}
+.certificate-body input[type="text"],
+.certificate-body input[type="date"],
+.certificate-body select {
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 15px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px dotted #000; /* The "fill-in-the-blank" style */
+  margin: 0 5px;
+  width: 120px; /* Default width for inline text inputs */
+}
+.certificate-body input[type="date"] {
+    width: 140px;
+}
+.certificate-body select {
+    width: auto; /* Allow select to size to content */
+    min-width: 80px;
+}
+
+.certificate-body input[name="applicantNameBody"],
+.certificate-body input[name="fatherName"],
+.certificate-body input[name="motherName"] {
+    width: 180px;
+}
+.certificate-body input[name="district1"],
+.certificate-body input[name="country1"] {
+    width: 100px;
+}
+.certificate-body input[name="dobBS"] {
+    width: 100px;
+}
+
+/* Designation Section */
+.designation-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 40px;
+    margin-right: 20px;
+}
+.designation-section input {
+    width: 220px;
+    border: none;
+    border-bottom: 1px solid #000;
+    margin-bottom: 5px;
+    text-align: center;
+    background: transparent;
+}
+.designation-section select {
+    width: 220px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Applicant Details */
+.applicant-details {
+  border-top: 1px dashed #ccc;
+  margin-top: 25px;
+  padding-top: 15px;
+}
+.applicant-details h3 {
+  margin-bottom: 15px;
+}
+.form-group-column {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+.form-group-column label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.form-group-column input {
+  width: 350px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+/* Submit Button */
+.submit-area {
+  text-align: center;
+  margin-top: 30px;
+}
+.submit-btn {
+  background-color: #343a40;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+.submit-btn:hover {
+  background-color: #23272b;
+}

@@ -1,0 +1,222 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.ufc-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.ufc-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 24px;
+  font-size: 14px;
+}
+
+.ufc-top-left {
+  font-weight: 600;
+}
+
+.ufc-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.ufc-paper {
+  margin: 0 24px 20px;
+  padding: 26px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Annex heading */
+.ufc-annex {
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ufc-annex-title {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* Date row */
+.ufc-date-row {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.ufc-date-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.ufc-to-block {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.ufc-long-input {
+  width: 280px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.ufc-long-input.second {
+  margin-top: 6px;
+}
+
+/* Subject */
+.ufc-subject-row {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 15px;
+}
+
+.ufc-subject-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.ufc-subject-text {
+  text-decoration: underline;
+}
+
+/* Body text */
+.ufc-body {
+  margin-top: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.ufc-small-input {
+  width: 110px;
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+.ufc-tiny-input {
+  width: 60px;
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Middle section: reasons + sign box */
+.ufc-middle-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+/* Reasons list */
+.ufc-reason {
+  font-size: 14px;
+  max-width: 60%;
+}
+
+.ufc-reason-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ufc-reason ol {
+  padding-left: 18px;
+  margin: 4px 0;
+}
+
+/* Signature box on right */
+.ufc-sign-box {
+  border: 1px solid #c1c1c1;
+  padding: 10px 12px;
+  font-size: 13px;
+  min-width: 220px;
+}
+
+.ufc-sign-title {
+  text-align: right;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.ufc-sign-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 6px;
+}
+
+.ufc-sign-field span {
+  white-space: nowrap;
+}
+
+.ufc-sign-field input {
+  flex: 1;
+  padding: 4px 5px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.ufc-section-title {
+  margin-top: 28px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ufc-applicant-box {
+  margin-top: 10px;
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+}
+
+.ufc-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.ufc-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.ufc-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit button */
+.ufc-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.ufc-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.ufc-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

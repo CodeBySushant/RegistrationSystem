@@ -1,0 +1,216 @@
+/* --- Main Container --- */
+.birth-verification-english-container {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 30px 50px;
+  background-color: rgba(255, 255, 255, 0.5); /* Transparent parchment feel */
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  color: #000;
+  position: relative;
+}
+
+/* --- Utility Classes --- */
+.bold-text { font-weight: bold; }
+.underline-text { text-decoration: underline; }
+.bg-gray { background-color: #f0f0f0; }
+.en-text { font-family: sans-serif; font-size: 0.95rem; }
+.en-label { font-family: sans-serif; }
+
+/* --- Top Bar --- */
+.top-bar-title {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.top-right-bread {
+  font-size: 0.9rem;
+  color: #777;
+  font-weight: normal;
+}
+
+/* --- Header Section --- */
+.form-header-section {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.header-logo img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 80px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #e74c3c;
+}
+
+.municipality-name-np { font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
+.municipality-name-en { font-size: 1.6rem; margin: 0; font-weight: bold; font-family: sans-serif; }
+.ward-title-np { font-size: 1.4rem; margin: 5px 0; font-weight: bold; }
+.ward-title-en { font-size: 1.2rem; font-family: sans-serif; }
+.address-text-np, .province-text-np { margin: 0; font-size: 1rem; }
+.address-text-en, .province-text-en { font-family: sans-serif; }
+.country-text { margin: 0; font-size: 1rem; }
+
+/* --- Meta Data --- */
+.meta-data-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  font-size: 1rem;
+}
+.meta-left p, .meta-right p { margin: 5px 0; font-weight: bold; }
+.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; }
+.small-input { width: 150px; }
+
+/* --- Main Title --- */
+.main-form-title {
+    text-align: center;
+    margin: 20px 0;
+    color: #34495e;
+}
+.main-form-title h3 {
+    border-bottom: 1px solid #ccc;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* --- Intro Paragraph --- */
+.intro-paragraph {
+    margin-bottom: 20px;
+    text-align: justify;
+    line-height: 1.8;
+}
+.intro-paragraph p { margin-bottom: 10px; }
+
+.line-input {
+    border: none;
+    border-bottom: 1px dotted #000;
+    background: transparent;
+    outline: none;
+    margin: 0 5px;
+}
+.medium-input { width: 200px; }
+.inline-select {
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 2px;
+    margin: 0 5px;
+}
+
+/* --- Form Table --- */
+.form-table-container {
+    margin-bottom: 30px;
+}
+.verification-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #000;
+}
+.verification-table td {
+    border: 1px solid #000;
+    padding: 8px;
+    vertical-align: middle;
+}
+
+.label-cell {
+    width: 25%;
+    font-weight: bold;
+    background-color: #f9f9f9;
+}
+.input-cell {
+    width: 75%;
+    background-color: #fff;
+}
+
+.table-input {
+    width: 98%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 1rem;
+}
+.table-select {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 1rem;
+    -webkit-appearance: none; /* removes default arrow for cleaner look if desired */
+    -moz-appearance: none;
+}
+
+/* Address Grids */
+.address-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+}
+.address-grid-5 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 10px;
+}
+.address-grid input, .address-grid-5 input, .address-grid select, .address-grid-5 select {
+    border-bottom: 1px dashed #ccc;
+}
+
+/* Flex Cells for Mixed Content */
+.flex-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.flex-row {
+    display: flex;
+    align-items: center;
+}
+.sub-label {
+    white-space: nowrap;
+    margin-right: 10px;
+    font-weight: bold;
+}
+.medium-select { width: auto; border: 1px solid #ccc; margin-right: 10px; }
+
+/* --- Signature Section --- */
+.signature-section {
+  display: flex;
+  justify-content: flex-start; /* Aligned left in this form */
+  margin-top: 40px;
+  margin-bottom: 30px;
+  border-top: 1px dotted #000;
+  width: 250px;
+  padding-top: 10px;
+}
+
+.signature-block { width: 100%; text-align: center; }
+.signature-dots { margin-bottom: 5px; display: none; /* Hidden as border-top handles it */ }
+.designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; margin-bottom: 5px; }
+.full-width-input { width: 100%; border: none; border-bottom: 1px dotted #000; }
+
+/* --- Footer --- */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn {
+  background-color: #34495e; /* Darker button for this form */
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.save-print-btn:hover { background-color: #2c3e50; }
+.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }

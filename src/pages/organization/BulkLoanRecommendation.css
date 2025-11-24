@@ -1,0 +1,247 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.blr-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.blr-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.blr-top-left {
+  font-weight: 600;
+}
+
+.blr-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.blr-paper {
+  margin: 0 24px 20px;
+  padding: 28px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Letterhead */
+.blr-letterhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blr-logo img {
+  width: 90px;
+  height: 90px;
+}
+
+.blr-head-text {
+  flex: 1;
+  text-align: center;
+}
+
+.blr-head-main {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.blr-head-ward {
+  font-size: 28px;
+  font-weight: 700;
+  color: #e60000;
+}
+
+.blr-head-sub {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.blr-head-meta {
+  font-size: 13px;
+  text-align: right;
+}
+
+.blr-meta-line {
+  margin-bottom: 4px;
+}
+
+.blr-small-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* पत्र / चलानी */
+.blr-ref-row {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.blr-ref-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.blr-ref-block input {
+  width: 180px;
+  padding: 5px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.blr-to-block {
+  margin-top: 22px;
+  font-size: 14px;
+}
+
+.blr-long-input {
+  width: 260px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+  margin: 0 4px;
+}
+
+.blr-to-second {
+  margin-top: 4px;
+}
+
+/* Subject */
+.blr-subject-row {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 15px;
+}
+
+.blr-sub-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.blr-subject-text {
+  text-decoration: underline;
+}
+
+/* Body */
+.blr-body {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.blr-body input {
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+.blr-bold {
+  font-weight: 600;
+}
+
+.blr-tiny-input {
+  width: 60px;
+}
+
+.blr-small-inline {
+  width: 100px;
+}
+
+.blr-medium-input {
+  width: 200px;
+}
+
+/* Large blank area */
+.blr-blank-area {
+  margin-top: 20px;
+  border: 1px solid #e0e0e0;
+  min-height: 260px;
+}
+
+/* Signature */
+.blr-sign-top {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.blr-sign-name {
+  width: 200px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.blr-post-select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.blr-section-title {
+  margin-top: 26px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.blr-applicant-box {
+  margin-top: 10px;
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+}
+
+.blr-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.blr-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.blr-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.blr-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.blr-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.blr-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

@@ -1,0 +1,166 @@
+/* --- Main Container --- */
+.farmer-registration-certificate-container {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 30px 50px;
+  background-color: rgba(255, 255, 255, 0.5); /* Transparent parchment feel */
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  color: #000;
+  position: relative;
+  border: 2px solid #e74c3c; /* Red border for certificate feel */
+  padding: 40px;
+}
+
+/* --- Utility Classes --- */
+.bold-text { font-weight: bold; }
+.underline-text { text-decoration: underline; }
+.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: sub;}
+.bg-gray-text { background-color: #eee; padding: 2px 5px; border-radius: 3px; margin: 0 5px; }
+
+/* --- Top Bar --- */
+.top-bar-title {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.top-right-bread {
+  font-size: 0.9rem;
+  color: #777;
+  font-weight: normal;
+}
+
+/* --- Header Section --- */
+.form-header-section {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.header-logo img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 80px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
+.ward-title { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
+.address-text, .province-text { color: #e74c3c; margin: 0; font-size: 1rem; }
+.certificate-title { font-size: 1.6rem; font-weight: bold; margin-top: 15px; }
+
+/* --- Registration Details --- */
+.registration-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+.detail-row { margin-bottom: 5px; display: flex; align-items: center; }
+.detail-row label { margin-right: 10px; }
+.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; font-family: inherit; font-size: 1rem; }
+.small-input { width: 120px; }
+
+/* --- Photo Box --- */
+.photo-box-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+.photo-box {
+    width: 120px;
+    height: 140px;
+    border: 1px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+    background-color: #f9f9f9;
+}
+
+/* --- Body Paragraph & Inputs --- */
+.form-body {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  text-align: justify;
+  margin-bottom: 30px;
+}
+.body-paragraph { margin-bottom: 20px; }
+
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.form-row {
+    display: flex;
+    align-items: center;
+}
+.form-row label { min-width: 220px; }
+
+.line-input {
+    border: none;
+    border-bottom: 1px dotted #000;
+    background: transparent;
+    outline: none;
+    margin: 0 5px;
+    padding: 2px 5px;
+    font-family: inherit;
+    font-size: 1.1rem;
+}
+.long-input { flex-grow: 1; }
+.medium-input { width: 250px; }
+
+.signature-box {
+    width: 200px;
+    height: 30px;
+    border-bottom: 1px dotted #000;
+}
+
+
+/* --- Bottom Section (Signature & Date) --- */
+.bottom-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
+.signature-block { width: 200px; text-align: center; }
+.signature-line {
+    border-bottom: 1px solid #000;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.date-block { font-size: 1.1rem; }
+
+
+/* --- Footer --- */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn {
+  background-color: #34495e;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.save-print-btn:hover { background-color: #2c3e50; }
+.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }

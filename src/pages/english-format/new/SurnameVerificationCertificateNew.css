@@ -1,0 +1,165 @@
+/* Basic container styling */
+.surname-verification-new-container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 25px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Times New Roman', Times, serif;
+  background-color: #fdfaf5; /* A slight parchment color */
+  box-sizing: border-box;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #8B0000;
+}
+.header .logo { width: 80px; margin-bottom: 10px; }
+.header h1 { margin: 0; font-size: 24px; }
+.header h2 { margin: 5px 0; font-size: 20px; }
+.header h3 { margin: 0; font-size: 18px; }
+
+/* General Form Layout - RESPONSIVE FIX */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Allows fields to stack on small screens */
+  margin-bottom: 15px;
+}
+.form-group {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.form-group label {
+  font-weight: bold;
+  margin-right: 8px;
+}
+.form-group input {
+  width: 200px;
+  max-width: 100%; /* Allows shrinking */
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Subject Line */
+.subject-line {
+  text-align: center;
+  margin: 25px 0;
+  font-size: 16px;
+}
+
+/* Main Certificate Body Styling - RESPONSIVE FIX */
+.certificate-body {
+  line-height: 2.8;
+  font-size: 16px;
+  text-align: justify;
+}
+.certificate-body input[type="text"],
+.certificate-body select {
+  display: inline-block; /* Keeps fields inline with text */
+  vertical-align: baseline; /* Aligns them nicely */
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 15px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px dotted #000;
+  margin: 0 5px;
+  width: 120px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.certificate-body select {
+  width: auto;
+  min-width: 80px;
+}
+
+/* Specific widths for inputs based on image */
+.certificate-body input[name="applicantNameBody"],
+.certificate-body input[name="applicantNameAgain"],
+.certificate-body input[name="fatherName"] {
+  width: 180px;
+}
+.certificate-body input[name="surnameContext"] {
+  width: 50px;
+}
+
+
+/* Designation Section - RESPONSIVE FIX */
+.designation-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 40px;
+  margin-right: 20px;
+}
+.designation-section input {
+  width: 220px;
+  max-width: 100%;
+  border: none;
+  border-bottom: 1px solid #000;
+  margin-bottom: 5px;
+  text-align: center;
+  background: transparent;
+  box-sizing: border-box;
+}
+.designation-section select {
+  width: 220px;
+  max-width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Applicant Details - RESPONSIVE FIX */
+.applicant-details {
+  border-top: 1px dashed #ccc;
+  margin-top: 25px;
+  padding-top: 15px;
+}
+.applicant-details h3 { margin-bottom: 15px; }
+.form-group-column {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+.form-group-column label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.form-group-column input {
+  width: 350px;
+  max-width: 100%; /* Allows shrinking */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+/* Submit Button */
+.submit-area {
+  text-align: center;
+  margin-top: 30px;
+}
+.submit-btn {
+  background-color: #343a40;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+.submit-btn:hover { background-color: #23272b; }

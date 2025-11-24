@@ -1,0 +1,259 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.orr-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.orr-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.orr-top-left {
+  font-weight: 600;
+}
+
+.orr-top-right {
+  opacity: 0.9;
+}
+
+/* Paper */
+.orr-paper {
+  margin: 0 24px 20px;
+  padding: 28px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Letterhead */
+.orr-letterhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.orr-logo img {
+  width: 90px;
+  height: 90px;
+}
+
+.orr-head-text {
+  flex: 1;
+  text-align: center;
+}
+
+.orr-head-main {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.orr-head-ward {
+  font-size: 28px;
+  font-weight: 700;
+  color: #e60000;
+}
+
+.orr-head-sub {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.orr-head-meta {
+  font-size: 13px;
+  text-align: right;
+}
+
+.orr-small-input {
+  width: 120px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.orr-meta-line {
+  margin-top: 4px;
+}
+
+/* पत्र / चलानी */
+.orr-ref-row {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.orr-ref-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.orr-ref-block input {
+  width: 170px;
+  padding: 5px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* To block */
+.orr-to-block {
+  margin-top: 22px;
+  font-size: 14px;
+}
+
+.orr-long-input {
+  width: 260px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+  margin: 0 4px;
+}
+
+.orr-to-second {
+  margin-top: 6px;
+}
+
+/* Subject */
+.orr-subject-row {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 15px;
+}
+
+.orr-sub-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.orr-subject-text {
+  text-decoration: underline;
+}
+
+/* Body */
+.orr-body {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.orr-body input {
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+.orr-bold {
+  font-weight: 600;
+}
+
+.orr-tiny-input {
+  width: 60px;
+}
+.orr-small-inline {
+  width: 100px;
+}
+.orr-medium-input {
+  width: 170px;
+}
+
+/* Location rows */
+.orr-location-row {
+  margin-top: 10px;
+  font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.orr-location-row input {
+  padding: 3px 4px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Divider */
+.orr-divider {
+  margin-top: 20px;
+  border-top: 1px solid #d1d1d1;
+}
+
+/* Signature section */
+.orr-sign-top {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.orr-sign-name {
+  width: 200px;
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+.orr-post-select {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Applicant details */
+.orr-section-title {
+  margin-top: 26px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.orr-applicant-box {
+  margin-top: 10px;
+  border: 1px solid #d3d3d3;
+  padding: 18px;
+  max-width: 360px;
+}
+
+.orr-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.orr-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.orr-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.orr-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.orr-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.orr-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}

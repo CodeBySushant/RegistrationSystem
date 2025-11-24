@@ -1,0 +1,138 @@
+/* --- Main Page Container --- */
+.report-page-container {
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #fff;
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Header --- */
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.report-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #000;
+  font-weight: bold;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* --- Filter Bar --- */
+.filter-bar-container {
+  background-color: #1c2331; /* Dark Navy Blue */
+  padding: 20px 30px;
+  display: flex;
+  align-items: flex-start; /* Align to top so labels sit correctly below inputs */
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-input, .filter-select {
+  padding: 10px;
+  border: none;
+  border-radius: 2px;
+  font-size: 0.95rem;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.date-input {
+  width: 180px;
+  background-color: #e0e0e0; /* Light gray input background */
+}
+
+.filter-select {
+  width: 200px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+/* Labels below the inputs (Date From/To) */
+.input-label {
+  color: #aab7c4; /* Light bluish-gray text */
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+/* Checkbox styling */
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  height: 40px; /* Align with inputs */
+  color: #fff;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Search Button */
+.search-icon-btn {
+  background-color: #2980b9; /* Blue button */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto; /* Pushes button to the right if there's space */
+}
+
+.search-icon-btn:hover {
+  background-color: #1c6ea4;
+}
+
+/* --- Results Area --- */
+.report-results-area {
+  flex-grow: 1; /* Takes up remaining space */
+  background-color: #f4f4f4; /* Fallback */
+  /* Add the texture image if you have one, or simulate the parchment look */
+  /* background-image: url('/background.jpg');  */
+  background-size: cover;
+  background-position: center;
+  min-height: 400px;
+  margin: 0 30px; /* Matches the padding of the header/filter bar */
+}
+
+/* --- Footer --- */
+.copyright-footer {
+  text-align: right;
+  padding: 15px 30px;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #eee;
+  background-color: #fff;
+}

@@ -1,0 +1,192 @@
+body {
+  margin: 0;
+  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  background: #d6d7da;
+}
+
+.ups-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.ups-topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.ups-top-left {
+  font-weight: 600;
+}
+
+/* Paper */
+.ups-paper {
+  margin: 0 24px 20px;
+  padding: 26px 40px 40px;
+  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
+  background-size: 280px 280px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Heading */
+.ups-annex {
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ups-main-title {
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Sections */
+.ups-section {
+  margin-top: 16px;
+}
+
+.ups-subtitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Field rows */
+.ups-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.ups-field-row input {
+  padding: 4px 6px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Width helpers */
+.ups-small-input { width: 90px; }
+.ups-medium-input { width: 160px; }
+.ups-wide-input { flex: 1; min-width: 220px; }
+
+/* Tables */
+.ups-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.ups-table th,
+.ups-table td {
+  border: 1px solid #c1c1c1;
+  padding: 6px 5px;
+  vertical-align: middle;
+}
+
+.ups-table th {
+  background-color: #f0f0f0;
+  text-align: center;
+}
+
+.ups-table td input {
+  width: 100%;
+  border: none;
+  padding: 3px 4px;
+  outline: none;
+}
+
+/* Add button */
+.ups-add-btn {
+  border: none;
+  background: #1276d1;
+  color: #ffffff;
+  padding: 3px 8px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+/* Textarea */
+.ups-textarea {
+  width: 100%;
+  margin-top: 6px;
+  border: 1px solid #c1c1c1;
+  padding: 6px 8px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Sign row */
+.ups-sign-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.ups-sign-left,
+.ups-sign-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ups-sign-role {
+  font-size: 13px;
+}
+
+/* Applicant box */
+.ups-applicant-box {
+  border: 1px solid #d3d3d3;
+  padding: 16px;
+  max-width: 360px;
+  margin-top: 6px;
+}
+
+.ups-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.ups-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.ups-field input {
+  padding: 6px 8px;
+  border: 1px solid #c1c1c1;
+}
+
+/* Submit */
+.ups-submit-row {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.ups-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer */
+.ups-footer {
+  text-align: right;
+  padding: 10px 24px 18px;
+  font-size: 13px;
+}
