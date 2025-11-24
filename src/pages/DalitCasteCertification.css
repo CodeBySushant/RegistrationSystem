@@ -1,0 +1,161 @@
+/* Basic container styling */
+.dalit-cert-container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 25px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif; /* Using a common font for Nepali */
+  background-color: #fdfaf5; /* A slight parchment color */
+  box-sizing: border-box;
+}
+
+/* General Form Layout - RESPONSIVE FIX */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Allows fields to stack on small screens */
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #ccc;
+}
+.form-group {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.form-group label {
+  font-weight: bold;
+  margin-right: 8px;
+}
+.form-group input {
+  width: 200px;
+  max-width: 100%; /* Allows shrinking */
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Header "To" Section */
+.header-to-group {
+    display: flex;
+    flex-direction: column;
+}
+.header-to-group h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+.header-to-group input {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 4px 6px;
+    margin-bottom: 8px;
+    border: none;
+    border-bottom: 1px dotted #000;
+    background: transparent;
+    width: 250px;
+    max-width: 100%;
+}
+
+/* Date group */
+.date-group {
+    font-weight: bold;
+}
+.date-group input {
+    border: none;
+    border-bottom: 1px dotted #000;
+    background: transparent;
+}
+
+/* Subject Line */
+.subject-line {
+  text-align: center;
+  margin: 25px 0;
+  font-size: 16px;
+}
+
+/* Main Certificate Body Styling - RESPONSIVE FIX */
+.certificate-body {
+  line-height: 2.8;
+  font-size: 16px;
+  text-align: justify;
+}
+.certificate-body input[type="text"],
+.certificate-body select {
+  display: inline-block; /* Keeps fields inline with text */
+  vertical-align: baseline; /* Aligns them nicely */
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 15px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px dotted #000;
+  margin: 0 5px;
+  width: 120px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.certificate-body select {
+  width: auto;
+  min-width: 80px;
+}
+.certificate-body .short-input {
+    width: 80px;
+}
+
+/* Left-aligned Signature Section */
+.signature-section-left {
+  margin-top: 30px;
+  float: left; /* Aligns block to the left */
+  width: 40%;
+  min-width: 300px;
+}
+.signature-section-left h4 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Re-using .form-group-column for signature inputs */
+.form-group-column {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+.form-group-column label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.form-group-column input {
+  width: 350px;
+  max-width: 100%; /* Allows shrinking */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+/* Submit Button */
+.submit-area {
+  clear: both; /* Clears the float from the signature block */
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 30px; /* Extra space above button */
+}
+.submit-btn {
+  background-color: #343a40;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+.submit-btn:hover { background-color: #23272b; }
