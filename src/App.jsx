@@ -3,12 +3,23 @@ import { Search, Menu, User } from "lucide-react";
 import { NAV_ITEMS } from "./data/NavItems.js";
 import SidebarItem from "./components/SidebarItem.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-import BusinessRegistrationForm from "./pages/BusinessRegistrationForm.jsx";
+// import BusinessRegistrationForm from "./pages/BusinessRegistrationForm.jsx";
 import PlaceholderPage from "./pages/PlaceholderPage.jsx";
-
+// pages/application
+import AllowanceForm from "./pages/application/AllowanceForm.jsx"
+import ApplicationforIndigenousNationalityCertification from "./pages/application/ApplicationforIndigenousNationalityCertification.jsx"
+import ApplicationforKhasAryaCasteCertification from "./pages/application/ApplicationforKhasAryaCasteCertification.jsx"
+import BusinessDeregistration from "./pages/application/BusinessDeregistrationForm.jsx"
+import BusinessRegistrationForm from "./pages/application/BusinessRegistrationForm.jsx"
+import CitizenshipwithHusbandSurname from "./pages/application/CitizenshipwithHusbandSurname.jsx"
+import CitizenshipwithoutHusbandSurname from "./pages/application/CitizenshipwithoutHusbandSurname.jsx"
+import DalitCasteCertification from "./pages/application/DalitCasteCertification.jsx"
+import ImprovisedCitizenshipApplicationRecommendation from "./pages/application/ImpoverishedCitizenApplicationandRecommendation.jsx"
+import LandBoundaryVerificationForm from "./pages/application/LandBoundaryVerificationForm.jsx"
+import RequestforCertification from "./pages/application/RequestforCertification.jsx";
+import RequestforCertificationMotherFather from "./pages/application/RequestforCertificationMotherFather.jsx";
 import TribalVerificationRecommendation from "./pages/application/TribalVerificationRecommendation.jsx";
-import DalitCasteCertification from "./pages/application/DalitCasteCertification.jsx";
-
+// pages/english-format
 import AddressVerification from "./pages/english-format/AddressVerification.jsx";
 import AnnualIncomeCertificate from "./pages/english-format/AnnualIncomeCertificate.jsx";
 import BirthDateVerification from "./pages/english-format/BirthDateVerification.jsx";
@@ -78,14 +89,35 @@ const App = () => {
     switch (activeLink) {
       case "गृहपृष्ठ":
         return <Dashboard />;
+// pages/application
       case "व्यवसाय दर्ता दरखास्त फारम":
         return <BusinessRegistrationForm setActiveLink={setActiveLink} />;
       case "आदिवासी प्रमाणित सिफारिस":
         return <TribalVerificationRecommendation setActiveLink={setActiveLink} />;
-      case "दलित जाति प्रमाणित _new_":
+      case "वृद्ध भत्ताको निवेदन":
+        return <AllowanceForm setActiveLink={setActiveLink} />;
+      case "जग्गाको साँध सिमाङ्कन":
+        return <LandBoundaryVerificationForm setActiveLink={setActiveLink} />;
+      case "फर्म खारेजी":
+        return <BusinessDeregistration setActiveLink={setActiveLink} />;
+      case "विपन्न नागरिक आवेदन तथा सिफारिस":
+        return <ImprovisedCitizenshipApplicationRecommendation setActiveLink={setActiveLink} />;
+      case "पतिको वतन कायम नागरिकताको प्रति‍लिपि new":
+        return <CitizenshipwithHusbandSurname setActiveLink={setActiveLink} />;
+      case "पतिको नाम, थर, वतन कायम गरी नागरिकताको प्रति‍लिपि new":
+        return <CitizenshipwithoutHusbandSurname setActiveLink={setActiveLink} />;
+      case "जनजाति प्रमाणित new":
+        return <ApplicationforIndigenousNationalityCertification setActiveLink={setActiveLink} />;
+      case "दलित जाति प्रमाणित new":
         return <DalitCasteCertification setActiveLink={setActiveLink} />;
+      case "खस आर्य जाति प्रमाणित new":
+        return <ApplicationforKhasAryaCasteCertification setActiveLink={setActiveLink} />;
+      case "नागरिकता प्रमाणपत्र शैक्षिक योग्यताको प्रमाणपत्र फरक":
+        return <RequestforCertification setActiveLink={setActiveLink} />;
+      case "नागरिकता प्रमाणपत्र बुवा/आमाको नागरिकतामा फरक new":
+        return <RequestforCertificationMotherFather setActiveLink={setActiveLink} />;
 
-
+// pages/english-format
       case "Relationship Verification":
         return <RelationshipVerificationEnglish setActiveLink={setActiveLink} />;
       case "Scholarship Verification":

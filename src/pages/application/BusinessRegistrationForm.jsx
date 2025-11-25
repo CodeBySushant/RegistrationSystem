@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './BusinessRegistrationSignatureForm.css'; // The CSS file for styling
+import './BusinessRegistrationForm.css'; // The CSS file for styling
 
 const BusinessRegistrationSignatureForm = () => {
   const [formData, setFormData] = useState({
