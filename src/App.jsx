@@ -5,8 +5,9 @@ import SidebarItem from "./components/SidebarItem.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import BusinessRegistrationForm from "./pages/BusinessRegistrationForm.jsx";
 import PlaceholderPage from "./pages/PlaceholderPage.jsx";
-import TribalVerificationRecommendation from "./pages/appeal/TribalVerificationRecommendation.jsx";
-import DalitCasteCertification from "./pages/DalitCasteCertification.jsx";
+
+import TribalVerificationRecommendation from "./pages/application/TribalVerificationRecommendation.jsx";
+import DalitCasteCertification from "./pages/application/DalitCasteCertification.jsx";
 
 import AddressVerification from "./pages/english-format/AddressVerification.jsx";
 import AnnualIncomeCertificate from "./pages/english-format/AnnualIncomeCertificate.jsx";
