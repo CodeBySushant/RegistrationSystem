@@ -24,7 +24,7 @@ export const NAV_ITEMS = [
         ]
     },
     {
-        id: 'business-recom',
+        id: 'business-recommendation',
         label: 'व्यवसाय सिफारिस',
         icon: Award,
         children: [
@@ -71,7 +71,7 @@ export const NAV_ITEMS = [
         ]
     },
     {
-        id: 'cooperative',
+        id: 'gov-organization',
         label: 'सहकारी संस्था',
         icon: Banknote,
         children: [
@@ -86,7 +86,7 @@ export const NAV_ITEMS = [
         children: ['छात्रवृत्ति सिफारिस', 'विपन्नता सिफारिस', 'जहेन्दार छात्रवृत्ति सिफारिस', 'कक्षा थप सिफारिस']
     },
     {
-        id: 'physical-const',
+        id: 'physical-development',
         label: 'भौतिक निर्माण',
         icon: Hammer,
         children: ['धारा जडान सिफारिस', 'बिजुली जडान सिफारिस', 'नयाँ बिजुली जडान सिफारिस', 'विद्युत् क्षमता बढाउन सिफारिस', 'सडक खन्ने स्वीकृतिको सिफारिस', 'नेपाल सरकारको नाममा बाटो कायम सिफारिस', 'सडक सिफारिसको लागि भूमि कित्ताकाट', 'ससिचार विद्युत् मिटर जडान सिफारिस', 'निशुल्क विद्युत् जडान']
@@ -98,7 +98,7 @@ export const NAV_ITEMS = [
         children: ['Relationship Verification', 'Scholarship Verification', 'Power of Attorney', 'Birth Date Verification', 'Occupation Verification', 'Unmarried Verification', 'Address Verification', 'Tax Clearance Certificate', 'Economic Status', 'Annual Income Certificate', 'Property Valuation Report', 'Marriage Certificate', 'Same Person Certificate', 'Certification of Occupation', 'Tax Cler Basic', 'Digital Verification', 'Occupation Verification New', 'Address Verification New', 'Birth Certification New', 'Verify Revised Emblem New', 'Tax Clearance New Format New', 'Annual Income Verification New', 'Surname Verification Certificate', 'Surname Verification After Marriage']
     },
     {
-        id: 'financial',
+        id: 'economic',
         label: 'आर्थिक',
         icon: Wallet,
         children: ['उपचारमा आर्थिक सहायता सिफारिस', 'अचल सम्पत्ति मुल्यांकन', 'कार्य योजना पूरा भयो सिफारिस', 'पेश्की अनुरोध सिफारिस', 'सामाजिक सुरक्षाको बैंक खाता', 'नयाँ लाभग्राहीको खाता खोल्न', 'सामाजिक सुरक्षा भत्ता रकम भुक्तानी गरि खाता बन्द गरिने', 'संरक्षक मार्फत सामाजिक सुरक्षा भत्ता उपलब्ध', 'लेखा परीक्षण']
@@ -170,7 +170,7 @@ export const NAV_ITEMS = [
         children: ['दर्ता किताब', 'चलानी किताब', 'दैनिक चलानी रिपोर्ट', 'सिफारिसको गन्ति हेर्नुहोस्', 'सूची दर्ता सिफारिसको सूची']
     },
     {
-        id: 'daily-work',
+        id: 'daily-work-execute',
         label: 'दैनिक कार्य सम्पादन',
         icon: Dot,
         children: []
