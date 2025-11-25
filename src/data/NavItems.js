@@ -1,12 +1,11 @@
-import { Briefcase, Award, FileText, BadgeCheck, Map, Users, Home, Banknote, GraduationCap, Hammer, Wallet, Mail, Plus, Book, PointerIcon, CircleDot, LucidePlusCircle, DotIcon, SpaceIcon, Dot } from 'lucide-react';
+import { Briefcase, Award, FileText, BadgeCheck, Map, Users, Home, Banknote, GraduationCap, Hammer, Wallet, Mail, Plus, Book, PointerIcon, CircleDot, LucidePlusCircle, DotIcon, SpaceIcon, Dot, StickyNote } from 'lucide-react';
 
-// This file does not need .jsx because it doesn't contain HTML-like syntax
 export const NAV_ITEMS = [
     { id: 'dashboard', label: 'गृहपृष्ठ', icon: Home, children: [] },
     {
         id: 'application',
         label: 'निवेदन',
-        icon: FileText,
+        icon: StickyNote,
         children: [
             'व्यवसाय दर्ता दरखास्त फारम', 'आदिवासी प्रमाणित सिफारिस', 'वृद्ध भत्ताको निवेदन',
             'जग्गाको साँध सिमाङ्कन', 'फर्म खारेजी', 'विपन्न नागरिक आवेदन तथा सिफारिस',
@@ -143,7 +142,7 @@ export const NAV_ITEMS = [
     {
         id: 'identity-card',
         label: 'प्रमाण–पत्र',
-        icon: FileText,
+        icon: StickyNote,
         children: ['कृषक समूह/समिति दर्ता प्रमाण–पत्र', 'घ वर्गको निर्माण व्यवसाय इजाजत पत्र', 'निर्माण कार्य को पासबुक', 'घ वर्गको निर्माण व्यवसाय इजाजत पत्रको नवीकरण', 'उपभोक्ता संग दर्ता प्रमाणपत्र सूची', 'कृषक समूह/समिति दर्ता प्रमाण–पत्र सूची', 'भवन निर्माण प्रमाण–पत्र', 'खानेपानी उपभोक्ता संस्था दर्ता प्रमाण पत्र']
     },
     {
