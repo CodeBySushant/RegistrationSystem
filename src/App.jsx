@@ -83,6 +83,11 @@ import OrganizationRegistrationPunishment from "./pages/association/Organization
 import OrganizationRegistrationRecommendation from "./pages/association/OrganizationRegistrationRecommendation.jsx"
 import OrganizationRenewRecommendation from "./pages/association/OrganizationRenewRecommendation.jsx"
 import SocialOrganizationRenew from "./pages/association/SocialOrganizationRenew.jsx"
+// pages/gov-organization
+import GovOrganizationReg from "./pages/gov-organization/GovOrganizationReg.jsx"
+import GovOrganizationRegProof from "./pages/gov-organization/GovOrganizationRegProof.jsx"
+import GovOrganizationRegRecommendation from "./pages/gov-organization/GovOrganizationRegRecommendation.jsx"
+import GovOrganizationRegUnsucessful from "./pages/gov-organization/GovOrganizationRegUnsucessful.jsx"
 // pages/english-format
 import AddressVerification from "./pages/english-format/AddressVerification.jsx";
 import AnnualIncomeCertificate from "./pages/english-format/AnnualIncomeCertificate.jsx";
@@ -310,6 +315,16 @@ const App = () => {
         return <ClubRegistration setActiveLink={setActiveLink} />;
       case "खाता खोली दिने":
         return <NewBankAccountRecommendation setActiveLink={setActiveLink} />;
+
+// pages/gov-organization
+      case "सहकारी संस्था दर्ता सिफारिस":
+        return <GovOrganizationReg setActiveLink={setActiveLink} />;
+      case "सहकारी संस्था दर्ता सिफारिसको सूची":
+        return <GovOrganizationRegUnsucessful setActiveLink={setActiveLink} />;
+      case "सहकारी संस्था दर्ता अस्वीकृत सूची":
+        return <GovOrganizationRegRecommendation setActiveLink={setActiveLink} />;
+      case "सहकारी संस्था दर्ता प्रमाण-पत्र सूची":
+        return <GovOrganizationRegProof setActiveLink={setActiveLink} />;
 
 // pages/english-format
       case "Relationship Verification":
