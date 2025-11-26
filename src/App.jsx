@@ -92,6 +92,16 @@ import GovOrganizationRegUnsucessful from "./pages/gov-organization/GovOrganizat
 import BackwardCommunityRecommendation from "./pages/educational/BackwardCommunityRecommendation.jsx"
 import NewClassRecommendation from "./pages/educational/NewClassRecommendation.jsx"
 import ScholarshipRecommendation from "./pages/educational/ScholarshipRecommendation.jsx"
+// pages/physical-development
+import ElectricityCapacityIncrease from "./pages/physical-development/ElectricityCapacityIncrease.jsx"
+import ElectricityInstallation from "./pages/physical-development/ElectricityInstallation.jsx"
+import ElectricityInstallationRecommendation from "./pages/physical-development/ElectricityInstallationRecommendation.jsx"
+import FreeElectricityConnectionRecommendation from "./pages/physical-development/FreeElectricityConnectionRecommendation.jsx"
+import IrrigationElectricMeterInstallationRecommendation from "./pages/physical-development/IrrigationElectricMeterInstallationRecommendation.jsx"
+import LandKittakatForRoadRecommendation from "./pages/physical-development/LandKittakatForRoadRecommendation.jsx"
+import RoadExcavationApprovalRecommendation from "./pages/physical-development/RoadExcavationApprovalRecommendation.jsx"
+import RoadMaintainRecommendation from "./pages/physical-development/RoadMaintainRecommendation.jsx"
+import TapInstallationRecommendation from "./pages/physical-development/TapInstallationRecommendation.jsx"
 // pages/english-format
 import AddressVerification from "./pages/english-format/AddressVerification.jsx";
 import AnnualIncomeCertificate from "./pages/english-format/AnnualIncomeCertificate.jsx";
@@ -337,6 +347,26 @@ const App = () => {
         return <BackwardCommunityRecommendation setActiveLink={setActiveLink} />;
       case "कक्षा थप सिफारिस":
         return <NewClassRecommendation setActiveLink={setActiveLink} />;
+
+// pages/physical-development
+      case "धारा जडान सिफारिस":
+        return <TapInstallationRecommendation setActiveLink={setActiveLink} />;
+      case "बिजुली जडान सिफारिस":
+        return <ElectricityInstallationRecommendation setActiveLink={setActiveLink} />;
+      case "नयाँ बिजुली जडान सिफारिस":
+        return <ElectricityInstallation setActiveLink={setActiveLink} />;
+      case "विद्युत् क्षमता बढाउन सिफारिस":
+        return <ElectricityCapacityIncrease setActiveLink={setActiveLink} />;
+      case "सडक खन्ने स्वीकृतिको सिफारिस":
+        return <RoadExcavationApprovalRecommendation setActiveLink={setActiveLink} />;
+      case "नेपाल सरकारको नाममा बाटो कायम सिफारिस":
+        return <RoadMaintainRecommendation setActiveLink={setActiveLink} />;
+      case "सडक सिफारिसको लागि भूमि कित्ताकाट":
+        return <LandKittakatForRoadRecommendation setActiveLink={setActiveLink} />;
+      case "ससिचार विद्युत् मिटर जडान सिफारिस":
+        return <IrrigationElectricMeterInstallationRecommendation setActiveLink={setActiveLink} />;
+      case "निशुल्क विद्युत् जडान":
+        return <FreeElectricityConnectionRecommendation setActiveLink={setActiveLink} />;
 
 // pages/english-format
       case "Relationship Verification":
