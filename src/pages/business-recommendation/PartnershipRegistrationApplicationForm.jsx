@@ -1,4 +1,4 @@
-// 13
+// 12
 import React from "react";
 import "./PartnershipRegistrationApplicationForm.css";
 

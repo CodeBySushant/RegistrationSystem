@@ -1,4 +1,4 @@
-// 12
+// 11
 import React from "react";
 import "./IndustryRegistrationRecommendation.css";
 

@@ -1,6 +1,6 @@
 // 3
 import React, { useState } from 'react';
-import './BusinessIndustryRegistrationNewList.css';
+import './BusinessIndustryRegistrationList.css';
 
 const initialData = [
   {
