@@ -175,6 +175,9 @@ import DifferentDOBCertification from "./pages/others/DifferentDOBCertification.
 import DifferentEnglishSpellingCertification from "./pages/others/DifferentEnglishSpellingCertification.jsx";
 import DifferentNameCertification from "./pages/others/DifferentNameCertification.jsx";
 import LeaveRequestApplication from "./pages/others/LeaveRequestApplication.jsx";
+// pages/animal-husbandry
+import DomesticAnimalInsuranceClaimRecommendation from "./pages/animal-husbandry/DomesticAnimalInsuranceClaimRecommendation.jsx";
+import DomesticAnimalMaternityNutritionAllowance from "./pages/animal-husbandry/DomesticAnimalMaternityNutritionAllowance.jsx";
 // pages/planning
 import AgreementOfPlan from "./pages/planning/AgreementOfPlan.jsx";
 import WithdrawalFundRecommendation from "./pages/planning/WithdrawalFundRecommendation.jsx";
@@ -571,6 +574,12 @@ const App = () => {
       case "बिदाको निवेदन":
         return <LeaveRequestApplication setActiveLink={setActiveLink} />;
 
+// pages/animal-husbandry
+      case "गाई / भैंसी सुक्खेरी पोषण भत्ता":
+        return <DomesticAnimalMaternityNutritionAllowance setActiveLink={setActiveLink} />;
+      case "पशु बिमा पाउँ":
+        return <DomesticAnimalInsuranceClaimRecommendation setActiveLink={setActiveLink} />;
+      
 // pages/planning
       case "योजना सम्झौताकॊ सिफारिस":
         return <AgreementOfPlan setActiveLink={setActiveLink} />;
