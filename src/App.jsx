@@ -168,6 +168,16 @@ import TemporaryResidenceRecommendation from "./pages/social-family/TemporaryRes
 import ThreeGenerationCertificate from "./pages/social-family/ThreeGenerationCertificate.jsx";
 import TribalRecommendation from "./pages/social-family/TribalRecommendation.jsx";
 import UnmarriedVerification from "./pages/social-family/UnmarriedVerification.jsx";
+// pages/MRP
+import PassportRecommendation from "./pages/MRP/PassportRecommendation";
+// pages/others
+import DifferentDOBCertification from "./pages/others/DifferentDOBCertification.jsx";
+import DifferentEnglishSpellingCertification from "./pages/others/DifferentEnglishSpellingCertification.jsx";
+import DifferentNameCertification from "./pages/others/DifferentNameCertification.jsx";
+import LeaveRequestApplication from "./pages/others/LeaveRequestApplication.jsx";
+// pages/planning
+import AgreementOfPlan from "./pages/planning/AgreementOfPlan.jsx";
+import WithdrawalFundRecommendation from "./pages/planning/WithdrawalFundRecommendation.jsx";
 // pages/report
 import CategoryReportSearch from "./pages/report/CategoryReportSearch.jsx";
 import CertificateRenewalList from "./pages/report/CertificateRenewalList.jsx";
@@ -546,6 +556,26 @@ const App = () => {
         return <BeneficiaryAllowanceTransfer setActiveLink={setActiveLink} />;
       case "जातीय पहिचान सिफारिस":
         return <EthnicIdentityRecommendation setActiveLink={setActiveLink} />;
+
+// pages/MRP
+      case "राहदानी प्रमाण पत्र":
+        return <PassportRecommendation setActiveLink={setActiveLink} />;
+
+// pages/others
+      case "फरक फरक नाम र थर सिफारिस":
+        return <DifferentNameCertification setActiveLink={setActiveLink} />;
+      case "फरक फरक जन्म मिति प्रमाणित":
+        return <DifferentDOBCertification setActiveLink={setActiveLink} />;
+      case "फरक फरक अंग्रेजी हिज्जे प्रमाणित":
+        return <DifferentEnglishSpellingCertification setActiveLink={setActiveLink} />;
+      case "बिदाको निवेदन":
+        return <LeaveRequestApplication setActiveLink={setActiveLink} />;
+
+// pages/planning
+      case "योजना सम्झौताकॊ सिफारिस":
+        return <AgreementOfPlan setActiveLink={setActiveLink} />;
+      case "रकम निकाशाको सिफारिस":
+        return <WithdrawalFundRecommendation setActiveLink={setActiveLink} />;
 
 // pages/report
       case "कोटीको आधारमा रिपोर्ट हेर्नुहोस्":
