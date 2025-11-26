@@ -88,6 +88,10 @@ import GovOrganizationReg from "./pages/gov-organization/GovOrganizationReg.jsx"
 import GovOrganizationRegProof from "./pages/gov-organization/GovOrganizationRegProof.jsx"
 import GovOrganizationRegRecommendation from "./pages/gov-organization/GovOrganizationRegRecommendation.jsx"
 import GovOrganizationRegUnsucessful from "./pages/gov-organization/GovOrganizationRegUnsucessful.jsx"
+// pages/educational
+import BackwardCommunityRecommendation from "./pages/educational/BackwardCommunityRecommendation.jsx"
+import NewClassRecommendation from "./pages/educational/NewClassRecommendation.jsx"
+import ScholarshipRecommendation from "./pages/educational/ScholarshipRecommendation.jsx"
 // pages/english-format
 import AddressVerification from "./pages/english-format/AddressVerification.jsx";
 import AnnualIncomeCertificate from "./pages/english-format/AnnualIncomeCertificate.jsx";
@@ -325,6 +329,14 @@ const App = () => {
         return <GovOrganizationRegRecommendation setActiveLink={setActiveLink} />;
       case "सहकारी संस्था दर्ता प्रमाण-पत्र सूची":
         return <GovOrganizationRegProof setActiveLink={setActiveLink} />;
+
+// pages/educational
+      case "छात्रवृत्ति सिफारिस":
+        return <ScholarshipRecommendation setActiveLink={setActiveLink} />;
+      case "विपन्नता सिफारिस":
+        return <BackwardCommunityRecommendation setActiveLink={setActiveLink} />;
+      case "कक्षा थप सिफारिस":
+        return <NewClassRecommendation setActiveLink={setActiveLink} />;
 
 // pages/english-format
       case "Relationship Verification":
