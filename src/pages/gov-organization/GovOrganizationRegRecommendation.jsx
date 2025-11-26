@@ -1,6 +1,6 @@
 // 2
 import React from "react";
-import "./GovOrganizationRegRecommendation.js";
+import "./GovOrganizationRegRecommendation.css";
 
 const cooperatives = [
   {
