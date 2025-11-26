@@ -168,6 +168,14 @@ import TemporaryResidenceRecommendation from "./pages/social-family/TemporaryRes
 import ThreeGenerationCertificate from "./pages/social-family/ThreeGenerationCertificate.jsx";
 import TribalRecommendation from "./pages/social-family/TribalRecommendation.jsx";
 import UnmarriedVerification from "./pages/social-family/UnmarriedVerification.jsx";
+// pages/report
+import CategoryReportSearch from "./pages/report/CategoryReportSearch.jsx";
+import CertificateRenewalList from "./pages/report/CertificateRenewalList.jsx";
+import DisabilityIdentityCardList from "./pages/report/DisabilityIdentityCardList.jsx";
+import ReportList from "./pages/report/ReportList.jsx";
+import SeniorCitizenIdentityCardList from "./pages/report/SeniorCitizenIdentityCardList.jsx";
+// pages/daily-work-execute
+import DailyWorkPerformanceList from "./pages/daily-work-execute/DailyWorkPerformanceList.jsx";
 
 const App = () => {
   const [openMenu, setOpenMenu] = useState("application");
@@ -539,7 +547,23 @@ const App = () => {
       case "जातीय पहिचान सिफारिस":
         return <EthnicIdentityRecommendation setActiveLink={setActiveLink} />;
 
-        default:
+// pages/report
+      case "कोटीको आधारमा रिपोर्ट हेर्नुहोस्":
+        return <CategoryReportSearch setActiveLink={setActiveLink} />;
+      case "कोटीको आधारमा सूची हेर्नुहोस्":
+        return <ReportList setActiveLink={setActiveLink} />;
+      case "अस्वीकृत अपाङ्गता परिचयपत्रको सूची":
+        return <DisabilityIdentityCardList setActiveLink={setActiveLink} />;
+      case "अस्वीकृत जेष्ठ नागरिक परिचयपत्रको सूची":
+        return <SeniorCitizenIdentityCardList setActiveLink={setActiveLink} />;
+      case "परिचय–पत्र नवीकरण सूची":
+        return <CertificateRenewalList setActiveLink={setActiveLink} />;
+
+// pages/daily-work-execute
+      case "दैनिक कार्य सम्पादनस":
+        return <DailyWorkPerformanceList setActiveLink={setActiveLink} />;
+
+      default:
         return <PlaceholderPage activeLink={activeLink} />;
     }
   };
