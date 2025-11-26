@@ -127,6 +127,16 @@ import SurnameVerificationAfterMarriage from "./pages/english-format/new/Surname
 import SurnameVerificationCertificateNew from "./pages/english-format/new/SurnameVerificationCertificateNew.jsx";
 import TaxClearanceNewFormat from "./pages/english-format/new/TaxClearanceNewFormat.jsx";
 import VerifyRevisedEmblem from "./pages/english-format/new/VerifyRevisedEmblem.jsx";
+// pages/economic
+import AdvancePaymentRequest from "./pages/economic/AdvancePaymentRequest.jsx";
+import BankAccountForSocialSecurity from "./pages/economic/BankAccountForSocialSecurity.jsx";
+import FixedAssetValuation from "./pages/economic/FixedAssetValuation.jsx";
+import LekhaParikshyan from "./pages/economic/LekhaParikshyan.jsx";
+import NewBeneficiaryAccount from "./pages/economic/NewBeneficiaryAccount.jsx";
+import ReqforHelpinHealth from "./pages/economic/ReqforHelpinHealth.jsx";
+import SocialSecurityPaymentClosure from "./pages/economic/SocialSecurityPaymentClosure.jsx";
+import SocialSecurityViaGuardian from "./pages/economic/SocialSecurityViaGuardian.jsx";
+import WorkPlanningCompleted from "./pages/economic/WorkPlanningCompleted.jsx";
 
 const App = () => {
   const [openMenu, setOpenMenu] = useState("application");
@@ -418,7 +428,26 @@ const App = () => {
       case "Surname Verification After Marriage":
         return <SurnameVerificationAfterMarriage setActiveLink={setActiveLink} />;
       
-      
+// pages/economic
+      case "उपचारमा आर्थिक सहायता सिफारिस":
+        return <ReqforHelpinHealth setActiveLink={setActiveLink} />;
+      case "अचल सम्पत्ति मुल्यांकन":
+        return <FixedAssetValuation setActiveLink={setActiveLink} />;
+      case "कार्य योजना पूरा भयो सिफारिस":
+        return <WorkPlanningCompleted setActiveLink={setActiveLink} />;
+      case "पेश्की अनुरोध सिफारिस":
+        return <AdvancePaymentRequest setActiveLink={setActiveLink} />;
+      case "सामाजिक सुरक्षाको बैंक खाता":
+        return <BankAccountForSocialSecurity setActiveLink={setActiveLink} />;
+      case "नयाँ लाभग्राहीको खाता खोल्न":
+        return <NewBeneficiaryAccount setActiveLink={setActiveLink} />;
+      case "सामाजिक सुरक्षा भत्ता रकम भुक्तानी गरि खाता बन्द गरिने":
+        return <SocialSecurityPaymentClosure setActiveLink={setActiveLink} />;
+      case "संरक्षक मार्फत सामाजिक सुरक्षा भत्ता उपलब्ध":
+        return <SocialSecurityViaGuardian setActiveLink={setActiveLink} />;
+      case "लेखा परीक्षण":
+        return <LekhaParikshyan setActiveLink={setActiveLink} />;
+
         default:
         return <PlaceholderPage activeLink={activeLink} />;
     }
