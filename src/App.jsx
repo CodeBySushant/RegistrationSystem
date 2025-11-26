@@ -40,6 +40,49 @@ import PartnershipRegistrationApplicationForm from "./pages/business-recommendat
 import ShopAgriculturalForm from "./pages/business-recommendation/ShopAgriculturalForm.jsx"
 import ShopRegistrationForm from "./pages/business-recommendation/ShopRegistrationForm.jsx"
 import TaxClearCertificate from "./pages/business-recommendation/TaxClearCertificate.jsx"
+// pages/nepali-citizenship
+import BhawanNirmanSampanna from "./pages/nepali-citizenship/BhawanNirmanSampanna.jsx"
+import ConsumerCommitteeRegistrationList from "./pages/nepali-citizenship/ConsumerCommitteeRegistrationList.jsx"
+import DClassConstructionBusinessLicense from "./pages/nepali-citizenship/DClassConstructionBusinessLicense.jsx"
+import DClassConstructionBusinessLicenseList from "./pages/nepali-citizenship/DClassConstructionBusinessLicenseList.jsx"
+import DrinkingWaterCommitteeRegistration from "./pages/nepali-citizenship/DrinkingWaterCommitteeRegistration.jsx"
+import FarmerGroupOrCommitteeRegistrationCertificate from "./pages/nepali-citizenship/FarmerGroupOrCommitteeRegistrationCertificate.jsx"
+import FarmerGroupOrCommitteeRegistrationCertificateList from "./pages/nepali-citizenship/FarmerGroupOrCommitteeRegistrationCertificateList.jsx"
+import PassbookOfConstructionWork from "./pages/nepali-citizenship/PassbookOfConstructionWork.jsx"
+// pages/house-land
+import BoundaryRecommendation from "./pages/house-land/BoundaryRecommendation.jsx"
+import CharKillaReloaded from "./pages/house-land/CharKillaReloaded.jsx"
+import GharKayamNewFormat from "./pages/house-land/GharKayamNewFormat.jsx"
+import GovernmentalLandUtilizationRecommendation from "./pages/house-land/GovernmentalLandUtilizationRecommendation.jsx"
+import HouseConstructionCompletedCertificate from "./pages/house-land/HouseConstructionCompletedCertificate.jsx"
+import HouseDestroyedRecommendation from "./pages/house-land/HouseDestroyedRecommendation.jsx"
+import HouseMaintainRecommendation from "./pages/house-land/HouseMaintainRecommendation.jsx"
+import HouseRoadVerification from "./pages/house-land/HouseRoadVerification.jsx"
+import HouseVerificationRecommendation from "./pages/house-land/HouseVerificationRecommendation.jsx"
+import KittaKatRecommendation from "./pages/house-land/KittaKatRecommendation.jsx"
+import LandClassificationRecommendation from "./pages/house-land/LandClassificationRecommendation.jsx"
+import LandConsolidationRecommendation from "./pages/house-land/LandConsolidationRecommendation.jsx"
+import OnsiteInspectionRecommendation from "./pages/house-land/OnsiteInspectionRecommendation.jsx"
+import PartialHouseConstructionCompletedCertificate from "./pages/house-land/PartialHouseConstructionCompletedCertificate.jsx"
+import PeskiAnurodhSifaris from "./pages/house-land/PeskiAnurodhSifaris.jsx"
+import PropertyOwnerCertificateCopyRecommendation from "./pages/house-land/PropertyOwnerCertificateCopyRecommendation.jsx"
+import PropertyOwnerCertificateHouseMaintainRecommendation from "./pages/house-land/PropertyOwnerCertificateHouseMaintainRecommendation.jsx"
+import PropertyOwnershipTransferKitani from "./pages/house-land/PropertyOwnershipTransferKitani.jsx"
+import PropertyOwnershipTransferRecommendation from "./pages/house-land/PropertyOwnershipTransferRecommendation.jsx"
+import PropertyVerificationRecommendation from "./pages/house-land/PropertyVerificationRecommendation.jsx"
+// pages/association
+import BulkLoanRecommendation from "./pages/association/BulkLoanRecommendation.jsx"
+import ClubRegistration from "./pages/association/ClubRegistration.jsx"
+import ComitteeRegistration from "./pages/association/CommitteeRegistration.jsx"
+import NewBankAccountRecommendation from "./pages/association/NewBankAccountRecommendation.jsx"
+import NewOrganizationRegistration from "./pages/association/NewOrganizationRegistration.jsx"
+import NonProfitOrgRegCertificate from "./pages/association/NonProfitOrgRegCertificate.jsx"
+import OldNonProfitOrgRegCertificate from "./pages/association/OldNonProfitOrgRegCertificate.jsx"
+import OrganizationRegistered from "./pages/association/OrganizationRegistered.jsx"
+import OrganizationRegistrationPunishment from "./pages/association/OrganizationRegistrationPunishment.jsx"
+import OrganizationRegistrationRecommendation from "./pages/association/OrganizationRegistrationRecommendation.jsx"
+import OrganizationRenewRecommendation from "./pages/association/OrganizationRenewRecommendation.jsx"
+import SocialOrganizationRenew from "./pages/association/SocialOrganizationRenew.jsx"
 // pages/english-format
 import AddressVerification from "./pages/english-format/AddressVerification.jsx";
 import AnnualIncomeCertificate from "./pages/english-format/AnnualIncomeCertificate.jsx";
@@ -181,6 +224,92 @@ const App = () => {
         return <BusinessExtensionPannumber setActiveLink={setActiveLink} />;
       case "कर चुक्ता प्रमाणपत्र":
         return <TaxClearCertificate setActiveLink={setActiveLink} />;
+
+// pages/nepali-citizenship
+      case "नागरिकता प्रतिलिपि सिफारिस":
+        return <TaxClearCertificate setActiveLink={setActiveLink} />;
+      case "नागरिकताको लागि मुचुल्का":
+        return <DClassConstructionBusinessLicense setActiveLink={setActiveLink} />;
+      case "स्थलगत सर्जमिन मुचुल्का":
+        return <TaxClearCertificate setActiveLink={setActiveLink} />;
+      case "नागरिकता प्रमाणपत्र सिफारिस":
+        return <TaxClearCertificate setActiveLink={setActiveLink} />;
+      case "नागरिकता सिफारिस":
+        return <TaxClearCertificate setActiveLink={setActiveLink} />;
+      case "नागरिकताको प्रमाण-पत्र प्रतिलिपि":
+        return <TaxClearCertificate setActiveLink={setActiveLink} />;
+      case "नेपाली अंगीकृत नागरिकता":
+        return <TaxClearCertificate setActiveLink={setActiveLink} />;
+      case "पतिको नाममा नेपाली नागरिकताको प्रमाण-पत्र":
+        return <TaxClearCertificate setActiveLink={setActiveLink} />;
+
+// pages/house-land
+      case "जग्गा वर्गीकरण new":
+        return <LandClassificationRecommendation setActiveLink={setActiveLink} />;
+      case "स्थलगत निरीक्षण new":
+        return <OnsiteInspectionRecommendation setActiveLink={setActiveLink} />;
+      case "घर जग्गा नामसारी सिफारिस (किटानी)":
+        return <PropertyOwnershipTransferKitani setActiveLink={setActiveLink} />;
+      case "घर कायम सिफारिस":
+        return <HouseMaintainRecommendation setActiveLink={setActiveLink} />;
+      case "घर जग्गा नामसारी सिफारिस":
+        return <PropertyOwnershipTransferRecommendation setActiveLink={setActiveLink} />;
+      case "घर जनाउने सिफारिस":
+        return <HouseVerificationRecommendation setActiveLink={setActiveLink} />;
+      case "कित्ताकाट सिफारिस":
+        return <KittaKatRecommendation setActiveLink={setActiveLink} />;
+      case "घरबाटो प्रमाणित":
+        return <HouseRoadVerification setActiveLink={setActiveLink} />;
+      case "चार किल्ला सिफारिस":
+        return <PeskiAnurodhSifaris setActiveLink={setActiveLink} />;
+      case "चार किल्ला खुलाई सिफारिस new":
+        return <CharKillaReloaded setActiveLink={setActiveLink} />;
+      case "लालपुर्जाको प्रतिलिपि सिफारिस":
+        return <PropertyOwnerCertificateCopyRecommendation setActiveLink={setActiveLink} />;
+      case "जग्गाधनी प्रमाण पुर्जामा घर कायम सिफारिस":
+        return <PropertyOwnerCertificateHouseMaintainRecommendation setActiveLink={setActiveLink} />;
+      case "घर पाताल भएको सिफारिस":
+        return <HouseDestroyedRecommendation setActiveLink={setActiveLink} />;
+      case "जोत भोग चलनको सिफारिस":
+        return <GovernmentalLandUtilizationRecommendation setActiveLink={setActiveLink} />;
+      case "चौहद्दी सिफारिस":
+        return <BoundaryRecommendation setActiveLink={setActiveLink} />;
+      case "भुकम्प प्रतिरोधि घर निर्माण सम्पन्न प्रमाणपत्र":
+        return <HouseConstructionCompletedCertificate setActiveLink={setActiveLink} />;
+      case "आंशिक / पूर्ण घर निर्माण सम्पन्न प्रमाणपत्र":
+        return <PartialHouseConstructionCompletedCertificate setActiveLink={setActiveLink} />;
+      case "सम्पत्ति प्रमाणीकरण सिफारिस":
+        return <PropertyVerificationRecommendation setActiveLink={setActiveLink} />;
+      case "जग्गा एकिकृत सिफारिस":
+        return <LandConsolidationRecommendation setActiveLink={setActiveLink} />;
+      case "घर कायम New Format":
+        return <GharKayamNewFormat setActiveLink={setActiveLink} />;
+
+// pages/association
+      case "गैर नाफामुलुक संस्था दर्ता":
+        return <NonProfitOrgRegCertificate setActiveLink={setActiveLink} />;
+      case "गैर नाफामुलुक संस्था दर्ता पुरानो वला":
+        return <OldNonProfitOrgRegCertificate setActiveLink={setActiveLink} />;
+      case "संस्था नबिकरण सिफारिस":
+        return <OrganizationRenewRecommendation setActiveLink={setActiveLink} />;
+      case "घरेलु तथा साना उद्योग दर्ता":
+        return <OrganizationRegistrationRecommendation setActiveLink={setActiveLink} />;
+      case "संस्था दर्ता":
+        return <NewOrganizationRegistration setActiveLink={setActiveLink} />;
+      case "सामाजिक संस्था नविकरण":
+        return <SocialOrganizationRenew setActiveLink={setActiveLink} />;
+      case "समिति दर्ता सिफारिस":
+        return <CommitteeRegistration setActiveLink={setActiveLink} />;
+      case "सजाय पाए नपाएको":
+        return <OrganizationRegistrationPunishment setActiveLink={setActiveLink} />;
+      case "थोक कर्जा सिफारिस":
+        return <BulkLoanRecommendation setActiveLink={setActiveLink} />;
+      case "संस्था दर्ता गरिएको":
+        return <OrganizationRegistered setActiveLink={setActiveLink} />;
+      case "क्लब दर्ता सिफारिस":
+        return <ClubRegistration setActiveLink={setActiveLink} />;
+      case "खाता खोली दिने":
+        return <NewBankAccountRecommendation setActiveLink={setActiveLink} />;
 
 // pages/english-format
       case "Relationship Verification":

@@ -1,6 +1,6 @@
 import React from "react";
 import "./NewBankAccountRecommendation.css";
-
+// 12
 function NewBankAccountRecommendation() {
   return (
     <div className="nbcr-page">

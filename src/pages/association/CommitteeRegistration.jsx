@@ -1,6 +1,6 @@
 // 7
 import React from "react";
-import "./ComitteeRegistration.css";
+import "./CommitteeRegistration.css";
 
 function ComitteeRegistration() {
   return (
