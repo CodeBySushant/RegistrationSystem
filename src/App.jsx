@@ -40,15 +40,15 @@ import PartnershipRegistrationApplicationForm from "./pages/business-recommendat
 import ShopAgriculturalForm from "./pages/business-recommendation/ShopAgriculturalForm.jsx"
 import ShopRegistrationForm from "./pages/business-recommendation/ShopRegistrationForm.jsx"
 import TaxClearCertificate from "./pages/business-recommendation/TaxClearCertificate.jsx"
-// pages/nepali-citizenship
-import BhawanNirmanSampanna from "./pages/nepali-citizenship/BhawanNirmanSampanna.jsx"
-import ConsumerCommitteeRegistrationList from "./pages/nepali-citizenship/ConsumerCommitteeRegistrationList.jsx"
-import DClassConstructionBusinessLicense from "./pages/nepali-citizenship/DClassConstructionBusinessLicense.jsx"
-import DClassConstructionBusinessLicenseList from "./pages/nepali-citizenship/DClassConstructionBusinessLicenseList.jsx"
-import DrinkingWaterCommitteeRegistration from "./pages/nepali-citizenship/DrinkingWaterCommitteeRegistration.jsx"
-import FarmerGroupOrCommitteeRegistrationCertificate from "./pages/nepali-citizenship/FarmerGroupOrCommitteeRegistrationCertificate.jsx"
-import FarmerGroupOrCommitteeRegistrationCertificateList from "./pages/nepali-citizenship/FarmerGroupOrCommitteeRegistrationCertificateList.jsx"
-import PassbookOfConstructionWork from "./pages/nepali-citizenship/PassbookOfConstructionWork.jsx"
+// pages/identity-card
+import BhawanNirmanSampanna from "./pages/identity-card/BhawanNirmanSampanna.jsx"
+import ConsumerCommitteeRegistrationList from "./pages/identity-card/ConsumerCommitteeRegistrationList.jsx"
+import DClassConstructionBusinessLicense from "./pages/identity-card/DClassConstructionBusinessLicense.jsx"
+import DClassConstructionBusinessLicenseList from "./pages/identity-card/DClassConstructionBusinessLicenseList.jsx"
+import DrinkingWaterCommitteeRegistration from "./pages/identity-card/DrinkingWaterCommitteeRegistration.jsx"
+import FarmerGroupOrCommitteeRegistrationCertificate from "./pages/identity-card/FarmerGroupOrCommitteeRegistrationCertificate.jsx"
+import FarmerGroupOrCommitteeRegistrationCertificateList from "./pages/identity-card/FarmerGroupOrCommitteeRegistrationCertificateList.jsx"
+import PassbookOfConstructionWork from "./pages/identity-card/PassbookOfConstructionWork.jsx"
 // pages/house-land
 import BoundaryRecommendation from "./pages/house-land/BoundaryRecommendation.jsx"
 import CharKillaReloaded from "./pages/house-land/CharKillaReloaded.jsx"
@@ -306,23 +306,23 @@ const App = () => {
       case "कर चुक्ता प्रमाणपत्र":
         return <TaxClearCertificate setActiveLink={setActiveLink} />;
 
-// pages/nepali-citizenship
-      case "नागरिकता प्रतिलिपि सिफारिस":
-        return <TaxClearCertificate setActiveLink={setActiveLink} />;
-      case "नागरिकताको लागि मुचुल्का":
+// pages/identity-card
+      case "कृषक समूह/समिति दर्ता प्रमाण–पत्र":
+        return <FarmerGroupOrCommitteeRegistrationCertificate setActiveLink={setActiveLink} />;
+      case "घ वर्गको निर्माण व्यवसाय इजाजत पत्र":
         return <DClassConstructionBusinessLicense setActiveLink={setActiveLink} />;
-      case "स्थलगत सर्जमिन मुचुल्का":
-        return <TaxClearCertificate setActiveLink={setActiveLink} />;
-      case "नागरिकता प्रमाणपत्र सिफारिस":
-        return <TaxClearCertificate setActiveLink={setActiveLink} />;
-      case "नागरिकता सिफारिस":
-        return <TaxClearCertificate setActiveLink={setActiveLink} />;
-      case "नागरिकताको प्रमाण-पत्र प्रतिलिपि":
-        return <TaxClearCertificate setActiveLink={setActiveLink} />;
-      case "नेपाली अंगीकृत नागरिकता":
-        return <TaxClearCertificate setActiveLink={setActiveLink} />;
-      case "पतिको नाममा नेपाली नागरिकताको प्रमाण-पत्र":
-        return <TaxClearCertificate setActiveLink={setActiveLink} />;
+      case "निर्माण कार्य को पासबुक":
+        return <PassbookOfConstructionWork setActiveLink={setActiveLink} />;
+      case "घ वर्गको निर्माण व्यवसाय इजाजत पत्रको नवीकरण":
+        return <DClassConstructionBusinessLicenseList setActiveLink={setActiveLink} />;
+      case "उपभोक्ता संग दर्ता प्रमाणपत्र सूची":
+        return <ConsumerCommitteeRegistrationList setActiveLink={setActiveLink} />;
+      case "कृषक समूह/समिति दर्ता प्रमाण–पत्र सूची":
+        return <FarmerGroupOrCommitteeRegistrationCertificateList setActiveLink={setActiveLink} />;
+      case "भवन निर्माण प्रमाण–पत्र":
+        return <BhawanNirmanSampanna setActiveLink={setActiveLink} />;
+      case "खानेपानी उपभोक्ता संस्था दर्ता प्रमाण पत्र":
+        return <DrinkingWaterCommitteeRegistration setActiveLink={setActiveLink} />;
 
 // pages/house-land
       case "जग्गा वर्गीकरण new":
@@ -599,7 +599,7 @@ const App = () => {
         return <CertificateRenewalList setActiveLink={setActiveLink} />;
 
 // pages/daily-work-execute
-      case "दैनिक कार्य सम्पादनस":
+      case "दैनिक कार्य सम्पादन":
         return <DailyWorkPerformanceList setActiveLink={setActiveLink} />;
 
       default:
