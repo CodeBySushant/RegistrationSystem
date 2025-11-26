@@ -137,6 +137,37 @@ import ReqforHelpinHealth from "./pages/economic/ReqforHelpinHealth.jsx";
 import SocialSecurityPaymentClosure from "./pages/economic/SocialSecurityPaymentClosure.jsx";
 import SocialSecurityViaGuardian from "./pages/economic/SocialSecurityViaGuardian.jsx";
 import WorkPlanningCompleted from "./pages/economic/WorkPlanningCompleted.jsx";
+// pages/social-family
+import BehaviorRecommendation from "./pages/social-family/BehaviorRecommendation.jsx";
+import BeneficiaryAllowanceTransfer from "./pages/social-family/BeneficiaryAllowanceTransfer.jsx";
+import BirthOrSettlementRecommendation from "./pages/social-family/BirthOrSettlementRecommendation.jsx";
+import BirthVerificationNepali from "./pages/social-family/BirthVerificationNepali.jsx";
+import DemisedHeirRecommendation from "./pages/social-family/DemisedHeirRecommendation.jsx";
+import DemisedSecurityAllowanceToHeir from "./pages/social-family/DemisedSecurityAllowanceToHeir.jsx";
+import DestituteRecommendation from "./pages/social-family/DestituteRecommendation.jsx";
+import DisabilityIdentityCardRecommendation from "./pages/social-family/DisabilityIdentityCardRecommendation.jsx";
+import DisableIdentityCardRenew from "./pages/social-family/DisableIdentityCardRenew.jsx";
+import ElectricityConnectionRecommendation from "./pages/social-family/ElectricityConnectionRecommendation.jsx";
+import EthnicIdentityRecommendation from "./pages/social-family/EthnicIdentityRecommendation.jsx";
+import FreeHealthInsuranceRequest from "./pages/social-family/FreeHealthInsuranceRequest.jsx";
+import IncomeSourceCertification from "./pages/social-family/IncomeSourceCertification.jsx";
+import InternalMigrationRecommendation from "./pages/social-family/InternalMigrationRecommendation.jsx";
+import JesthaNagarikSifarisWada from "./pages/social-family/JesthaNagarikSifarisWada.jsx";
+import MarriageCertificate from "./pages/social-family/MarriageCertificate.jsx";
+import MinorIdentityCard from "./pages/social-family/MinorIdentityCard.jsx";
+import MinorIdentityCardRecommendation from "./pages/social-family/MinorIdentityCardRecommendation.jsx";
+import NewBirthVerification from "./pages/social-family/NewBirthVerification.jsx";
+import NoSecondMarriageRecommendation from "./pages/social-family/NoSecondMarriageRecommendation.jsx";
+import OldAgeAllowanceForm from "./pages/social-family/OldAgeAllowanceForm.jsx";
+import PermanentResidenceRecommendation from "./pages/social-family/PermanentResidenceRecommendation.jsx";
+import RelationTemporaryResidence from "./pages/social-family/RelationTemporaryResidence.jsx";
+import RelationshipVerification from "./pages/social-family/RelationshipVerification.jsx";
+import SocialSecurityAllowanceRecommendation from "./pages/social-family/SocialSecurityAllowanceRecommendation.jsx";
+import SocialSecurityRecommendation from "./pages/social-family/SocialSecurityRecommendation.jsx";
+import TemporaryResidenceRecommendation from "./pages/social-family/TemporaryResidenceRecommendation.jsx";
+import ThreeGenerationCertificate from "./pages/social-family/ThreeGenerationCertificate.jsx";
+import TribalRecommendation from "./pages/social-family/TribalRecommendation.jsx";
+import UnmarriedVerification from "./pages/social-family/UnmarriedVerification.jsx";
 
 const App = () => {
   const [openMenu, setOpenMenu] = useState("application");
@@ -447,6 +478,66 @@ const App = () => {
         return <SocialSecurityViaGuardian setActiveLink={setActiveLink} />;
       case "लेखा परीक्षण":
         return <LekhaParikshyan setActiveLink={setActiveLink} />;
+
+// pages/social-family
+      case "पारिवारिक विवरण":
+        return <OldAgeAllowanceForm setActiveLink={setActiveLink} />;
+      case "अस्थायी बसोवास सिफारिस":
+        return <TemporaryResidenceRecommendation setActiveLink={setActiveLink} />;
+      case "अस्थायी बसोवास प्रमाणित":
+        return <RelationTemporaryResidence setActiveLink={setActiveLink} />;
+      case "स्थायी बसोवास सिफारिस":
+        return <PermanentResidenceRecommendation setActiveLink={setActiveLink} />;
+      case "विवाह प्रमाणित":
+        return <MarriageCerificate setActiveLink={setActiveLink} />;
+      case "जन्म मिति प्रमाणित":
+        return <BirthVerificationNepali setActiveLink={setActiveLink} />;
+      case "जन्म प्रमाणिकरण new":
+        return <NewBirthVerification setActiveLink={setActiveLink} />;
+      case "अविवाहित प्रमाणित":
+        return <UnmarriedVerification setActiveLink={setActiveLink} />;
+      case "नाता प्रमाणित प्रमाण पत्र new":
+        return <RelationshipVerification setActiveLink={setActiveLink} />;
+      case "तीन पुस्ते प्रमाणित":
+        return <ThreeGenerationCertificate setActiveLink={setActiveLink} />;
+      case "चालचलन सिफारिस":
+        return <BehaviorRecommendation setActiveLink={setActiveLink} />;
+      case "सामाजिक सुरक्षा सिफारिस":
+        return <SocialSecurityRecommendation setActiveLink={setActiveLink} />;
+      case "आन्तरिक बसाईँसराई सिफारिस":
+        return <InternalMigrationRecommendation setActiveLink={setActiveLink} />;
+      case "नाबालक परिचयपत्रको अनुसूची":
+        return <MinorIdentityCardRecommendation setActiveLink={setActiveLink} />;
+      case "नाबालक परिचय पत्र":
+        return <MinorIdentityCard setActiveLink={setActiveLink} />;
+      case "मृतकका हकदारको सिफारिस":
+        return <DemisedHeirRecommendation setActiveLink={setActiveLink} />;
+      case "अपांग परिचय पत्र सिफारिस":
+        return <DisabilityIdentityCardRecommendation setActiveLink={setActiveLink} />;
+      case "जेष्ठ नागरिक सिफारिस":
+        return <JesthaNagarikSifarisWada setActiveLink={setActiveLink} />;
+      case "आदिवासी सिफारिस":
+        return <TribalRecommendation setActiveLink={setActiveLink} />;
+      case "जन्म / बसोबास प्रमाणित":
+        return <BirthOrSettlementRecommendation setActiveLink={setActiveLink} />;
+      case "मृतकको सामाजिक सुरक्षा भत्ता हकदारलाई":
+        return <DemisedSecurityAllowanceToHeir setActiveLink={setActiveLink} />;
+      case "सामाजिक सुरक्षा भत्ता":
+        return <SocialSecurityAllowanceRecommendation setActiveLink={setActiveLink} />;
+      case "निशुल्क स्वास्थ्य बिमा":
+        return <FreeHealthInsuranceRequest setActiveLink={setActiveLink} />;
+      case "आय श्रोत प्रमाणित":
+        return <IncomeSourceCertification setActiveLink={setActiveLink} />;
+      case "दोश्रो विवाह नगरेको सिफारिस":
+        return <NoSecondMarriageRecommendation setActiveLink={setActiveLink} />;
+      case "परिचय पत्र नविकरण":
+        return <DisableIdentityCardRenew setActiveLink={setActiveLink} />;
+      case "विपन्न सिफारिस":
+        return <DestituteRecommendation setActiveLink={setActiveLink} />;
+      case "लाभग्राहीको लगत स्थानान्तरण":
+        return <BeneficiaryAllowanceTransfer setActiveLink={setActiveLink} />;
+      case "जातीय पहिचान सिफारिस":
+        return <EthnicIdentityRecommendation setActiveLink={setActiveLink} />;
 
         default:
         return <PlaceholderPage activeLink={activeLink} />;
