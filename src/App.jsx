@@ -195,6 +195,12 @@ import DomesticAnimalMaternityNutritionAllowance from "./pages/animal-husbandry/
 // pages/planning
 import AgreementOfPlan from "./pages/planning/AgreementOfPlan.jsx";
 import WithdrawalFundRecommendation from "./pages/planning/WithdrawalFundRecommendation.jsx";
+// pages/open-format
+import EnglishLanguage from "./pages/open-format/EnglishLanguage.jsx";
+import NepaliLanguage from "./pages/open-format/NepaliLanguage.jsx";
+import OpenApplication from "./pages/open-format/OpenApplication.jsx";
+import OpenFormatTippani from "./pages/open-format/OpenFormatTippani.jsx";
+import PartialInformation from "./pages/open-format/PartialInformation.jsx";
 // pages/report
 import CategoryReportSearch from "./pages/report/CategoryReportSearch.jsx";
 import CertificateRenewalList from "./pages/report/CertificateRenewalList.jsx";
@@ -337,7 +343,17 @@ const App = () => {
         return <CitizenshipAngkrit setActiveLink={setActiveLink} />;
       case "पतिको नाममा नेपाली नागरिकताको प्रमाण-पत्र":
         return <CitizenshipRecommendationOnHusbandDetail setActiveLink={setActiveLink} />;
-
+// pages/open-format
+      case "नेपाली भाषामा":
+        return <NepaliLanguage setActiveLink={setActiveLink} />;
+      case "अंग्रेजी भाषामा":
+        return <EnglishLanguage setActiveLink={setActiveLink} />;
+      case "खुल्ला निवेदन":
+        return <OpenApplication setActiveLink={setActiveLink} />;
+      case "सूचना अध्यावधिक":
+        return <PartialInformation setActiveLink={setActiveLink} />;
+      case "टिप्पणी new":
+        return <OpenFormatTippani setActiveLink={setActiveLink} />;
 // pages/official-use
       case "अन्तर स्थानीय सरुवा new":
         return <InterLocalTransferRecommendation setActiveLink={setActiveLink} />;
