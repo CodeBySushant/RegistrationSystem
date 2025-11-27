@@ -177,6 +177,23 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"citizenship-husband-surname": {
+  "table": "CitizenshipWithHusbandSurname",
+  "columns": [
+    "date",
+    "districtOffice",
+    "preMarriageDate",
+    "preMarriageDistrict",
+    "currentMunicipality",
+    "currentWard",
+    "husbandName",
+    "sigName",
+    "sigAddress",
+    "sigMobile",
+    "sigSignature"
+  ]
 }
 
 

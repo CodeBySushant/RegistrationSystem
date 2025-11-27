@@ -1,33 +1,72 @@
-import React, { useState } from 'react';
-import './CitizenshipwithHusbandSurname.css'; // The CSS file for styling
+// CitizenshipwithHusbandSurname.jsx
+import React, { useState } from "react";
+import axios from "axios";
+import "./CitizenshipwithHusbandSurname.css";
+
+const initialState = {
+  date: "२०८२.०७.१५",
+  districtOffice: "काठमाडौँ",
+  preMarriageDate: "२०८२.०७.१५",
+  preMarriageDistrict: "",
+  currentMunicipality: "",
+  currentWard: "",
+  husbandName: "",
+  sigName: "",
+  sigAddress: "",
+  sigMobile: "",
+  sigSignature: "",
+};
 
 const CitizenshipwithHusbandSurname = () => {
-  const [formData, setFormData] = useState({
-    date: '२०८२.०७.१५',
-    districtOffice: 'काठमाडौँ',
-    preMarriageDate: '२०८२.०७.१५',
-    preMarriageDistrict: '',
-    currentMunicipality: '',
-    currentWard: '',
-    husbandName: '',
-    sigName: '',
-    sigAddress: '',
-    sigMobile: '',
-    sigSignature: '',
-  });
+  const [formData, setFormData] = useState(initialState);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = (data) => {
+    if (!data.preMarriageDistrict?.trim()) return "preMarriageDistrict is required";
+    if (!data.currentMunicipality?.trim()) return "currentMunicipality is required";
+    if (!data.currentWard?.trim()) return "currentWard is required";
+    if (!data.husbandName?.trim()) return "husbandName is required";
+    if (!data.sigName?.trim()) return "sigName is required";
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Citizenship with Husband Surname Form Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    if (submitting) return;
+
+    const err = validate(formData);
+    if (err) {
+      alert("कृपया आवश्यक क्षेत्रहरू भर्नुहोस्: " + err);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      // convert empty strings to null optionally
+      const payload = { ...formData };
+      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+
+      const url = "/api/forms/citizenship-husband-surname"; // relative works if proxy is configured; else use full http://localhost:5000/...
+      const res = await axios.post(url, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("Saved successfully. ID: " + (res.data?.id ?? ""));
+        setFormData(initialState);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Submission failed";
+      alert("त्रुटि: " + JSON.stringify(msg));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -46,12 +85,7 @@ const CitizenshipwithHusbandSurname = () => {
           </div>
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="text" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
 
@@ -94,7 +128,9 @@ const CitizenshipwithHusbandSurname = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
       </form>
     </div>
