@@ -37,6 +37,35 @@
       "signer_name","signer_designation",
       "applicant_name","applicant_address","applicant_citizenship_no","applicant_phone"
     ]
+  },
+
+  "allowance-form": {
+    "table": "AllowanceForm",
+    "columns": [
+    "nagarpalika",
+    "ward",
+    "targetGroup",
+    "gender",
+    "fullName",
+    "fatherName",
+    "motherName",
+    "address",
+    "nagariktaNo",
+    "jariJilla",
+    "birthDate",
+    "mobileNo",
+    "patiMrituNo",
+    "patiMrituMiti",
+    "allowanceType",
+    "parichayaNo",
+    "allowanceStartDate",
+    "allowanceStartQuarter",
+    "applicantName",
+    "applicantAddress",
+    "applicantNagarikta",
+    "applicantPhone"
+    ]
   }
+
 
 }
