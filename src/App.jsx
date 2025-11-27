@@ -40,6 +40,15 @@ import PartnershipRegistrationApplicationForm from "./pages/business-recommendat
 import ShopAgriculturalForm from "./pages/business-recommendation/ShopAgriculturalForm.jsx"
 import ShopRegistrationForm from "./pages/business-recommendation/ShopRegistrationForm.jsx"
 import TaxClearCertificate from "./pages/business-recommendation/TaxClearCertificate.jsx"
+// pages/nepali-citizenship
+import CitizenshipProofCopy from "./pages/nepali-citizenship/CitizenshipProofCopy.jsx"
+import CitizenshipCertificateRecommendation from "./pages/nepali-citizenship/CitizenshipCertificateRecommendation.jsx"
+import CitizenshipCertificateRecommendationCopy from "./pages/nepali-citizenship/CitizenshipCertificateRecommendationCopy.jsx"
+import CitizenshipMujulka from "./pages/nepali-citizenship/CitizenshipMujulka.jsx"
+import CitizenshipRecommendation from "./pages/nepali-citizenship/CitizenshipRecommendation.jsx"
+import CitizenshipRecommendationOnHusbandDetail from "./pages/nepali-citizenship/CitizenshipRecommendationOnHusbandDetail.jsx"
+import CitizenshipAngkrit from "./pages/nepali-citizenship/CitizenshipAngkrit.jsx"
+import SthalagatSarjiminMujulka from "./pages/nepali-citizenship/SthalagatSarjiminMujulka.jsx"
 // pages/identity-card
 import BhawanNirmanSampanna from "./pages/identity-card/BhawanNirmanSampanna.jsx"
 import ConsumerCommitteeRegistrationList from "./pages/identity-card/ConsumerCommitteeRegistrationList.jsx"
@@ -305,6 +314,24 @@ const App = () => {
         return <BusinessExtensionPannumber setActiveLink={setActiveLink} />;
       case "कर चुक्ता प्रमाणपत्र":
         return <TaxClearCertificate setActiveLink={setActiveLink} />;
+
+// pages/nepali-citizenship
+      case "नागरिकता प्रतिलिपि सिफारिस":
+        return <CitizenshipCertificateRecommendationCopy setActiveLink={setActiveLink} />;
+      case "नागरिकताको लागि मुचुल्का":
+        return <CitizenshipMujulka setActiveLink={setActiveLink} />;
+      case "स्थलगत सर्जमिन मुचुल्का":
+        return <SthalagatSarjiminMujulka setActiveLink={setActiveLink} />;
+      case "नागरिकता प्रमाणपत्र सिफारिस":
+        return <CitizenshipCertificateRecommendation setActiveLink={setActiveLink} />;
+      case "नागरिकता सिफारिस":
+        return <CitizenshipRecommendation setActiveLink={setActiveLink} />;
+      case "नागरिकताको प्रमाण-पत्र प्रतिलिपि":
+        return <CitizenshipProofCopy setActiveLink={setActiveLink} />;
+      case "नेपाली अंगीकृत नागरिकता":
+        return <CitizenshipAngkrit setActiveLink={setActiveLink} />;
+      case "पतिको नाममा नेपाली नागरिकताको प्रमाण-पत्र":
+        return <CitizenshipRecommendationOnHusbandDetail setActiveLink={setActiveLink} />;
 
 // pages/identity-card
       case "कृषक समूह/समिति दर्ता प्रमाण–पत्र":
