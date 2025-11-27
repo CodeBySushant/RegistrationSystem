@@ -26,5 +26,17 @@
       "signer_name",
       "signer_designation"
     ]
+  },
+
+  "animal-maternity-allowance": {
+    "table": "DomesticAnimalMaternityNutritionAllowance",
+    "columns": [
+      "chalan_no","subject","issue_date","addressee_line1","addressee_line2",
+      "district","municipality_name","ward_no","resident_name",
+      "duration_value","duration_unit","calving_date","animal_count",
+      "signer_name","signer_designation",
+      "applicant_name","applicant_address","applicant_citizenship_no","applicant_phone"
+    ]
   }
+
 }
