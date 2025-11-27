@@ -58,6 +58,11 @@ import DrinkingWaterCommitteeRegistration from "./pages/identity-card/DrinkingWa
 import FarmerGroupOrCommitteeRegistrationCertificate from "./pages/identity-card/FarmerGroupOrCommitteeRegistrationCertificate.jsx"
 import FarmerGroupOrCommitteeRegistrationCertificateList from "./pages/identity-card/FarmerGroupOrCommitteeRegistrationCertificateList.jsx"
 import PassbookOfConstructionWork from "./pages/identity-card/PassbookOfConstructionWork.jsx"
+// pages/official-use
+import ActingWardOfficerAssigned from "./pages/official-use/ActingWardOfficerAssigned.jsx"
+import InterLocalTransferRecommendation from "./pages/official-use/InterLocalTransferRecommendation.jsx"
+import RamanaPatra from "./pages/official-use/RamanaPatra.jsx"
+import SuchanaDetailList from "./pages/official-use/SuchanaDetailList.jsx"
 // pages/house-land
 import BoundaryRecommendation from "./pages/house-land/BoundaryRecommendation.jsx"
 import CharKillaReloaded from "./pages/house-land/CharKillaReloaded.jsx"
@@ -332,6 +337,16 @@ const App = () => {
         return <CitizenshipAngkrit setActiveLink={setActiveLink} />;
       case "पतिको नाममा नेपाली नागरिकताको प्रमाण-पत्र":
         return <CitizenshipRecommendationOnHusbandDetail setActiveLink={setActiveLink} />;
+
+// pages/official-use
+      case "अन्तर स्थानीय सरुवा new":
+        return <InterLocalTransferRecommendation setActiveLink={setActiveLink} />;
+      case "रमाना पत्र new":
+        return <RamanaPatra setActiveLink={setActiveLink} />;
+      case "कार्यवाहक तोकिएको सिफारिस":
+        return <ActingWardOfficerAssigned setActiveLink={setActiveLink} />;
+      case "सूचना विवरण सूची":
+        return <SuchanaDetailList setActiveLink={setActiveLink} />;
 
 // pages/identity-card
       case "कृषक समूह/समिति दर्ता प्रमाण–पत्र":
