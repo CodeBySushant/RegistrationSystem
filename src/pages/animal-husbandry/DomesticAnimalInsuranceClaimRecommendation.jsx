@@ -1,9 +1,78 @@
-import React from 'react';
-import './DomesticAnimalInsuranceClaimRecommendation.css';
-// 2
+// DomesticAnimalInsuranceClaimRecommendation.jsx
+import React, { useState } from "react";
+import axios from "axios";
+import "./DomesticAnimalInsuranceClaimRecommendation.css";
+
+const initialState = {
+  // meta / header
+  chalan_no: "",
+  subject: "सिफारिस सम्बन्धमा",
+
+  // addressee
+  addressee_line1: "",
+  addressee_line2: "",
+  addressee_line3: "",
+
+  municipality_name: "नागार्जुन नगरपालिका",
+  ward_no: "1",
+
+  // paragraph inline fields
+  resident_name_in_paragraph: "",
+  local_select_type: "गुयुल्का",
+  animal_type: "",
+  animal_inspected_by: "",
+  report_brief: "",
+  damaged_area_description: "",
+  tag_number: "",
+  tag_subtype: "",
+  animal_color: "",
+  death_date: "", // YYYY-MM-DD
+
+  // applicant box
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship_no: "",
+  applicant_phone: "",
+
+  // signature
+  signer_name: "",
+  signer_designation: ""
+};
+
 const DomesticAnimalInsuranceClaimRecommendation = () => {
+  const [form, setForm] = useState(initialState);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // backend URL - adjust if different
+      const url = "http://localhost:5000/api/domestic-animal/";
+      const res = await axios.post(url, form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState); // reset form on success
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
   return (
-    <div className="insurance-claim-container">
+    <form className="insurance-claim-container" onSubmit={handleSubmit}>
       {/* --- Top Bar --- */}
       <div className="top-bar-title">
         पशु बिमा पाउँ ।
@@ -13,7 +82,6 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
       {/* --- Header Section --- */}
       <div className="form-header-section">
         <div className="header-logo">
-          {/* Replace with your actual logo path */}
           <img src="/logo.png" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
@@ -28,7 +96,16 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
       <div className="meta-data-row">
         <div className="meta-left">
           <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
-          <p>चलानी नं. : <input type="text" className="dotted-input small-input" /></p>
+          <p>
+            चलानी नं. :
+            <input
+              name="chalan_no"
+              type="text"
+              className="dotted-input small-input"
+              value={form.chalan_no}
+              onChange={handleChange}
+            />
+          </p>
         </div>
         <div className="meta-right">
           <p>मिति : <span className="bold-text">२०८२-०८-०६</span></p>
@@ -38,35 +115,153 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
 
       {/* --- Subject --- */}
       <div className="subject-section">
-        <p>विषय: <span className="underline-text">सिफारिस सम्बन्धमा</span></p>
+        <p>विषय: <span className="underline-text">{form.subject}</span></p>
       </div>
 
       {/* --- Addressee Section --- */}
       <div className="addressee-section">
         <div className="addressee-row">
           <span>श्री</span>
-          <input type="text" className="line-input medium-input" required />
+          <input
+            name="addressee_line1"
+            type="text"
+            className="line-input medium-input"
+            required
+            value={form.addressee_line1}
+            onChange={handleChange}
+          />
         </div>
         <div className="addressee-row">
-           <input type="text" className="line-input medium-input" required />
-           <span>,</span>
-           <input type="text" className="line-input medium-input" required />
-           <span>।</span>
+          <input
+            name="addressee_line2"
+            type="text"
+            className="line-input medium-input"
+            required
+            value={form.addressee_line2}
+            onChange={handleChange}
+          />
+          <span>,</span>
+          <input
+            name="addressee_line3"
+            type="text"
+            className="line-input medium-input"
+            required
+            value={form.addressee_line3}
+            onChange={handleChange}
+          />
+          <span>।</span>
         </div>
       </div>
 
       {/* --- Main Body --- */}
       <div className="form-body">
         <p className="body-paragraph">
-          प्रस्तुत विषयमा जिल्ला काठमाडौँ <input type="text" className="inline-box-input medium-box" defaultValue="नागार्जुन नगरपालिका" /> वडा नं. १ गा बसोबास गर्ने श्री 
-          <input type="text" className="inline-box-input long-box" required /> ले यस पशु सेवा शाखामा पेश गरेको निवेदन, वडा 
-          <select className="inline-select">
-              <option>गुयुल्का</option>
-              <option>वडा</option>
+          प्रस्तुत विषयमा जिल्ला काठमाडौँ
+          <input
+            name="municipality_name"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.municipality_name}
+            onChange={handleChange}
+          />
+          वडा नं.
+          <input
+            name="ward_no"
+            type="text"
+            className="inline-box-input small-input"
+            value={form.ward_no}
+            onChange={handleChange}
+          />
+          गा बसोबास गर्ने श्री
+          <input
+            name="resident_name_in_paragraph"
+            type="text"
+            className="inline-box-input long-box"
+            required
+            value={form.resident_name_in_paragraph}
+            onChange={handleChange}
+          />
+          ले यस पशु सेवा शाखामा पेश गरेको निवेदन, वडा
+          <select
+            name="local_select_type"
+            className="inline-select"
+            value={form.local_select_type}
+            onChange={handleChange}
+          >
+            <option value="गुयुल्का">गुयुल्का</option>
+            <option value="वडा">वडा</option>
           </select>
-          तथा पशु <input type="text" className="inline-box-input medium-box" required /> श्री <input type="text" className="inline-box-input medium-box" required /> को जाँच प्रतिवेदन अनुसार बिगा लेख 
-          <input type="text" className="inline-box-input medium-box" required /> भएको ट्याग नं. <input type="text" className="inline-box-input medium-box" required /> को <input type="text" className="inline-box-input medium-box" required /> रङको 
-          <input type="text" className="inline-box-input medium-box" required /> मिति २०८२-०८-०६ गतेका दिन <input type="text" className="inline-box-input medium-box" required /> रोग लागि उपचारको क्रममा मृत्यु भएको व्यहोरा प्रमाणित साथ आवश्यक कारवाहिको लागि सिफारिस गरि पठाइएको व्यहोरा अनुरोध छ।
+          तथा पशु
+          <input
+            name="animal_type"
+            type="text"
+            className="inline-box-input medium-box"
+            required
+            value={form.animal_type}
+            onChange={handleChange}
+          />
+          श्री
+          <input
+            name="animal_inspected_by"
+            type="text"
+            className="inline-box-input medium-box"
+            required
+            value={form.animal_inspected_by}
+            onChange={handleChange}
+          />
+          को जाँच प्रतिवेदन अनुसार बिगा लेख
+          <input
+            name="damaged_area_description"
+            type="text"
+            className="inline-box-input medium-box"
+            required
+            value={form.damaged_area_description}
+            onChange={handleChange}
+          />
+          भएको ट्याग नं.
+          <input
+            name="tag_number"
+            type="text"
+            className="inline-box-input medium-box"
+            required
+            value={form.tag_number}
+            onChange={handleChange}
+          />
+          को
+          <input
+            name="tag_subtype"
+            type="text"
+            className="inline-box-input medium-box"
+            required
+            value={form.tag_subtype}
+            onChange={handleChange}
+          /> रङको
+          <input
+            name="animal_color"
+            type="text"
+            className="inline-box-input medium-box"
+            required
+            value={form.animal_color}
+            onChange={handleChange}
+          />
+          मिति
+          <input
+            name="death_date"
+            type="date"
+            className="inline-box-input medium-box"
+            value={form.death_date}
+            onChange={handleChange}
+          />
+          गतेका दिन
+          <input
+            name="report_brief"
+            type="text"
+            className="inline-box-input medium-box"
+            required
+            value={form.report_brief}
+            onChange={handleChange}
+          />
+          रोग लागि उपचारको क्रममा मृत्यु भएको व्यहोरा प्रमाणित साथ आवश्यक कारवाहिको लागि सिफारिस गरि पठाइएको व्यहोरा अनुरोध छ।
         </p>
       </div>
 
@@ -74,12 +269,24 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
       <div className="signature-section">
         <div className="signature-block">
           <div className="signature-line"></div>
-          <input type="text" className="line-input full-width-input" required />
-          <select className="designation-select">
-             <option>पद छनौट गर्नुहोस्</option>
-             <option>वडा अध्यक्ष</option>
-             <option>वडा सचिव</option>
-             <option>कार्यवाहक वडा अध्यक्ष</option>
+          <input
+            name="signer_name"
+            type="text"
+            className="line-input full-width-input"
+            required
+            value={form.signer_name}
+            onChange={handleChange}
+          />
+          <select
+            name="signer_designation"
+            className="designation-select"
+            value={form.signer_designation}
+            onChange={handleChange}
+          >
+            <option value="">पद छनौट गर्नुहोस्</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>
@@ -90,32 +297,58 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
         <div className="details-grid">
           <div className="detail-group">
             <label>निवेदकको नाम</label>
-            <input type="text" className="detail-input bg-gray" />
+            <input
+              name="applicant_name"
+              type="text"
+              className="detail-input bg-gray"
+              value={form.applicant_name}
+              onChange={handleChange}
+            />
           </div>
           <div className="detail-group">
             <label>निवेदकको ठेगाना</label>
-            <input type="text" className="detail-input bg-gray" />
+            <input
+              name="applicant_address"
+              type="text"
+              className="detail-input bg-gray"
+              value={form.applicant_address}
+              onChange={handleChange}
+            />
           </div>
           <div className="detail-group">
             <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <input
+              name="applicant_citizenship_no"
+              type="text"
+              className="detail-input bg-gray"
+              value={form.applicant_citizenship_no}
+              onChange={handleChange}
+            />
           </div>
           <div className="detail-group">
             <label>निवेदकको फोन नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <input
+              name="applicant_phone"
+              type="text"
+              className="detail-input bg-gray"
+              value={form.applicant_phone}
+              onChange={handleChange}
+            />
           </div>
         </div>
       </div>
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button className="save-print-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+        <button className="save-print-btn" type="submit" disabled={loading}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
       </div>
-      
+
       <div className="copyright-footer">
         © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
       </div>
-    </div>
+    </form>
   );
 };
 
