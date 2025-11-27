@@ -214,7 +214,27 @@
     "sigMobile",
     "sigSignature"
   ]
+},
+
+"dalit-caste-certification": {
+  "table": "DalitCasteCertification",
+  "columns": [
+    "date",
+    "headerDistrict",
+    "mainDistrict",
+    "palikaName",
+    "wardNo",
+    "residentName",
+    "relation",
+    "guardianName",
+    "casteName",
+    "sigName",
+    "sigAddress",
+    "sigMobile",
+    "sigSignature"
+  ]
 }
+
 
 
 
