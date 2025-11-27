@@ -1,35 +1,93 @@
-import React, { useState } from 'react';
-import './ApplicationforKhasAryaCasteCertification.css'; // The CSS file for styling
+// ApplicationforKhasAryaCasteCertification.jsx
+import React, { useState } from "react";
+import axios from "axios";
+import "./ApplicationforKhasAryaCasteCertification.css";
+
+const initialState = {
+  date: "२०८२.०७.१५",
+  headerDistrict: "काठमाडौँ",
+  mainDistrict: "काठमाडौँ",
+  palikaName: "",
+  wardNo: "",
+  residentName: "",
+  relation: "छोरा",
+  guardianName: "",
+  casteName: "",
+  sigName: "",
+  sigAddress: "",
+  sigMobile: "",
+  sigSignature: "",
+};
 
 const ApplicationforKhasAryaCasteCertification = () => {
-  const [formData, setFormData] = useState({
-    date: '२०८२.०७.१५',
-    headerDistrict: 'काठमाडौँ',
-    mainDistrict: 'काठमाडौँ',
-    palikaName: '',
-    wardNo: '',
-    residentName: '',
-    relation: 'छोरा',
-    guardianName: '',
-    casteName: '',
-    sigName: '',
-    sigAddress: '',
-    sigMobile: '',
-    sigSignature: '',
-  });
+  const [formData, setFormData] = useState(initialState);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = (data) => {
+    const required = [
+      "headerDistrict",
+      "mainDistrict",
+      "palikaName",
+      "wardNo",
+      "residentName",
+      "guardianName",
+      "casteName",
+      "sigName",
+      "sigAddress",
+      "sigMobile",
+    ];
+    for (let f of required) {
+      if (!data[f] || (typeof data[f] === "string" && data[f].trim() === "")) {
+        return `${f} is required`;
+      }
+    }
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Khas Arya Caste Certification Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    if (submitting) return;
+
+    const err = validate(formData);
+    if (err) {
+      alert("कृपया सबै आवश्यक क्षेत्रहरू पुरा गर्नुहोस्। (" + err + ")");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      // prepare payload: convert empty strings to null
+      const payload = { ...formData };
+      Object.keys(payload).forEach((k) => {
+        if (payload[k] === "") payload[k] = null;
+      });
+
+      const url = "http://localhost:5000/api/forms/khas-arya-certification";
+      const res = await axios.post(url, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
+        setFormData(initialState);
+        console.log("Saved:", res.data);
+      } else {
+        alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      const msg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Submission failed";
+      alert("त्रुटि: " + msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -46,6 +104,7 @@ const ApplicationforKhasAryaCasteCertification = () => {
               required
             />
           </div>
+
           <div className="form-group date-group">
             <label>मिति :</label>
             <input
@@ -62,24 +121,66 @@ const ApplicationforKhasAryaCasteCertification = () => {
         </div>
 
         <p className="certificate-body">
-          <input type="text" name="mainDistrict" value={formData.mainDistrict} onChange={handleChange} required />
+          <input
+            type="text"
+            name="mainDistrict"
+            value={formData.mainDistrict}
+            onChange={handleChange}
+            required
+          />
           जिल्ला
-          <input type="text" name="palikaName" placeholder="गाउँपालिका/नगरपालिका" value={formData.palikaName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="palikaName"
+            placeholder="गाउँपालिका/नगरपालिका"
+            value={formData.palikaName}
+            onChange={handleChange}
+            required
+          />
           वडा नं.
-          <input type="text" name="wardNo" placeholder="वडा" value={formData.wardNo} onChange={handleChange} required className="short-input" />
+          <input
+            type="text"
+            name="wardNo"
+            placeholder="वडा"
+            value={formData.wardNo}
+            onChange={handleChange}
+            required
+            className="short-input"
+          />
           निवासी
-          <input type="text" name="residentName" placeholder="निवासीको नाम" value={formData.residentName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="residentName"
+            placeholder="निवासीको नाम"
+            value={formData.residentName}
+            onChange={handleChange}
+            required
+          />
           को
           <select name="relation" value={formData.relation} onChange={handleChange}>
-            <option>छोरा</option>
-            <option>छोरी</option>
-            <option>पति</option>
-            <option>पत्नी</option>
+            <option value="छोरा">छोरा</option>
+            <option value="छोरी">छोरी</option>
+            <option value="पति">पति</option>
+            <option value="पत्नी">पत्नी</option>
           </select>
           म
-          <input type="text" name="guardianName" placeholder="अभिभावकको नाम" value={formData.guardianName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="guardianName"
+            placeholder="अभिभावकको नाम"
+            value={formData.guardianName}
+            onChange={handleChange}
+            required
+          />
           खस आर्य जाति अन्तर्गत
-          <input type="text" name="casteName" placeholder="जातिको नाम" value={formData.casteName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="casteName"
+            placeholder="जातिको नाम"
+            value={formData.casteName}
+            onChange={handleChange}
+            required
+          />
           जातिमा पर्ने भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा कार्यालयको सिफारिस, नागरिकता प्रमाणपत्रको फोटोकपी सहित रु १०।- को टिकट टाँसी यो निवेदन पेश गरेको छु ।
         </p>
 
@@ -104,7 +205,9 @@ const ApplicationforKhasAryaCasteCertification = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
       </form>
     </div>
