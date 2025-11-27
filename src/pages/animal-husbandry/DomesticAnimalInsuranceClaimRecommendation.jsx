@@ -54,7 +54,7 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
 
     try {
       // backend URL - adjust if different
-      const url = "http://localhost:5000/api/domestic-animal/";
+      const url = "http://localhost:5000/api/forms/domestic-animal";
       const res = await axios.post(url, form);
       setLoading(false);
       if (res.status === 201) {
