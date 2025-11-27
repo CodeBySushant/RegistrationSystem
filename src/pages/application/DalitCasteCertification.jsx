@@ -1,35 +1,76 @@
-import React, { useState } from 'react';
-import './DalitCasteCertification.css'; // The CSS file for styling
+// DalitCasteCertification.jsx
+import React, { useState } from "react";
+import axios from "axios";
+import "./DalitCasteCertification.css";
+
+const initialState = {
+  date: "२०८२.०७.१५",
+  headerDistrict: "काठमाडौँ",
+  mainDistrict: "काठमाडौँ",
+  palikaName: "",
+  wardNo: "",
+  residentName: "",
+  relation: "छोरा",
+  guardianName: "",
+  casteName: "",
+  sigName: "",
+  sigAddress: "",
+  sigMobile: "",
+  sigSignature: "",
+};
 
 const DalitCasteCertification = () => {
-  const [formData, setFormData] = useState({
-    date: '२०८२.०७.१५',
-    headerDistrict: 'काठमाडौँ',
-    mainDistrict: 'काठमाडौँ',
-    palikaName: '',
-    wardNo: '',
-    residentName: '',
-    relation: 'छोरा',
-    guardianName: '',
-    casteName: '',
-    sigName: '',
-    sigAddress: '',
-    sigMobile: '',
-    sigSignature: '',
-  });
+  const [formData, setFormData] = useState(initialState);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = (d) => {
+    if (!d.mainDistrict?.trim()) return "mainDistrict is required";
+    if (!d.palikaName?.trim()) return "palikaName is required";
+    if (!d.wardNo?.trim()) return "wardNo is required";
+    if (!d.residentName?.trim()) return "residentName is required";
+    if (!d.casteName?.trim()) return "casteName is required";
+    if (!d.sigName?.trim()) return "sigName is required";
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Dalit Caste Certification Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    if (submitting) return;
+
+    const err = validate(formData);
+    if (err) {
+      alert("कृपया आवश्यक क्षेत्रहरू भर्नुहोस्: " + err);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const payload = { ...formData };
+      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+
+      // Use relative URL if dev proxy is configured; otherwise use full http://localhost:5000/...
+      const url = "/api/forms/dalit-caste-certification";
+      const res = await axios.post(url, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("Saved successfully. ID: " + (res.data?.id ?? ""));
+        setFormData(initialState);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      console.error("server response:", error.response?.data);
+      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Submission failed";
+      alert("त्रुटि: " + JSON.stringify(msg));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -48,12 +89,7 @@ const DalitCasteCertification = () => {
           </div>
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="text" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
 
@@ -104,7 +140,9 @@ const DalitCasteCertification = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
       </form>
     </div>
