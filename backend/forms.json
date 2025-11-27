@@ -127,7 +127,58 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+  "business-registration": {
+  "table": "BusinessRegistration",
+  "columns": [
+    "regNo",
+    "regDate",
+    "headerTo",
+    "businessName",
+    "pan",
+    "phone",
+    "email",
+    "businessTole",
+    "businessRoad",
+    "businessHouseNo",
+    "ownerName",
+    "regNature",
+    "fatherName",
+    "grandfatherName",
+    "husbandName",
+    "motherInLawName",
+    "fatherInLawName",
+    "citizenAddress",
+    "businessType",
+    "propFatherName",
+    "propFatherAddress",
+    "propGrandfatherName",
+    "propGrandfatherAddress",
+    "propWifeName",
+    "propWifeAddress",
+    "remarks",
+    "proprietors",
+    "tippadiSignature",
+    "tippadiLevel",
+    "tippadiDate",
+    "tippadiName",
+    "tippadiPosition",
+    "approverSignature",
+    "approverName",
+    "approverPosition",
+    "applicantSignature",
+    "applicantNameSignature",
+    "voucherNo",
+    "voucherDate",
+    "voucherAmount",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
+
 
 
 
