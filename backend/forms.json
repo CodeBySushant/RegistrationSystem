@@ -84,6 +84,25 @@
     "sigMobile",
     "sigSignature"
   ]
+}, 
+
+  "khas-arya-certification": {
+  "table": "KhasAryaCasteCertification",
+  "columns": [
+    "date",
+    "headerDistrict",
+    "mainDistrict",
+    "palikaName",
+    "wardNo",
+    "residentName",
+    "relation",
+    "guardianName",
+    "casteName",
+    "sigName",
+    "sigAddress",
+    "sigMobile",
+    "sigSignature"
+  ]
 }
 
 
