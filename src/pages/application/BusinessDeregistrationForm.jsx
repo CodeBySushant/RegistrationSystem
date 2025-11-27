@@ -1,40 +1,92 @@
-import React, { useState } from 'react';
-import './BusinessDeregistrationForm.css'; // The CSS file for styling
+// BusinessDeregistrationForm.jsx
+import React, { useState } from "react";
+import axios from "axios";
+import "./BusinessDeregistrationForm.css";
+
+const initialState = {
+  headerTo: "श्रीमान्",
+  headerMunicipality: "नागार्जुन नगरपालिका",
+  headerOffice: "काठमाडौँ",
+  date: "२०८२.०७.१५",
+  municipality: "नागार्जुन नगरपालिका",
+  firmType: "प्राइभेट फर्म",
+  firmRegNo: "",
+  firmName: "",
+  dissolveReason: "",
+  applicantNameForDissolve: "",
+  sigSignature: "",
+  sigName: "",
+  sigAddress: "",
+  sigFirmStamp: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+};
 
 const BusinessDeregistrationForm = () => {
-  const [formData, setFormData] = useState({
-    headerTo: 'श्रीमान्',
-    headerMunicipality: 'नागार्जुन नगरपालिका',
-    headerOffice: 'काठमाडौँ',
-    date: '२०८२.०७.१५',
-    municipality: 'नागार्जुन नगरपालिका',
-    firmType: 'प्राइभेट फर्म',
-    firmRegNo: '',
-    firmName: '',
-    dissolveReason: '',
-    applicantNameForDissolve: '',
-    sigSignature: '',
-    sigName: '',
-    sigAddress: '',
-    sigFirmStamp: '',
-    applicantName: '',
-    applicantAddress: '',
-    applicantCitizenship: '',
-    applicantPhone: '',
-  });
+  const [formData, setFormData] = useState(initialState);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = (d) => {
+    const required = [
+      "firmRegNo",
+      "firmName",
+      "dissolveReason",
+      "applicantNameForDissolve",
+      "sigSignature",
+      "sigName",
+      "sigAddress",
+      "sigFirmStamp",
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+    ];
+    for (const f of required) {
+      if (!d[f] || (typeof d[f] === "string" && d[f].trim() === "")) {
+        return `${f} is required`;
+      }
+    }
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Business Deregistration Form Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    if (submitting) return;
+
+    const err = validate(formData);
+    if (err) {
+      alert("कृपया सबै आवश्यक क्षेत्रहरू भर्नुहोस्। (" + err + ")");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const payload = { ...formData };
+      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+
+      const url = "http://localhost:5000/api/forms/business-deregistration";
+      const res = await axios.post(url, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
+        setFormData(initialState);
+        console.log("Saved:", res.data);
+      } else {
+        alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Submission failed";
+      alert("त्रुटि: " + msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -48,42 +100,17 @@ const BusinessDeregistrationForm = () => {
         <div className="form-row">
           <div className="header-to-group">
             <div className="form-group-inline">
-              <input
-                type="text"
-                name="headerTo"
-                value={formData.headerTo}
-                onChange={handleChange}
-                className="header-input"
-              />
+              <input type="text" name="headerTo" value={formData.headerTo} onChange={handleChange} className="header-input" />
               <span>ज्यु,</span>
             </div>
-            <input
-              type="text"
-              name="headerMunicipality"
-              value={formData.headerMunicipality}
-              onChange={handleChange}
-              className="header-input"
-            />
-            <input
-              type="text"
-              name="headerOffice"
-              value={formData.headerOffice}
-              onChange={handleChange}
-              className="header-input"
-            />
+            <input type="text" name="headerMunicipality" value={formData.headerMunicipality} onChange={handleChange} className="header-input" />
+            <input type="text" name="headerOffice" value={formData.headerOffice} onChange={handleChange} className="header-input" />
           </div>
           <div className="header-meta">
-            <div className="stamp-box">
-              रु. २० को टिकट
-            </div>
+            <div className="stamp-box">रु. २० को टिकट</div>
             <div className="form-group date-group">
               <label>मिति :</label>
-              <input
-                type="text"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-              />
+              <input type="text" name="date" value={formData.date} onChange={handleChange} />
             </div>
           </div>
         </div>
@@ -128,14 +155,8 @@ const BusinessDeregistrationForm = () => {
           <div className="thumb-section">
             <label className="section-title">औंठा छाप</label>
             <div className="thumb-boxes">
-              <div className="thumb-box">
-                <label>बायाँ</label>
-                <div className="thumb-area"></div>
-              </div>
-              <div className="thumb-box">
-                <label>दायाँ</label>
-                <div className="thumb-area"></div>
-              </div>
+              <div className="thumb-box"><label>बायाँ</label><div className="thumb-area"></div></div>
+              <div className="thumb-box"><label>दायाँ</label><div className="thumb-area"></div></div>
             </div>
           </div>
 
@@ -181,7 +202,9 @@ const BusinessDeregistrationForm = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
       </form>
     </div>

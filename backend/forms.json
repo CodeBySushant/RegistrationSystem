@@ -103,7 +103,32 @@
     "sigMobile",
     "sigSignature"
   ]
+},
+
+  "business-deregistration": {
+  "table": "BusinessDeregistration",
+  "columns": [
+    "headerTo",
+    "headerMunicipality",
+    "headerOffice",
+    "date",
+    "municipality",
+    "firmType",
+    "firmRegNo",
+    "firmName",
+    "dissolveReason",
+    "applicantNameForDissolve",
+    "sigSignature",
+    "sigName",
+    "sigAddress",
+    "sigFirmStamp",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
+
 
 
 }
