@@ -36,7 +36,7 @@ export const NAV_ITEMS = [
         ]
     },
     {
-        id: 'nepali-citizen',
+        id: 'nepali-citizenship',
         label: 'नेपाली नागरिकता',
         icon: BadgeCheck,
         children: [

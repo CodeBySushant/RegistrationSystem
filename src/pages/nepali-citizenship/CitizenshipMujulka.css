@@ -1,0 +1,191 @@
+/* --- Main Container --- */
+.citizenship-mujulka-container {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 30px 50px;
+  background-color: rgba(255, 255, 255, 0.5); /* Transparent parchment feel */
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  color: #000;
+  position: relative;
+}
+
+/* --- Utility Classes --- */
+.bold-text { font-weight: bold; }
+.underline-text { text-decoration: underline; }
+.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: middle;}
+.red-mark { color: red; position: absolute; top: 0; left: 0; }
+.red-asterisk { color: red; font-size: 1.2rem; vertical-align: middle; margin-left: 2px;}
+.in-cell { font-size: 0.8rem; }
+.bg-gray-text { background-color: #eee; padding: 2px 5px; border-radius: 3px; margin: 0 5px; }
+.center-text { text-align: center; }
+.mt-20 { margin-top: 20px; }
+.mt-10 { margin-top: 10px; }
+
+/* --- Header Section --- */
+.header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 100px;
+  font-size: 1rem;
+}
+.header-text p { margin: 2px 0; }
+
+/* --- Top Info (Shared across all forms) --- */
+.meta-data-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+/* --- Main Body --- */
+.header-text, .form-body {
+  text-align: justify;
+  line-height: 1.6;
+}
+.header-text { margin-bottom: 20px; }
+
+.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; font-family: inherit; font-size: 1rem; }
+.medium-input { width: 150px; }
+.tiny-input { width: 40px; text-align: center; }
+
+.inline-select {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 2px;
+    margin: 0 5px;
+    font-size: 0.95rem;
+}
+
+/* --- Table Section --- */
+.table-section { margin-top: 20px; margin-bottom: 30px; }
+.table-title { margin-bottom: 10px; color: #555; }
+
+.table-responsive { overflow-x: auto; }
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgba(255,255,255,0.6);
+}
+
+.details-table th {
+  background-color: #e0e0e0;
+  border: 1px solid #555;
+  padding: 8px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.details-table td {
+  border: 1px solid #555;
+  padding: 5px;
+}
+
+.table-input {
+  width: 85%;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 4px;
+  font-size: 0.9rem;
+  color: #e74c3c;
+}
+
+.action-cell { text-align: center; }
+.add-btn {
+    background-color: blue;
+    color: white;
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+/* --- Signature Blocks --- */
+.signature-section-bottom {
+    margin-bottom: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ccc;
+}
+.signatures-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+.sig-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    border: 1px dotted #ccc;
+}
+.sig-item label { font-weight: normal; font-size: 0.9rem; margin-bottom: 5px; }
+
+.footer-signature-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 0.95rem;
+}
+.footer-sig-item {
+    display: flex;
+    align-items: center;
+}
+.footer-sig-item label { margin-right: 5px; }
+
+
+/* --- Applicant Details Box --- */
+.applicant-details-box {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.4);
+  margin-top: 20px;
+  border-radius: 4px;
+}
+
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.bg-gray { background-color: #eef2f5; } 
+
+/* --- Footer --- */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn {
+  background-color: #34495e;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.save-print-btn:hover { background-color: #2c3e50; }
+.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
