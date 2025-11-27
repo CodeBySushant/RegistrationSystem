@@ -1,4 +1,4 @@
-import { Briefcase, Award, FileText, BadgeCheck, Map, Users, Home, Banknote, GraduationCap, Hammer, Wallet, Mail, Plus, Book, PointerIcon, CircleDot, LucidePlusCircle, DotIcon, SpaceIcon, Dot, StickyNote } from 'lucide-react';
+import { Briefcase, Award, FileText, BadgeCheck, Map, Users, Home, Banknote, GraduationCap, Hammer, Wallet, Mail, Plus, Book, PointerIcon, CircleDot, LucidePlusCircle, DotIcon, SpaceIcon, Dot, StickyNote, BoxIcon } from 'lucide-react';
 
 export const NAV_ITEMS = [
     { id: 'dashboard', label: 'गृहपृष्ठ', icon: Home, children: [] },
@@ -172,7 +172,7 @@ export const NAV_ITEMS = [
     {
         id: 'daily-work-execute',
         label: 'दैनिक कार्य सम्पादन',
-        icon: Dot,
+        icon: BoxIcon,
         children: []
     },
 ];
