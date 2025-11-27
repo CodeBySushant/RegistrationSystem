@@ -1,10 +1,13 @@
+// AllowanceForm.jsx
 import React, { useState } from "react";
 import "./AllowanceForm.css";
+// optionally: import axios from "axios";
 
 const AllowanceForm = () => {
   const [formData, setFormData] = useState({
     nagarpalika: "नागार्जुन नगरपालिका",
     ward: "",
+    targetGroup: "जेष्ठ नागरिक (दलित)", // added missing field
     gender: "पुरुष",
     fullName: "",
     fatherName: "",
@@ -12,19 +15,21 @@ const AllowanceForm = () => {
     address: "",
     nagariktaNo: "",
     jariJilla: "",
-    birthDate: "",
+    birthDate: "", // YYYY-MM-DD (for type="date")
     mobileNo: "",
     patiMrituNo: "",
-    patiMrituMiti: "",
+    patiMrituMiti: "", // YYYY-MM-DD (for type="date")
     allowanceType: "",
     parichayaNo: "",
-    allowanceStartDate: "",
+    allowanceStartDate: "", // can be YYYY-MM-DD or string depending on your use-case
     allowanceStartQuarter: "",
     applicantName: "",
     applicantAddress: "",
     applicantNagarikta: "",
     applicantPhone: "",
   });
+
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,10 +39,40 @@ const AllowanceForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    alert("Form submitted! Check console for details.");
+    // quick client-side required check example (optional)
+    if (!formData.fullName || !formData.applicantName) {
+      alert("कृपया आवश्यक क्षेत्रहरू भर्नुहोस् (नाम र निवेदकको नाम)।");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      console.log("Submitting:", formData);
+
+      // Option B: Uncomment to send to backend (adjust URL/formKey)
+      const url = "http://localhost:5000/api/forms/allowance-form"; // <-- change formKey/table as needed
+      const res = await axios.post(url, formData);
+      if (res.status === 201) {
+        alert("Saved. ID: " + res.data.id);
+        setFormData({
+          nagarpalika: "नागार्जुन नगरपालिका", ward: "", targetGroup: "जेष्ठ नागरिक (दलित)", gender: "पुरुष",
+          fullName: "", fatherName: "", motherName: "", address: "", nagariktaNo: "", jariJilla: "",
+          birthDate: "", mobileNo: "", patiMrituNo: "", patiMrituMiti: "", allowanceType: "", parichayaNo: "",
+          allowanceStartDate: "", allowanceStartQuarter: "", applicantName: "", applicantAddress: "", applicantNagarikta: "", applicantPhone: ""
+        });
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+      
+    } catch (err) {
+      console.error(err);
+      alert("Submission failed: " + (err.response?.data?.message || err.message));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -75,7 +110,11 @@ const AllowanceForm = () => {
         <div className="form-section">
           <div className="form-row">
             <label>लक्षित समूह: </label>
-            <select name="targetGroup" onChange={handleChange}>
+            <select
+              name="targetGroup"
+              value={formData.targetGroup}
+              onChange={handleChange}
+            >
               <option>जेष्ठ नागरिक (दलित)</option>
               <option>अपांगता भएका व्यक्ति</option>
               <option>एकल महिला</option>
@@ -163,7 +202,7 @@ const AllowanceForm = () => {
             <div className="form-group">
               <label>जन्म मिति:</label>
               <input
-                type="text"
+                type="date"
                 name="birthDate"
                 value={formData.birthDate}
                 onChange={handleChange}
@@ -195,7 +234,7 @@ const AllowanceForm = () => {
             <div className="form-group">
               <label>पतिको मृत्यु मिति:</label>
               <input
-                type="text"
+                type="date"
                 name="patiMrituMiti"
                 value={formData.patiMrituMiti}
                 onChange={handleChange}
@@ -296,7 +335,9 @@ const AllowanceForm = () => {
         </div>
 
         <div className="button-container">
-          <button type="submit">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button type="submit" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
       </form>
     </div>
