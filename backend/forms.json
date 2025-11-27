@@ -1,0 +1,30 @@
+{
+  "domestic-animal": {
+    "table": "DomesticAnimalInsuranceClaimRecommendation",
+    "columns": [
+      "chalan_no",
+      "subject",
+      "addressee_line1",
+      "addressee_line2",
+      "addressee_line3",
+      "municipality_name",
+      "ward_no",
+      "resident_name_in_paragraph",
+      "local_select_type",
+      "animal_type",
+      "animal_inspected_by",
+      "report_brief",
+      "damaged_area_description",
+      "tag_number",
+      "tag_subtype",
+      "animal_color",
+      "death_date",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "signer_name",
+      "signer_designation"
+    ]
+  }
+}

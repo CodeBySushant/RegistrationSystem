@@ -5,9 +5,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use((req, res, next) => {
+  console.log("REQ:", req.method, req.originalUrl);
+  next();
+});
+
 // Routes
-const domesticAnimalRoutes = require("./routes/domesticAnimalRoutes");
-app.use("/api/domestic-animal", domesticAnimalRoutes);
+const genericFormRoutes = require("./routes/genericFormRoutes");
+app.use("/api/forms", genericFormRoutes);
 
 // Generic 404
 app.use((req, res) => {
