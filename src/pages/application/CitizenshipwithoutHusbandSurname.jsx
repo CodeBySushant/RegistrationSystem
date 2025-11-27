@@ -1,36 +1,76 @@
-import React, { useState } from 'react';
-import './CitizenshipwithoutHusbandSurname.css'; // The CSS file for styling
+// CitizenshipwithoutHusbandSurname.jsx
+import React, { useState } from "react";
+import axios from "axios";
+import "./CitizenshipwithoutHusbandSurname.css";
+
+const initialState = {
+  date: "२०८२.०७.१५",
+  districtOffice: "काठमाडौँ",
+  preMarriageDate: "२०८२.०७.१५",
+  preMarriageDistrict: "",
+  relationshipStatus: "सम्बन्धविच्छेद",
+  certificateInfo: "",
+  currentHusbandName: "",
+  currentDistrict: "जिल्ला",
+  currentPalikaType: "गा.पा.",
+  currentPalikaName: "",
+  sigName: "",
+  sigAddress: "",
+  sigMobile: "",
+  sigSignature: "",
+};
 
 const CitizenshipwithoutHusbandSurname = () => {
-  const [formData, setFormData] = useState({
-    date: '२०८२.०७.१५',
-    districtOffice: 'काठमाडौँ',
-    preMarriageDate: '२०८२.०७.१५',
-    preMarriageDistrict: '',
-    relationshipStatus: 'सम्बन्धविच्छेद',
-    certificateInfo: '',
-    currentHusbandName: '',
-    currentDistrict: 'जिल्ला',
-    currentPalikaType: 'गा.पा.',
-    currentPalikaName: '',
-    sigName: '',
-    sigAddress: '',
-    sigMobile: '',
-    sigSignature: '',
-  });
+  const [formData, setFormData] = useState(initialState);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = (d) => {
+    if (!d.preMarriageDistrict?.trim()) return "preMarriageDistrict is required";
+    if (!d.certificateInfo?.trim()) return "certificateInfo is required";
+    if (!d.currentHusbandName?.trim()) return "currentHusbandName is required";
+    if (!d.currentPalikaName?.trim()) return "currentPalikaName is required";
+    if (!d.sigName?.trim()) return "sigName is required";
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Citizenship (Remove Ex-Husband) Form Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    if (submitting) return;
+
+    const err = validate(formData);
+    if (err) {
+      alert("कृपया आवश्यक क्षेत्रहरू भर्नुहोस्: " + err);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const payload = { ...formData };
+      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+
+      // Use relative path if your CRA/Vite proxy is configured; otherwise use full URL.
+      const url = "/api/forms/citizenship-remove-husband";
+      const res = await axios.post(url, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("Saved successfully. ID: " + (res.data?.id ?? ""));
+        setFormData(initialState);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      console.error("server response:", error.response?.data);
+      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Submission failed";
+      alert("त्रुटि: " + JSON.stringify(msg));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -49,12 +89,7 @@ const CitizenshipwithoutHusbandSurname = () => {
           </div>
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="text" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
 
@@ -107,7 +142,9 @@ const CitizenshipwithoutHusbandSurname = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
       </form>
     </div>

@@ -194,7 +194,29 @@
     "sigMobile",
     "sigSignature"
   ]
+},
+
+"citizenship-remove-husband": {
+  "table": "CitizenshipWithoutHusbandSurname",
+  "columns": [
+    "date",
+    "districtOffice",
+    "preMarriageDate",
+    "preMarriageDistrict",
+    "relationshipStatus",
+    "certificateInfo",
+    "currentHusbandName",
+    "currentDistrict",
+    "currentPalikaType",
+    "currentPalikaName",
+    "sigName",
+    "sigAddress",
+    "sigMobile",
+    "sigSignature"
+  ]
 }
+
+
 
 
 
