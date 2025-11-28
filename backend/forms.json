@@ -447,6 +447,30 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"new-bank-account-recommendation": {
+  "table": "NewBankAccountRecommendation",
+  "columns": [
+    "date",
+    "patraSankhya",
+    "chalanNo",
+    "toName",
+    "toPlace",
+    "district",
+    "municipalityWardNo",
+    "groupName",
+    "groupWardNo",
+    "groupRefPatraNo",
+    "groupRefChalanNo",
+    "officials",
+    "signerName",
+    "signerDesignation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
