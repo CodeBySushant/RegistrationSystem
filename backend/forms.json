@@ -272,7 +272,46 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"land-boundary-verification": {
+  "table": "LandBoundaryVerification",
+  "columns": [
+    "date",
+    "headerTo",
+    "headerMunicipality",
+    "headerOffice",
+    "headerDistrict",
+    "mainDistrict",
+    "mainMunicipality",
+    "mainWardNo1",
+    "prevLocationType",
+    "prevWardNo",
+    "tole",
+    "applicantTitle",
+    "applicantName",
+    "applicantRelation",
+    "applicantAge",
+    "guardianTitle",
+    "guardianName",
+    "kittaNo",
+    "landName",
+    "landArea",
+    "feeAmount",
+    "feeAmountWords",
+    "sigApplicantType",
+    "sigName",
+    "sigAddress",
+    "sigWard",
+    "sigPhone",
+    "detailApplicantName",
+    "detailApplicantAddress",
+    "detailApplicantCitizenship",
+    "detailApplicantPhone"
+  ]
 }
+
+
 
 
 
