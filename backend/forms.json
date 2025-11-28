@@ -352,6 +352,33 @@
     "sigMobile",
     "sigSignature"
   ]
+},
+
+"tribal-verification-recommendation": {
+  "table": "TribalVerificationRecommendation",
+  "columns": [
+    "date",
+    "headerTo",
+    "municipality1",
+    "wardNo1",
+    "officeName",
+    "address1",
+    "municipality2",
+    "wardNo2",
+    "residentTitle",
+    "relation",
+    "guardianTitle",
+    "guardianName",
+    "tribeCategory",
+    "tribeName",
+    "mainContent",
+    "applicantNameSignature",
+    "applicantAddressSignature",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
