@@ -1,39 +1,82 @@
-import React, { useState } from 'react';
-import './RequestforCertification.css'; // The CSS file for styling
+// RequestforCertification.jsx
+import React, { useState } from "react";
+import axios from "axios";
+import "./RequestforCertification.css";
+
+const initialState = {
+  date: "२०८२.०७.१५",
+  headerDistrict: "काठमाडौँ",
+  mainDistrict: "काठमाडौँ",
+  palikaName: "",
+  wardNo: "",
+  residentName: "",
+  relation: "छोरा",
+  guardianName: "",
+  doc1Type: "नागरिकता",
+  doc1Detail: "",
+  doc2Type: "शैक्षिक योग्यता",
+  doc2Detail: "",
+  variationDetail: "",
+  sigName: "",
+  sigAddress: "",
+  sigMobile: "",
+  sigSignature: "",
+};
 
 const RequestforCertification = () => {
-  const [formData, setFormData] = useState({
-    date: '२०८२.०७.१५',
-    headerDistrict: 'काठमाडौँ',
-    mainDistrict: 'काठमाडौँ',
-    palikaName: '',
-    wardNo: '',
-    residentName: '',
-    relation: 'छोरा',
-    guardianName: '',
-    doc1Type: 'नागरिकता',
-    doc1Detail: '',
-    doc2Type: 'शैक्षिक योग्यता',
-    doc2Detail: '',
-    variationDetail: '',
-    sigName: '',
-    sigAddress: '',
-    sigMobile: '',
-    sigSignature: '',
-  });
+  const [formData, setFormData] = useState(initialState);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = (fd) => {
+    if (!fd.mainDistrict?.trim()) return "मुख्य जिल्ला भर्नुहोस्";
+    if (!fd.palikaName?.trim()) return "पालिका/नगरपालिका भर्नुहोस्";
+    if (!fd.wardNo?.trim()) return "वडा नं. भर्नुहोस्";
+    if (!fd.residentName?.trim()) return "निवेदकको नाम भर्नुहोस्";
+    if (!fd.guardianName?.trim()) return "अभिभावक/सम्बन्धको नाम भर्नुहोस्";
+    if (!fd.doc1Detail?.trim()) return "पहिलो कागजात विवरण भर्नुहोस्";
+    if (!fd.doc2Detail?.trim()) return "दोश्रो कागजात विवरण भर्नुहोस्";
+    if (!fd.sigName?.trim()) return "दस्तखत गर्नेको नाम भर्नुहोस्";
+    if (!fd.sigMobile?.trim()) return "मोबाइल नम्बर भर्नुहोस्";
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Request for Certification Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    if (submitting) return;
+
+    const err = validate(formData);
+    if (err) {
+      alert("कृपया: " + err);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const payload = { ...formData };
+      // convert empty strings to null (optional)
+      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+
+      const url = "/api/forms/request-for-certification";
+      const res = await axios.post(url, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("रेकर्ड सफलतापूर्वक सेभ भयो। ID: " + (res.data?.id ?? ""));
+        setFormData(initialState);
+      } else {
+        alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      const msg = error.response?.data?.message || error.message || "Submission failed";
+      alert("त्रुटि: " + msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -42,22 +85,11 @@ const RequestforCertification = () => {
         <div className="form-row">
           <div className="header-to-group">
             <h3>श्रीमान् प्रमुख जिल्ला अधिकारीज्यु,</h3>
-            <input
-              type="text"
-              name="headerDistrict"
-              value={formData.headerDistrict}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" name="headerDistrict" value={formData.headerDistrict} onChange={handleChange} required />
           </div>
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="text" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
 
@@ -81,7 +113,7 @@ const RequestforCertification = () => {
             <option>पत्नी</option>
           </select>
           म
-          <input type="text" name="guardianName" placeholder="अभिभावकको नाम" value={formData.guardianName} onChange={handleChange} required />
+          <input type="text" name="guardianName" placeholder="अभिभावक/सम्बन्धको नाम" value={formData.guardianName} onChange={handleChange} required />
           को
           <input type="text" name="doc1Type" value={formData.doc1Type} onChange={handleChange} required />
           प्रमाणपत्रमा
@@ -90,8 +122,13 @@ const RequestforCertification = () => {
           <input type="text" name="doc2Type" value={formData.doc2Type} onChange={handleChange} required />
           प्रमाणपत्रमा
           <input type="text" name="doc2Detail" placeholder="विवरण" value={formData.doc2Detail} onChange={handleChange} required />
-          भई फरक पर्नु व्यक्ति एउटै भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा कार्यालयको सिफारिस, नागरिकता प्रमाणपत्रको फोटोकपी र शैक्षिक योग्यताको प्रमाणपत्रको फोटोकपी सहित रु १०।- को टिकट टाँसी यो निवेदन पेश गरेको छु ।
+          भई फरक पर्नु व्यक्ति एउटै भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा कार्यालयको सिफारिस, नागरिकता प्रमाणपत्र र शैक्षिक प्रमाणपत्रको फोटोकपी सहित रु १०।- को टिकट टाँसी यो निवेदन पेश गरेको छु ।
         </p>
+
+        <div className="form-group-column">
+          <label>अन्तर (भिन्नता) विवरण (यदि छ):</label>
+          <input type="text" name="variationDetail" value={formData.variationDetail} onChange={handleChange} />
+        </div>
 
         <div className="signature-section-left">
           <h4>निवेदक</h4>
@@ -114,7 +151,9 @@ const RequestforCertification = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
       </form>
     </div>

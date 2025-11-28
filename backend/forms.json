@@ -309,6 +309,29 @@
     "detailApplicantCitizenship",
     "detailApplicantPhone"
   ]
+},
+
+"request-for-certification": {
+  "table": "RequestForCertification",
+  "columns": [
+    "date",
+    "headerDistrict",
+    "mainDistrict",
+    "palikaName",
+    "wardNo",
+    "residentName",
+    "relation",
+    "guardianName",
+    "doc1Type",
+    "doc1Detail",
+    "doc2Type",
+    "doc2Detail",
+    "variationDetail",
+    "sigName",
+    "sigAddress",
+    "sigMobile",
+    "sigSignature"
+  ]
 }
 
 
