@@ -525,6 +525,35 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"old-non-profit-org-certificate": {
+  "table": "OldNonProfitOrgCertificate",
+  "columns": [
+    "fiscalYear",
+    "date",
+    "regNo",
+    "regDate",
+    "organizationName",
+    "organizationAddress",
+    "subjectArea",
+    "startDate",
+    "email",
+    "phone",
+    "presidentName",
+    "presidentAddress",
+    "presidentEmail",
+    "presidentPhone",
+    "bankAccountInfo",
+    "bankEmail",
+    "bankPhone",
+    "signerName",
+    "signerDesignation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
