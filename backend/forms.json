@@ -554,6 +554,28 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"organization-registered": {
+  "table": "OrganizationRegistered",
+  "columns": [
+    "localityType",
+    "wardNo",
+    "district",
+    "organizationName",
+    "registrationDate",
+    "regNo",
+    "certNo",
+    "extraInfo",
+    "toOffice",
+    "signerName",
+    "signerDesignation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone",
+    "date"
+  ]
 }
 
 
