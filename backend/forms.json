@@ -471,8 +471,31 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
-}
+},
 
+"new-organization-registration": {
+  "table": "NewOrganizationRegistration",
+  "columns": [
+    "date",
+    "patraSankhya",
+    "chalanNo",
+    "toName",
+    "toPlace",
+    "district",
+    "municipalityWardNo",
+    "prevWardNo",
+    "organizationName",
+    "organizationLocation",
+    "organizationType",
+    "suggestedBy",
+    "signerName",
+    "signerDesignation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
+}
 
 
 
