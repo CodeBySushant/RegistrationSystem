@@ -402,6 +402,29 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"club-registration": {
+  "table": "ClubRegistration",
+  "columns": [
+    "date",
+    "patraSankhya",
+    "chalanNo",
+    "toName",
+    "toSecondLine",
+    "district",
+    "municipality",
+    "wardNo",
+    "residentName",
+    "clubName",
+    "clubAddress",
+    "signerName",
+    "signerDesignation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
