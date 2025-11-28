@@ -233,7 +233,47 @@
     "sigMobile",
     "sigSignature"
   ]
+},
+
+"impoverished-citizen-application": {
+  "table": "ImpoverishedCitizenApplicationRecommendation",
+  "columns": [
+    "headerTo",
+    "headerOffice",
+    "patientName",
+    "age",
+    "gender",
+    "permJilla",
+    "permPalika",
+    "permWarda",
+    "tempJilla",
+    "tempPalika",
+    "tempWarda",
+    "ethnicity",
+    "familySize",
+    "incomeSource",
+    "monthlyIncome",
+    "landDetails",            
+    "bankName",
+    "bankBranch",
+    "accountNo",
+    "healthStatus",
+    "recommenderRelation",
+    "applicantSigName",
+    "applicantSigAddress",
+    "applicantSigDate",
+    "applicantSigPhone",
+    "recName",
+    "recPosition",
+    "recDate",
+    "recOfficeStamp",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
+
 
 
 
