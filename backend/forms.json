@@ -332,6 +332,26 @@
     "sigMobile",
     "sigSignature"
   ]
+},
+
+"request-for-certification-mf": {
+  "table": "RequestForCertificationMotherFather",
+  "columns": [
+    "date",
+    "headerDistrict",
+    "mainDistrict",
+    "palikaName",
+    "wardNo",
+    "residentName",
+    "relation",
+    "guardianName",
+    "doc1Detail",
+    "doc2Detail",
+    "sigName",
+    "sigAddress",
+    "sigMobile",
+    "sigSignature"
+  ]
 }
 
 
