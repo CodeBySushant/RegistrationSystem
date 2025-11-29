@@ -628,6 +628,29 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"organization-renew-recommendation": {
+  "table": "OrganizationRenewRecommendation",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "toOffice",
+    "toOfficeLine2",
+    "wardNo",
+    "sabikWardNo",
+    "sabikWardNo2",
+    "personName",
+    "orgName",
+    "orgAddress",
+    "signerName",
+    "signerDesignation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
