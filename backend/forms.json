@@ -692,6 +692,30 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"business-extension-pan": {
+  "table": "BusinessExtensionPannumber",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "toLine1",
+    "toLine2",
+    "wardNo",
+    "prevWardNo",
+    "applicantNameTop",
+    "panNo",
+    "addedPanNo",
+    "addedBusiness",
+    "details",
+    "signerName",
+    "signerPost",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
