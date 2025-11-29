@@ -674,6 +674,24 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"business-closed": {
+  "table": "BusinessClosed",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "municipality",
+    "wardNo",
+    "toOfficePerson",
+    "introText",
+    "businesses",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
