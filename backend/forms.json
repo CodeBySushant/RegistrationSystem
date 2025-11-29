@@ -595,6 +595,39 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"organization-registration-recommendation": {
+  "table": "OrganizationRegistrationRecommendation",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "toOffice",
+    "toOfficeLine2",
+    "toOfficeLine3",
+    "wardNo",
+    "sabikWardNo",
+    "sabikWardNo2",
+    "applicantName",
+    "industryName",
+    "industryAddress",
+    "locationMunicipality",
+    "locationWard",
+    "locationTole",
+    "kittaNo",
+    "area",
+    "boundaryEast",
+    "boundaryWest",
+    "boundarySouth",
+    "boundaryNorth",
+    "signerName",
+    "signerDesignation",
+    "applicantNameFooter",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
