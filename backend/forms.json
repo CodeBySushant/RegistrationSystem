@@ -576,6 +576,25 @@
     "applicantPhone",
     "date"
   ]
+},
+
+"organization-registration-punishment": {
+  "table": "OrganizationRegistrationPunishment",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "toOffice",
+    "toOffice2",
+    "introText",
+    "persons",
+    "signerName",
+    "signerDesignation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
