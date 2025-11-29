@@ -1,86 +1,134 @@
-// 1
-import React from "react";
+// BusinessClosed.jsx
+import React, { useState } from "react";
+import axios from "axios";
 import "./BusinessClosed.css";
 
-function BusinessClosed() {
+const initialForm = {
+  date: "२०८२.०७.१५",
+  refLetterNo: "",
+  chalaniNo: "",
+  municipality: "नागार्जुन",
+  wardNo: "",
+  introText: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+  toOfficePerson: "", // optional salutation target
+};
+
+const initialBusinessRow = { id: 1, type: "", name: "", houseNo: "", tole: "", wardNo: "", remarks: "" };
+
+export default function BusinessClosed() {
+  const [form, setForm] = useState(initialForm);
+  const [rows, setRows] = useState([initialBusinessRow]);
+  const [submitting, setSubmitting] = useState(false);
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setForm((p) => ({ ...p, [name]: value }));
+  };
+
+  const onRowChange = (index, e) => {
+    const { name, value } = e.target;
+    setRows((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [name]: value };
+      return copy;
+    });
+  };
+
+  const addRow = () => setRows((p) => [...p, { id: p.length + 1, type: "", name: "", houseNo: "", tole: "", wardNo: "", remarks: "" }]);
+
+  const validate = () => {
+    if (!form.applicantName?.trim()) return "Applicant name required";
+    if (!form.applicantCitizenship?.trim()) return "Applicant citizenship required";
+    // ensure no partial business rows (if any field filled, all required)
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      const any = r.type || r.name || r.houseNo || r.tole || r.wardNo || r.remarks;
+      if (any && (!r.type || !r.name)) return `Complete business row ${i + 1} (type & name required)`;
+    }
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+    const err = validate();
+    if (err) {
+      alert("कृपया आवश्यक क्षेत्रहरू भर्नुहोस्: " + err);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const payload = { ...form };
+      // convert empty strings -> null
+      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+      // send business rows as JSON string (backend in your project tends to expect JSON strings)
+      payload.businesses = JSON.stringify(rows.filter((r) => r.type || r.name || r.houseNo || r.tole || r.wardNo || r.remarks));
+      const url = "/api/forms/business-closed";
+      const res = await axios.post(url, payload);
+      if (res.status === 201 || res.status === 200) {
+        alert("Saved successfully. ID: " + (res.data?.id ?? ""));
+        setForm(initialForm);
+        setRows([initialBusinessRow]);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      const msg = error.response?.data?.message || error.message || "Submission failed";
+      alert("त्रुटि: " + msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="bc-page">
-      {/* Top breadcrumb / title bar */}
-      <header className="bc-topbar">
-        <div className="bc-top-left">व्यवसाय बन्द ।</div>
-        <div className="bc-top-right">घर / व्यवसाय बन्द</div>
-      </header>
-
-      {/* Main paper area */}
-      <div className="bc-paper">
-        {/* Letterhead with logo & headings */}
+      <form className="bc-paper" onSubmit={handleSubmit}>
         <div className="bc-letterhead">
           <div className="bc-logo">
-            {/* Replace src with your own logo path if needed */}
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Emblem_of_Nepal.svg/240px-Emblem_of_Nepal.svg.png"
-              alt="Government Logo"
-            />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Emblem_of_Nepal.svg/240px-Emblem_of_Nepal.svg.png" alt="Logo" />
           </div>
           <div className="bc-head-text">
-            <div className="bc-head-main">नागार्जुन नगरपालिक</div>
+            <div className="bc-head-main">नागार्जुन नगरपालिका</div>
             <div className="bc-head-ward">१ नं. वडा कार्यालय</div>
-            <div className="bc-head-sub">
-              नागार्जुन, काठमाडौं <br />
-              बागमती प्रदेश, नेपाल
-            </div>
+            <div className="bc-head-sub">नागार्जुन, काठमाडौं <br /> बागमती प्रदेश, नेपाल</div>
           </div>
           <div className="bc-head-meta">
-            <div>
-              मिति : <input type="text" className="bc-small-input" />
-            </div>
-            <div className="bc-head-day">
-              ने.सं.: ११४६ भाद्र, २ शनिवार
-            </div>
+            <div>मिति : <input name="date" value={form.date} onChange={onChange} className="bc-small-input" /></div>
+            <div className="bc-head-day">ने.सं.: ११४६ भाद्र, २ शनिवार</div>
           </div>
         </div>
 
-        {/* Reference numbers */}
         <div className="bc-ref-row">
-          <div className="bc-ref-block">
-            <label>पत्र संख्या :</label>
-            <input type="text" />
-          </div>
-          <div className="bc-ref-block">
-            <label>चलानी नं. :</label>
-            <input type="text" />
-          </div>
+          <div className="bc-ref-block"><label>पत्र संख्या :</label><input name="refLetterNo" value={form.refLetterNo} onChange={onChange} /></div>
+          <div className="bc-ref-block"><label>चलानी नं. :</label><input name="chalaniNo" value={form.chalaniNo} onChange={onChange} /></div>
         </div>
 
-        {/* Subject */}
         <div className="bc-subject-row">
           <span className="bc-subject-label">विषयः</span>
           <span className="bc-subject-text">व्यवसाय बन्द बारे ।</span>
         </div>
 
-        {/* Salutation */}
-        <p className="bc-salutation">
-          श्री {`[`}०५ जो जससँग सम्बन्घ राख्छ{`]`} ज्यु,
-        </p>
+        <p className="bc-salutation">श्री <input name="toOfficePerson" value={form.toOfficePerson} onChange={onChange} placeholder="ज्युलाई नाम" /> ज्यु,</p>
 
-        {/* Address line */}
         <div className="bc-address-line">
-          <span>उपर्युक्त सम्बन्धमा *</span>
-          <select>
+          <span>उपर्युक्त सम्बन्धमा</span>
+          <select name="municipality" value={form.municipality} onChange={onChange}>
             <option>नागार्जुन</option>
           </select>
           <span>नगरपालिका वडा नं</span>
-          <input type="text" className="bc-ward-input" />
-          <span>स्थित (तत्कालिक ठेगाना)</span>
+          <input name="wardNo" value={form.wardNo} onChange={onChange} className="bc-ward-input" />
         </div>
 
-        {/* Explanation paragraph placeholder */}
         <p className="bc-body-text">
-          अर्को पंक्तिमा सो व्यवसाय बन्द गरिएको सम्बन्धमा निवेदन पेश गरिएको छ। तलको
-          विवरण अनुसार व्यवसायको दर्ता र बन्दको जानकारी दिइएको छ।
+          <textarea name="introText" value={form.introText} onChange={onChange} rows="3" placeholder="व्यवसाय बन्द सम्बन्धी छोटो व्यहोरा / कारण (optional)" style={{width:"100%"}} />
         </p>
 
-        {/* Business details table */}
         <div className="bc-table-wrapper">
           <table className="bc-table">
             <thead>
@@ -95,64 +143,40 @@ function BusinessClosed() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>१</td>
-                <td>
-                  <input type="text" />
-                </td>
-                <td>
-                  <input type="text" />
-                </td>
-                <td>
-                  <input type="text" />
-                </td>
-                <td>
-                  <input type="text" />
-                </td>
-                <td>
-                  <input type="text" />
-                </td>
-                <td>
-                  <input type="text" />
-                </td>
-              </tr>
+              {rows.map((r, i) => (
+                <tr key={r.id}>
+                  <td>{i + 1}</td>
+                  <td><input name="type" value={r.type} onChange={(e) => onRowChange(i, e)} /></td>
+                  <td><input name="name" value={r.name} onChange={(e) => onRowChange(i, e)} /></td>
+                  <td><input name="houseNo" value={r.houseNo} onChange={(e) => onRowChange(i, e)} /></td>
+                  <td><input name="tole" value={r.tole} onChange={(e) => onRowChange(i, e)} /></td>
+                  <td><input name="wardNo" value={r.wardNo} onChange={(e) => onRowChange(i, e)} /></td>
+                  <td><input name="remarks" value={r.remarks} onChange={(e) => onRowChange(i, e)} /></td>
+                </tr>
+              ))}
             </tbody>
           </table>
+          <div style={{marginTop:8}}>
+            <button type="button" onClick={addRow}>Add row +</button>
+          </div>
         </div>
 
-        {/* Applicant details */}
         <h3 className="bc-section-title">निवेदकको विवरण</h3>
         <div className="bc-applicant-box">
-          <div className="bc-field">
-            <label>निवेदकको नाम *</label>
-            <input type="text" />
-          </div>
-          <div className="bc-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input type="text" />
-          </div>
-          <div className="bc-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input type="text" />
-          </div>
-          <div className="bc-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input type="text" />
-          </div>
+          <div className="bc-field"><label>निवेदकको नाम *</label><input name="applicantName" value={form.applicantName} onChange={onChange} required /></div>
+          <div className="bc-field"><label>निवेदकको ठेगाना *</label><input name="applicantAddress" value={form.applicantAddress} onChange={onChange} /></div>
+          <div className="bc-field"><label>निवेदकको नागरिकता नं. *</label><input name="applicantCitizenship" value={form.applicantCitizenship} onChange={onChange} required /></div>
+          <div className="bc-field"><label>निवेदकको फोन नं. *</label><input name="applicantPhone" value={form.applicantPhone} onChange={onChange} /></div>
         </div>
 
-        {/* Submit button */}
         <div className="bc-submit-row">
-          <button className="bc-submit-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button className="bc-submit-btn" type="submit" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
-      </div>
+      </form>
 
-      {/* Footer */}
-      <footer className="bc-footer">
-        © सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः
-      </footer>
+      <footer className="bc-footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
     </div>
   );
 }
-
-export default BusinessClosed;
