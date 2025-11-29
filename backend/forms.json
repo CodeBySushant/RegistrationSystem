@@ -716,6 +716,25 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"business-reg-summary": {
+  "table": "BusinessRegSummary",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "addressee",
+    "municipality",
+    "mailTo",
+    "description",
+    "businessList",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone",
+    "positionTitle"
+  ]
 }
 
 
