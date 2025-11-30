@@ -873,6 +873,31 @@
     "applicant_citizenship",
     "applicant_phone"
   ]
+},
+
+"industry-transfer-acceptance-letter": {
+  "table": "IndustryTransferAcceptanceLetter",
+  "columns": [
+    "date",
+    "to_line1",
+    "to_line2",
+    "original_reg_date",
+    "province",
+    "district",
+    "from_municipality",
+    "from_ward",
+    "industry_name",
+    "to_municipality",
+    "to_ward",
+    "decision_ref",
+    "signer_name",
+    "signer_position",
+    "comment",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone"
+  ]
 }
 
 
