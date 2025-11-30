@@ -1256,6 +1256,31 @@
     "task",
     "notes"
   ]
+},
+
+"advance-payment-request": {
+  "table": "AdvancePaymentRequest",
+  "columns": [
+    "date",
+    "letter_no",
+    "chalani_no",
+    "addressee",
+    "municipality",
+    "fiscal_year",
+    "budget_program",
+    "budget_title_no",
+    "fund_type",
+    "total_amount",
+    "advance_amount",
+    "advance_amount_words",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
