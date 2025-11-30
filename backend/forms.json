@@ -757,7 +757,35 @@
       "applicant_email",
       "table_rows"
     ]
-  }
+  },
+
+  "industry-closed-notify": {
+  "table": "IndustryClosedNotify",
+  "columns": [
+    "date",
+    "to_line1",
+    "to_line2",
+    "place_text",
+    "place_extra",
+    "registered_date",
+    "registered_municipality",
+    "ward",
+    "industry_name",
+    "shown_reason",
+    "closure_from_date",
+    "closure_to_date",
+    "short_reason",
+    "detailed_description",
+    "attached_docs",
+    "signature",
+    "signer_name",
+    "signer_position",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizen_no",
+    "applicant_phone"
+  ]
+}
 
 
 
