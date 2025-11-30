@@ -1504,6 +1504,29 @@
     "applicant_box_phone",
     "notes"
   ]
+},
+
+"backward-community-recommendation": {
+  "table": "BackwardCommunityRecommendation",
+  "columns": [
+    "letter_no",
+    "chalani_no",
+    "date",
+    "municipality",
+    "ward_no",
+    "sabik_area",
+    "sabik_ward",
+    "person_title",
+    "person_name",
+    "reason_summary",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
