@@ -1478,6 +1478,32 @@
     "applicant_box_phone",
     "notes"
   ]
+},
+
+"work-planning-completed": {
+  "table": "WorkPlanningCompleted",
+  "columns": [
+    "letter_no",
+    "chalani_no",
+    "date",
+    "addressee_line1",
+    "addressee_line2",
+    "municipality",
+    "ward_no",
+    "fiscal_year",
+    "project_name",
+    "applicant_name",
+    "inspection_date",
+    "inspection_findings",
+    "technical_evaluation",
+    "signature_name",
+    "designation",
+    "applicant_box_name",
+    "applicant_box_address",
+    "applicant_box_citizenship",
+    "applicant_box_phone",
+    "notes"
+  ]
 }
 
 
