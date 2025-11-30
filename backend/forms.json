@@ -1244,6 +1244,18 @@
     "status",
     "notes"
   ]
+},
+
+"daily-work-performance-list": {
+  "table": "DailyWorkPerformanceList",
+  "columns": [
+    "report_date",
+    "total_forms",
+    "total_amount",
+    "department",
+    "task",
+    "notes"
+  ]
 }
 
 
