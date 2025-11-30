@@ -1598,6 +1598,38 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"annual-income-certificate": {
+  "title": "Annual Income Certificate",
+  "table": "annual_income_certificate",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "guardianTitle",
+    "guardianName",
+    "guardianRelation",
+    "residencyType",
+    "municipality",
+    "wardNo",
+    "district",
+    "province",
+    "table_rows",
+    "totalIncomeNRs",
+    "totalIncomeWords",
+    "usdRate",
+    "equivalentUSD",
+    "equivalentUSDWords",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
