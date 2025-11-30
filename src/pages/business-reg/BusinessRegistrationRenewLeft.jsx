@@ -1,108 +1,65 @@
-// 4
-import React from "react";
+// BusinessRegistrationRenewLeft.jsx
+import React, { useEffect, useState } from "react";
 import "./BusinessRegistrationRenewLeft.css";
 
-const tableData = [
-  {
-    sn: 1,
-    regDate: "२०७९-०२-१६",
-    regNo: "१८/०८/८२",
-    businessOwner: "John Kirby",
-    businessName: "Abel Mcbride",
-    address: "Ifeoma Ayala, वडा नं ६९६",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 2,
-    regDate: "२०७८-०२-२३",
-    regNo: "८/०८/८२",
-    businessOwner: "निर्देशक",
-    businessName: "निर्देशक",
-    address: "निर्देशक, वडा नं १२",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 3,
-    regDate: "२०७८-०२-२३",
-    regNo: "८/०८/८२",
-    businessOwner: "निर्देशक",
-    businessName: "निर्देशक",
-    address: "निर्देशक, वडा नं निर्देश",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 4,
-    regDate: "२०७८-०२-२३",
-    regNo: "१३/०८/८२",
-    businessOwner: "नववेअवेबकनमन",
-    businessName: "राम बहादुर राना",
-    address: "कफन, वडा नं कफन",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 5,
-    regDate: "२०७८-०२-३०",
-    regNo: "२४/०८/८२",
-    businessOwner: "युनिक",
-    businessName: "ऐन बहादुर रोकाया",
-    address: "८, वडा नं ८",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 6,
-    regDate: "२०७८-०२-२३",
-    regNo: "१४/०८/८२",
-    businessOwner: "--",
-    businessName: "--",
-    address: "-, वडा नं -",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 7,
-    regDate: "२०७८-०२-२३",
-    regNo: "५/०८/८२",
-    businessOwner: "सुन्दर किशन पसल",
-    businessName: "रमेश यादव",
-    address: "पुष्प पथ, वडा नं २",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 8,
-    regDate: "२०७८-१२-२८",
-    regNo: "३/०८/८२",
-    businessOwner: "a",
-    businessName: "a",
-    address: "a, वडा नं १",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 9,
-    regDate: "२०७८-१२-१६",
-    regNo: "४/०८/८२",
-    businessOwner: "मनोज केश फर्म",
-    businessName: "मनोज श्रेष्ठ",
-    address: "गौतम, वडा नं ०२",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-  {
-    sn: 10,
-    regDate: "२०७८-१२-२३",
-    regNo: "१०/०८/८२",
-    businessOwner: "1",
-    businessName: "11",
-    address: "1, वडा नं 1",
-    renewalLastDate: "नविकरण गर्न बाकी !",
-  },
-];
+function BusinessRegistrationRenewLeft() {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-function App() {
+  const fetchRows = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/forms/business-registration-renew-left");
+      if (!res.ok) throw new Error(`Server ${res.status}`);
+      const data = await res.json();
+      // data likely contains DB columns; map so UI fields are present
+      setRows(data.map(r => ({
+        id: r.id,
+        sn: r.sn ?? null,
+        regDate: r.regDate ?? "",
+        regNo: r.regNo ?? "",
+        businessOwner: r.businessOwner ?? "",
+        businessName: r.businessName ?? "",
+        address: r.address ?? "",
+        renewalLastDate: r.renewalLastDate ?? "",
+        status: r.status ?? "active",
+        notes: r.notes ?? ""
+      })));
+      setError(null);
+    } catch (e) {
+      console.error(e);
+      setError(e.message || "Fetch error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRows();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("के यो रेकर्ड पक्का मेटाउने हो?")) return;
+    try {
+      const res = await fetch(`/api/forms/business-registration-renew-left/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Server ${res.status}`);
+      }
+      // remove locally
+      setRows(prev => prev.filter(r => r.id !== id));
+    } catch (e) {
+      alert("मेटाउन असफल भयो: " + (e.message || e));
+    }
+  };
+
   return (
     <div className="page">
       <div className="card">
         {/* Top filter bar */}
         <div className="filter-bar">
           <button className="excel-btn">एक्सेल निर्यात गर्नुहोस्</button>
-
           <div className="filter-inputs">
             <div className="filter-group">
               <label>मिति देखि</label>
@@ -117,14 +74,13 @@ function App() {
               <input type="text" />
             </div>
           </div>
-
-          <button className="search-btn" aria-label="Search">
-            🔍
-          </button>
+          <button className="search-btn" aria-label="Search">🔍</button>
         </div>
 
         {/* Table */}
         <div className="table-wrapper">
+          {loading ? <div>लोड हुँदैछ...</div> : null}
+          {error ? <div style={{color:'red'}}>त्रुटि: {error}</div> : null}
           <table className="data-table">
             <thead>
               <tr>
@@ -137,12 +93,17 @@ function App() {
                 <th>नविकरण गरिएको अन्तिम मिति</th>
                 <th>नविकरण अवस्था</th>
                 <th>प्रमाणपत्र प्रिन्ट</th>
+                <th>कारवाही</th>
               </tr>
             </thead>
             <tbody>
-              {tableData.map((row) => (
-                <tr key={row.sn}>
-                  <td>{row.sn}</td>
+              {rows.length === 0 && !loading ? (
+                <tr><td colSpan="10">डेटा उपलब्ध छैन</td></tr>
+              ) : null}
+
+              {rows.map((row, idx) => (
+                <tr key={row.id ?? idx} className={row.status === "closed" ? "closed-row" : ""}>
+                  <td>{row.sn ?? (idx + 1)}</td>
                   <td>{row.regDate}</td>
                   <td>{row.regNo}</td>
                   <td>{row.businessOwner}</td>
@@ -154,6 +115,9 @@ function App() {
                   </td>
                   <td>
                     <button className="icon-btn card-btn">🪪</button>
+                  </td>
+                  <td>
+                    <button className="icon-btn delete-btn" onClick={() => handleDelete(row.id)}>🗑️</button>
                   </td>
                 </tr>
               ))}
@@ -169,11 +133,9 @@ function App() {
         </div>
       </div>
 
-      <footer className="footer">
-        © सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः
-      </footer>
+      <footer className="footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
     </div>
   );
 }
 
-export default App;
+export default BusinessRegistrationRenewLeft;

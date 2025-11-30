@@ -1211,6 +1211,21 @@
     "isClosed",
     "closeReason"
   ]
+},
+
+"business-registration-renew-left": {
+  "table": "BusinessRegistrationRenewLeft",
+  "columns": [
+    "sn",
+    "regDate",
+    "regNo",
+    "businessOwner",
+    "businessName",
+    "address",
+    "renewalLastDate",
+    "status",
+    "notes"
+  ]
 }
 
 
