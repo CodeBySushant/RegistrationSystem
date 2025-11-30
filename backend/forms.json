@@ -1306,6 +1306,38 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"fixed-asset-valuation": {
+  "table": "FixedAssetValuation",
+  "columns": [
+    "letter_no",
+    "chalani_no",
+    "date",
+    "former_area",
+    "former_vdc_mun",
+    "former_ward",
+    "current_municipality",
+    "current_ward",
+    "person_title",
+    "person_name",
+    "application_to",
+    "application_ward",
+    "owner_name",
+    "owner_sabik",
+    "owner_ward",
+    "owner_kitta_no",
+    "owner_area",
+    "owner_rate",
+    "owner_remarks",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
