@@ -1364,6 +1364,28 @@
     "applicant_citizenship",
     "applicant_phone"
   ]
+},
+
+"new-beneficiary-account": {
+  "table": "new_beneficiary_account",
+  "columns": [
+    "chalani_no",
+    "subject_to",
+    "subject_org",
+    "subject_location",
+    "former_area",
+    "fiscal_year",
+    "reason",
+    "citizenship_no",
+    "issue_date",
+    "beneficiary_name",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone"
+  ]
 }
 
 
