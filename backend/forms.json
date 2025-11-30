@@ -991,6 +991,39 @@
     "applicant_citizenship",
     "applicant_phone"
   ]
+},
+
+"shop-agricultural-form": {
+  "table": "ShopAgriculturalForm",
+  "columns": [
+    "province",
+    "district",
+    "municipality",
+    "ward",
+    "sabik",
+    "sabik_no",
+    "owner_age",
+    "owner_name",
+    "on_behalf_of",
+    "location_name",
+    "registration_no",
+    "operation_from",
+    "operation_to",
+    "period_year",
+    "period_month",
+    "boundary_east",
+    "boundary_west",
+    "boundary_north",
+    "boundary_south",
+    "rohabar_ward_no",
+    "rohabar_post",
+    "rohabar_person",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
