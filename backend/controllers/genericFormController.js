@@ -15,14 +15,39 @@ function getModelForKey(formKey) {
 
 exports.createRecord = (req, res) => {
   try {
-    const model = getModelForKey(req.params.formKey);
-    model.insert(req.body, (err, result) => {
+    const formKey = req.params.formKey;
+    const meta = forms[formKey];
+    if (!meta) throw new Error(`Unknown formKey: ${formKey}`);
+
+    // Prepare payload only for this form (do not modify other modules)
+    const payload = { ...req.body };
+
+    // If table_rows (or any array/object) is present, stringify it so the DB driver
+    // receives a single value for that column (avoids value-count mismatch).
+    if (payload.table_rows && typeof payload.table_rows !== "string") {
+      try {
+        payload.table_rows = JSON.stringify(payload.table_rows);
+      } catch (e) {
+        payload.table_rows = null;
+      }
+    }
+
+    // Ensure all columns declared in forms.json exist in the payload.
+    // This guarantees modelFactory will receive a values array matching the columns array.
+    if (Array.isArray(meta.columns)) {
+      meta.columns.forEach((col) => {
+        if (!(col in payload)) payload[col] = null;
+      });
+    }
+
+    const model = createModel(meta.table, meta.columns || []);
+    model.insert(payload, (err, result) => {
       if (err) return res.status(500).json({ error: err.code, message: err.sqlMessage });
       const id = result.insertId;
       // run optional hook asynchronously (don't block response)
-      const h = hooks[req.params.formKey];
+      const h = hooks[formKey];
       if (h && typeof h.afterInsert === "function") {
-        try { h.afterInsert(id, req.body); } catch (e) { console.error("hook error", e); }
+        try { h.afterInsert(id, payload); } catch (e) { console.error("hook error", e); }
       }
       res.status(201).json({ id });
     });

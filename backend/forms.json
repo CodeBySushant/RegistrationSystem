@@ -735,8 +735,29 @@
     "applicantPhone",
     "positionTitle"
   ]
-}
+},
 
+ "industry-change": {
+    "table": "industry_change",
+    "columns": [
+      "date",
+      "to_line1",
+      "to_line2",
+      "province",
+      "district",
+      "municipality",
+      "ward",
+      "industry_name",
+      "industry_other_info",
+      "signature",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizen_no",
+      "applicant_phone",
+      "applicant_email",
+      "table_rows"
+    ]
+  }
 
 
 
