@@ -1414,6 +1414,37 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"social-security-payment-closure": {
+  "table": "social_security_payment_closure",
+  "columns": [
+    "letter_no",
+    "chalani_no",
+    "date",
+    "addressee_line1",
+    "addressee_line2",
+    "current_area",
+    "current_ward",
+    "former_area",
+    "former_ward",
+    "fiscal_year",
+    "allowance_type",
+    "heir_citizenship_no",
+    "heir_name",
+    "row_name",
+    "row_citizenship",
+    "row_payable_amount",
+    "row_return_amount",
+    "row_beneficiary_no",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
