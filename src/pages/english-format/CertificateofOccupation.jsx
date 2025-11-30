@@ -1,70 +1,104 @@
-import React, { useState } from 'react';
-import './CertificateofOccupation.css'; // The CSS file for styling
+import React, { useState } from "react";
+import "./CertificateofOccupation.css";
 
 const CertificateOfOccupation = () => {
   const [formData, setFormData] = useState({
-    letterNo: '2082/83',
-    refNo: '',
-    date: '2025-10-31',
-    applicantTitle: 'Mr.',
-    applicantNameBody: '',
-    relation: 'Son',
-    fatherTitle: 'Mr.',
-    fatherName: '',
-    motherTitle: 'Mrs.',
-    motherName: '',
-    residencyType: 'permanent',
-    municipality: 'Nagarjun Municipality',
-    wardNo: '1',
-    district: 'Kathmandu',
-    country: 'Nepal',
-    applicantNameAgain: '',
-    designation: '',
-    applicantName: '',
-    applicantAddress: '',
-    applicantCitizenship: '',
-    applicantPhone: '',
+    letterNo: "2082/83",
+    refNo: "",
+    date: "2025-10-31",
+    applicantTitle: "Mr.",
+    applicantNameBody: "",
+    relation: "Son",
+    fatherTitle: "Mr.",
+    fatherName: "",
+    motherTitle: "Mrs.",
+    motherName: "",
+    residencyType: "permanent",
+    municipality: "Nagarjun Municipality",
+    wardNo: "1",
+    district: "Kathmandu",
+    country: "Nepal",
+    applicantNameAgain: "",
+    designation: "",
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
   });
 
   const [occupations, setOccupations] = useState([
-    { id: 1, ownerTitle: 'Mr.', ownerName: '', relationship: '', occupation: '' },
+    { id: 1, ownerTitle: "Mr.", ownerName: "", relationship: "", occupation: "" },
   ]);
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleOccupationChange = (index, e) => {
     const { name, value } = e.target;
-    const newOccupations = [...occupations];
-    newOccupations[index][name] = value;
-    setOccupations(newOccupations);
+    setOccupations((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [name]: value };
+      return copy;
+    });
   };
 
   const addOccupationRow = () => {
     setOccupations((prev) => [
       ...prev,
-      { id: prev.length + 1, ownerTitle: 'Mr.', ownerName: '', relationship: '', occupation: '' },
+      { id: prev.length + 1, ownerTitle: "Mr.", ownerName: "", relationship: "", occupation: "" },
     ]);
   };
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    const requiredMain = ["applicantNameAgain", "designation", "applicantName", "applicantAddress", "applicantCitizenship", "applicantPhone"];
+    for (let k of requiredMain) {
+      if (!formData[k] || formData[k].toString().trim() === "") return { ok: false, missing: k };
+    }
+    // At least one occupation row must have ownerName and occupation
+    const hasValidRow = occupations.some(r => r.ownerName && r.occupation);
+    if (!hasValidRow) return { ok: false, missing: "occupation row (ownerName & occupation)" };
+    return { ok: true };
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Main Form Data:', formData);
-    console.log('Occupations:', occupations);
-    alert('Form submitted! Check the console for the data.');
+    const v = validate();
+    if (!v.ok) {
+      alert("Please fill required field: " + v.missing);
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = { ...formData, table_rows: occupations };
+      const res = await fetch("/api/forms/certificate-of-occupation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || `Server returned ${res.status}`);
+      }
+      const body = await res.json();
+      alert("Saved successfully (id: " + body.id + ")");
+      window.print();
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Failed to save: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="certificate-of-occupation-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          {/* Replace with your logo path */}
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
+          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
           <h1>Nagarjun Municipality</h1>
           <h2>1 No. Ward Office</h2>
           <h3>Kathmandu, Kathmandu</h3>
@@ -74,32 +108,18 @@ const CertificateOfOccupation = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input
-              type="text"
-              name="letterNo"
-              value={formData.letterNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
           </div>
           <div className="form-group">
             <label>Date:</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="date" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
+
         <div className="form-row">
           <div className="form-group">
             <label>Ref No.:</label>
-            <input
-              type="text"
-              name="refNo"
-              value={formData.refNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
           </div>
         </div>
 
@@ -112,51 +132,30 @@ const CertificateOfOccupation = () => {
         <p className="certificate-body">
           This is to certify that
           <select name="applicantTitle" value={formData.applicantTitle} onChange={handleChange}>
-            <option>Mr.</option>
-            <option>Mrs.</option>
-            <option>Ms.</option>
+            <option>Mr.</option><option>Mrs.</option><option>Ms.</option>
           </select>
           <input type="text" name="applicantNameBody" placeholder="Name" value={formData.applicantNameBody} onChange={handleChange} required />
           ,
           <select name="relation" value={formData.relation} onChange={handleChange}>
-            <option>Son</option>
-            <option>Daughter</option>
+            <option>Son</option><option>Daughter</option>
           </select>
           of
-          <select name="fatherTitle" value={formData.fatherTitle} onChange={handleChange}>
-            <option>Mr.</option>
-          </select>
+          <select name="fatherTitle" value={formData.fatherTitle} onChange={handleChange}><option>Mr.</option></select>
           <input type="text" name="fatherName" placeholder="Father's Name" value={formData.fatherName} onChange={handleChange} required />
           and
-          <select name="motherTitle" value={formData.motherTitle} onChange={handleChange}>
-            <option>Mrs.</option>
-          </select>
+          <select name="motherTitle" value={formData.motherTitle} onChange={handleChange}><option>Mrs.</option></select>
           <input type="text" name="motherName" placeholder="Mother's Name" value={formData.motherName} onChange={handleChange} required />
           ,
-          <select name="residencyType" value={formData.residencyType} onChange={handleChange}>
-            <option>permanent</option>
-            <option>temporary</option>
-          </select>
+          <select name="residencyType" value={formData.residencyType} onChange={handleChange}><option>permanent</option><option>temporary</option></select>
           resident of
-          <select name="municipality" value={formData.municipality} onChange={handleChange}>
-            <option>Nagarjun Municipality</option>
-          </select>
+          <select name="municipality" value={formData.municipality} onChange={handleChange}><option>Nagarjun Municipality</option></select>
           Ward No.
-          <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-          </select>
+          <select name="wardNo" value={formData.wardNo} onChange={handleChange}><option>1</option><option>2</option><option>3</option></select>
           ,
-          <input type="text" name="district" value={formData.district} onChange={handleChange} />
-          ,
-          <input type="text" name="country" value={formData.country} onChange={handleChange} />
-          .
-          <select name="applicantTitle" value={formData.applicantTitle} onChange={handleChange}>
-            <option>Mr.</option>
-            <option>Mrs.</option>
-            <option>Ms.</option>
-          </select>
+          <input type="text" name="district" value={formData.district} onChange={handleChange} />,
+          <input type="text" name="country" value={formData.country} onChange={handleChange} />.
+          <br />
+          <select name="applicantTitle" value={formData.applicantTitle} onChange={handleChange}><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select>
           <input type="text" name="applicantNameAgain" placeholder="Applicant Name" value={formData.applicantNameAgain} onChange={handleChange} required />
           has been involving in following occupations.
         </p>
@@ -172,28 +171,18 @@ const CertificateOfOccupation = () => {
             </tr>
           </thead>
           <tbody>
-            {occupations.map((item, index) => (
+            {occupations.map((item, idx) => (
               <tr key={item.id}>
-                <td>{index + 1}</td>
+                <td>{idx + 1}</td>
                 <td className="owner-name-cell">
-                  <select name="ownerTitle" value={item.ownerTitle} onChange={(e) => handleOccupationChange(index, e)}>
-                    <option>Mr.</option>
-                    <option>Mrs.</option>
-                    <option>Ms.</option>
+                  <select name="ownerTitle" value={item.ownerTitle} onChange={(e) => handleOccupationChange(idx, e)}>
+                    <option>Mr.</option><option>Mrs.</option><option>Ms.</option>
                   </select>
-                  <input type="text" name="ownerName" value={item.ownerName} onChange={(e) => handleOccupationChange(index, e)} required />
+                  <input type="text" name="ownerName" value={item.ownerName} onChange={(e) => handleOccupationChange(idx, e)} required />
                 </td>
-                <td>
-                  <input type="text" name="relationship" value={item.relationship} onChange={(e) => handleOccupationChange(index, e)} required />
-                </td>
-                <td>
-                  <input type="text" name="occupation" value={item.occupation} onChange={(e) => handleOccupationChange(index, e)} required />
-                </td>
-                <td>
-                  {index === occupations.length - 1 && (
-                    <button type="button" onClick={addOccupationRow} className="add-btn">+</button>
-                  )}
-                </td>
+                <td><input type="text" name="relationship" value={item.relationship} onChange={(e) => handleOccupationChange(idx, e)} required /></td>
+                <td><input type="text" name="occupation" value={item.occupation} onChange={(e) => handleOccupationChange(idx, e)} required /></td>
+                <td>{idx === occupations.length - 1 && <button type="button" onClick={addOccupationRow} className="add-btn">+</button>}</td>
               </tr>
             ))}
           </tbody>
@@ -224,12 +213,12 @@ const CertificateOfOccupation = () => {
           </div>
           <div className="form-group-column">
             <label>Applicant Phone Number *</label>
-            <input type="text" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
+            <input type="tel" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
           </div>
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">Save and Print Record</button>
+          <button type="submit" className="submit-btn" disabled={loading}>{loading ? "Saving..." : "Save and Print Record"}</button>
         </div>
       </form>
     </div>
