@@ -1281,6 +1281,31 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"bank-account-for-social-security": {
+  "table": "BankAccountForSocialSecurity",
+  "columns": [
+    "date",
+    "letter_no",
+    "chalani_no",
+    "former_vdc_mun",
+    "former_ward",
+    "current_municipality",
+    "current_ward",
+    "person_name",
+    "relation_type",
+    "relative_name",
+    "social_security_type",
+    "reason_text",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
