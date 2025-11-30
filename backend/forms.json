@@ -1386,6 +1386,34 @@
     "applicant_citizenship",
     "applicant_phone"
   ]
+},
+
+"req-for-help-in-health": {
+  "table": "req_for_help_in_health",
+  "columns": [
+    "chalani_no",
+    "letter_no",
+    "date",
+    "addressee_line1",
+    "addressee_line2",
+    "municipality",
+    "former_area",
+    "former_ward",
+    "person_title",
+    "person_name",
+    "annual_income",
+    "relation",
+    "condition_description",
+    "hospital_name",
+    "treatment_cost_estimate",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
