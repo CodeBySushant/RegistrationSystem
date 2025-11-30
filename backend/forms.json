@@ -1552,6 +1552,31 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"scholarship-recommendation": {
+  "table": "ScholarshipRecommendation",
+  "columns": [
+    "letter_no",
+    "chalani_no",
+    "date",
+    "sabik_place",
+    "ward_no",
+    "residency_type",
+    "father_name",
+    "mother_name",
+    "household_economic_status",
+    "child_relation",        
+    "child_title",            
+    "child_name",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
