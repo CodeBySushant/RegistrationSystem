@@ -1668,6 +1668,35 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"certificate-of-occupation": {
+  "title": "Certificate Of Occupation",
+  "table": "certificate_of_occupation",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "fatherTitle",
+    "fatherName",
+    "motherTitle",
+    "motherName",
+    "residencyType",
+    "municipality",
+    "wardNo",
+    "district",
+    "country",
+    "applicantNameAgain",
+    "table_rows",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
