@@ -1577,7 +1577,30 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"address-verification": {
+  "title": "Address Verification",
+  "table": "address_verification",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "govLocation",
+    "oldWardNo",
+    "newWardNo",
+    "newMunicipality",
+    "newDistrict",
+    "newProvince",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
+
+
 
 
 
