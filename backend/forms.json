@@ -1140,7 +1140,25 @@
     "applicant_citizenship",
     "applicant_phone"
   ]
+},
+
+"business-industry-registration-new-list": {
+  "table": "BusinessIndustryRegistrationNewList",
+  "columns": [
+    "sn",
+    "regDate",
+    "regNo",
+    "businessName",
+    "ownerName",
+    "address",
+    "capital",
+    "renewDate",
+    "type",
+    "status",
+    "notes"
+  ]
 }
+
 
 
 
