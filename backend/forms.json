@@ -811,6 +811,37 @@
     "applicant_citizen_no",
     "applicant_phone"
   ]
+},
+
+"industry-period-summary": {
+  "table": "IndustryPeriodSummary",
+  "columns": [
+    "industry_name",
+    "industry_address",
+    "period_from",
+    "period_to",
+    "fiscal_year",
+    "registration_date",
+    "industry_type",
+    "establishment_date",
+    "operation_duration",
+    "production_items",
+    "raw_materials",
+    "export_country",
+    "export_amount",
+    "export_quantity",
+    "government_benefits",
+    "other_resources",
+    "manpower",
+    "environmental_measures",
+    "prepared_by",
+    "opened_by",
+    "prepared_by_role",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizen_no",
+    "applicant_phone"
+  ]
 }
 
 
