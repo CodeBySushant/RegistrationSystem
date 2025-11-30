@@ -1527,6 +1527,31 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"new-class-recommendation": {
+  "table": "NewClassRecommendation",
+  "columns": [
+    "letter_no",
+    "chalani_no",
+    "date",
+    "municipality",
+    "ward_no",
+    "school_location",
+    "applicant_name",
+    "class_requested",
+    "rule_title",
+    "rule_schedule",
+    "rule_section",
+    "infrastructure_summary",
+    "signature_name",
+    "designation",
+    "applicant_name_final",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
