@@ -1697,6 +1697,42 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"digital-verification": {
+  "title": "Digital Verification Certificate",
+  "table": "digital_verification",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "guardianTitle",
+    "guardianName",
+    "motherName",
+    "residencyType",
+    "municipality",
+    "wardNo1",
+    "prevDesignation",
+    "prevWardNo",
+    "prevDistrict",
+    "district",
+    "city",
+    "country",
+    "purpose",
+    "destination",
+    "contactName",
+    "contactDesignation",
+    "contactNumber",
+    "contactEmail",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
