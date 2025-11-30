@@ -925,6 +925,36 @@
     "applicant_citizenship",
     "applicant_phone"
   ]
+},
+
+"new-business-pannumber": {
+  "table": "NewBusinessPannumber",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "to_line1",
+    "to_line2",
+    "ward",
+    "sabik_ward",
+    "resident_name",
+    "resident_from",
+    "resident_to",
+    "firm_name",
+    "proprietor_name",
+    "proprietor_citizen_no",
+    "proprietor_address",
+    "firm_address",
+    "firm_capital",
+    "firm_purpose",
+    "notes",
+    "sign_name",
+    "sign_position",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone"
+  ]
 }
 
 
