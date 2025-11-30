@@ -785,6 +785,32 @@
     "applicant_citizen_no",
     "applicant_phone"
   ]
+},
+
+"industry-form-cancellation": {
+  "table": "IndustryFormCancellation",
+  "columns": [
+    "date",
+    "to_line1",
+    "to_line2",
+    "reg_certificate_date",
+    "province",
+    "district",
+    "municipality",
+    "ward",
+    "industry_location",
+    "started_date",
+    "closed_date",
+    "reason_short",
+    "reason_long",
+    "signature",
+    "signer_name",
+    "signer_position",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizen_no",
+    "applicant_phone"
+  ]
 }
 
 
