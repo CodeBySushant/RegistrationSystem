@@ -1338,7 +1338,34 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"lekha-parikshyan": {
+  "table": "lekha_parikshyan",
+  "columns": [
+    "chalani_no",
+    "subject_to",
+    "subject_org",
+    "office_name",
+    "ward_no",
+    "organization_name",
+    "organization_extra",
+    "fiscal_year",
+    "auditor_name",
+    "auditor_certificate_no",
+    "organization_reg_no",
+    "auditor_org_name",
+    "auditor_org_extra",
+    "bodartha",
+    "signature_name",
+    "designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone"
+  ]
 }
+
 
 
 
