@@ -1226,6 +1226,24 @@
     "status",
     "notes"
   ]
+},
+
+"business-reg-renew-completed": {
+  "table": "BusinessRegRenewCompleted",
+  "columns": [
+    "sn",
+    "regDate",
+    "regNo",
+    "businessName",
+    "ownerName",
+    "address",
+    "lastRenewalDate",
+    "renewalPeriod",
+    "renewalRate",
+    "renewalVoucher",
+    "status",
+    "notes"
+  ]
 }
 
 
