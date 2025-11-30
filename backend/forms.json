@@ -1058,6 +1058,25 @@
     "applicant_citizenship",
     "applicant_phone"
   ]
+},
+
+"tax-clear-certificate": {
+  "table": "TaxClearanceCertificate",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "to_line1",
+    "to_line2",
+    "subject_person_name",
+    "fiscal_details",
+    "officer_name",
+    "officer_post",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone"
+  ]
 }
 
 
