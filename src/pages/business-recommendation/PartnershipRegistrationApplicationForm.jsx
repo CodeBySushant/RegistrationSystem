@@ -1,299 +1,264 @@
-// 12
-import React from "react";
+import React, { useState } from "react";
 import "./PartnershipRegistrationApplicationForm.css";
 
-function PartnershipRegistrationApplicationForm() {
+export default function PartnershipRegistrationApplicationForm() {
+  const [form, setForm] = useState({
+    date: "",
+    to_line1: "",
+    to_line2: "",
+    firm_name_np: "",
+    firm_name_en: "",
+    firm_address_full: "",
+    firm_nature: "",
+    partnership_duration_years: "",
+    firm_phone: "",
+    firm_email: "",
+    firm_category: "सानो",
+    partners: [
+      // default one partner
+      { name: "", father_or_spouse: "", address: "", age: "", investment: "", share_percent: "" }
+    ],
+    partners_guardian_info: [],     // optional array for guardians/tirpura style
+    first_registration_info: "",
+    representative_name: "",
+    name_registered_date: "",
+    firm_start_date: "",
+    office_check_officer: "",
+    report_received_date: "",
+    inspection_table: [],           // rows for office use
+    deed_signature: "",
+    deed_holder_name: "",
+    deed_date: "",
+    deed_year: "",
+    deed_month: "",
+    deed_day: "",
+    applicant_name: "",
+    applicant_address: "",
+    applicant_citizenship: "",
+    applicant_phone: ""
+  });
+
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const update = (key, value) => setForm(s => ({ ...s, [key]: value }));
+
+  // helpers for arrays
+  const updatePartner = (idx, key, value) => {
+    setForm(s => {
+      const copy = [...s.partners];
+      copy[idx] = { ...copy[idx], [key]: value };
+      return { ...s, partners: copy };
+    });
+  };
+  const addPartner = () => setForm(s => ({ ...s, partners: [...s.partners, { name: "", father_or_spouse: "", address: "", age: "", investment: "", share_percent: "" }] }));
+  const removePartner = (idx) => setForm(s => ({ ...s, partners: s.partners.filter((_, i) => i !== idx) }));
+
+  const validate = () => {
+    if (!form.applicant_name?.trim()) return "निवेदकको नाम आवश्यक छ";
+    if (!form.applicant_citizenship?.trim()) return "नागरिकता नं आवश्यक छ";
+    // require at least one partner name
+    if (!form.partners.some(p => p.name && p.name.trim())) return "कम्तिमा एक साझेदारको नाम आवश्यक छ";
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const err = validate();
+    if (err) { alert(err); return; }
+    if (submitting) return;
+    setSubmitting(true);
+    setMessage(null);
+
+    try {
+      // prepare payload - stringify arrays so MySQL JSON/text column can accept
+      const payload = { ...form,
+        partners: JSON.stringify(form.partners),
+        partners_guardian_info: JSON.stringify(form.partners_guardian_info || []),
+        inspection_table: JSON.stringify(form.inspection_table || [])
+      };
+      // normalize empty strings to null
+      Object.keys(payload).forEach(k => { if (payload[k] === "") payload[k] = null; });
+
+      const res = await fetch("/api/forms/partnership-registration-application-form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message || `Server returned ${res.status}`);
+      }
+
+      const data = await res.json();
+      setMessage({ type: "success", text: `सेभ भयो (id: ${data.id})` });
+
+      // optional reset
+      setForm({
+        date: "",
+        to_line1: "",
+        to_line2: "",
+        firm_name_np: "",
+        firm_name_en: "",
+        firm_address_full: "",
+        firm_nature: "",
+        partnership_duration_years: "",
+        firm_phone: "",
+        firm_email: "",
+        firm_category: "सानो",
+        partners: [{ name: "", father_or_spouse: "", address: "", age: "", investment: "", share_percent: "" }],
+        partners_guardian_info: [],
+        first_registration_info: "",
+        representative_name: "",
+        name_registered_date: "",
+        firm_start_date: "",
+        office_check_officer: "",
+        report_received_date: "",
+        inspection_table: [],
+        deed_signature: "",
+        deed_holder_name: "",
+        deed_date: "",
+        deed_year: "",
+        deed_month: "",
+        deed_day: "",
+        applicant_name: "",
+        applicant_address: "",
+        applicant_citizenship: "",
+        applicant_phone: ""
+      });
+    } catch (err) {
+      setMessage({ type: "error", text: err.message });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="praf-page">
-      {/* Top bar */}
-      <header className="praf-topbar">
-        <div className="praf-top-left">साझेदारी रजिष्ट्रेशन गर्ने दरखास्त फाराम</div>
-        <div className="praf-top-right">
-          अवलोकन पृष्ठ / साझेदारी रजिष्ट्रेशन गर्ने दरखास्त फाराम
-        </div>
-      </header>
-
-      {/* Main paper */}
-      <div className="praf-paper">
-        {/* Header title */}
+      <form className="praf-paper" onSubmit={handleSubmit}>
         <h2 className="praf-main-title">साझेदारी रजिष्ट्रेशन गर्ने दरखास्त फाराम</h2>
 
-        {/* Date row */}
-        <div className="praf-date-row">
-          मिति : <input type="text" className="praf-date-input" />
-        </div>
+        <div className="praf-date-row">मिति : <input value={form.date} onChange={e => update("date", e.target.value)} className="praf-date-input" /></div>
 
-        {/* To section */}
         <div className="praf-to-block">
           <span>श्रीमान</span>
-          <input type="text" className="praf-long-input" />
-          <br />
-          <input type="text" className="praf-long-input praf-to-second" />
+          <input value={form.to_line1} onChange={e => update("to_line1", e.target.value)} className="praf-long-input" />
+          <br/>
+          <input value={form.to_line2} onChange={e => update("to_line2", e.target.value)} className="praf-long-input praf-to-second" />
         </div>
 
-        {/* Subject */}
-        <div className="praf-subject-row">
-          <span className="praf-sub-label">विषयः</span>
-          <span className="praf-subject-text">
-            साझेदारी व्यवसाय – रजिष्ट्रेशन दर्ता बारे ।
-          </span>
-        </div>
-
-        {/* Intro paragraph */}
-        <p className="praf-body">
-          महोदय, हामी तल हस्ताक्षर कर्ता व्यक्तिहरूले विद्यमान कानुन बमोजिम
-          साझेदारी व्यवसाय सञ्चालन गर्नका लागि आवश्यक भएको सबै अन्य कागजात
-          सहित यो निवेदन गर्न आएका छौं । तदनुसार सरकारको सम्बन्धित तह एवं
-          कार्यालयबाट साझेदारी फर्म दर्ता गराई पाऊँ भनी बिनम्र अनुरोध गर्दछौं ।
-        </p>
-
-        {/* Basic firm fields */}
+        {/* basic fields */}
         <section className="praf-section">
           <div className="praf-field-row">
             <span>१) फर्मको पूरा नाम (नेपालीमा) :</span>
-            <input type="text" className="praf-wide-input" />
+            <input value={form.firm_name_np} onChange={e => update("firm_name_np", e.target.value)} className="praf-wide-input" />
           </div>
           <div className="praf-field-row">
-            <span>२) फर्मको पूरा नाम (अंग्रेजीमा) (हले भएमा) :</span>
-            <input type="text" className="praf-wide-input" />
+            <span>२) फर्मको पूरा नाम (अंग्रेजीमा) :</span>
+            <input value={form.firm_name_en} onChange={e => update("firm_name_en", e.target.value)} className="praf-wide-input" />
           </div>
           <div className="praf-field-row">
-            <span>३) फर्मको पूर्ण ठेगाना (वडा नं., टोल, नगरपालिका) :</span>
-            <input type="text" className="praf-wide-input" />
+            <span>३) फर्मको पूर्ण ठेगाना :</span>
+            <input value={form.firm_address_full} onChange={e => update("firm_address_full", e.target.value)} className="praf-wide-input" />
           </div>
           <div className="praf-field-row">
-            <span>४) साझेदारी व्यवसायको प्रकृति :</span>
-            <input type="text" className="praf-medium-input" />
-            <span>साझेदारी अवधि :</span>
-            <input type="text" className="praf-small-input" />
-            <span>वर्ष</span>
+            <span>४) फर्मको प्रकृति :</span>
+            <input value={form.firm_nature} onChange={e => update("firm_nature", e.target.value)} className="praf-medium-input" />
+            <span> अवधि (वर्ष):</span>
+            <input value={form.partnership_duration_years} onChange={e => update("partnership_duration_years", e.target.value)} className="praf-small-input" />
           </div>
           <div className="praf-field-row">
-            <span>५) फर्मको सम्पर्क फोन :</span>
-            <input type="text" className="praf-medium-input" />
+            <span>५) फर्म सम्पर्क फोन :</span>
+            <input value={form.firm_phone} onChange={e => update("firm_phone", e.target.value)} className="praf-medium-input" />
             <span>इमेल :</span>
-            <input type="text" className="praf-medium-input" />
-            <span>साझेदारी व्यवसायको वर्ग :</span>
-            <select className="praf-select">
-              <option>सानो</option>
-              <option>मझौला</option>
-              <option>ठूलो</option>
+            <input value={form.firm_email} onChange={e => update("firm_email", e.target.value)} className="praf-medium-input" />
+            <span>वर्ग :</span>
+            <select value={form.firm_category} onChange={e => update("firm_category", e.target.value)} className="praf-select">
+              <option>सानो</option><option>मझौला</option><option>ठूलो</option>
             </select>
           </div>
         </section>
 
-        {/* Partner list table */}
+        {/* partners table (editable) */}
         <section className="praf-section">
-          <h3 className="praf-subtitle">
-            ६) साझेदारहरुको नाम, ठेगाना, तथा फर्ममा लगानी स्थिति:
-          </h3>
-
+          <h3 className="praf-subtitle">साझेदारहरु</h3>
           <table className="praf-table">
             <thead>
-              <tr>
-                <th>क्र.स.</th>
-                <th>साझेदारको नाम</th>
-                <th>बाजे / बाबुको नाम</th>
-                <th>ठेगाना</th>
-                <th>उमेर</th>
-                <th>कुल लगानी (रु)</th>
-                <th>लाभांश प्रतिशत</th>
-                <th>कार्य</th>
-              </tr>
+              <tr><th>क्र.स.</th><th>नाम</th><th>बाजे/बाबु</th><th>ठेगाना</th><th>उमेर</th><th>लगानी</th><th>लाभ प्रतिशत</th><th>कार्य</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td>१</td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><button className="praf-add-btn">+</button></td>
-              </tr>
+              {form.partners.map((p, i) => (
+                <tr key={i}>
+                  <td>{i+1}</td>
+                  <td><input value={p.name} onChange={e => updatePartner(i, "name", e.target.value)} /></td>
+                  <td><input value={p.father_or_spouse} onChange={e => updatePartner(i, "father_or_spouse", e.target.value)} /></td>
+                  <td><input value={p.address} onChange={e => updatePartner(i, "address", e.target.value)} /></td>
+                  <td><input value={p.age} onChange={e => updatePartner(i, "age", e.target.value)} /></td>
+                  <td><input value={p.investment} onChange={e => updatePartner(i, "investment", e.target.value)} /></td>
+                  <td><input value={p.share_percent} onChange={e => updatePartner(i, "share_percent", e.target.value)} /></td>
+                  <td>
+                    {form.partners.length > 1 && <button type="button" onClick={() => removePartner(i)}>-</button>}
+                    {i === form.partners.length - 1 && <button type="button" onClick={addPartner}>+</button>}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </section>
 
-        {/* Guardian info */}
-        <section className="praf-section">
-          <h3 className="praf-subtitle">७) साझेदारहरूको तिरपुरा नाम, ठेगाना :</h3>
-          <table className="praf-table">
-            <thead>
-              <tr>
-                <th>क्र.स.</th>
-                <th>साझेदार</th>
-                <th>बाबुको नाम, ठेगाना</th>
-                <th>बाजेको नाम, ठेगाना</th>
-                <th>कार्य</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>१</td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><button className="praf-add-btn">+</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        {/* Existing partnership info */}
+        {/* deed & office use */}
         <section className="praf-section">
           <div className="praf-field-row">
-            <span>८) फर्म साझेदारीको पहिलो रुपमा दर्ता लागिरहेको भए सो हो भने :</span>
-            <input type="text" className="praf-wide-input" />
+            <span>१०) नाम दर्ता मिति :</span><input value={form.name_registered_date} onChange={e => update("name_registered_date", e.target.value)} className="praf-small-input" />
           </div>
           <div className="praf-field-row">
-            <span>९) फर्मको प्रतिनीधि वा मुख्य साझेदार वा साझेदारीको नाम :</span>
+            <span>११) संचालन थालिएको मिति :</span><input value={form.firm_start_date} onChange={e => update("firm_start_date", e.target.value)} className="praf-small-input" />
           </div>
-          <table className="praf-table">
-            <thead>
-              <tr>
-                <th>क्र.स.</th>
-                <th>मुख्य साझेदारको नाम</th>
-                <th>कार्य</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>१</td>
-                <td><input type="text" /></td>
-                <td><button className="praf-add-btn">+</button></td>
-              </tr>
-            </tbody>
-          </table>
 
           <div className="praf-field-row">
-            <span>१०) नाम दर्ता गरिएको मिति :</span>
-            <input type="text" className="praf-small-input" />
-          </div>
-          <div className="praf-field-row">
-            <span>११) फर्म संचालन गर्न थालिएको मिति :</span>
-            <input type="text" className="praf-small-input" />
+            <label>टिप्पणी (कार्यालयले भर्ने): जाँच अधिकारी</label>
+            <input value={form.office_check_officer} onChange={e => update("office_check_officer", e.target.value)} className="praf-medium-input" />
+            <label>रिपोर्ट प्राप्त मिति</label>
+            <input value={form.report_received_date} onChange={e => update("report_received_date", e.target.value)} className="praf-small-input" />
           </div>
         </section>
 
-        {/* Note section for office use */}
-        <section className="praf-section praf-note-section">
-          <h3 className="praf-subtitle">टिप्पणी (नगर कार्यालयको कार्यालयले मात्र भर्ने)</h3>
-          <p className="praf-note-text">
-            तालिमका सोधपुछ लगायतका विवरण र पसल साझेदारी फर्म दर्ता गर्न गराएको
-            निर्णय शीषर्क शीक्षीत र आवश्यक अन्य कागजात समेत संलग्न राखी निवेदन
-            गरिएको फर्म दर्ता गर्न रजिष्ट्रारलाई सिफारिस गरिन्छ।
-          </p>
-
-          <div className="praf-field-row">
-            <span>जाँच गर्न खटाइएको अधिकारीको नाम :</span>
-            <input type="text" className="praf-medium-input" />
-            <span>रिपोर्ट प्राप्त मिति :</span>
-            <input type="text" className="praf-small-input" />
-          </div>
-
-          <table className="praf-table">
-            <thead>
-              <tr>
-                <th>क्र.स.</th>
-                <th>साझेदार</th>
-                <th>स्थायी ठेगाना</th>
-                <th>हालको ठेगाना</th>
-                <th>नागरिकता नं.</th>
-                <th>फोन नं.</th>
-                <th>कैफियत</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>१</td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        {/* Partnership deed section */}
         <section className="praf-section">
-          <h3 className="praf-subtitle">कम्पनी / साझेदारीनामामा फाराम</h3>
-          <p className="praf-body">
-            विद्यमान दशाबाट उक्त फर्मदर्ता आवेदनपत्र प्राप्त भएको मितिले
-            सम्बन्धित कार्यालयबाट जाँच गरी साझेदार फर्म दर्ता गर्नुपर्ने भएको
-            हुँदा यो निवेदन पेश गरेको छु / छौं । यहाँ दिएको विवरण साँचो छ भनी
-            सोझाइन्छ र समय सीमा भित्र फर्म दर्ता गराउनुहुन अनुरोध गर्दछौं ।
-          </p>
-
-          <ol className="praf-points">
-            <li>फर्मको नाम, उद्देश्य तथा कारोबारको किसिम स्पष्ट वर्णन गरिएको।</li>
-            <li>प्रत्येक साझेदारको लगानीको रकम र लाभांशको प्रतिशत उल्लेख गरिएको।</li>
-            <li>साझेदारको दायित्व र अधिकारको व्यवस्था गरिएको।</li>
-            <li>फर्म चलाउने म्याद, खारेजको अवस्था, नयाँ साझेदार थप/हटाउने तरिका इत्यादि।</li>
-          </ol>
-
           <div className="praf-field-row">
             <span>दस्तखत :</span>
-            <input type="text" className="praf-medium-input" />
+            <input value={form.deed_signature} onChange={e => update("deed_signature", e.target.value)} className="praf-medium-input" />
           </div>
           <div className="praf-field-row">
-            <span>प्रोप्राइटर / साझेदारको पुरा नाम :</span>
-            <input type="text" className="praf-medium-input" />
+            <span>प्रोपाइटर/साझेदार पुरा नाम :</span>
+            <input value={form.deed_holder_name} onChange={e => update("deed_holder_name", e.target.value)} className="praf-medium-input" />
           </div>
-
           <div className="praf-field-row">
             <span>हस्ती मानेको मिति :</span>
-            <input type="text" className="praf-small-input" />
-            <span>साल :</span>
-            <input type="text" className="praf-small-input" />
-            <span>महिना :</span>
-            <input type="text" className="praf-small-input" />
-            <span>गते रोज :</span>
-            <input type="text" className="praf-small-input" />
+            <input value={form.deed_date} onChange={e => update("deed_date", e.target.value)} className="praf-small-input" />
+            <span>साल :</span><input value={form.deed_year} onChange={e => update("deed_year", e.target.value)} className="praf-small-input" />
+            <span>महिना :</span><input value={form.deed_month} onChange={e => update("deed_month", e.target.value)} className="praf-small-input" />
+            <span>गते रोज :</span><input value={form.deed_day} onChange={e => update("deed_day", e.target.value)} className="praf-small-input" />
           </div>
         </section>
 
-        {/* Applicant details */}
+        {/* applicant */}
         <section className="praf-section">
           <h3 className="praf-subtitle">निवेदकको विवरण</h3>
           <div className="praf-applicant-box">
-            <div className="praf-field">
-              <label>निवेदकको नाम *</label>
-              <input type="text" />
-            </div>
-            <div className="praf-field">
-              <label>निवेदकको ठेगाना *</label>
-              <input type="text" />
-            </div>
-            <div className="praf-field">
-              <label>निवेदकको नागरिकता नं. *</label>
-              <input type="text" />
-            </div>
-            <div className="praf-field">
-              <label>निवेदकको फोन नं. *</label>
-              <input type="text" />
-            </div>
+            <div className="praf-field"><label>निवेदकको नाम *</label><input value={form.applicant_name} onChange={e => update("applicant_name", e.target.value)} /></div>
+            <div className="praf-field"><label>ठेगाना *</label><input value={form.applicant_address} onChange={e => update("applicant_address", e.target.value)} /></div>
+            <div className="praf-field"><label>नागरिकता नं. *</label><input value={form.applicant_citizenship} onChange={e => update("applicant_citizenship", e.target.value)} /></div>
+            <div className="praf-field"><label>फोन नं. *</label><input value={form.applicant_phone} onChange={e => update("applicant_phone", e.target.value)} /></div>
           </div>
         </section>
 
-        {/* Submit button */}
         <div className="praf-submit-row">
-          <button className="praf-submit-btn">
-            रेकर्ड सेभ र प्रिन्ट गर्नुहोस्
-          </button>
+          <button className="praf-submit-btn" type="submit" disabled={submitting}>{submitting ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}</button>
         </div>
-      </div>
 
-      {/* Footer */}
-      <footer className="praf-footer">
-        © सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः
-      </footer>
+        {message && <div className={`praf-message ${message.type === "error" ? "error" : "success"}`}>{message.text}</div>}
+      </form>
     </div>
   );
 }
-
-export default PartnershipRegistrationApplicationForm;

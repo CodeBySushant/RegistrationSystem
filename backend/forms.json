@@ -955,6 +955,42 @@
     "applicant_citizenship",
     "applicant_phone"
   ]
+},
+
+"partnership-registration-application-form": {
+  "table": "PartnershipRegistrationApplicationForm",
+  "columns": [
+    "date",
+    "to_line1",
+    "to_line2",
+    "firm_name_np",
+    "firm_name_en",
+    "firm_address_full",
+    "firm_nature",
+    "partnership_duration_years",
+    "firm_phone",
+    "firm_email",
+    "firm_category",
+    "partners",
+    "partners_guardian_info",
+    "first_registration_info",
+    "representative_name",
+    "name_registered_date",
+    "firm_start_date",
+    "office_check_officer",
+    "report_received_date",
+    "inspection_table",
+    "deed_signature",
+    "deed_holder_name",
+    "deed_date",
+    "deed_year",
+    "deed_month",
+    "deed_day",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone"
+  ]
 }
 
 
