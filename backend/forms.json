@@ -842,6 +842,37 @@
     "applicant_citizen_no",
     "applicant_phone"
   ]
+},
+
+"industry-registration-recommendation": {
+  "table": "IndustryRegistrationRecommendation",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "to_line1",
+    "to_line2",
+    "sabik_district",
+    "sabik_ward_no",
+    "current_residence",
+    "residence_from",
+    "residence_to",
+    "place_details",
+    "kitta_no",
+    "area_size",
+    "boundary_east",
+    "boundary_west",
+    "boundary_north",
+    "boundary_south",
+    "structure_types",
+    "inspection_notes",
+    "sign_name",
+    "sign_position",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone"
+  ]
 }
 
 
