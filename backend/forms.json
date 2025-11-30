@@ -1024,6 +1024,40 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"shop-registration-form": {
+  "table": "ShopRegistrationForm",
+  "columns": [
+    "date",
+    "refLetterNo",
+    "chalaniNo",
+    "to_office",
+    "to_office_extra",
+    "district",
+    "municipality",
+    "ward",
+    "sabik",
+    "sabik_no",
+    "owner_age",
+    "resident_name",
+    "on_behalf_of",
+    "registration_no",
+    "land_kitta_no",
+    "land_place",
+    "operation_from",
+    "operation_to",
+    "short_ref",
+    "boundary_kitta",
+    "owner_cert_kitta",
+    "prev_ward_no",
+    "location_description",
+    "post_name",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship",
+    "applicant_phone"
+  ]
 }
 
 
