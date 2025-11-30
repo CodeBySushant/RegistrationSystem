@@ -1630,9 +1630,45 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"birthdate-verification": {
+  "title": "Birth Date Verification",
+  "table": "birthdate_verification",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "fatherTitle",
+    "fatherName",
+    "motherTitle",
+    "motherName",
+    "residencyType",
+    "municipality",
+    "wardNo1",
+    "district1",
+    "country1",
+    "vdc",
+    "wardNo2",
+    "district2",
+    "pronoun",
+    "certificateType",
+    "issuedBy",
+    "issuedDistrict",
+    "issuedCountry",
+    "pronoun2",
+    "dobBS",
+    "dobAD",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
-
-
 
 
 
