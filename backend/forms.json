@@ -1445,6 +1445,39 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"social-security-via-guardian": {
+  "table": "social_security_via_guardian",
+  "columns": [
+    "letter_no",
+    "chalani_no",
+    "date",
+    "addressee_line1",
+    "addressee_line2",
+    "applicant_name",
+    "ward_chairman_name",
+    "beneficiary_name",
+    "guardian_relation",
+    "guardian_name",
+    "ben_name",
+    "ben_issue_district",
+    "ben_issue_date",
+    "ben_citizenship_no",
+    "ben_account_no",
+    "grd_name",
+    "grd_issue_district",
+    "grd_issue_date",
+    "grd_citizenship_no",
+    "grd_account_no",
+    "signature_name",
+    "designation",
+    "applicant_box_name",
+    "applicant_box_address",
+    "applicant_box_citizenship",
+    "applicant_box_phone",
+    "notes"
+  ]
 }
 
 
