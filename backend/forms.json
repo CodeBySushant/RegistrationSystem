@@ -1926,6 +1926,50 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"same-person-certificate": {
+  "title": "Same Person Certificate",
+  "table": "same_person_certificate",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "applicantRelation",
+    "applicantGuardianTitle",
+    "applicantGuardianName",
+    "municipality",
+    "wardNo",
+    "district",
+    "province",
+    "doc1Source",
+    "doc1NameTitle",
+    "doc1Name",
+    "doc2Source",
+    "doc2NameTitle",
+    "doc2Name",
+    "doc2Relation",
+    "doc2GuardianTitle",
+    "doc2GuardianName",
+    "doc3Source",
+    "doc4Source",
+    "doc4NameTitle",
+    "doc4Name",
+    "doc4Relation",
+    "doc4GuardianTitle",
+    "doc4GuardianName",
+    "finalName1Title",
+    "finalName1",
+    "finalName2Title",
+    "finalName2",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
