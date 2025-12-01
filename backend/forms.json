@@ -1807,8 +1807,37 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
-}
+},
 
+"occupation-verification": {
+  "title": "Occupation Verification",
+  "table": "occupation_verification",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "fatherTitle",
+    "fatherName",
+    "motherTitle",
+    "motherName",
+    "residencyType",
+    "wardNo",
+    "municipality",
+    "district",
+    "prevVDC",
+    "prevWardNo",
+    "prevDistrict",
+    "occupation",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
+}
 
 
 
