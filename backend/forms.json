@@ -2184,12 +2184,35 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"occupation-verification-new": {
+  "table": "occupation_verification_new",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "fatherTitle",
+    "fatherName",
+    "residencyType",
+    "municipality",
+    "wardNo",
+    "prevAddress1",
+    "prevWardNo",
+    "prevAddress2",
+    "prevProvince",
+    "prevCountry",
+    "description",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
-
-
-
-
-
 
 
 
