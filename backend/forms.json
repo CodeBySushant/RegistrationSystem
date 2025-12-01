@@ -2143,6 +2143,47 @@
     "applicantPhone",
     "table_rows"
   ]
+},
+
+"birth-certificate-new": {
+  "table": "birth_certificate_new",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "childTitle",
+    "childName",
+    "relation",
+    "fatherTitle",
+    "fatherName",
+    "motherTitle",
+    "motherName",
+    "municipality",
+    "wardNo",
+    "prevAddress1",
+    "prevWardNo",
+    "prevAddress2",
+    "prevProvince",
+    "prevCountry",
+    "dobBS",
+    "dobAD",
+    "birthMunicipality",
+    "birthWardNo",
+    "birthPrevAddress1",
+    "birthPrevWardNo",
+    "birthPrevAddress2",
+    "birthPrevProvince",
+    "birthPrevCountry",
+    "recordLocation",
+    "recordWardNo",
+    "recordOffice",
+    "imageBoxTitle",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
