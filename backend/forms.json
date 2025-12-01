@@ -2212,6 +2212,37 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"surname-verification-after-marriage": {
+  "table": "surname_verification_after_marriage",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantNameBody",
+    "residencyType1",
+    "municipality1",
+    "wardNo1",
+    "district1",
+    "province1",
+    "country1",
+    "name1",
+    "name2",
+    "name3",
+    "name4",
+    "residencyType2",
+    "municipality2",
+    "wardNo2",
+    "district2",
+    "province2",
+    "country2",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
