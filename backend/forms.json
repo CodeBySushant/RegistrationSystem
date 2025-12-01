@@ -2243,6 +2243,30 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"surname-verification-certificate-new": {
+  "table": "surname_verification_certificate_new",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "surname1",
+    "applicantNameAgain",
+    "surname2",
+    "surnameContext",
+    "fatherName",
+    "surname3",
+    "surname4",
+    "relationship",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
