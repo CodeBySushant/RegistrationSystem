@@ -1,47 +1,93 @@
-import React, { useState } from 'react';
-import './SurnameVerificationCertificateNew.css'; // The CSS file for styling
+import React, { useState } from "react";
+import "./SurnameVerificationCertificateNew.css";
 
 const SurnameVerificationCertificateNew = () => {
   const [formData, setFormData] = useState({
-    letterNo: '2082/83',
-    refNo: '',
-    date: '2025-11-01',
-    applicantTitle: 'Mr.',
-    applicantNameBody: 'Manjit Thapa Magar (Appli',
-    surname1: 'Thapa Magar',
-    applicantNameAgain: 'Mr. Manjit Thapa Magar',
-    surname2: 'Thapa',
-    surnameContext: 'cl',
-    fatherName: 'Late Min Bahadur Thapa',
-    surname3: 'Thapa Magar',
-    surname4: 'Thapa',
-    relationship: 'son',
-    designation: '',
-    applicantName: '',
-    applicantAddress: '',
-    applicantCitizenship: '',
-    applicantPhone: '',
+    letterNo: "2082/83",
+    refNo: "",
+    date: "2025-11-01",
+    applicantTitle: "Mr.",
+    applicantNameBody: "Manjit Thapa Magar (Appli",
+    surname1: "Thapa Magar",
+    applicantNameAgain: "Mr. Manjit Thapa Magar",
+    surname2: "Thapa",
+    surnameContext: "cl",
+    fatherName: "Late Min Bahadur Thapa",
+    surname3: "Thapa Magar",
+    surname4: "Thapa",
+    relationship: "son",
+    designation: "",
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    const required = [
+      "applicantNameBody",
+      "surname1",
+      "applicantNameAgain",
+      "surname2",
+      "fatherName",
+      "surname3",
+      "surname4",
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
+      "designation",
+    ];
+    for (const k of required) {
+      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+    }
+    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
+      return { ok: false, missing: "applicantPhone (invalid)" };
+    }
+    return { ok: true };
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Surname Verification Form Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    const v = validate();
+    if (!v.ok) {
+      alert("Please fill/validate field: " + v.missing);
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = { ...formData };
+      const res = await fetch("/api/forms/surname-verification-certificate-new", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || `Server returned ${res.status}`);
+      }
+      const body = await res.json();
+      alert("Saved successfully (id: " + body.id + ")");
+      setTimeout(() => window.print(), 250);
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Failed to save: " + (err.message || "unknown error"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="surname-verification-new-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          {/* Replace with your logo path */}
           <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
           <h1>Nagarjun Municipality</h1>
           <h2>1 No. Ward Office</h2>
@@ -52,38 +98,23 @@ const SurnameVerificationCertificateNew = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input
-              type="text"
-              name="letterNo"
-              value={formData.letterNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
           </div>
           <div className="form-group">
             <label>Date:</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="date" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
+
         <div className="form-row">
           <div className="form-group">
             <label>Ref No.:</label>
-            <input
-              type="text"
-              name="refNo"
-              value={formData.refNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>Subject: <u>Surname Verification Certifi</u></strong>
-          <br />
+          <strong>Subject: <u>Surname Verification Certificate</u></strong><br />
           <strong><u>TO WHOM IT MAY CONCERN</u></strong>
         </div>
 
@@ -94,28 +125,20 @@ const SurnameVerificationCertificateNew = () => {
             <option>Mrs.</option>
             <option>Ms.</option>
           </select>
-          <input type="text" name="applicantNameBody" value={formData.applicantNameBody} onChange={handleChange} required />
-          ,to verify the family surname and this is verified that there is
-          "
-          <input type="text" name="surname1" value={formData.surname1} onChange={handleChange} required />
-          " in the name of
-          <input type="text" name="applicantNameAgain" value={formData.applicantNameAgain} onChange={handleChange} required />
-          and there is "
-          <input type="text" name="surname2" value={formData.surname2} onChange={handleChange} required />
-          " in fathers' surname,
-          <input type="text" name="surnameContext" value={formData.surnameContext} onChange={handleChange} required />
-          "
-          <input type="text" name="fatherName" value={formData.fatherName} onChange={handleChange} required />
-          ". However, it is verified that "
-          <input type="text" name="surname3" value={formData.surname3} onChange={handleChange} required />
-          " and "
-          <input type="text" name="surname4" value={formData.surname4} onChange={handleChange} required />
-          " are similar surnames and they are father and
+          <input type="text" name="applicantNameBody" value={formData.applicantNameBody} onChange={handleChange} required /> ,
+          to verify the family surname and this is verified that "
+          <input type="text" name="surname1" value={formData.surname1} onChange={handleChange} required /> "
+          in the name of
+          <input type="text" name="applicantNameAgain" value={formData.applicantNameAgain} onChange={handleChange} required /> and there is "
+          <input type="text" name="surname2" value={formData.surname2} onChange={handleChange} required /> " in father's surname,
+          <input type="text" name="surnameContext" value={formData.surnameContext} onChange={handleChange} required /> "
+          <input type="text" name="fatherName" value={formData.fatherName} onChange={handleChange} required /> ". However, it is verified that "
+          <input type="text" name="surname3" value={formData.surname3} onChange={handleChange} required /> " and "
+          <input type="text" name="surname4" value={formData.surname4} onChange={handleChange} required /> " are similar surnames and they are father and
           <select name="relationship" value={formData.relationship} onChange={handleChange}>
             <option>son</option>
             <option>daughter</option>
-          </select>
-          . It is requested to forward document without any hesitation.
+          </select>. It is requested to forward document without any hesitation.
         </p>
 
         <div className="designation-section">
@@ -148,7 +171,9 @@ const SurnameVerificationCertificateNew = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">Save and Print Record</button>
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save and Print Record"}
+          </button>
         </div>
       </form>
     </div>
