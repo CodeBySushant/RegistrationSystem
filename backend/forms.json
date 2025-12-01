@@ -2043,6 +2043,40 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"unmarried-verification": {
+  "title": "Unmarried Verification",
+  "table": "unmarried_verification",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "fatherTitle",
+    "fatherName",
+    "motherTitle",
+    "motherName",
+    "docType",
+    "docNo",
+    "residencyType",
+    "municipality",
+    "wardNo1",
+    "district1",
+    "country1",
+    "prevDesignation",
+    "prevWardNo",
+    "prevDistrict",
+    "pronoun",
+    "asOfDate",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
