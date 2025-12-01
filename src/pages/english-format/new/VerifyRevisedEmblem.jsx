@@ -1,49 +1,98 @@
-import React, { useState } from 'react';
-import './VerifyRevisedEmblem.css'; // The CSS file for styling
+import React, { useState } from "react";
+import "./VerifyRevisedEmblem.css";
 
 const VerifyRevisedEmblem = () => {
   const [formData, setFormData] = useState({
-    letterNo: '2082/83',
-    refNo: '',
-    date: '2025-11-01',
-    billName: '',
-    amendmentName: '',
-    mapLocation: '',
-    stampLocation: 'Stamp of our Ward Office',
-    villageName: '',
-    stampMunicipality: 'Nagarjun Municipality',
-    stampWardNo: '1',
-    provinceNameLetterhead: '',
-    provinceNameStamp: 'Nagarjun Municipality',
-    stampWardNo2: '1',
-    wardOfficeName1: '',
-    wardOfficeName2: '',
-    designation: '',
-    applicantName: '',
-    applicantAddress: '',
-    applicantCitizenship: '',
-    applicantPhone: '',
+    letterNo: "2082/83",
+    refNo: "",
+    date: "2025-11-01",
+    billName: "",
+    amendmentName: "",
+    mapLocation: "",
+    stampLocation: "Stamp of our Ward Office",
+    villageName: "",
+    stampMunicipality: "Nagarjun Municipality",
+    stampWardNo: "1",
+    provinceNameLetterhead: "",
+    provinceNameStamp: "Nagarjun Municipality",
+    stampWardNo2: "1",
+    wardOfficeName1: "",
+    wardOfficeName2: "",
+    designation: "",
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    const required = [
+      "billName",
+      "amendmentName",
+      "mapLocation",
+      "stampLocation",
+      "villageName",
+      "stampMunicipality",
+      "stampWardNo",
+      "provinceNameLetterhead",
+      "provinceNameStamp",
+      "wardOfficeName1",
+      "designation",
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
+    ];
+    for (const k of required) {
+      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+    }
+    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
+      return { ok: false, missing: "applicantPhone (invalid)" };
+    }
+    return { ok: true };
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Verify Revised Emblem Form Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    const v = validate();
+    if (!v.ok) {
+      alert("Please fill/validate field: " + v.missing);
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = { ...formData };
+      const res = await fetch("/api/forms/verify-revised-emblem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || `Server returned ${res.status}`);
+      }
+      const body = await res.json();
+      alert("Saved successfully (id: " + body.id + ")");
+      setTimeout(() => window.print(), 200);
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Failed to save: " + (err.message || "unknown error"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="verify-emblem-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          {/* Replace with your logo path */}
           <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
           <h1>Nagarjun Municipality</h1>
           <h2>1 No. Ward Office</h2>
@@ -54,78 +103,45 @@ const VerifyRevisedEmblem = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input
-              type="text"
-              name="letterNo"
-              value={formData.letterNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
           </div>
           <div className="form-group">
             <label>Date:</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="date" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
+
         <div className="form-row">
           <div className="form-group">
             <label>Ref No.:</label>
-            <input
-              type="text"
-              name="refNo"
-              value={formData.refNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>Subject: <u>Verification Revise Demblem</u></strong>
-          <br />
+          <strong>Subject: <u>Verification Revise Emblem</u></strong><br />
           <strong><u>To Whom It May Concern</u></strong>
         </div>
 
         <p className="certificate-body">
-          This certificate is issued to certify that The House of Representatives (HOR) has unanimously passed the government's constitution (2nd Amendment)
-          Bill,
-          <input type="text" name="billName" value={formData.billName} onChange={handleChange} required />
-          , which seeks to amend
-          <input type="text" name="amendmentName" value={formData.amendmentName} onChange={handleChange} required />
-          of the constitution to update the national cost of arms by
-          incorporating Limpiyadhura, Lipulekh and Kalapani in Nepal's map on
-          <input type="text" name="mapLocation" value={formData.mapLocation} onChange={handleChange} required />
-          .
+          This certificate is issued to certify that The House of Representatives (HOR) has unanimously passed the government's constitution (2nd Amendment) Bill,
+          <input type="text" name="billName" value={formData.billName} onChange={handleChange} required /> ,
+          which seeks to amend
+          <input type="text" name="amendmentName" value={formData.amendmentName} onChange={handleChange} required /> of the constitution to update the national map by
+          incorporating
+          <input type="text" name="mapLocation" value={formData.mapLocation} onChange={handleChange} required />.
           <br />
-          Although we have already changed the emblem of Nepal on the Letterhead of our ward office, because of certain inconvenience we are not able change
-          the emblem of Nepal imprinted on Stamp of our Ward Office. We are sorry for the inconvenience and will revise the imprinted emblem of Nepal on Stamp
-          of our
-          <input type="text" name="stampLocation" value={formData.stampLocation} onChange={handleChange} required />
-          as we get favorable condition.
+          Although we have already changed the emblem of Nepal on the letterhead, due to inconvenience we are not yet able to change the emblem imprinted on the
+          <input type="text" name="stampLocation" value={formData.stampLocation} onChange={handleChange} required />. We apologize and will revise it when possible.
           <br />
-          Furthermore, the village name "
-          <input type="text" name="villageName" value={formData.villageName} onChange={handleChange} required />
-          " has written in the Nepali font only and it has not written in the English font in the
-          letterhead whereas it has not written in the stamp of this
-          <input type="text" name="stampMunicipality" value={formData.stampMunicipality} onChange={handleChange} required />
-          ,
-          <input type="text" name="stampWardNo" value={formData.stampWardNo} onChange={handleChange} required />
-          No.Ward but are the genuine letterhead and stamp.
+          Furthermore, the village name "<input type="text" name="villageName" value={formData.villageName} onChange={handleChange} required />" is written in Nepali font only on the letterhead and not on the stamp of this
+          <input type="text" name="stampMunicipality" value={formData.stampMunicipality} onChange={handleChange} required /> , Ward No.
+          <input type="text" name="stampWardNo" value={formData.stampWardNo} onChange={handleChange} required /> but both are genuine.
           <br />
-          Note: The province name is written as "
-          <input type="text" name="provinceNameLetterhead" value={formData.provinceNameLetterhead} onChange={handleChange} required />
-          " in the letterhead and stamp of this
-          <input type="text" name="provinceNameStamp" value={formData.provinceNameStamp} onChange={handleChange} required />
-          ,
-          <input type="text" name="stampWardNo2" value={formData.stampWardNo2} onChange={handleChange} required />
-          No. Ward Office which can be written as "
-          <input type="text" name="wardOfficeName1" value={formData.wardOfficeName1} onChange={handleChange} required />
-          " and both are the same province.
+          Note: The province name is written as "<input type="text" name="provinceNameLetterhead" value={formData.provinceNameLetterhead} onChange={handleChange} required />" in the letterhead and as
+          "<input type="text" name="provinceNameStamp" value={formData.provinceNameStamp} onChange={handleChange} required />" on the stamp of this Ward Office (Ward No. <input type="text" name="stampWardNo2" value={formData.stampWardNo2} onChange={handleChange} required />). Both refer to the same province.
           <br />
-          We would to ratify and apologize for the inconvenience caused by this matter, please feel free to contact us for further information required in this regard.
+          We ratify and apologize for the inconvenience. For further information please contact us.
         </p>
 
         <div className="designation-section">
@@ -158,7 +174,9 @@ const VerifyRevisedEmblem = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">Save and Print Record</button>
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save and Print Record"}
+          </button>
         </div>
       </form>
     </div>

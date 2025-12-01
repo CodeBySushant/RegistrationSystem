@@ -2294,6 +2294,32 @@
     "applicantPhone",
     "table_rows"
   ]
+},
+
+"verify-revised-emblem": {
+  "table": "verify_revised_emblem",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "billName",
+    "amendmentName",
+    "mapLocation",
+    "stampLocation",
+    "villageName",
+    "stampMunicipality",
+    "stampWardNo",
+    "provinceNameLetterhead",
+    "provinceNameStamp",
+    "stampWardNo2",
+    "wardOfficeName1",
+    "wardOfficeName2",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
