@@ -2022,6 +2022,27 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"tax-clearance-certificate": {
+  "title": "Tax Clearance Certificate",
+  "table": "tax_clearance_certificate",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "ownerTitle",
+    "ownerNameBody",
+    "municipality",
+    "wardNo",
+    "district",
+    "table_rows",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
