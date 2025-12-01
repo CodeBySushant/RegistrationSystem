@@ -22,15 +22,19 @@ exports.createRecord = (req, res) => {
     // Prepare payload only for this form (do not modify other modules)
     const payload = { ...req.body };
 
-    // If table_rows (or any array/object) is present, stringify it so the DB driver
-    // receives a single value for that column (avoids value-count mismatch).
-    if (payload.table_rows && typeof payload.table_rows !== "string") {
-      try {
-        payload.table_rows = JSON.stringify(payload.table_rows);
-      } catch (e) {
-        payload.table_rows = null;
+    // === Generic: stringify any arrays/objects so the DB receives a single column value ===
+    // Skip Date objects (we want them to be passed as real dates if provided)
+    Object.keys(payload).forEach((k) => {
+      const v = payload[k];
+      if (v && typeof v === "object" && !(v instanceof Date)) {
+        try {
+          payload[k] = JSON.stringify(v);
+        } catch (e) {
+          // if stringification fails, set to null to avoid DB driver errors
+          payload[k] = null;
+        }
       }
-    }
+    });
 
     // Ensure all columns declared in forms.json exist in the payload.
     // This guarantees modelFactory will receive a values array matching the columns array.
@@ -42,13 +46,25 @@ exports.createRecord = (req, res) => {
 
     const model = createModel(meta.table, meta.columns || []);
     model.insert(payload, (err, result) => {
-      if (err) return res.status(500).json({ error: err.code, message: err.sqlMessage });
-      const id = result.insertId;
+      if (err) {
+        // Prefer returning sqlMessage where available for easier debugging
+        return res.status(500).json({ error: err.code || "INSERT_ERROR", message: err.sqlMessage || err.message });
+      }
+      const id = result && result.insertId ? result.insertId : null;
+
       // run optional hook asynchronously (don't block response)
       const h = hooks[formKey];
       if (h && typeof h.afterInsert === "function") {
-        try { h.afterInsert(id, payload); } catch (e) { console.error("hook error", e); }
+        try {
+          // call but do not await; keep it resilient
+          Promise.resolve(h.afterInsert(id, payload)).catch((hookErr) => {
+            console.error("hook error", hookErr);
+          });
+        } catch (e) {
+          console.error("hook error", e);
+        }
       }
+
       res.status(201).json({ id });
     });
   } catch (e) {
