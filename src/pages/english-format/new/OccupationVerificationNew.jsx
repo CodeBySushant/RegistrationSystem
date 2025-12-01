@@ -1,55 +1,92 @@
-import React, { useState } from 'react';
-// Renamed CSS import
-import './OccupationVerificationNew.css'; 
+import React, { useState } from "react";
+import "./OccupationVerificationNew.css";
 
-// Renamed Component
 const OccupationVerificationNew = () => {
   const [formData, setFormData] = useState({
-    letterNo: '2082/83',
-    refNo: '',
-    date: '2025-10-31',
-    applicantTitle: 'Master.',
-    applicantNameBody: '',
-    relation: 'son',
-    fatherTitle: 'Master.',
-    fatherName: '',
-    residencyType: 'permanent',
-    municipality: 'Nagarjun Municipality',
-    wardNo: '1',
-    prevAddress1: '',
-    prevWardNo: '',
-    prevAddress2: '',
-    prevProvince: 'Koshi Province',
-    prevCountry: 'Nepal',
-    description: 'is a respected person as well as one of the renowned farmer ...',
-    designation: '',
-    applicantName: '',
-    applicantAddress: '',
-    applicantCitizenship: '',
-    applicantPhone: '',
+    letterNo: "2082/83",
+    refNo: "",
+    date: "2025-10-31",
+    applicantTitle: "Master.",
+    applicantNameBody: "",
+    relation: "son",
+    fatherTitle: "Master.",
+    fatherName: "",
+    residencyType: "permanent",
+    municipality: "Nagarjun Municipality",
+    wardNo: "1",
+    prevAddress1: "",
+    prevWardNo: "",
+    prevAddress2: "",
+    prevProvince: "Koshi Province",
+    prevCountry: "Nepal",
+    description: "is a respected person as well as one of the renowned farmer ...",
+    designation: "",
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    const required = [
+      "applicantNameBody",
+      "fatherName",
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
+      "designation",
+    ];
+    for (const k of required) {
+      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+    }
+    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
+      return { ok: false, missing: "applicantPhone (invalid)" };
+    }
+    return { ok: true };
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Updated console log
-    console.log('Occupation Verification (New) Form Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    const v = validate();
+    if (!v.ok) {
+      alert("Please fill/validate field: " + v.missing);
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = { ...formData };
+      const res = await fetch("/api/forms/occupation-verification-new", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || `Server returned ${res.status}`);
+      }
+      const body = await res.json();
+      alert("Saved successfully (id: " + body.id + ")");
+      setTimeout(() => window.print(), 200);
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Failed to save: " + (err.message || "unknown error"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    // Renamed main container class
     <div className="occupation-verification-new-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          {/* Replace with your logo path */}
           <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
           <h1>Nagarjun Municipality</h1>
           <h2>1 No. Ward Office</h2>
@@ -60,37 +97,22 @@ const OccupationVerificationNew = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input
-              type="text"
-              name="letterNo"
-              value={formData.letterNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
           </div>
           <div className="form-group">
             <label>Date:</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="date" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
+
         <div className="form-row">
           <div className="form-group">
             <label>Ref No.:</label>
-            <input
-              type="text"
-              name="refNo"
-              value={formData.refNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
           </div>
         </div>
 
         <div className="subject-line">
-          {/* The subject is still "BIRTH CERTIFICATE" as per the image */ }
           <strong>Subject: <u>OCCUPATION VERIFICATION CERTIFICATE</u></strong>
           <br />
           <strong><u>TO WHOM IT MAY CONCERN</u></strong>
@@ -104,8 +126,7 @@ const OccupationVerificationNew = () => {
             <option>Miss.</option>
             <option>Mrs.</option>
           </select>
-          <input type="text" name="applicantNameBody" placeholder="Name" value={formData.applicantNameBody} onChange={handleChange} required />
-          ,
+          <input type="text" name="applicantNameBody" placeholder="Name" value={formData.applicantNameBody} onChange={handleChange} required /> ,
           <select name="relation" value={formData.relation} onChange={handleChange}>
             <option>son</option>
             <option>daughter</option>
@@ -115,8 +136,7 @@ const OccupationVerificationNew = () => {
             <option>Master.</option>
             <option>Mr.</option>
           </select>
-          <input type="text" name="fatherName" placeholder="Father's Name" value={formData.fatherName} onChange={handleChange} required />
-          ,
+          <input type="text" name="fatherName" placeholder="Father's Name" value={formData.fatherName} onChange={handleChange} required /> ,
           <select name="residencyType" value={formData.residencyType} onChange={handleChange}>
             <option>permanent</option>
             <option>temporary</option>
@@ -132,12 +152,9 @@ const OccupationVerificationNew = () => {
             <option>3</option>
           </select>
           , (Previously:
-          <input type="text" name="prevAddress1" placeholder="Address" value={formData.prevAddress1} onChange={handleChange} required />
-          Ward No.
-          <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} required />
-          ),
-          <input type="text" name="prevAddress2" placeholder="Address" value={formData.prevAddress2} onChange={handleChange} required />
-          ,
+          <input type="text" name="prevAddress1" placeholder="Address" value={formData.prevAddress1} onChange={handleChange} /> Ward No.
+          <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} /> ),
+          <input type="text" name="prevAddress2" placeholder="Address" value={formData.prevAddress2} onChange={handleChange} /> ,
           <select name="prevProvince" value={formData.prevProvince} onChange={handleChange}>
             <option>Koshi Province</option>
             <option>Bagmati Province</option>
@@ -147,14 +164,9 @@ const OccupationVerificationNew = () => {
             <option>Nepal</option>
           </select>
         </p>
+
         <div className="certificate-body">
-           <textarea
-             name="description"
-             value={formData.description}
-             onChange={handleChange}
-             rows="3"
-             required
-           ></textarea>
+          <textarea name="description" value={formData.description} onChange={handleChange} rows="3" required></textarea>
         </div>
 
         <div className="designation-section">
@@ -187,12 +199,13 @@ const OccupationVerificationNew = () => {
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">Save and Print Record</button>
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save and Print Record"}
+          </button>
         </div>
       </form>
     </div>
   );
 };
 
-// Renamed export
 export default OccupationVerificationNew;
