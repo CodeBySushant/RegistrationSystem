@@ -1970,6 +1970,36 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"scholarship-verification": {
+  "title": "Scholarship Verification",
+  "table": "scholarship_verification",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "guardianTitle",
+    "guardianName",
+    "residentOf",
+    "district",
+    "previouslyKnownAs",
+    "wardNo1",
+    "municipality",
+    "wardNo2",
+    "annualIncome",
+    "pronounHeShe",
+    "pronounHimHer",
+    "pronounHisHer",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
