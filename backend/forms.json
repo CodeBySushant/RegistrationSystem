@@ -2108,7 +2108,43 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"annual-income-verification-new": {
+  "table": "annual_income_verification_new",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantNameBody",
+    "relation",
+    "guardianTitle",
+    "guardianName",
+    "municipality",
+    "wardNo",
+    "prevAddress",
+    "prevWardNo",
+    "district",
+    "province",
+    "country",
+    "totalNPR_fy1",
+    "totalNPR_fy2",
+    "totalNPR_fy3",
+    "currency",
+    "totalCurrency_fy1",
+    "totalCurrency_fy2",
+    "totalCurrency_fy3",
+    "usdRate",
+    "rateDate",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone",
+    "table_rows"
+  ]
 }
+
 
 
 
