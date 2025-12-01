@@ -2320,6 +2320,30 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"gov-organization-registration": {
+  "table": "gov_organization_registration",
+  "columns": [
+    "date",
+    "letterNo",
+    "refNo",
+    "proposalName",
+    "wardNo",
+    "purpose",
+    "activities",
+    "headOffice",
+    "branchOffice",
+    "liability",
+    "femaleMembers",
+    "maleMembers",
+    "totalShareCapital",
+    "entranceFee",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
