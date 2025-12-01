@@ -2000,6 +2000,28 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"tax-clear-basic": {
+  "title": "Tax Clear Basic",
+  "table": "tax_clear_basic",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantNameBody",
+    "residencyType",
+    "municipality",
+    "wardNo",
+    "prevWardNo",
+    "district",
+    "country",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
