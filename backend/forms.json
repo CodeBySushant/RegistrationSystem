@@ -1860,6 +1860,39 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"property-valuation-report": {
+  "title": "Property Valuation Report",
+  "table": "property_valuation_report",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "guardianTitle",
+    "guardianName",
+    "residencyType",
+    "municipality",
+    "wardNo1",
+    "district1",
+    "propertyMunicipality",
+    "wardNo2",
+    "propertyDistrict",
+    "valuationNRs",
+    "valuationWords",
+    "usdRate",
+    "equivalentUSD",
+    "equivalentUSDWords",
+    "table_rows",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
