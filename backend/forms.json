@@ -1837,6 +1837,29 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"power-of-attorney": {
+  "title": "Power Of Attorney",
+  "table": "power_of_attorney",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "deceasedTitle",
+    "deceasedName",
+    "passportNo",
+    "expiredOn",
+    "dueTo",
+    "delegationLocation",
+    "issuedPowerOfAttorneyOn",
+    "table_rows",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
