@@ -2267,6 +2267,33 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"tax-clearance-new-format": {
+  "table": "tax_clearance_new_format",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "guardianTitle",
+    "guardianName",
+    "municipality",
+    "wardNo",
+    "prevAddress",
+    "prevWardNo",
+    "prevProvince",
+    "prevCountry",
+    "fiscalYear",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone",
+    "table_rows"
+  ]
 }
 
 
