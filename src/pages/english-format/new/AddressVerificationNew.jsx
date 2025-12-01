@@ -1,54 +1,109 @@
-import React, { useState } from 'react';
-import './AddressVerificationNew.css'; // The CSS file for styling
+import React, { useState } from "react";
+import "./AddressVerificationNew.css";
 
 const AddressVerificationNew = () => {
   const [formData, setFormData] = useState({
-    letterNo: '2082/83',
-    refNo: '',
-    date: '2025-10-31',
-    applicantNameBody: '',
-    oldWardNo: '1',
-    oldMunicipality: '',
-    oldProvince: 'Koshi Province',
-    newMunicipality: 'Nagarjun Municipality',
-    newWardNo: '',
-    newProvince: '',
-    newCountry: 'Nepal',
-    decisionSource: 'Council of Ministry',
-    govSource: 'Government of Nepal',
-    decisionDate: '10th March, 2017',
-    finalAddress1: '',
-    finalAddress2: 'Nagarjun Municipality',
-    finalWardNo: '1',
-    finalProvince: 'Koshi Province',
-    finalCountry: 'Nepal',
-    designation: '',
-    applicantName: '',
-    applicantAddress: '',
-    applicantCitizenship: '',
-    applicantPhone: '',
+    letterNo: "2082/83",
+    refNo: "",
+    date: "2025-10-31",
+    applicantNameBody: "",
+    oldWardNo: "1",
+    oldMunicipality: "",
+    oldProvince: "Koshi Province",
+    newMunicipality: "Nagarjun Municipality",
+    newWardNo: "",
+    newProvince: "",
+    newCountry: "Nepal",
+    decisionSource: "Council of Ministry",
+    govSource: "Government of Nepal",
+    decisionDate: "10th March, 2017",
+    finalAddress1: "",
+    finalAddress2: "Nagarjun Municipality",
+    finalWardNo: "1",
+    finalProvince: "Koshi Province",
+    finalCountry: "Nepal",
+    designation: "",
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    const required = [
+      "applicantNameBody",
+      "oldWardNo",
+      "oldMunicipality",
+      "oldProvince",
+      "newMunicipality",
+      "newWardNo",
+      "newProvince",
+      "newCountry",
+      "decisionSource",
+      "govSource",
+      "decisionDate",
+      "finalAddress1",
+      "finalAddress2",
+      "finalWardNo",
+      "finalProvince",
+      "finalCountry",
+      "designation",
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
+    ];
+    for (let k of required) {
+      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+    }
+    // basic phone check
+    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
+      return { ok: false, missing: "applicantPhone (invalid format)" };
+    }
+    return { ok: true };
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Address Verification (New) Form Data:', formData);
-    alert('Form submitted! Check the console for the data.');
+    const v = validate();
+    if (!v.ok) {
+      alert("Please fill/validate field: " + v.missing);
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/forms/address-verification-new", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || `Server returned ${res.status}`);
+      }
+      const body = await res.json();
+      alert("Saved successfully (id: " + body.id + ")");
+      window.print();
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Failed to save: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="address-verification-new-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          {/* Replace with your logo path */}
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
+          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
           <h1>Nagarjun Municipality</h1>
           <h2>1 No. Ward Office</h2>
           <h3>Kathmandu, Kathmandu</h3>
@@ -58,38 +113,23 @@ const AddressVerificationNew = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input
-              type="text"
-              name="letterNo"
-              value={formData.letterNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
           </div>
           <div className="form-group">
             <label>Date:</label>
-            <input
-              type="text"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="date" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
+
         <div className="form-row">
           <div className="form-group">
             <label>Ref No.:</label>
-            <input
-              type="text"
-              name="refNo"
-              value={formData.refNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>Subject: <u>VERIFICATION OF ADDRESS</u></strong>
-          <br />
+          <strong>Subject: <u>VERIFICATION OF ADDRESS</u></strong><br />
           <strong><u>TO WHOM IT MAY CONCERN</u></strong>
         </div>
 
@@ -98,37 +138,14 @@ const AddressVerificationNew = () => {
           <input type="text" name="applicantNameBody" placeholder="Applicant's Name" value={formData.applicantNameBody} onChange={handleChange} required />
           , Ward No.
           <input type="text" name="oldWardNo" value={formData.oldWardNo} onChange={handleChange} required />
-          ,
-          <input type="text" name="oldMunicipality" placeholder="Old Municipality/VDC" value={formData.oldMunicipality} onChange={handleChange} required />
-          ,
-          <input type="text" name="oldProvince" value={formData.oldProvince} onChange={handleChange} required />
+          , <input type="text" name="oldMunicipality" placeholder="Old Municipality/VDC" value={formData.oldMunicipality} onChange={handleChange} required />, <input type="text" name="oldProvince" value={formData.oldProvince} onChange={handleChange} required />
           has been changed into
-          <input type="text" name="newMunicipality" value={formData.newMunicipality} onChange={handleChange} required />
-          , Ward No.
-          <input type="text" name="newWardNo" placeholder="New Ward" value={formData.newWardNo} onChange={handleChange} required />
-          ,
-          <input type="text" name="newProvince" placeholder="New Province" value={formData.newProvince} onChange={handleChange} required />
-          ,
-          <input type="text" name="newCountry" value={formData.newCountry} onChange={handleChange} required />
-          . as per the decision of
-          <input type="text" name="decisionSource" value={formData.decisionSource} onChange={handleChange} required />
-          ,
-          <input type="text" name="govSource" value={formData.govSource} onChange={handleChange} required />
-          on
-          <input type="text" name="decisionDate" value={formData.decisionDate} onChange={handleChange} required />
-          .
+          <input type="text" name="newMunicipality" value={formData.newMunicipality} onChange={handleChange} required />, Ward No.
+          <input type="text" name="newWardNo" placeholder="New Ward" value={formData.newWardNo} onChange={handleChange} required />, <input type="text" name="newProvince" placeholder="New Province" value={formData.newProvince} onChange={handleChange} required />, <input type="text" name="newCountry" value={formData.newCountry} onChange={handleChange} required />.
           <br />
-          Thus, addresses
-          <input type="text" name="finalAddress1" placeholder="Old Address" value={formData.finalAddress1} onChange={handleChange} required />
-          and
-          <input type="text" name="finalAddress2" value={formData.finalAddress2} onChange={handleChange} required />
-          , Ward No.
-          <input type="text" name="finalWardNo" value={formData.finalWardNo} onChange={handleChange} required />
-          ,
-          <input type="text" name="finalProvince" value={formData.finalProvince} onChange={handleChange} required />
-          ,
-          <input type="text" name="finalCountry" value={formData.finalCountry} onChange={handleChange} required />
-          represents same place.
+          As per the decision of <input type="text" name="decisionSource" value={formData.decisionSource} onChange={handleChange} required />, <input type="text" name="govSource" value={formData.govSource} onChange={handleChange} required /> on <input type="text" name="decisionDate" value={formData.decisionDate} onChange={handleChange} required />.
+          <br />
+          Thus, addresses <input type="text" name="finalAddress1" placeholder="Old Address" value={formData.finalAddress1} onChange={handleChange} required /> and <input type="text" name="finalAddress2" value={formData.finalAddress2} onChange={handleChange} required />, Ward No. <input type="text" name="finalWardNo" value={formData.finalWardNo} onChange={handleChange} required />, <input type="text" name="finalProvince" value={formData.finalProvince} onChange={handleChange} required />, <input type="text" name="finalCountry" value={formData.finalCountry} onChange={handleChange} required /> represent the same place.
         </p>
 
         <div className="designation-section">
@@ -142,26 +159,14 @@ const AddressVerificationNew = () => {
 
         <div className="applicant-details">
           <h3>Applicant Details</h3>
-          <div className="form-group-column">
-            <label>Applicant Name *</label>
-            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Address *</label>
-            <input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Citizenship Number *</label>
-            <input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Phone Number *</label>
-            <input type="text" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
-          </div>
+          <div className="form-group-column"><label>Applicant Name *</label><input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required /></div>
+          <div className="form-group-column"><label>Applicant Address *</label><input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required /></div>
+          <div className="form-group-column"><label>Applicant Citizenship Number *</label><input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required /></div>
+          <div className="form-group-column"><label>Applicant Phone Number *</label><input type="tel" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required /></div>
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn">Save and Print Record</button>
+          <button type="submit" className="submit-btn" disabled={loading}>{loading ? "Saving..." : "Save and Print Record"}</button>
         </div>
       </form>
     </div>

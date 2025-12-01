@@ -2077,6 +2077,37 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"address-verification-new": {
+  "title": "Address Verification (New)",
+  "table": "address_verification_new",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantNameBody",
+    "oldWardNo",
+    "oldMunicipality",
+    "oldProvince",
+    "newMunicipality",
+    "newWardNo",
+    "newProvince",
+    "newCountry",
+    "decisionSource",
+    "govSource",
+    "decisionDate",
+    "finalAddress1",
+    "finalAddress2",
+    "finalWardNo",
+    "finalProvince",
+    "finalCountry",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
