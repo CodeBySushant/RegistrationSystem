@@ -1767,6 +1767,46 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"marriage-certificate": {
+  "title": "Marriage Certificate (English)",
+  "table": "marriage_certificate",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "groomTitle",
+    "groomName",
+    "groomRelation",
+    "groomGuardianTitle",
+    "groomGuardianName",
+    "groomMotherTitle",
+    "groomMotherName",
+    "residencyType",
+    "municipality",
+    "wardNo1",
+    "prevDesignation",
+    "prevWardNo",
+    "prevDistrict",
+    "district",
+    "brideTitle",
+    "brideName",
+    "brideRelation",
+    "brideGuardianTitle",
+    "brideGuardianName",
+    "brideMotherTitle",
+    "brideMotherName",
+    "marriageDateBS",
+    "marriageDateAD",
+    "groomCitizenship",
+    "brideCitizenship",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
