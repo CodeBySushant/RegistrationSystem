@@ -1733,6 +1733,40 @@
     "applicantCitizenship",
     "applicantPhone"
   ]
+},
+
+"economic-status": {
+  "title": "Economic Status Verification",
+  "table": "economic_status",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+    "applicantTitle",
+    "applicantNameBody",
+    "relation",
+    "grandFatherTitle",
+    "grandFatherName",
+    "sonOfTitle",
+    "sonOfName",
+    "motherTitle",
+    "motherName",
+    "residencyType",
+    "municipality",
+    "wardNo",
+    "district1",
+    "district2",
+    "province",
+    "country",
+    "retiredFrom",
+    "retirementDateBS",
+    "retirementDateAD",
+    "designation",
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
 }
 
 
