@@ -2785,6 +2785,28 @@
       "signer_designation",
       "notes"
     ]
+  },
+
+  "property-owner-certificate-house-maintain-recommendation": {
+    "table": "property_owner_certificate_house_maintain_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "applicant_type",
+      "previous_place_text",
+      "previous_place_type",
+      "previous_ward_no",
+      "plot_number",
+      "area",
+      "signer_name",
+      "signer_designation",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
   }
 
 
