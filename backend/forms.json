@@ -2957,6 +2957,20 @@
     "signature_engineer",
     "signature_issuer"
   ]
+},
+
+"consumer-committee-registrations": {
+  "table": "consumer_committee_registrations",
+  "columns": [
+    "sn",
+    "reg_no",
+    "committee_name",
+    "reg_date",
+    "owner_name",
+    "address",
+    "phone",
+    "notes"
+  ]
 }
 
 
