@@ -2441,7 +2441,45 @@
 "applicant_phone",
 "notes"
 ]
-}
+},
+
+
+"governmental-land-utilization-recommendation": {
+    "table": "governmental_land_utilization_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_type",
+      "addressee_line1",
+      "addressee_line2",
+      "municipality",
+      "ward_no",
+      "applicant_name",
+      "applicant_prefix",
+      "applicant_name_secondary",
+      "child_prefix",
+      "child_name",
+      "old_place_text",
+      "old_place_type",
+      "old_ward_no",
+      "plot_number",
+      "area",
+      "current_municipality",
+      "current_ward_no",
+      "boundary_east",
+      "boundary_west",
+      "boundary_north",
+      "boundary_south",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
+  }
+
 
 
 
