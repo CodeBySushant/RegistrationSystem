@@ -3502,6 +3502,25 @@
     "marriage_date_nepali_ascii",
     "notes"
   ]
+},
+
+"open-application": {
+  "table": "open_applications",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date",
+    "subject",
+    "addressee_name",
+    "addressee_line2",
+    "body_text",
+    "signature_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
