@@ -2660,6 +2660,28 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "land-consolidation-recommendation": {
+    "table": "land_consolidation_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "municipality_text",
+      "ward_no",
+      "applicant_relation_name",
+      "relation_type",
+      "relation_name",
+      "entries",
+      "signer_name",
+      "signer_designation",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
   }
 
 
