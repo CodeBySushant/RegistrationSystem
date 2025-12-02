@@ -3352,7 +3352,31 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"acting-ward-officer-assigned": {
+  "table": "acting_ward_officer_assigned_records",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date",
+    "subject",
+    "assigned_member_name",
+    "assigned_member_address",
+    "assigned_ward_no",
+    "assign_from_date",
+    "assign_to_date",
+    "bodartha_text",
+    "signatory_name",
+    "signatory_position",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
 }
+
 
 
 
