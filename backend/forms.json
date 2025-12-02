@@ -3043,7 +3043,22 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "passbook-construction-work": {
+    "table": "passbook_construction_works",
+    "columns": [
+      "reg_date",
+      "business_name",
+      "owner_name",
+      "phone",
+      "work_description",
+      "remarks",
+      "scan_filename",
+      "notes"
+    ]
   }
+
 
 
 
