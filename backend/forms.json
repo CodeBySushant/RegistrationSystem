@@ -2867,6 +2867,40 @@
       "applicant_citizenship_no",
       "applicant_phone"
     ]
+  },
+
+  "property-verification-recommendation": {
+    "table": "property_verification_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "prev_district",
+      "prev_type",
+      "prev_ward_no",
+      "resident_local",
+      "resident_ward_no",
+      "applicant_relation_prefix",
+      "applicant_relation_name",
+      "applicant_child_prefix",
+      "applicant_child_name",
+      "house_present",
+      "house_type",
+      "length",
+      "length_unit",
+      "width",
+      "width_unit",
+      "additional_measure_1",
+      "additional_measure_2",
+      "road_included",
+      "tapashil",
+      "signature_name",
+      "signature_designation",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone"
+    ]
   }
 
 
