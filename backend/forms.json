@@ -3085,6 +3085,32 @@
       "detail_applicant_phone",
       "notes"
     ]
+  },
+
+  "citizenship-angkrit": {
+    "table": "citizenship_angkrits",
+    "columns": [
+      "reg_no",
+      "reg_date",
+      "target_group",
+      "applicant_name",
+      "father_name",
+      "mother_name",
+      "gender",
+      "birth_date",
+      "age_reach_date",
+      "address",
+      "issue_district",
+      "citizenship_no",
+      "contact_phone",
+      "signature_text",
+      "decision_date",
+      "allowance_type",
+      "id_card_no",
+      "allowance_start_fy",
+      "allowance_quarter",
+      "notes"
+    ]
   }
 
 
