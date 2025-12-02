@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import "./DestituteRecommendation.css";
 
 const FORM_KEY = "destitute-recommendation";
-const API_BASE = import.meta.env.VITE_API_BASE || (process.env.REACT_APP_API_BASE || "");
+// safe env detection: prefer import.meta.env (Vite), otherwise use process.env only if available (CRA / others)
+const API_BASE =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_BASE) ||
+  (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_BASE) ||
+  "";
 const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 
 const DestituteRecommendation = () => {

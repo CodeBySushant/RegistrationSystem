@@ -4091,6 +4091,20 @@
     "signatory_name",
     "signatory_designation"
   ]
+},
+
+"disability-identity-card-recommendation": {
+  "table": "disability_identity_card_recommendations",
+  "columns": [
+    "chalani_no",
+    "addressee",
+    "location",
+    "disability",
+    "applicant",
+    "signatory_name",
+    "signatory_designation",
+    "meta_date"
+  ]
 }
 
 
