@@ -3154,7 +3154,51 @@
       "applicant_phone",
       "notes"
     ]
-  }
+  },
+
+"citizenship-certificate-copy": {
+  "table": "citizenship_certificate_copies",
+  "columns": [
+    "prpn_no",
+    "issue_district",
+    "issue_date",
+    "certificate_type",
+    "full_name_np",
+    "full_name_en",
+    "sex",
+    "dob_bs",
+    "dob_ad",
+    "permanent_address",
+    "temporary_address",
+    "municipality",
+    "ward_no",
+    "tol",
+    "father_name",
+    "father_dob_bs",
+    "father_relation",
+    "father_address",
+    "father_citizenship_no",
+    "husband_name",
+    "husband_address",
+    "husband_citizenship_no",
+    "mother_name",
+    "mother_citizenship_no",
+    "grandfather_name",
+    "grandfather_relation",
+    "recommender_name",
+    "recommender_position",
+    "witness_name",
+    "witness_relation",
+    "reason_for_copy",
+    "office_recommendation",
+    "recommender_date",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
+}
 
 
 
