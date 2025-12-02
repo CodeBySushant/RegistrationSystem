@@ -3983,6 +3983,25 @@
     "applicant_citizenship_no",
     "applicant_phone"
   ]
+},
+
+"behavior-recommendation": {
+  "table": "behavior_recommendations",
+  "columns": [
+    "chalani_no",
+    "municipality",
+    "applicant_relation_name",
+    "applicant_relation_type",
+    "relative_name",
+    "relative_gender",
+    "relative_of",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone"
+  ]
 }
 
 
