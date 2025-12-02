@@ -3625,6 +3625,28 @@
     "applicant_citizenship_footer",
     "applicant_phone_footer"
   ]
+},
+
+"different-name-certification": {
+  "table": "different_name_certification",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date_bs",
+    "municipality",
+    "previous_unit_type",
+    "previous_ward",
+    "salutation",
+    "applicant_name",
+    "reason_text",
+    "rows_json",
+    "recommender_name",
+    "recommender_designation",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_footer",
+    "applicant_phone_footer"
+  ]
 }
 
 
