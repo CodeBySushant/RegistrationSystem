@@ -3521,6 +3521,24 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"open-format-tippani": {
+  "table": "open_format_tippani",
+  "columns": [
+    "date",
+    "addressee",
+    "subject",
+    "body_text",
+    "archive",
+    "approve",
+    "signature_name",
+    "signature_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone"
+  ]
 }
 
 
