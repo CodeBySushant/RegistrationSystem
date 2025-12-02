@@ -2971,6 +2971,27 @@
     "phone",
     "notes"
   ]
+},
+
+"d-class-construction-business-license": {
+  "table": "dclass_construction_business_licenses",
+  "columns": [
+    "license_no",
+    "fiscal_year",
+    "issue_date",
+    "business_name",
+    "office_address",
+    "firm_or_company",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "signatory_name",
+    "signatory_position",
+    "signatory_seal",
+    "signatory_date",
+    "notes"
+  ]
 }
 
 
