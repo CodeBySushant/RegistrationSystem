@@ -3664,7 +3664,30 @@
     "reason",
     "leave_choices_json"
   ]
-}
+},
+
+"electricity-capacity-increase": {
+    "table": "electricity_capacity_increase",
+    "columns": [
+      "letter_no",
+      "reference_no",
+      "date_bs",
+      "date_ad",
+      "recipient_name",
+      "recipient_address",
+      "municipality",
+      "ward_no",
+      "location",
+      "business_name",
+      "business_owner",
+      "reason",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
+  }
 
 
 
