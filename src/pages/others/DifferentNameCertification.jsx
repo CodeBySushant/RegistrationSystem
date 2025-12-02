@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import "./DifferentNameCertification.css";
 
 const FORM_KEY = "different-name-certification";
-const API_BASE = process.env.REACT_APP_API_BASE || "";
+const API_BASE = import.meta.env.VITE_API_BASE || "";
 const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 
 const emptyRow = () => ({ id: Date.now(), doc: "", name_on_doc: "", diff_doc: "", diff_name: "" });

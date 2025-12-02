@@ -41,7 +41,7 @@ import ShopAgriculturalForm from "./pages/business-recommendation/ShopAgricultur
 import ShopRegistrationForm from "./pages/business-recommendation/ShopRegistrationForm.jsx"
 import TaxClearCertificate from "./pages/business-recommendation/TaxClearCertificate.jsx"
 // pages/nepali-citizenship
-import CitizenshipProofCopy from "./pages/nepali-citizenship/CitizenshipProofCopy.jsx"
+import CitizenshipCertificateCopy from "./pages/nepali-citizenship/CitizenshipCertificateCopy.jsx"
 import CitizenshipCertificateRecommendation from "./pages/nepali-citizenship/CitizenshipCertificateRecommendation.jsx"
 import CitizenshipCertificateRecommendationCopy from "./pages/nepali-citizenship/CitizenshipCertificateRecommendationCopy.jsx"
 import CitizenshipMujulka from "./pages/nepali-citizenship/CitizenshipMujulka.jsx"
