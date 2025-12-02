@@ -20,6 +20,9 @@ app.use("/api/reports", reports);
 const certificates = require("./routes/certificates");
 app.use("/api/certificates", certificates);
 
+const disability = require("./routes/disability");
+app.use("/api/disability", disability);
+
 // Generic 404
 app.use((req, res) => {
   res.status(404).json({ error: "Not Found" });
