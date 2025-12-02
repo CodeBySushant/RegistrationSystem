@@ -3021,8 +3021,29 @@
       "applicant_phone",
       "notes"
     ]
-  }
+  },
 
+  "farmer-group-committee-registration": {
+    "table": "farmer_group_committees",
+    "columns": [
+      "reg_date",
+      "reg_no",
+      "group_name",
+      "address",
+      "purpose",
+      "main_activity",
+      "service_area",
+      "authority_name",
+      "authority_position",
+      "signature",
+      "signing_date",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
+  }
 
 
 
