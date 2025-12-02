@@ -3734,6 +3734,34 @@
     "applicant_footer_citizenship_no",
     "applicant_footer_phone"
   ]
+},
+
+"electricity-installation-recommendation": {
+  "table": "electricity_installation_recommendation",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date_bs",
+    "date_ad",
+    "recipient_company",
+    "recipient_location",
+    "previous_district",
+    "previous_local_body",
+    "previous_ward",
+    "current_district",
+    "current_municipality",
+    "current_ward",
+    "applicant_title",
+    "applicant_name",
+    "body_text",
+    "signature_name",
+    "signature_designation",
+    "applicant_footer_name",
+    "applicant_footer_address",
+    "applicant_footer_citizenship_no",
+    "applicant_footer_phone",
+    "notes"
+  ]
 }
 
 
