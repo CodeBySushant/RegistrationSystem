@@ -4161,6 +4161,33 @@
     "signatory_name",
     "signatory_designation"
   ]
+},
+
+"ethnic-identity-recommendation": {
+  "table": "ethnic_identity_recommendation",
+  "columns": [
+    "chalani_no",
+    "addressee_office",
+    "addressee_district",
+    "residence_district",
+    "residence_municipality",
+    "residence_ward_no",
+    "person_title",
+    "person_name",
+    "relation_title",
+    "relation_name",
+    "relation_child_type",
+    "relation_child_title",
+    "relation_child_name",
+    "na_pr_no",
+    "requested_ethnicity",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "signatory_name",
+    "signatory_designation"
+  ]
 }
 
 
