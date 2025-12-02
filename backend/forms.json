@@ -3262,6 +3262,40 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"citizenship-recommendation": {
+  "table": "citizenship_recommendations",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date",
+    "recipient_office",
+    "recipient_district",
+    "husband_name",
+    "husband_prpn_no",
+    "father_name",
+    "mother_name",
+    "permanent_local_unit",
+    "ward_no",
+    "local_citizenship_type",
+    "marriage_date",
+    "local_witness_citizenship_type",
+    "relation_to_recommendee",
+    "local_second_name",
+    "photo_filename",
+    "recommender_name",
+    "recommender_position",
+    "recommender_date",
+    "signatory_name",
+    "signatory_date",
+    "signatory_position",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
