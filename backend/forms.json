@@ -3647,6 +3647,23 @@
     "applicant_citizenship_footer",
     "applicant_phone_footer"
   ]
+},
+
+"leave-request-application": {
+  "table": "leave_request_application",
+  "columns": [
+    "letter_no",
+    "date_bs",
+    "employee_id",
+    "employee_name",
+    "position",
+    "phone",
+    "leave_from_bs",
+    "leave_to_bs",
+    "leave_days",
+    "reason",
+    "leave_choices_json"
+  ]
 }
 
 
