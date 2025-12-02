@@ -2578,9 +2578,34 @@
       "applicant_citizenship_no",
       "applicant_phone"
     ]
+  },
+
+  "house-verification-recommendation": {
+    "table": "house_verification_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_type",
+      "addressee_location",
+      "municipality",
+      "ward_no",
+      "applicant_fullname",
+      "previous_place_text",
+      "previous_place_type",
+      "previous_ward_no",
+      "current_place_text",
+      "current_ward_no",
+      "plot_number",
+      "area",
+      "notes",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone"
+    ]
   }
-
-
 
 
 
