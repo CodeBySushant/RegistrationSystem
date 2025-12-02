@@ -2992,7 +2992,36 @@
     "signatory_date",
     "notes"
   ]
-}
+},
+
+"drinking-water-committee-registration": {
+    "table": "drinking_water_committees",
+    "columns": [
+      "reg_no",
+      "reg_date",
+      "committee_name",
+      "committee_location",
+      "reference_date",
+      "water_source_name",
+      "water_source_east",
+      "water_source_north",
+      "water_source_west",
+      "water_source_south",
+      "water_use_description",
+      "water_result_description",
+      "service_type",
+      "service_area",
+      "beneficiary_info",
+      "future_expansion_info",
+      "signatory_name",
+      "signatory_designation",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
+  }
 
 
 
