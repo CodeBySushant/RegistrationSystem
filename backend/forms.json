@@ -3942,7 +3942,30 @@
       "applicant_citizenship_no",
       "applicant_phone"
     ]
-  }
+  },
+
+  "agreement-of-plan": {
+  "table": "agreement_of_plan",
+  "columns": [
+    "project_code_or_id",
+    "implement_unit",
+    "district",
+    "fiscal_year",
+    "project_title",
+    "agreement_amount",
+    "allocated_amount",
+    "allocated_amount_in_words",
+    "party_a",
+    "party_b",
+    "tapsil",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone"
+  ]
+}
 
 
 
