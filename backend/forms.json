@@ -2708,6 +2708,33 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "partial-house-construction-completed-certificate": {
+    "table": "partial_house_construction_completed_certificate",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "municipality_text",
+      "ward_no",
+      "resident_name",
+      "previous_place_text",
+      "previous_place_type",
+      "previous_ward_no",
+      "plot_number",
+      "area",
+      "floors_approved",
+      "completion_date",
+      "completion_type",
+      "signer_name",
+      "signer_designation",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
   }
 
 
