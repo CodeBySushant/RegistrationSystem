@@ -3472,6 +3472,36 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"nepali-language": {
+  "table": "nepali_language_recommendations",
+  "columns": [
+    "applicant_full_name",
+    "issued_date_ad",
+    "issued_date_nepali",
+    "issued_date_nepali_ascii",
+    "issue_district",
+    "sex",
+    "birth_date_ad",
+    "birth_date_nepali",
+    "birth_date_nepali_ascii",
+    "birth_place",
+    "permanent_district",
+    "permanent_municipality",
+    "permanent_ward",
+    "temporary_district",
+    "temporary_municipality",
+    "temporary_ward",
+    "father_name",
+    "mother_name",
+    "husband_name",
+    "angikrit_reason",
+    "marriage_date_ad",
+    "marriage_date_nepali",
+    "marriage_date_nepali_ascii",
+    "notes"
+  ]
 }
 
 
