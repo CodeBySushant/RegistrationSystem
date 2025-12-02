@@ -3408,6 +3408,35 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"ramana-patra": {
+  "table": "ramana_patras",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date",
+    "addressee_name",
+    "addressee_line2",
+    "decision_no",
+    "decision_date",
+    "permit_for",
+    "permit_quantity",
+    "contractor_name",
+    "contractor_contact",
+    "amount_total",
+    "amount_to_withdraw",
+    "amount_in_words",
+    "deadline_days",
+    "remarks",
+    "signatory_name",
+    "signatory_position",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 

@@ -1,144 +1,192 @@
-// 2
-import React from 'react';
-import './RamanaPatra.css';
+// src/components/RamanaPatra.jsx
+import React, { useState } from "react";
+import "./RamanaPatra.css";
 
-const RamanaPatra = () => {
+const FORM_KEY = "ramana-patra";
+const API_URL = `/api/forms/${FORM_KEY}`;
+
+export default function RamanaPatra() {
+  const [form, setForm] = useState({
+    letter_no: "२०८२/८३",
+    reference_no: "",
+    date: "", // YYYY-MM-DD
+
+    addressee_name: "",
+    addressee_line2: "",
+
+    decision_no: "",
+    decision_date: "",
+
+    permit_for: "",
+    permit_quantity: "",
+    contractor_name: "",
+    contractor_contact: "",
+
+    amount_total: "",
+    amount_to_withdraw: "",
+    amount_in_words: "",
+    deadline_days: 7,
+    remarks: "",
+
+    signatory_name: "",
+    signatory_position: "",
+
+    applicant_name_footer: "",
+    applicant_address_footer: "",
+    applicant_citizenship_no: "",
+    applicant_phone: "",
+
+    notes: ""
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const upd = (k) => (e) => setForm(s => ({ ...s, [k]: e.target.value }));
+
+  const validate = () => {
+    if (!form.addressee_name) return "प्राप्तकर्ता (addressee)को नाम आवश्यक छ।";
+    if (!form.amount_to_withdraw) return "निकासा रकम आवश्यक छ।";
+    if (!form.signatory_name) return "सही/दस्तखत आवश्यक छ।";
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage(null);
+    const v = validate();
+    if (v) { setMessage({ type: "error", text: v }); return; }
+
+    setLoading(true);
+    try {
+      // backend will stringify arrays/objects automatically if present.
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
+
+      const ct = res.headers.get("content-type") || "";
+      const body = ct.includes("application/json") ? await res.json() : await res.text();
+
+      if (!res.ok) {
+        throw new Error(body.message || JSON.stringify(body) || `HTTP ${res.status}`);
+      }
+
+      setMessage({ type: "success", text: `रेकर्ड सफल—ID: ${body.id || "unknown"}` });
+      // optionally reset form here if you want
+    } catch (err) {
+      console.error(err);
+      setMessage({ type: "error", text: err.message || "सेभ गर्न सकिएन" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="ramana-patra-container">
-      {/* --- Top Bar --- */}
+    <form className="ramana-patra-container" onSubmit={handleSubmit}>
       <div className="top-bar-title">
         रमाना पत्र ।
         <span className="top-right-bread">आर्थिक प्रबेश &gt; रमाना पत्र</span>
       </div>
 
-      {/* --- Header Section --- */}
       <div className="form-header-section">
-        <div className="header-logo">
-          {/* Replace with your actual logo path */}
-          <img src="/logo.png" alt="Nepal Emblem" />
-        </div>
+        <div className="header-logo"><img src="/logo.png" alt="logo" /></div>
         <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
+          <h1>नागार्जुन नगरपालिका</h1>
+          <h2>१ नं. वडा कार्यालय</h2>
+          <p>नागार्जुन, काठमाडौँ</p>
         </div>
       </div>
 
-      {/* --- Meta Data (Date/Ref) --- */}
       <div className="meta-data-row">
-        <div className="meta-left">
-          <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
-          <p>चलानी नं. : <input type="text" className="dotted-input small-input" /></p>
+        <div>
+          <label>पत्र संख्या:</label>
+          <input value={form.letter_no} onChange={upd("letter_no")} />
         </div>
-        <div className="meta-right">
-          <p>मिति : <span className="bold-text">२०८२-०८-०६</span></p>
-          <p>ने.सं - 1146 थिंलाथ्व, 7 बिहीबार</p>
+        <div>
+          <label>चलानी नं.:</label>
+          <input value={form.reference_no} onChange={upd("reference_no")} />
+        </div>
+        <div>
+          <label>मिति:</label>
+          <input type="date" value={form.date} onChange={upd("date")} />
         </div>
       </div>
 
-      {/* --- Main Content --- */}
       <div className="main-content-section">
-        
-        {/* --- Addressee --- */}
         <div className="addressee-section">
-            <div className="addressee-row">
-                <span>श्री</span>
-                <input type="text" className="line-input large-input" required />
-            </div>
-            <div className="addressee-row">
-                <input type="text" className="line-input large-input" required />
-            </div>
+          <label>श्री:</label>
+          <input value={form.addressee_name} onChange={upd("addressee_name")} placeholder="प्राप्तकर्ता नाम" />
+          <input value={form.addressee_line2} onChange={upd("addressee_line2")} placeholder="additional line" />
         </div>
 
-        {/* --- Subject --- */}
-        <div className="subject-section center-text">
-          <p>विषय: <span className="underline-text">रमाना पत्र।</span></p>
-        </div>
-
-        {/* --- Body Paragraph --- */}
         <div className="body-paragraph">
           <p>
-            यस कार्यालयका मिति <span className="bold-text">२०८२-०८-०६</span> को निर्णय नं 
-            <input type="text" className="dotted-input tiny-input" required /> <span className="red">*</span> ले स्वीकृत भई <input type="text" className="dotted-input medium-input" required /> <span className="red">*</span> 
-            निर्माण कार्यका लागि <input type="text" className="dotted-input medium-input" required /> <span className="red">*</span> को <input type="text" className="dotted-input medium-input" required /> <span className="red">*</span> <input type="text" className="dotted-input small-input" required /> <span className="red">*</span> <input type="text" className="dotted-input medium-input" required /> <span className="red">*</span>
-            को नाममा <input type="text" className="dotted-input medium-input" required /> <span className="red">*</span> <input type="text" className="dotted-input small-input" required /> <span className="red">*</span> मा जम्मा भएको रकम
-            <input type="text" className="dotted-input medium-input" required /> <span className="red">*</span> मध्ये रु <input type="text" className="dotted-input medium-input" required /> <span className="red">*</span> (अक्षरेपी रु <input type="text" className="dotted-input long-input" required /> <span className="red">*</span> ) रकम आजको मितिदेखि सात दिन भित्र निकासा गरि लिनुहुन र निर्माण कार्य पुरा गरी फरफारक गर्नुहुन निमित्त रमाना दिईएको छ |
-          </p>
-          <p>
-            रमाना दिनेको : मिति <span className="bold-text">२०८२-०८-०६</span>
+            यस कार्यालयका मिति 
+            <input type="date" value={form.decision_date} onChange={upd("decision_date")} style={{marginLeft:6, marginRight:6}} />
+            को निर्णय नं 
+            <input value={form.decision_no} onChange={upd("decision_no")} style={{width:120}} /> ले स्वीकृत भई&nbsp;
+            <input value={form.permit_for} onChange={upd("permit_for")} placeholder="कार्य/वस्तु" /> का लागि 
+            <input value={form.permit_quantity} onChange={upd("permit_quantity")} placeholder="परिमाण" /> को 
+            <input value={form.contractor_name} onChange={upd("contractor_name")} placeholder="नाम" /> (फोन: 
+            <input value={form.contractor_contact} onChange={upd("contractor_contact")} placeholder="फोन" />) को नाममा जम्मा भएको रकम 
+            <input value={form.amount_total} onChange={upd("amount_total")} placeholder="कुल रकम" /> मध्ये रु 
+            <input value={form.amount_to_withdraw} onChange={upd("amount_to_withdraw")} placeholder="निकासा रकम" /> 
+            (अक्षरेपी रु <input value={form.amount_in_words} onChange={upd("amount_in_words")} placeholder="अक्षरेपी" /> ) रकम आजको मितिदेखि 
+            <input type="number" value={form.deadline_days} onChange={upd("deadline_days")} style={{width:70}} /> दिन भित्र निकासा गरि लिनुहुन...
           </p>
         </div>
 
-        {/* --- Rich Text Editor Mock (The long textarea) --- */}
         <div className="editor-section">
-            <h4 className="bold-text">कैफियत :</h4>
-            <div className="rich-editor-mock">
-                <div className="editor-toolbar">
-                    <span className="tool-btn bold">B</span>
-                    <span className="tool-btn italic">I</span>
-                    <span className="tool-btn underline">U</span>
-                    <span className="tool-btn strike">S</span>
-                    <span className="tool-sep">|</span>
-                    <span className="tool-btn">X<sub>2</sub></span>
-                    <span className="tool-btn">X<sup>2</sup></span>
-                    <span className="tool-sep">|</span>
-                    {/* Simplified mock buttons */}
-                    <span className="tool-btn">¶</span>
-                    <span className="tool-btn">﹖</span>
-                </div>
-                <textarea className="editor-textarea" rows="8"></textarea>
-            </div>
+          <h4>कैफियत :</h4>
+          <textarea className="editor-textarea" rows={6} value={form.remarks} onChange={upd("remarks")} />
         </div>
 
-        {/* --- Signature Block (Right Aligned) --- */}
         <div className="signature-section">
-            <div className="signature-block">
-                <div className="signature-line"></div>
-                <span className="red-mark">*</span>
-                <input type="text" className="line-input full-width-input" required />
-                <select className="designation-select">
-                    <option>पद छनौट गर्नुहोस्</option>
-                    <option>वडा अध्यक्ष</option>
-                    <option>वडा सचिव</option>
-                </select>
-            </div>
+          <input value={form.signatory_name} onChange={upd("signatory_name")} placeholder="दस्तखत/नाम" required />
+          <select value={form.signatory_position} onChange={upd("signatory_position")}>
+            <option value="">पद छान्नुहोस्</option>
+            <option>वडा अध्यक्ष</option>
+            <option>वडा सचिव</option>
+          </select>
         </div>
 
-        {/* --- Applicant Details Box (Footer) --- */}
         <div className="applicant-details-box">
           <h3>निवेदकको विवरण</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>निवेदकको नाम</label>
-              <input type="text" className="detail-input bg-gray" />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको ठेगाना</label>
-              <input type="text" className="detail-input bg-gray" />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको नागरिकता नं.</label>
-              <input type="text" className="detail-input bg-gray" />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको फोन नं.</label>
-              <input type="text" className="detail-input bg-gray" />
-            </div>
+          <div>
+            <label>नाम</label>
+            <input value={form.applicant_name_footer} onChange={upd("applicant_name_footer")} />
+          </div>
+          <div>
+            <label>ठेगाना</label>
+            <input value={form.applicant_address_footer} onChange={upd("applicant_address_footer")} />
+          </div>
+          <div>
+            <label>नागरिकता नं.</label>
+            <input value={form.applicant_citizenship_no} onChange={upd("applicant_citizenship_no")} />
+          </div>
+          <div>
+            <label>फोन</label>
+            <input value={form.applicant_phone} onChange={upd("applicant_phone")} />
           </div>
         </div>
       </div>
 
-      {/* --- Footer Action --- */}
-      <div className="form-footer">
-        <button className="save-print-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+      <div style={{ marginTop: 12 }}>
+        <label>Notes</label>
+        <textarea rows={2} value={form.notes} onChange={upd("notes")} />
       </div>
-      
-      <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
-      </div>
-    </div>
-  );
-};
 
-export default RamanaPatra;
+      <div className="form-footer" style={{ marginTop: 12 }}>
+        <button type="submit" disabled={loading}>{loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}</button>
+      </div>
+
+      {message && (
+        <div style={{ marginTop: 8, color: message.type === "error" ? "crimson" : "green" }}>
+          {message.text}
+        </div>
+      )}
+    </form>
+  );
+}
