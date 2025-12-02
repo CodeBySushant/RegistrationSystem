@@ -2505,7 +2505,30 @@
       "applicant_phone",
       "notes"
     ]
-}
+},
+
+"house-destroyed-recommendation": {
+    "table": "house_destroyed_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_name",
+      "addressee_line2",
+      "municipality",
+      "ward_no",
+      "owner_prefix",
+      "owner_name",
+      "plot_number",
+      "plot_area",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
+  }
 
 
 
