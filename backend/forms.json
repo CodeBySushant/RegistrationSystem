@@ -2554,6 +2554,30 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "house-road-verification": {
+    "table": "house_road_verification",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_office",
+      "addressee_location",
+      "municipality",
+      "ward_no",
+      "previous_type",
+      "prev_ward_no",
+      "owner_prefix",
+      "owner_name",
+      "roads",
+      "notes",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone"
+    ]
   }
 
 
