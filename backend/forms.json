@@ -3539,6 +3539,52 @@
     "applicant_citizenship_no",
     "applicant_phone"
   ]
+},
+
+"partial-information": {
+  "table": "partial_information",
+  "columns": [
+    "full_name_np",
+    "full_name_en",
+    "sex",
+    "dob_bs",
+    "dob_ad",
+    "birth_district_np",
+    "birth_municipality_np",
+    "birth_ward_np",
+    "birth_district_en",
+    "birth_municipality_en",
+    "birth_ward_en",
+    "permanent_district",
+    "permanent_municipality",
+    "permanent_ward",
+    "grandfather_name",
+    "grandfather_relation",
+    "father_name",
+    "father_address",
+    "father_citizenship_no",
+    "husband_name",
+    "husband_address",
+    "husband_citizenship_no",
+    "mother_name",
+    "mother_citizenship_no",
+    "witness1_name",
+    "witness1_address",
+    "witness1_citizenship_no",
+    "witness1_signature",
+    "witness2_name",
+    "witness2_address",
+    "witness2_citizenship_no",
+    "witness2_signature",
+    "declaration_text",
+    "recommender_name",
+    "recommender_designation",
+    "recommender_date",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_footer",
+    "applicant_phone_footer"
+  ]
 }
 
 
