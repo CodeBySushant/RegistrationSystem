@@ -2528,6 +2528,32 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "house-maintain-recommendation": {
+    "table": "house_maintain_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_office",
+      "addressee_location",
+      "district",
+      "municipality",
+      "ward_no",
+      "previous_gb_np",
+      "previous_ward_no",
+      "owner_prefix",
+      "owner_name",
+      "ownership_type",
+      "properties",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
   }
 
 
