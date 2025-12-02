@@ -3841,7 +3841,35 @@
     "created_at",
     "updated_at"
   ]
-}
+},
+
+"land-kittakat-for-road": {
+    "table": "land_kittakat_for_road",
+    "columns": [
+      "chalan_no",
+      "date_nepali",
+      "subject_number",
+      "subject_text",
+      "addressee",
+      "addressee_place",
+      "district",
+      "municipality_name",
+      "ward_no",
+      "previous_address_type",
+      "previous_ward_no",
+      "parcel_kitta_no",
+      "area",
+      "owner_name",
+      "owner_relation",
+      "owner_relation_name",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "designation",
+      "recommendation_text"
+    ]
+  }
 
 
 
