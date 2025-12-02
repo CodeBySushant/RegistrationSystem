@@ -4128,7 +4128,41 @@
       "signatory_designation",
       "municipality_display"
     ]
-  }
+  },
+
+  "electricity-connection-recommendation": {
+  "table": "electricity_connection_recommendation",
+  "columns": [
+    "chalani_no",
+    "addressee_company",
+    "addressee_location",
+    "addressee_city",
+    "municipality_display",
+    "applicant_person",
+    "applicant_ward",
+    "family_husband_father",
+    "family_sasura",
+    "land_old_unit_type",
+    "land_old_unit_ward",
+    "land_kitta_no",
+    "land_area",
+    "land_tol",
+    "bound_east",
+    "bound_west",
+    "bound_north",
+    "bound_south",
+    "house_type",
+    "house_floors",
+    "house_owner_name",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "signatory_name",
+    "signatory_designation"
+  ]
+}
+
 
 
 
