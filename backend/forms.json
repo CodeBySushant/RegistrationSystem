@@ -2807,6 +2807,41 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "property-ownership-transfer-kitani": {
+    "table": "property_ownership_transfer_kitani",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_place",
+      "previous_type",
+      "previous_ward_no",
+      "current_ward_no",
+      "deceased_person_name",
+      "deceased_person_relation",
+      "deceased_person_spouse",
+      "deceased_death_date",
+      "deceased_prev_type",
+      "deceased_prev_ward_no",
+      "plot_no",
+      "jb_no",
+      "jb_area",
+      "deceased_heirs",
+      "living_heirs",
+      "transfer_heirs",
+      "sarjimin_village_no",
+      "sarjimin_ward_no",
+      "sarjimin_year",
+      "sarjimin_extra",
+      "signature_name",
+      "signature_designation",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone"
+    ]
   }
 
 
