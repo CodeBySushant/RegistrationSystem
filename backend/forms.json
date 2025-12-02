@@ -2390,6 +2390,31 @@
     "signer_designation",
     "notes"
   ]
+},
+
+"char-killa-reloaded": {
+    "table": "char_killa_reloaded",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_line1",
+      "addressee_line2",
+      "applicant_name",
+      "malpot_office_place",
+      "registration_text",
+      "place_type",
+      "declaration_person",
+      "declaration_relation",
+      "declaration_name",
+      "plots",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
 }
 
 
