@@ -1,148 +1,91 @@
-import React, { useState } from 'react';
-import './FarmerGroupOrCommitteeRegistrationCertificateList.css';
+// src/pages/identity-card/FarmerGroupOrCommitteeRegistrationCertificateList.jsx
+import React, { useEffect, useState } from "react";
+import "./FarmerGroupOrCommitteeRegistrationCertificateList.css";
 
-const initialData = [
-  { 
-    id: 1, 
-    sn: '१', 
-    groupName: 'भुलभुले', 
-    regNo: '३/२०८१/८२', 
-    regDate: '२०८२-०१-१३', 
-    formedDate: '२०८२-०१-१३', 
-    type: 'समूह',
-    department: 'नागार्जुन गाउँपालिका',
-    address: 'नागार्जुन,बाग्मती',
-    officer: 'मन्जिल आचार्य',
-    position: 'अध्यक्ष'
-  },
-  { 
-    id: 2, 
-    sn: '२', 
-    groupName: 'सहयोगी कृषक समुह', 
-    regNo: '१/२०८१/८२', 
-    regDate: '२०८१-०७-२७', 
-    formedDate: '२०८१-०७-२७', 
-    type: 'समूह',
-    department: 'नागार्जुन नगरपालिका',
-    address: 'काठमाडौ,काठमाडौ',
-    officer: 'अमृत बहादुर वली',
-    position: 'सचिव'
-  },
-  { 
-    id: 3, 
-    sn: '३', 
-    groupName: 'हेमन्ती परिवार', 
-    regNo: '४/२०८१/८२', 
-    regDate: '२०८२-०१-२१', 
-    formedDate: '२०८२-०१-२१', 
-    type: 'समूह',
-    department: 'वडा कार्यालय',
-    address: 'सैनामैना,रुपन्देही',
-    officer: 'मन्जिल आचार्य',
-    position: 'अध्यक्ष'
-  },
-  { 
-    id: 4, 
-    sn: '४', 
-    groupName: 'krishna', 
-    regNo: '५/२०८१/८२', 
-    regDate: '२०८२-०१-२६', 
-    formedDate: '२०८२-०१-२६', 
-    type: 'समिति',
-    department: 'jkhac',
-    address: 'hjgac,gau',
-    officer: 'अमृत बहादुर वली',
-    position: 'सचिव'
-  },
-  { 
-    id: 5, 
-    sn: '५', 
-    groupName: 'adIkhaksjh', 
-    regNo: '७/२०८१/८२', 
-    regDate: '२०८२-०३-०४', 
-    formedDate: '२०८२-०३-०४', 
-    type: 'समूह',
-    department: 'asdljk',
-    address: 'lkhdj,dkjhj',
-    officer: 'सरस्वती राना',
-    position: 'का.वा अध्यक्ष'
-  },
-  { 
-    id: 6, 
-    sn: '६', 
-    groupName: 'मोडेल', 
-    regNo: '९/२०८२/८३', 
-    regDate: '२०८२-०४-१०', 
-    formedDate: '२०८२-०४-१०', 
-    type: 'समूह',
-    department: 'नागार्जु',
-    address: 'काठमाडौँ,काठमाडौँ',
-    officer: 'मन्जिल आचार्य',
-    position: 'अध्यक्ष'
-  },
-  { 
-    id: 7, 
-    sn: '७', 
-    groupName: 'कमल', 
-    regNo: '६/२०८१/८२', 
-    regDate: '२०८२-०२-०६', 
-    formedDate: '२०८२-०२-०६', 
-    type: 'समिति',
-    department: 'चसनब मबस',
-    address: 'नमस चबन,नब चनसा',
-    officer: 'मन बहादुर श्रेष्ठ',
-    position: 'सचिव'
-  },
-  { 
-    id: 8, 
-    sn: '८', 
-    groupName: '1', 
-    regNo: '८/२०८१/८२', 
-    regDate: '२०८२-०३-१७', 
-    formedDate: '२०८२-०३-१७', 
-    type: 'समूह',
-    department: 'sd',
-    address: 'dsd,asda',
-    officer: 'सरस्वती राना',
-    position: 'का.वा अध्यक्ष'
-  },
-  { 
-    id: 9, 
-    sn: '९', 
-    groupName: 'बयजब', 
-    regNo: '२/२०८१/८२', 
-    regDate: '२०८१-०८-२६', 
-    formedDate: '२०८१-०८-२६', 
-    type: 'समूह',
-    department: 'मा',
-    address: 'मा,कमा',
-    officer: 'मन्जिल आचार्य',
-    position: 'अध्यक्ष'
-  },
-  { 
-    id: 10, 
-    sn: '१०', 
-    groupName: '7dee6ed3-57ef-4f2d-a89c-d4d87fc3cb9a', 
-    regNo: '१/२०८१/८२', 
-    regDate: '२०८१-११-०८', 
-    formedDate: '२०८१-११-०८', 
-    type: 'समूह',
-    department: 'fhn',
-    address: 'dfhn,२०८१-११-०८',
-    officer: 'राम',
-    position: 'अध्यक्ष'
-  }
-];
+const FORM_KEY = "farmer-group-committee-registration"; // must match forms.json
+const API_URL = `/api/forms/${FORM_KEY}`;
 
 const FarmerGroupOrCommitteeRegistrationCertificateList = () => {
-  const [data] = useState(initialData);
+  const [rows, setRows] = useState([]);       // raw rows from API
+  const [filtered, setFiltered] = useState([]); // filtered view
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSearch = () => {
-    console.log('Search button clicked');
+  // filters
+  const [qName, setQName] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
+  const fetchRows = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const arr = Array.isArray(data) ? data : [];
+      setRows(arr);
+      setFiltered(arr);
+    } catch (err) {
+      setError(err.message || "Failed to fetch");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleBack = () => {
-    console.log('Back button clicked');
+  useEffect(() => {
+    fetchRows();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // helper to safely extract fields with fallback to older initialData keys
+  const mapRow = (r) => {
+    return {
+      id: r.id,
+      sn: r.id ? String(r.id) : "-", // if you want Nepali numerals convert later
+      groupName: r.group_name || r.groupName || "-",
+      regNo: r.reg_no || r.regNo || "-",
+      regDate: r.reg_date ? r.reg_date.split("T")[0] : (r.regDate || "-"),
+      formedDate: r.signing_date ? r.signing_date.split("T")[0] : (r.signing_date || r.created_at ? (r.created_at ? r.created_at.split("T")[0] : "-") : (r.formedDate || "-")),
+      type: r.type || r.group_type || "-",
+      department: r.department || r.service_area || "-",
+      address: r.address || r.applicant_address || "-",
+      officer: r.authority_name || r.officer || "-",
+      position: r.authority_position || r.position || "-"
+    };
+  };
+
+  const handleSearch = () => {
+    const q = qName.trim().toLowerCase();
+    let out = rows.filter((r) => {
+      const m = mapRow(r);
+      // name/ regNo / officer match
+      const matchQ =
+        !q ||
+        (m.groupName || "").toString().toLowerCase().includes(q) ||
+        (m.regNo || "").toString().toLowerCase().includes(q) ||
+        (m.officer || "").toString().toLowerCase().includes(q);
+
+      // date filters against regDate (YYYY-MM-DD)
+      const reg = m.regDate && m.regDate !== "-" ? m.regDate : null;
+      const passFrom = !dateFrom || !reg || reg >= dateFrom;
+      const passTo = !dateTo || !reg || reg <= dateTo;
+      return matchQ && passFrom && passTo;
+    });
+
+    setFiltered(out);
+  };
+
+  const handleReset = () => {
+    setQName("");
+    setDateFrom("");
+    setDateTo("");
+    setFiltered(rows);
+  };
+
+  const handleView = (id) => {
+    // adjust route to your app's detail page if exists
+    window.location.href = `/forms/${FORM_KEY}/${id}`;
   };
 
   return (
@@ -150,62 +93,98 @@ const FarmerGroupOrCommitteeRegistrationCertificateList = () => {
       {/* --- Header --- */}
       <div className="list-header">
         <h2>कृषक समूह/समिति दर्ता प्रमाण-पत्रको सूची</h2>
-        <button className="back-link-btn" onClick={handleBack}>
+        <button className="back-link-btn" onClick={() => window.history.back()}>
           ← Back
         </button>
       </div>
 
       {/* --- Filter Bar --- */}
       <div className="filter-bar">
-        <input type="text" placeholder="मिति देखि" className="filter-input date-field" />
-        <input type="text" placeholder="मिति सम्म" className="filter-input date-field" />
-        <input type="text" placeholder="समूह/समितिको नाम" className="filter-input" />
+        <input
+          type="date"
+          placeholder="मिति देखि"
+          className="filter-input date-field"
+          value={dateFrom}
+          onChange={(e) => setDateFrom(e.target.value)}
+        />
+        <input
+          type="date"
+          placeholder="मिति सम्म"
+          className="filter-input date-field"
+          value={dateTo}
+          onChange={(e) => setDateTo(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="समूह/समितिको नाम, दर्ता नं वा अधिकृत व्यक्ति खोज्नुहोस्"
+          className="filter-input"
+          value={qName}
+          onChange={(e) => setQName(e.target.value)}
+        />
         <button className="search-icon-btn" onClick={handleSearch}>🔍</button>
+        <button className="search-icon-btn" onClick={handleReset}>⟲</button>
+        <button className="search-icon-btn" onClick={fetchRows} title="Reload">⟳</button>
       </div>
 
       {/* --- Table Section --- */}
       <div className="table-container">
-        <table className="farmer-table">
-          <thead>
-            <tr>
-              <th>क्र.स.</th>
-              <th>समूह/समितिको नाम</th>
-              <th>दर्ता नं.</th>
-              <th>दर्ता मिति</th>
-              <th>गठन मिति</th>
-              <th>समूह/समिति दर्ता मिति</th>
-              <th>प्रकार</th>
-              <th>विभाग</th>
-              <th>ठेगाना,जिल्ला</th>
-              <th>अधिकृत व्यक्ति</th>
-              <th>पद</th>
-              <th>कार्य</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row) => (
-              <tr key={row.id}>
-                <td>{row.sn}</td>
-                <td>{row.groupName}</td>
-                <td>{row.regNo}</td>
-                <td>{row.regDate}</td>
-                <td>{row.formedDate}</td>
-                <td>{row.formedDate}</td> {/* Reusing date as image shows similar */}
-                <td>{row.type}</td>
-                <td>{row.department}</td>
-                <td>{row.address}</td>
-                <td>{row.officer}</td>
-                <td>{row.position}</td>
-                <td className="text-center">
-                  <span className="eye-icon">👁</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="pagination-info">
-             Page 1 of 1
-        </div>
+        {loading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div style={{ color: "crimson" }}>Error: {error}</div>
+        ) : (
+          <>
+            <table className="farmer-table">
+              <thead>
+                <tr>
+                  <th>क्र.स.</th>
+                  <th>समूह/समितिको नाम</th>
+                  <th>दर्ता नं.</th>
+                  <th>दर्ता मिति</th>
+                  <th>गठन मिति</th>
+                  <th>समूह/समिति दर्ता मिति</th>
+                  <th>प्रकार</th>
+                  <th>विभाग</th>
+                  <th>ठेगाना,जिल्ला</th>
+                  <th>अधिकृत व्यक्ति</th>
+                  <th>पद</th>
+                  <th>कार्य</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan="12" style={{ textAlign: "center" }}>No records found</td>
+                  </tr>
+                ) : (
+                  filtered.map((r, index) => {
+                    const m = mapRow(r);
+                    return (
+                      <tr key={r.id || index}>
+                        <td>{m.sn}</td>
+                        <td>{m.groupName}</td>
+                        <td>{m.regNo}</td>
+                        <td>{m.regDate}</td>
+                        <td>{m.formedDate}</td>
+                        <td>{m.formedDate}</td>
+                        <td>{m.type}</td>
+                        <td>{m.department}</td>
+                        <td>{m.address}</td>
+                        <td>{m.officer}</td>
+                        <td>{m.position}</td>
+                        <td className="text-center">
+                          <button onClick={() => handleView(r.id)} title="View">👁</button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+
+            <div className="pagination-info">Total: {filtered.length} record(s)</div>
+          </>
+        )}
       </div>
 
       {/* --- Footer --- */}
