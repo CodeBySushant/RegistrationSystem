@@ -3585,6 +3585,26 @@
     "applicant_citizenship_footer",
     "applicant_phone_footer"
   ]
+},
+
+"different-dob-certification": {
+  "table": "different_dob_certification",
+  "columns": [
+    "municipality",
+    "previous_unit_type",
+    "previous_ward",
+    "salutation",
+    "applicant_name",
+    "applicant_address",
+    "reason_text",
+    "docs",
+    "recommender_name",
+    "recommender_designation",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_footer",
+    "applicant_phone_footer"
+  ]
 }
 
 
