@@ -4105,8 +4105,30 @@
     "signatory_designation",
     "meta_date"
   ]
-}
+},
 
+"disable-identity-card-renew": {
+    "table": "disable_identity_card_renew",
+    "columns": [
+      "chalani_no",
+      "certificate_type",
+      "previous_unit_name",
+      "previous_unit_ward",
+      "relation_text",
+      "relation_child_type",
+      "relation_child_name",
+      "certificate_date",
+      "certificate_number",
+      "renewal_type",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "signatory_name",
+      "signatory_designation",
+      "municipality_display"
+    ]
+  }
 
 
 
