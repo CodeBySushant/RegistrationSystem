@@ -1,156 +1,154 @@
-// 2
-import React from 'react';
+// src/components/EnglishLanguage.jsx
+import React, { useState } from 'react';
 import './EnglishLanguage.css';
 
+const FORM_KEY = "open-format-nepali";
+const API_URL = `/api/forms/${FORM_KEY}`;
+
 const EnglishLanguage = () => {
+  const [form, setForm] = useState({
+    letter_no: "२०८२/८३",
+    reference_no: "",
+    date: "",
+    subject: "",
+    addressee_name: "",
+    addressee_line2: "",
+    body_text: "",
+    archive: false,
+    bodartha: "",
+    signatory_name: "",
+    signatory_position: "",
+    applicant_name: "",
+    applicant_address: "",
+    applicant_citizenship_no: "",
+    applicant_phone: "",
+    notes: ""
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const upd = (k) => (e) => {
+    const v = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    setForm(s => ({ ...s, [k]: v }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage(null);
+
+    // minimal validation
+    if (!form.subject || !form.addressee_name || !form.signatory_name) {
+      setMessage({ type: 'error', text: 'सबै आवश्यक फिल्ड (subject, addressee, signatory) भर्नुहोस्।' });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        setMessage({ type: 'error', text: body.message || JSON.stringify(body) });
+      } else {
+        setMessage({ type: 'success', text: `रेकर्ड सफल—ID: ${body.id || 'unknown'}` });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="open-format-container">
-      {/* --- Top Bar --- */}
+    <form className="open-format-container" onSubmit={handleSubmit}>
       <div className="top-bar-title">
         नेपाली भाषामा ।
         <span className="top-right-bread">खुला ढाँचा &gt; नेपाली प्रपत्र</span>
       </div>
 
-      {/* --- Header Section --- */}
-      <div className="form-header-section">
-        <div className="header-logo">
-          {/* Replace with your actual logo path */}
-          <img src="/logo.png" alt="Nepal Emblem" />
-        </div>
-        <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
-        </div>
-      </div>
-
-      {/* --- Meta Data (Date/Ref) --- */}
       <div className="meta-data-row">
         <div className="meta-left">
-          <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
-          <p>चलानी नं. : <input type="text" className="dotted-input small-input" /></p>
+          <label>पत्र संख्या :</label>
+          <input type="text" value={form.letter_no} onChange={upd('letter_no')} />
+        </div>
+        <div className="meta-left">
+          <label>चलानी नं. :</label>
+          <input type="text" value={form.reference_no} onChange={upd('reference_no')} />
         </div>
         <div className="meta-right">
-          <p>मिति : <span className="bold-text">२०८२-०८-११</span></p>
-          <p>ने.सं - 1146 थिंलाथ्व, 7 बिहीबार</p>
+          <label>मिति :</label>
+          <input type="date" value={form.date} onChange={upd('date')} />
         </div>
       </div>
 
-      {/* --- Addressee & Subject --- */}
       <div className="addressee-subject-section">
-          <div className="subject-block">
-              <label>विषय:</label>
-              <input type="text" className="line-input large-input" required />
-          </div>
-          <div className="addressee-row">
-              <span>श्री</span>
-              <input type="text" className="line-input long-input" required />
-              <span className="red">*</span>
-          </div>
-          <div className="addressee-row">
-             <input type="text" className="line-input long-input" required />
-             <span className="red">*</span>
-          </div>
+        <div className="subject-block">
+          <label>विषय:</label>
+          <input type="text" value={form.subject} onChange={upd('subject')} className="line-input large-input" required />
+        </div>
+
+        <div className="addressee-row">
+          <span>श्री</span>
+          <input type="text" value={form.addressee_name} onChange={upd('addressee_name')} className="line-input long-input" required />
+        </div>
+        <div className="addressee-row">
+          <input type="text" value={form.addressee_line2} onChange={upd('addressee_line2')} className="line-input long-input" />
+        </div>
       </div>
 
-      {/* --- Rich Text Editor Mock --- */}
       <div className="editor-area">
-        <div className="rich-editor-mock">
-            <div className="editor-toolbar">
-                <span className="tool-btn bold">File</span>
-                <span className="tool-btn italic">Edit</span>
-                <span className="tool-btn">View</span>
-                <span className="tool-btn">Insert</span>
-                <span className="tool-btn">Format</span>
-                <span className="tool-btn">Tools</span>
-                <span className="tool-btn">Table</span>
-                <span className="tool-btn">Help</span>
-                
-                <span className="upgrade-btn">Upgrade</span>
-            </div>
-            <div className="editor-toolbar-2">
-                 <span className="tool-btn">⟲</span>
-                 <span className="tool-btn">⟳</span>
-                 <span className="tool-sep">|</span>
-                 <select className="editor-select"><option>Paragraph</option></select>
-                 <select className="editor-select"><option>12pt</option></select>
-                 <span className="tool-sep">|</span>
-                 <span className="tool-btn">B</span>
-                 <span className="tool-btn">I</span>
-                 <span className="tool-btn">U</span>
-                 <span className="tool-btn">S</span>
-                 {/* Mock alignment and other tools */}
-                 <span className="tool-sep ml-20">|</span>
-                 <span className="tool-btn">▤</span>
-                 <span className="tool-btn">☰</span>
-                 <span className="tool-btn">☷</span>
-                 <span className="tool-btn">☱</span>
-            </div>
-            <textarea className="editor-textarea" rows="10" placeholder="p"></textarea>
-            <div className="word-count">
-                <span>0 words</span>
-                <span className="ml-20">@tiny</span>
-            </div>
-        </div>
-      </div>
-
-      {/* --- Footer Options --- */}
-      <div className="footer-options">
-          <input type="checkbox" id="archive" />
-          <label htmlFor="archive">अभिलेख गर्नुहोस्</label>
+        <textarea className="editor-textarea" rows="10" placeholder="लेख यहाँ..." value={form.body_text} onChange={upd('body_text')} />
+        <div className="word-count"> { (form.body_text || '').split(/\s+/).filter(Boolean).length } words</div>
       </div>
 
       <div className="footer-options">
-          <label>बोधार्थ:</label>
-          <input type="text" className="line-input long-input" />
+        <label><input type="checkbox" checked={!!form.archive} onChange={upd('archive')} /> अभिलेख गर्नुहोस्</label>
       </div>
 
-      {/* --- Signature Section --- */}
+      <div className="footer-options">
+        <label>बोधार्थ:</label>
+        <input type="text" value={form.bodartha} onChange={upd('bodartha')} className="line-input long-input" />
+      </div>
+
       <div className="signature-section">
-        <div className="signature-block">
-          <div className="signature-line"></div>
-          <span className="red-mark">*</span>
-          <input type="text" className="line-input full-width-input" required />
-          <select className="designation-select">
-             <option>पद छनौट गर्नुहोस्</option>
-             <option>वडा अध्यक्ष</option>
-          </select>
-        </div>
+        <input type="text" value={form.signatory_name} onChange={upd('signatory_name')} placeholder="दस्तखत/नाम" required />
+        <select value={form.signatory_position} onChange={upd('signatory_position')}>
+          <option value="">पद छनौट गर्नुहोस्</option>
+          <option>वडा अध्यक्ष</option>
+          <option>वडा सचिव</option>
+        </select>
       </div>
 
-      {/* --- Applicant Details Box --- */}
       <div className="applicant-details-box">
         <h3>निवेदकको विवरण</h3>
         <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input type="text" className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input type="text" className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input type="text" className="detail-input bg-gray" />
-          </div>
+          <input type="text" placeholder="नाम" value={form.applicant_name} onChange={upd('applicant_name')} />
+          <input type="text" placeholder="ठेगाना" value={form.applicant_address} onChange={upd('applicant_address')} />
+          <input type="text" placeholder="नागरिकता नं." value={form.applicant_citizenship_no} onChange={upd('applicant_citizenship_no')} />
+          <input type="text" placeholder="फोन" value={form.applicant_phone} onChange={upd('applicant_phone')} />
         </div>
       </div>
 
-      {/* --- Footer Action --- */}
-      <div className="form-footer">
-        <button className="save-print-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+      <div style={{ marginTop: 12 }}>
+        <label>Notes</label>
+        <textarea rows={2} value={form.notes} onChange={upd('notes')} />
       </div>
-      
-      <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+
+      <div className="form-footer" style={{ marginTop: 12 }}>
+        <button type="submit" disabled={loading}>{loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}</button>
       </div>
-    </div>
+
+      {message && (
+        <div style={{ marginTop: 8, color: message.type === 'error' ? 'crimson' : 'green' }}>
+          {message.text}
+        </div>
+      )}
+    </form>
   );
 };
 

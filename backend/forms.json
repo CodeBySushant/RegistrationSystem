@@ -3450,6 +3450,28 @@
     "subject",
     "location"
   ]
+},
+
+"open-format-nepali": {
+  "table": "open_format_documents",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date",
+    "subject",
+    "addressee_name",
+    "addressee_line2",
+    "body_text",
+    "archive",
+    "bodartha",
+    "signatory_name",
+    "signatory_position",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
