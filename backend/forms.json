@@ -2363,7 +2363,35 @@
     "notes"
   ],
   "title": "Gov Organization Registration Rejected"
+},
+
+"boundary-recommendation": {
+  "table": "boundary_recommendations",
+  "columns": [
+    "letter_no",
+    "chalani_no",
+    "date_nep",
+    "municipality",
+    "ward_no",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "old_district",
+    "old_municipality",
+    "old_ward_no",
+    "plot_number",
+    "area",
+    "east_boundary",
+    "west_boundary",
+    "north_boundary",
+    "south_boundary",
+    "signer_name",
+    "signer_designation",
+    "notes"
+  ]
 }
+
 
 
 
