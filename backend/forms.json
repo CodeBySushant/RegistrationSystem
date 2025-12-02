@@ -3296,6 +3296,38 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"citizenship-recommendation-husband": {
+  "table": "citizenship_recommendation_husband_details",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date",
+    "pre_marriage_district",
+    "pre_marriage_office",
+    "pre_marriage_ward",
+    "pre_marriage_prpn_no",
+    "marriage_district",
+    "marriage_municipality",
+    "marriage_ward",
+    "marriage_date",
+    "applicant_title",
+    "applicant_name",
+    "wife_name",
+    "husband_name",
+    "husband_address",
+    "recommender_name",
+    "recommender_position",
+    "recommender_date",
+    "signatory_name",
+    "signatory_position",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
