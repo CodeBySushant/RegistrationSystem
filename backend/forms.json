@@ -3965,6 +3965,24 @@
     "applicant_citizenship_no",
     "applicant_phone"
   ]
+},
+
+"withdrawal-fund-recommendation": {
+  "table": "withdrawal_fund_recommendation",
+  "columns": [
+    "project_code_or_id",
+    "requested_amount",
+    "committee_chair",
+    "consumer_committee_name",
+    "implement_unit_name",
+    "tapsil",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone"
+  ]
 }
 
 
