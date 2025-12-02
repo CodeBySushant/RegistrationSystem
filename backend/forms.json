@@ -2346,7 +2346,25 @@
     "status",
     "recommendation_note"
   ]
+},
+
+"gov-organization-registration-rejected": {
+  "table": "gov_organization_registration_rejected",
+  "columns": [
+    "sn",
+    "regDate",
+    "proposedName",
+    "address",
+    "purpose",
+    "mainWork",
+    "share",
+    "entryFee",
+    "rejectReason",
+    "notes"
+  ],
+  "title": "Gov Organization Registration Rejected"
 }
+
 
 
 
