@@ -2758,6 +2758,33 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "property-owner-certificate-copy-recommendation": {
+    "table": "property_owner_certificate_copy_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_office",
+      "addressee_place",
+      "owner_prefix",
+      "owner_name",
+      "previous_muni_name",
+      "previous_muni_type",
+      "previous_ward_no",
+      "plot_no",
+      "area",
+      "request_district",
+      "request_local_body",
+      "request_local_body_type",
+      "request_local_body_ward_no",
+      "certificates",
+      "footer_applicants",
+      "signer_name",
+      "signer_designation",
+      "notes"
+    ]
   }
 
 
