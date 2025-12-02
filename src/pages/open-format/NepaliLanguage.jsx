@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import "./NepaliLanguage.css";
 
 const FORM_KEY = "nepali-language"; // use this in forms.json and backend route
-const API_BASE = process.env.REACT_APP_API_BASE || ""; // "" for same-origin
+const API_BASE = import.meta.env.VITE_API_BASE || "";
 const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 
 // helper: convert Devanagari digits to ASCII digits
