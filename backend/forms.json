@@ -3891,6 +3891,32 @@
       "applicant_designation",
       "recommendation_notes"
     ]
+  },
+
+  "road-maintain-recommendation": {
+    "table": "road_maintain_recommendation",
+    "columns": [
+      "chalan_no",
+      "date_nepali",
+      "district",
+      "municipality",
+      "ward_no",
+      "previous_address_type",
+      "previous_ward_no",
+      "kitta_no",
+      "area",
+      "side",
+      "width_ft",
+      "length_ft",
+      "owner_title",
+      "owner_name",
+      "technical_report_attached",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "designation"
+    ]
   }
 
 
