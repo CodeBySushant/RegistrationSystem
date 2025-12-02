@@ -2901,7 +2901,64 @@
       "applicant_citizenship_no",
       "applicant_phone"
     ]
-  }
+  },
+
+  "bhawan-nirman-sampanna": {
+  "table": "bhawan_nirman_sampanna",
+  "columns": [
+    "date_nep",
+    "owner_name",
+    "municipality",
+    "ward_no",
+    "tole",
+    "construction_note",
+    "land_prev_local",
+    "land_prev_ward",
+    "land_prev_halqa",
+    "land_tol",
+    "land_kitta",
+    "land_area",
+    "land_region",
+    "land_subregion",
+    "boundary_east",
+    "boundary_west",
+    "boundary_north",
+    "boundary_south",
+    "land_owner",
+    "house_owner",
+    "owner_parent",
+    "construction_type",
+    "map_pass_no",
+    "map_pass_date",
+    "regularized_date",
+    "regularized_floor_count",
+    "purpose",
+    "floor_details",
+    "height",
+    "setback_distance",
+    "setback_value",
+    "electric_distance",
+    "electric_left",
+    "electric_volt",
+    "river_distance",
+    "river_left",
+    "river_name",
+    "septic",
+    "remarks",
+    "transfers1",
+    "transfers2",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "signature_owner",
+    "signature_faatwala",
+    "signature_inspector",
+    "signature_engineer",
+    "signature_issuer"
+  ]
+}
+
 
 
 
