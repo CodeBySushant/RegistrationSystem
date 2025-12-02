@@ -3437,6 +3437,19 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"notice-details-list": {
+  "table": "notice_details",
+  "columns": [
+    "notice_no",
+    "issue_date",
+    "approve_date",
+    "type",
+    "purpose",
+    "subject",
+    "location"
+  ]
 }
 
 
