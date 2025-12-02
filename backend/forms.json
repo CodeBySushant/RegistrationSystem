@@ -4222,7 +4222,40 @@
     "signatory_designation",
     "meta_date"
   ]
+},
+
+"internal-migration-recommendation": {
+  "table": "internal_migration_recommendation",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date",
+    "subject",
+    "addressee_line1",
+    "addressee_line2",
+    "from_location",
+    "migration_type",
+    "from_date",
+    "to_date",
+    "from_district",
+    "from_municipality_type",
+    "from_ward_no",
+    "to_district",
+    "to_municipality",
+    "to_ward_no",
+    "details",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "updated_at"
+  ]
 }
+
 
 
 
