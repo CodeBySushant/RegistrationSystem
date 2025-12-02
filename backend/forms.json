@@ -3057,6 +3057,34 @@
       "scan_filename",
       "notes"
     ]
+  },
+
+   "passport-recommendation": {
+    "table": "passport_recommendations",
+    "columns": [
+      "letter_no",
+      "ref_no",
+      "date_of_letter",
+      "day_text",
+      "header_to",
+      "header_district",
+      "main_district",
+      "prev_location_type",
+      "prev_ward_no",
+      "current_municipality",
+      "current_ward_no",
+      "resident_address_type",
+      "resident_district",
+      "citizen_issue_date",
+      "citizen_no",
+      "applicant_name",
+      "designation",
+      "detail_applicant_name",
+      "detail_applicant_address",
+      "detail_applicant_citizenship",
+      "detail_applicant_phone",
+      "notes"
+    ]
   }
 
 
