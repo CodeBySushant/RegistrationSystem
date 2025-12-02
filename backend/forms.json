@@ -3687,7 +3687,55 @@
       "applicant_phone",
       "notes"
     ]
-  }
+  },
+
+  "electricity-installation": {
+  "table": "electricity_installation",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date_bs",
+    "date_ad",
+    "recipient_company",
+    "recipient_city",
+    "applicant_municipality",
+    "applicant_municipality_type",
+    "applicant_ward",
+    "applicant_title",
+    "applicant_name",
+    "relation1_type",
+    "relation1_name",
+    "relation1_address",
+    "relation2_type",
+    "relation2_name",
+    "relation2_address",
+    "previous_local_body_type",
+    "previous_local_body_name",
+    "previous_ward",
+    "ki_no",
+    "area_size",
+    "tole",
+    "basti",
+    "current_ward",
+    "boundary_east",
+    "boundary_west",
+    "boundary_north",
+    "boundary_south",
+    "house_built_by",
+    "house_floors",
+    "house_type",
+    "property_registered_to",
+    "declaration_text",
+    "additional_notes",
+    "signature_name",
+    "signature_designation",
+    "applicant_footer_name",
+    "applicant_footer_address",
+    "applicant_footer_citizenship_no",
+    "applicant_footer_phone"
+  ]
+}
+
 
 
 
