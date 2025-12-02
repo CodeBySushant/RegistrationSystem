@@ -3605,6 +3605,26 @@
     "applicant_citizenship_footer",
     "applicant_phone_footer"
   ]
+},
+
+"different-english-spelling-certification": {
+  "table": "different_english_spelling_certification",
+  "columns": [
+    "municipality",
+    "previous_unit_type",
+    "previous_ward",
+    "salutation",
+    "applicant_name",
+    "english_spelling_basis",
+    "reason_text",
+    "docs",
+    "recommender_name",
+    "recommender_designation",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_footer",
+    "applicant_phone_footer"
+  ]
 }
 
 
