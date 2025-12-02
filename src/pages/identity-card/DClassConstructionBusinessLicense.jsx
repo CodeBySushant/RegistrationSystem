@@ -1,10 +1,60 @@
-// 2
-import React from 'react';
-import './DClassConstructionBusinessLicense.css';
+// DClassConstructionBusinessLicense.jsx
+import React, { useState } from "react";
+import "./DClassConstructionBusinessLicense.css";
 
 const DClassConstructionBusinessLicense = () => {
+  const [form, setForm] = useState({
+    license_no: "७/२०८२/८३",
+    fiscal_year: "२०८२/८३",
+    issue_date: "2082-08-06", // ISO-like yyyy-mm-dd
+    business_name: "",
+    office_address: "",
+    firm_or_company: "",
+    applicant_name: "",
+    applicant_address: "",
+    applicant_citizenship_no: "",
+    applicant_phone: "",
+    signatory_name: "",
+    signatory_position: "",
+    signatory_seal: "",
+    signatory_date: "2082-08-06",
+    notes: ""
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const update = (key) => (e) => {
+    setForm((s) => ({ ...s, [key]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage(null);
+    setLoading(true);
+    try {
+      // Your generic route expects POST /api/forms/:formKey
+      const res = await fetch("/api/forms/d-class-construction-business-license", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        setMessage({ type: "error", text: body.message || JSON.stringify(body) });
+      } else {
+        setMessage({ type: "success", text: `Saved (id: ${body.id || "unknown"})` });
+      }
+    } catch (err) {
+      setMessage({ type: "error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="construction-license-container">
+    <form className="construction-license-container" onSubmit={handleSubmit}>
       {/* --- Top Bar --- */}
       <div className="top-bar-title">
         घ वर्गको निर्माण व्यवसाय इजाजत पत्र ।
@@ -13,10 +63,7 @@ const DClassConstructionBusinessLicense = () => {
 
       {/* --- Header Section --- */}
       <div className="form-header-section">
-        <div className="header-logo">
-          {/* Replace with your actual logo path */}
-          <img src="/logo.png" alt="Nepal Emblem" />
-        </div>
+        <div className="header-logo"><img src="/logo.png" alt="Nepal Emblem" /></div>
         <div className="header-text">
           <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
           <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
@@ -28,14 +75,22 @@ const DClassConstructionBusinessLicense = () => {
       {/* --- Meta Data & Photo Box --- */}
       <div className="meta-data-row">
         <div className="meta-left">
-          <p>इजाजत पत्र नं : <span className="bold-text">७/२०८२/८३</span></p>
-          <p>आ.व. : <span className="bold-text">२०८२/८३</span></p>
-          <p>मिति : <span className="bold-text">२०८२-०८-०६</span></p>
+          <p>इजाजत पत्र नं :
+            <input type="text" className="line-input medium-input" value={form.license_no} onChange={update("license_no")} />
+          </p>
+          <p>आ.व. :
+            <input type="text" className="line-input medium-input" value={form.fiscal_year} onChange={update("fiscal_year")} />
+          </p>
+          <p>मिति :
+            <input type="date" className="line-input medium-input" value={form.issue_date} onChange={update("issue_date")} />
+          </p>
         </div>
+
         <div className="meta-right">
-            <div className="photo-box">
-                निवेदकको दुबै कान देखिने पासपोर्ट साइजको फोटो
-            </div>
+          <div className="photo-box" aria-hidden>
+            निवेदकको दुबै कान देखिने पासपोर्ट साइजको फोटो
+            {/* If you later add file upload, replace this with <input type="file"> and update backend */}
+          </div>
         </div>
       </div>
 
@@ -47,38 +102,47 @@ const DClassConstructionBusinessLicense = () => {
       {/* --- Main Body --- */}
       <div className="form-body">
         <p className="body-paragraph">
-          निर्माण व्यवसाय ऐन २०५५ को दफा ४ को उप दफा (३), निर्माण व्यवसाय नियमावली २०५६ को नियम ६ को उपनियम (१) बमोजिम निर्माण व्यवसाय गर्ने स्थानीय सरकार सञ्चालन ऐन २०७४ को दफा (११) को उप दफा (२) को देहाय छ (१०) र 'घ' वर्गको निर्माण व्यवसाय इजाजतपत्र सम्वन्धी कार्यविधि, २०७९ को दफा २ को उपदफा (४) बमोजिम प्रचलित कानुनको परिधिभित्र रही निर्माण व्यवसाय सञ्चालन गर्न <input type="text" className="line-input long-input" required /> <span className="red">*</span> स्थित कार्यालय भएको <input type="text" className="line-input long-input" required /> <span className="red">*</span> फर्म वा कम्पनीलाई "घ" वर्गको <select className="inline-select"><option>इजाजतपत्र</option></select> प्रदान गरिएको छ ।
+          ...प्रचलित कानुनको परिधिभित्र रही निर्माण व्यवसाय सञ्चालन गर्न
+          <input type="text" className="line-input long-input" value={form.business_name} onChange={update("business_name")} placeholder="व्यवसाय/व्यवसायीको नाम" required /> स्थित कार्यालय
+          <input type="text" className="line-input long-input" value={form.office_address} onChange={update("office_address")} placeholder="कार्यालय ठेगाना" required />
+          फर्म वा कम्पनीलाई
+          <input type="text" className="inline-select" value={form.firm_or_company} onChange={update("firm_or_company")} placeholder="फर्म वा कम्पनी" />
+          "घ" वर्गको इजाजतपत्र प्रदान गरिएको छ।
         </p>
       </div>
 
-      {/* --- Bottom Section (Big Letter & Signature) --- */}
+      {/* --- Bottom (Signature) --- */}
       <div className="bottom-section">
-          <div className="big-letter-box">
-              <span>घ</span>
+        <div className="big-letter-box"><span>घ</span></div>
+
+        <div className="signature-details">
+          <p className="bold-text">इजाजतपत्र दिनेको :</p>
+
+          <div className="sig-row">
+            <label>दस्तखत :</label>
+            <input type="text" className="line-input medium-input" value={form.signatory_name} onChange={update("signatory_name")} />
           </div>
-          <div className="signature-details">
-              <p className="bold-text">इजाजतपत्र दिनेको :</p>
-              <div className="sig-row">
-                  <label>दस्तखत :</label>
-                  <input type="text" className="line-input medium-input" />
-              </div>
-              <div className="sig-row">
-                  <label>नाम : <span className="red">*</span></label>
-                  <input type="text" className="line-input medium-input" />
-              </div>
-              <div className="sig-row">
-                  <label>पद : <span className="red">*</span></label>
-                  <input type="text" className="line-input medium-input" />
-              </div>
-              <div className="sig-row">
-                  <label>छाप:</label>
-                  <input type="text" className="line-input medium-input" />
-              </div>
-              <div className="sig-row">
-                  <label>मिति :</label>
-                  <input type="text" className="line-input medium-input" defaultValue="२०८२-०८-०६" />
-              </div>
+
+          <div className="sig-row">
+            <label>नाम : <span className="red">*</span></label>
+            <input type="text" className="line-input medium-input" value={form.signatory_name} onChange={update("signatory_name")} required />
           </div>
+
+          <div className="sig-row">
+            <label>पद : <span className="red">*</span></label>
+            <input type="text" className="line-input medium-input" value={form.signatory_position} onChange={update("signatory_position")} required />
+          </div>
+
+          <div className="sig-row">
+            <label>छाप:</label>
+            <input type="text" className="line-input medium-input" value={form.signatory_seal} onChange={update("signatory_seal")} />
+          </div>
+
+          <div className="sig-row">
+            <label>मिति :</label>
+            <input type="date" className="line-input medium-input" value={form.signatory_date} onChange={update("signatory_date")} />
+          </div>
+        </div>
       </div>
 
       {/* --- Applicant Details Box --- */}
@@ -87,32 +151,45 @@ const DClassConstructionBusinessLicense = () => {
         <div className="details-grid">
           <div className="detail-group">
             <label>निवेदकको नाम</label>
-            <input type="text" className="detail-input bg-gray" />
+            <input type="text" className="detail-input bg-gray" value={form.applicant_name} onChange={update("applicant_name")} />
           </div>
           <div className="detail-group">
             <label>निवेदकको ठेगाना</label>
-            <input type="text" className="detail-input bg-gray" />
+            <input type="text" className="detail-input bg-gray" value={form.applicant_address} onChange={update("applicant_address")} />
           </div>
           <div className="detail-group">
             <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <input type="text" className="detail-input bg-gray" value={form.applicant_citizenship_no} onChange={update("applicant_citizenship_no")} />
           </div>
           <div className="detail-group">
             <label>निवेदकको फोन नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <input type="text" className="detail-input bg-gray" value={form.applicant_phone} onChange={update("applicant_phone")} />
           </div>
         </div>
       </div>
 
-      {/* --- Footer Action --- */}
-      <div className="form-footer">
-        <button className="save-print-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+      {/* --- Notes / Footer Action --- */}
+      <div style={{ marginTop: 12 }}>
+        <label>नोट / अतिरिक्त जानकारी</label>
+        <textarea className="full-width-textarea" rows="3" value={form.notes} onChange={update("notes")} />
       </div>
-      
+
+      <div className="form-footer" style={{ marginTop: 12 }}>
+        <button type="submit" className="save-print-btn" disabled={loading}>
+          {loading ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
+      </div>
+
+      {message && (
+        <div style={{ marginTop: 8, color: message.type === "error" ? "crimson" : "green" }}>
+          {message.text}
+        </div>
+      )}
+
       <div className="copyright-footer">
         © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
       </div>
-    </div>
+    </form>
   );
 };
 
