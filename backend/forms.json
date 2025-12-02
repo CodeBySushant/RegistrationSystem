@@ -2415,6 +2415,32 @@
       "applicant_phone",
       "notes"
     ]
+},
+
+"ghar-kayam-new-format": {
+"table": "ghar_kayam_new_format",
+"columns": [
+"letter_no",
+"chalani_no",
+"date_nep",
+"malpot_office_place",
+"district",
+"ward_no",
+"owner_name",
+"registration_date",
+"certificate_taken_from",
+"plot_gb_np",
+"plot_ward_no",
+"plot_seat_no",
+"plot_plot_no",
+"plot_area",
+"signer_name",
+"signer_designation",
+"applicant_address",
+"applicant_citizenship_no",
+"applicant_phone",
+"notes"
+]
 }
 
 
