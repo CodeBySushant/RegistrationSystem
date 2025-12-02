@@ -4078,6 +4078,19 @@
     "signatory_name",
     "signatory_designation"
   ]
+},
+
+"destitute-recommendation": {
+  "table": "destitute_recommendations",
+  "columns": [
+    "chalani_no",
+    "municipality_display",
+    "location",
+    "subject",
+    "applicant",
+    "signatory_name",
+    "signatory_designation"
+  ]
 }
 
 
