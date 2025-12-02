@@ -2842,6 +2842,31 @@
       "applicant_citizenship_no",
       "applicant_phone"
     ]
+  },
+
+  "property-ownership-transfer-recommendation": {
+    "table": "property_ownership_transfer_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "previous_type",
+      "previous_ward_no",
+      "current_local",
+      "current_municipality",
+      "current_ward_no",
+      "deceased_indicator",
+      "applicant_prefix",
+      "applicant_name",
+      "requested_by",
+      "other_heirs",
+      "property_details",
+      "signature_name",
+      "signature_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone"
+    ]
   }
 
 
