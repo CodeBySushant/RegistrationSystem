@@ -2342,9 +2342,12 @@
     "applicantName",
     "applicantAddress",
     "applicantCitizenship",
-    "applicantPhone"
+    "applicantPhone",
+    "status",
+    "recommendation_note"
   ]
 }
+
 
 
 
