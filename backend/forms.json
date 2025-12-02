@@ -4188,6 +4188,40 @@
     "signatory_name",
     "signatory_designation"
   ]
+},
+
+"free-health-insurance-request": {
+  "table": "free_health_insurance_requests",
+  "columns": [
+    "chalani_no",
+    "fiscal_year",
+    "addressee",
+    "family_members",
+    "employment",
+    "land_ownership",
+    "financial",
+    "applicant",
+    "meta_date"
+  ]
+},
+
+"income-source-certification": {
+  "table": "income_source_certifications",
+  "columns": [
+    "chalani_no",
+    "residence_district",
+    "residence_municipality",
+    "residence_ward_no",
+    "incomes",
+    "total_income",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "signatory_name",
+    "signatory_designation",
+    "meta_date"
+  ]
 }
 
 
