@@ -3375,6 +3375,39 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"inter-local-transfer-recommendation": {
+  "table": "inter_local_transfer_recommendations",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date",
+    "subject",
+    "requested_person_name",
+    "requested_person_position",
+    "requested_person_position_code",
+    "transfer_to_local",
+    "transfer_to_position",
+    "employee_name",
+    "employee_post_title",
+    "service_group",
+    "appointing_local",
+    "transfer_local",
+    "permanent_address",
+    "phone",
+    "dob",
+    "citizenship_no",
+    "citizenship_issue_date",
+    "citizenship_issue_district",
+    "signatory_name",
+    "signatory_position",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
