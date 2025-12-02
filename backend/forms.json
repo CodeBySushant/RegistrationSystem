@@ -2682,6 +2682,32 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "onsite-inspection-recommendation": {
+    "table": "onsite_inspection_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_name",
+      "addressee_line2",
+      "previous_municipality",
+      "previous_type",
+      "previous_ward_no",
+      "applicant_name",
+      "applicant_current_municipality",
+      "applicant_current_ward_no",
+      "plot_prev_municipality",
+      "plot_prev_ward_no",
+      "plot_details",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
   }
 
 
