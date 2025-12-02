@@ -2478,7 +2478,34 @@
       "applicant_phone",
       "notes"
     ]
-  }
+  },
+
+"house-construction-completed-certificate": {
+    "table": "house_construction_completed_certificate",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "municipality",
+      "ward_no",
+      "applicant_name",
+      "previous_district",
+      "previous_type",
+      "previous_ward_no",
+      "plot_number",
+      "plot_area",
+      "house_type",
+      "house_storeys",
+      "map_approval_date",
+      "map_approval_type",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
+}
 
 
 
