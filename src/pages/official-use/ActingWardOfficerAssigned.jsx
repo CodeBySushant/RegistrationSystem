@@ -1,136 +1,190 @@
-// 3
-import React from 'react';
+import React, { useState } from 'react';
 import './ActingWardOfficerAssigned.css';
 
+const FORM_KEY = "acting-ward-officer-assigned";
+const API_URL = `/api/forms/${FORM_KEY}`;
+
 const ActingWardOfficerAssigned = () => {
+
+  const [form, setForm] = useState({
+    letter_no: "२०८२/८३",
+    reference_no: "",
+    date: "2082-08-11",
+    subject: "कार्यवाहक तोकिएको सम्बन्धमा",
+
+    assigned_member_name: "",
+    assigned_member_address: "नागार्जुन नगरपालिका",
+    assigned_ward_no: "1",
+
+    assign_from_date: "2082-08-11",
+    assign_to_date: "2082-08-11",
+
+    bodartha_text: "",
+
+    signatory_name: "",
+    signatory_position: "",
+    
+    applicant_name_footer: "",
+    applicant_address_footer: "",
+    applicant_citizenship_no: "",
+    applicant_phone: "",
+    notes: ""
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState(null);
+
+  const upd = key => e =>
+    setForm(f => ({ ...f, [key]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
+
+      const contentType = res.headers.get("content-type") || "";
+      const body = contentType.includes("application/json")
+        ? await res.json()
+        : await res.text();
+
+      if (!res.ok) {
+        throw new Error(body.message || JSON.stringify(body));
+      }
+
+      setMsg({ type: "success", text: `Saved successfully (ID: ${body.id})` });
+    } catch (err) {
+      setMsg({ type: "error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="acting-officer-container">
-      {/* --- Top Bar --- */}
+    <form className="acting-officer-container" onSubmit={handleSubmit}>
+
       <div className="top-bar-title">
         कार्यवाहक तोकिएको सिफारिस ।
         <span className="top-right-bread">आर्थिक प्रबेश &gt; कार्यवाहक तोकिएको सिफारिस</span>
       </div>
 
-      {/* --- Header Section --- */}
+      {/* Header */}
       <div className="form-header-section">
         <div className="header-logo">
-          {/* Replace with your actual logo path */}
           <img src="/logo.png" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
           <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
           <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
+          <p>नागार्जुन, काठमाडौँ</p>
         </div>
       </div>
 
-      {/* --- Meta Data (Date/Ref) --- */}
+      {/* Meta Data */}
       <div className="meta-data-row">
         <div className="meta-left">
-          <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
-          <p>चलानी नं. : <input type="text" className="dotted-input small-input" /></p>
+          <p>पत्र संख्या : <input value={form.letter_no} onChange={upd("letter_no")} /></p>
+          <p>चलानी नं.: <input value={form.reference_no} onChange={upd("reference_no")} /></p>
         </div>
         <div className="meta-right">
-          <p>मिति : <span className="bold-text">२०८२-०८-११</span></p>
-          <p>ने.सं - 1146 थिंलाथ्व, 7 बिहीबार</p>
+          <p>मिति : <input value={form.date} onChange={upd("date")} /></p>
         </div>
       </div>
 
-      {/* --- Subject --- */}
-      <div className subject-section>
-        <p>विषय: <span className="underline-text">कार्यवाहक तोकिएको सम्बन्धमा।</span></p>
+      {/* Subject */}
+      <div className="subject-section">
+        <p>विषय: <input value={form.subject} onChange={upd("subject")} /></p>
       </div>
 
-      {/* --- Addressee Section --- */}
-      <div className addressee-section>
+      {/* Addressee */}
+      <div className="addressee-section">
         <div className="addressee-row">
           <span>श्री वडा सदस्य</span>
-          <input type="text" className="line-input medium-input" required />
-          <span className="red">*</span>
+          <input value={form.assigned_member_name} onChange={upd("assigned_member_name")} />
         </div>
         <div className="addressee-row">
-           <input type="text" className="line-input medium-input" defaultValue="नागार्जुन नगरपालिका" />
-           <span>वडा नं. १</span>
+          <input value={form.assigned_member_address} onChange={upd("assigned_member_address")} />
+          <span>वडा नं.</span>
+          <input className="tiny" value={form.assigned_ward_no} onChange={upd("assigned_ward_no")} />
         </div>
       </div>
 
-      {/* --- Main Body --- */}
+      {/* Body */}
       <div className="form-body">
-        <p className="body-paragraph">
-          प्रस्तुत विषयमा कार्यालयको कामकामजको शिलशिलामा मिति <input type="text" className="inline-box-input medium-box" defaultValue="२०८२-०८-११" /> देखि मिति <input type="text" className="inline-box-input medium-box" defaultValue="२०८२-०८-११" /> गते सम्म बाहिर जानु पर्ने भएकोले सो अवधि सम्म यस १ नं वडा कार्यालयको कामकाज सम्हाल्ने गरी तपाईंलाई कार्यवाहक वडा अध्यक्षको जिम्मेवारी तथा काम गर्न गराई काम गर्नुहोला ।
+        <p>
+          प्रस्तुत विषयमा कार्यालयको कामकाजको शिलशिलामा मिति  
+          <input value={form.assign_from_date} onChange={upd("assign_from_date")} /> देखि 
+          <input value={form.assign_to_date} onChange={upd("assign_to_date")} /> 
+          गतेसम्म बाहिर जानु पर्ने भएकोले सो अवधिसम्म कार्यालयको कामकाज सम्हाल्ने गरी तपाईंलाई कार्यवाहक वडा अध्यक्षको जिम्मेवारी दिइन्छ।
         </p>
       </div>
 
-      {/* --- Bodartha (CC) Section --- */}
+      {/* Bodartha */}
       <div className="bodartha-section">
-          <h4 className="bold-text">बोधार्थ:</h4>
-          <div className="editor-section">
-              <div className="rich-editor-mock">
-                  <div className="editor-toolbar">
-                      <span className="tool-btn bold">B</span>
-                      <span className="tool-btn italic">I</span>
-                      <span className="tool-btn underline">U</span>
-                      <span className="tool-btn strike">S</span>
-                      <span className="tool-sep">|</span>
-                      <span className="tool-btn">X<sub>2</sub></span>
-                      <span className="tool-btn">X<sup>2</sup></span>
-                      <span className="tool-sep">|</span>
-                      <span className="tool-btn">¶</span>
-                      <span className="tool-btn">﹖</span>
-                  </div>
-                  <textarea className="editor-textarea" rows="4"></textarea>
-              </div>
-          </div>
+        <h4>बोधार्थ:</h4>
+        <textarea
+          className="editor-textarea"
+          rows={4}
+          value={form.bodartha_text}
+          onChange={upd("bodartha_text")}
+        />
       </div>
 
-      {/* --- Signature Section --- */}
+      {/* Signature */}
       <div className="signature-section">
         <div className="signature-block">
-          <div className="signature-line"></div>
-          <span className="red-mark">*</span>
-          <input type="text" className="line-input full-width-input" required />
-          <select className="designation-select">
-             <option>पद छनौट गर्नुहोस्</option>
-             <option>वडा अध्यक्ष</option>
-             <option>वडा सचिव</option>
-             <option>कार्यवाहक वडा अध्यक्ष</option>
+          <input placeholder="दस्तखत" value={form.signatory_name} onChange={upd("signatory_name")} />
+          <select value={form.signatory_position} onChange={upd("signatory_position")}>
+            <option>पद छनौट गर्नुहोस्</option>
+            <option>वडा अध्यक्ष</option>
+            <option>वडा सचिव</option>
+            <option>कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>
 
-      {/* --- Applicant Details Box --- */}
+      {/* Applicant Footer */}
       <div className="applicant-details-box">
         <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input type="text" className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input type="text" className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input type="text" className="detail-input bg-gray" />
-          </div>
-        </div>
+
+        <label>नाम</label>
+        <input value={form.applicant_name_footer} onChange={upd("applicant_name_footer")} />
+
+        <label>ठेगाना</label>
+        <input value={form.applicant_address_footer} onChange={upd("applicant_address_footer")} />
+
+        <label>नागरिकता नं.</label>
+        <input value={form.applicant_citizenship_no} onChange={upd("applicant_citizenship_no")} />
+
+        <label>फोन</label>
+        <input value={form.applicant_phone} onChange={upd("applicant_phone")} />
       </div>
 
-      {/* --- Footer Action --- */}
+      {/* Notes */}
+      <textarea
+        rows={3}
+        placeholder="Notes"
+        value={form.notes}
+        onChange={upd("notes")}
+      ></textarea>
+
       <div className="form-footer">
-        <button className="save-print-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+        <button disabled={loading}>{loading ? "Saving..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}</button>
       </div>
-      
-      <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
-      </div>
-    </div>
+
+      {msg && (
+        <div style={{ color: msg.type === "error" ? "crimson" : "green" }}>
+          {msg.text}
+        </div>
+      )}
+
+    </form>
   );
 };
 
