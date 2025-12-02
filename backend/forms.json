@@ -3917,6 +3917,31 @@
       "applicant_phone",
       "designation"
     ]
+  },
+
+  "tap-installation-recommendation": {
+    "table": "tap_installation_recommendation",
+    "columns": [
+      "chalan_no",
+      "date_nepali",
+      "addressee_prefix",
+      "addressee_name",
+      "addressee_place",
+      "ward_no",
+      "previous_address",
+      "owner_name",
+      "kitta_main_no",
+      "construction_type",
+      "tap_count",
+      "kitta_list",
+      "signature_name",
+      "signature_designation",
+      "bodartha_text",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone"
+    ]
   }
 
 
