@@ -3328,6 +3328,30 @@
     "applicant_phone",
     "notes"
   ]
+},
+
+"sthalagat-sarjimin-mujulka": {
+  "table": "sthalagat_sarjimin_mujulkas",
+  "columns": [
+    "letter_date",
+    "district",
+    "office",
+    "municipality",
+    "ward_no",
+    "applicant_title",
+    "applicant_name",
+    "claim_reason",
+    "certificate_details",
+    "tapsil",       
+    "signatory_name",
+    "signatory_position",
+    "signatory_date",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
 }
 
 
