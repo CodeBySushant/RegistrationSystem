@@ -3221,7 +3221,49 @@
       "footer_signature",
       "notes"
     ]
-  }
+  },
+
+"citizenship-proof-copy": {
+  "table": "citizenship_proof_copy_requests",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date",
+    "recipient_name",
+    "recipient_address",
+    "recipient_district",
+    "municipality",
+    "ward_no",
+    "permanent_municipality",
+    "permanent_ward",
+    "applicant_relation_to",
+    "applicant_name",
+    "applicant_relation_title",
+    "subject_prpn_no",
+    "subject_issue_district",
+    "subject_issue_date",
+    "certificate_kind",
+    "permanent_address",
+    "temporary_address",
+    "municipality_name",
+    "ward_number",
+    "tol",
+    "father_name",
+    "father_dob_bs",
+    "father_relation",
+    "mother_name",
+    "mother_name_citizenship",
+    "recommender_name",
+    "recommender_position",
+    "recommender_date",
+    "applicant_name_footer",
+    "applicant_address_footer",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "notes"
+  ]
+}
+
 
 
 
