@@ -3869,6 +3869,28 @@
       "designation",
       "recommendation_text"
     ]
+  },
+
+  "road-excavation-approval": {
+    "table": "road_excavation_approval",
+    "columns": [
+      "chalan_no",
+      "date_nepali",
+      "addressee_prefix",
+      "addressee_name",
+      "addressee_place",
+      "subject_text",
+      "place_for_excavation",
+      "completion_days",
+      "approved_road",
+      "approved_unit",
+      "approved_unit_value",
+      "deposit_amount",
+      "applicant_previous_address",
+      "applicant_name",
+      "applicant_designation",
+      "recommendation_notes"
+    ]
   }
 
 
