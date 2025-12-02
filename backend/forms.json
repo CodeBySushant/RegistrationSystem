@@ -4033,6 +4033,21 @@
     "signatory_name",
     "signatory_designation"
   ]
+},
+
+"birth-verification-nepali": {
+  "table": "birth_verifications_nepali",
+  "columns": [
+    "chalani_no",
+    "municipality",
+    "ward_no",
+    "birth",
+    "person",
+    "applicant",
+    "signatory_name",
+    "signatory_designation",
+    "meta_date"
+  ]
 }
 
 
