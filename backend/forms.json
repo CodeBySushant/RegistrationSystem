@@ -4002,6 +4002,21 @@
     "applicant_citizenship_no",
     "applicant_phone"
   ]
+},
+
+"beneficiary-allowance-transfer": {
+  "table": "beneficiary_allowance_transfers",
+  "columns": [
+    "chalani_no",
+    "fiscal_year_from",
+    "fiscal_year_to",
+    "target_local_level",
+    "target_ward_no",
+    "beneficiary",
+    "transfer",
+    "applicant",
+    "notes"
+  ]
 }
 
 
