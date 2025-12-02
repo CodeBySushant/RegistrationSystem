@@ -4063,6 +4063,21 @@
     "signatory_designation",
     "meta_date"
   ]
+},
+
+"demised-security-allowance-to-heir": {
+  "table": "demised_security_allowance_to_heir",
+  "columns": [
+    "chalani_no",
+    "addressee_name",
+    "addressee_line2",
+    "addressee_line3",
+    "address",
+    "deceasedBenefit",
+    "applicant",
+    "signatory_name",
+    "signatory_designation"
+  ]
 }
 
 
