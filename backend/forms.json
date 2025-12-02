@@ -4254,6 +4254,33 @@
     "ward_title",
     "updated_at"
   ]
+},
+
+"jestha-nagarik-sifaris-wada": {
+  "table": "jestha_nagarik_sifaris_wada",
+  "columns": [
+    "chalani_no",
+    "date",
+    "subject",
+    "addressee_line1",
+    "addressee_line2",
+    "addressee_line3",
+    "from_district",
+    "from_place",
+    "from_ward_no",
+    "current_municipality",
+    "applicant_reason_text",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
