@@ -2605,6 +2605,42 @@
       "applicant_citizenship_no",
       "applicant_phone"
     ]
+  },
+
+   "kitta-kat-recommendation": {
+    "table": "kitta_kat_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "addressee_type",
+      "addressee_location",
+      "district",
+      "municipality",
+      "ward_no",
+      "previous_place_text",
+      "previous_ward_no",
+      "applicant_prefix",
+      "applicant_name",
+      "requested_for",
+      "split_area",
+      "split_area_unit",
+      "plots",
+      "built_plot_area",
+      "total_house_area",
+      "ground_floor_area",
+      "paune_far",
+      "reason_for_recommendation",
+      "recommender",
+      "technician_name",
+      "technician_signature",
+      "signer_name",
+      "signer_designation",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
   }
 
 
