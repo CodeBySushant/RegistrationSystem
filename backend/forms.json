@@ -3762,7 +3762,50 @@
     "applicant_footer_phone",
     "notes"
   ]
+},
+
+"free-electricity-connection": {
+  "table": "free_electricity_connection_recommendation",
+  "columns": [
+    "letter_no",
+    "reference_no",
+    "date_bs",
+    "date_ad",
+    "recipient_company",
+    "recipient_location",
+    "district",
+    "municipality",
+    "sabik_local_body_type",
+    "sabik_local_body_name",
+    "sabik_ward_no",
+    "ward_no",
+    "applicant_role_in_plot",
+    "applicant_name",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "kitta_no",
+    "new_kitta_no",
+    "plot_description",
+    "neighbors_east",
+    "neighbors_west",
+    "neighbors_north",
+    "neighbors_south",
+    "family_status",
+    "recommendation_text",
+    "signature_name",
+    "signature_designation",
+    "applicant_footer_name",
+    "applicant_footer_address",
+    "applicant_footer_citizenship_no",
+    "applicant_footer_phone",
+    "notes",
+    "created_by",
+    "created_at",
+    "updated_at"
+  ]
 }
+
+
 
 
 
