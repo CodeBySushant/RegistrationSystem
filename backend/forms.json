@@ -2641,6 +2641,25 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "land-classification-recommendation": {
+    "table": "land_classification_recommendation",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "decision_date",
+      "standard_version",
+      "entries",
+      "signer_name",
+      "signer_designation",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
   }
 
 
