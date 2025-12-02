@@ -3198,7 +3198,30 @@
     "applicant_phone",
     "notes"
   ]
-}
+},
+
+"citizenship-mujulka": {
+    "table": "citizenship_mujulkas",
+    "columns": [
+      "municipality",
+      "district",
+      "ward_no",
+      "written_date",
+      "permanent_place",
+      "previous_local_unit",
+      "applicant_name",
+      "applicant_citizenship_no",
+      "applicant_address",
+      "table_rows", 
+      "signer_district",
+      "signer_local_unit",
+      "signer_role",
+      "footer_date",
+      "footer_role_person",
+      "footer_signature",
+      "notes"
+    ]
+  }
 
 
 
