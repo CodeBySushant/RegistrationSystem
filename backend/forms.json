@@ -4048,6 +4048,21 @@
     "signatory_designation",
     "meta_date"
   ]
+},
+
+"demised-heir-recommendation": {
+  "table": "demised_heir_recommendations",
+  "columns": [
+    "chalani_no",
+    "municipality",
+    "ward_no",
+    "deceased",
+    "heirs",
+    "applicant",
+    "signatory_name",
+    "signatory_designation",
+    "meta_date"
+  ]
 }
 
 
