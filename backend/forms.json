@@ -2735,6 +2735,29 @@
       "applicant_phone",
       "notes"
     ]
+  },
+
+  "peski-anurodh-sifaris": {
+    "table": "peski_anurodh_sifaris",
+    "columns": [
+      "letter_no",
+      "chalani_no",
+      "date_nep",
+      "budget_year",
+      "budget_head_title",
+      "budget_head_number",
+      "operation_or_program",
+      "total_amount",
+      "requested_amount",
+      "amount_in_words",
+      "signer_name",
+      "signer_designation",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship_no",
+      "applicant_phone",
+      "notes"
+    ]
   }
 
 
