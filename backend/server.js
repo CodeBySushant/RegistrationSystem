@@ -17,6 +17,9 @@ app.use("/api/forms", genericFormRoutes);
 const reports = require("./routes/reports");
 app.use("/api/reports", reports);
 
+const certificates = require("./routes/certificates");
+app.use("/api/certificates", certificates);
+
 // Generic 404
 app.use((req, res) => {
   res.status(404).json({ error: "Not Found" });
