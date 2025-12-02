@@ -4017,6 +4017,22 @@
     "applicant",
     "notes"
   ]
+},
+
+"birth-settlement-recommendation": {
+  "table": "birth_settlement_recommendations",
+  "columns": [
+    "chalani_no",
+    "municipality",
+    "ward_no",
+    "subject",
+    "birth",
+    "current_residence",
+    "parent",
+    "applicant",
+    "signatory_name",
+    "signatory_designation"
+  ]
 }
 
 
