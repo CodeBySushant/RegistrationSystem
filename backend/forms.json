@@ -4448,6 +4448,39 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"no-second-marriage-recommendation": {
+  "table": "no_second_marriage_recommendation",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date",
+    "subject",
+    "district",
+    "municipality",
+    "ward_no",
+    "resident_name",
+    "relative_name",
+    "daughter_name",
+    "wife_name",
+    "spouse_npr_no",
+    "spouse_npr_issue_date",
+    "spouse_death_date",
+    "application_date",
+    "recommended_until_date",
+    "witness_text",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
