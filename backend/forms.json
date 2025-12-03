@@ -4535,6 +4535,35 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"relationship-verification_form": {
+  "table": "relationship_verification_form",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date_bs",
+    "addressee_line1",
+    "addressee_line2",
+    "ward_no",
+    "applicant_prefix",
+    "applicant_name",
+    "applicant_relation_to_subject",
+    "subject_prefix",
+    "subject_name",
+    "subject_role",
+    "relations",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name_box",
+    "applicant_address_box",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
