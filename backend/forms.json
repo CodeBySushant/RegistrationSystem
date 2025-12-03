@@ -4505,6 +4505,36 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"permanent-residence-recommendation": {
+  "table": "permanent_residence_recommendation",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date_bs",
+    "salutation_person_prefix",
+    "applicant_name",
+    "current_municipality",
+    "current_municipality_display",
+    "ward_no",
+    "previous_unit",
+    "since_date_bs",
+    "npr_no",
+    "npr_issue_district",
+    "npr_issue_date_bs",
+    "locations",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name_box",
+    "applicant_address_box",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
