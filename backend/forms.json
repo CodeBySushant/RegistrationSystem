@@ -4564,8 +4564,42 @@
     "created_at",
     "updated_at"
   ]
-}
+},
 
+"relation-temporary-residence": {
+  "table": "relation_temporary_residence",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date_bs",
+    "subject_prefix",
+    "applicant_name",
+    "permanent_district",
+    "permanent_prev_unit",
+    "permanent_prev_unit_type",
+    "permanent_ward_no",
+    "current_municipality",
+    "current_ward_no",
+    "person_name",
+    "person_family_head",
+    "family_origin_district",
+    "family_origin_unit",
+    "family_origin_ward_no",
+    "residence_since_bs",
+    "family_details",
+    "residence_locations",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name_box",
+    "applicant_address_box",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
+}
 
 
 
