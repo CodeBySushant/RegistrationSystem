@@ -4722,6 +4722,33 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"unmarried-verification_form": {
+  "table": "unmarried_verification_form",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date_bs",
+    "district",
+    "municipality",
+    "previous_admin",
+    "previous_ward_no",
+    "resident_name",
+    "spouse_name",
+    "child_relation",
+    "child_name",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
