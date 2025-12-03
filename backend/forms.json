@@ -4281,6 +4281,38 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"marriage-certificate": {
+  "table": "marriage_certificate",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date",
+    "prev_district",
+    "prev_unit_type",
+    "prev_ward_no",
+    "resident_municipality",
+    "resident_ward_no",
+    "groom_name",
+    "groom_parent_relation",
+    "bride_name",
+    "bride_parent_relation",
+    "registration_no",
+    "marriage_date",
+    "marriage_place",
+    "remarks",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
