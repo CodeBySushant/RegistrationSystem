@@ -4313,6 +4313,50 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"minor-identity-card": {
+  "table": "minor_identity_card",
+  "columns": [
+    "chalani_no",
+    "date",
+    "addressee_type",
+    "addressee_office",
+    "addressee_place1",
+    "addressee_place2",
+    "child_name_ne",
+    "child_gender",
+    "child_fullname_en",
+    "birth_district",
+    "birth_rm",
+    "birth_ward_no",
+    "permanent_district",
+    "permanent_rm",
+    "permanent_ward_no",
+    "birth_date_bs",
+    "birth_date_ad",
+    "father_name",
+    "father_address",
+    "mother_name",
+    "mother_address",
+    "parent_citizenship_no",
+    "guardian_name",
+    "guardian_address",
+    "applicant_thumb_right",
+    "applicant_thumb_left",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "recommender_date",
+    "recommender_name",
+    "recommender_designation",
+    "recommender_office_seal",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
