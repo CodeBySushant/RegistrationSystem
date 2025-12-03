@@ -4687,6 +4687,41 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"tribal-recommendation": {
+  "table": "tribal_recommendation",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date_bs",
+    "subject",
+    "person_name",
+    "person_relation_type",
+    "person_role",
+    "previous_admin_type",
+    "previous_ward_no",
+    "current_municipality",
+    "current_ward_no",
+    "citizenship_no",
+    "citizenship_issue_date",
+    "requester_name",
+    "claimed_type",
+    "registered_list_name",
+    "registered_list_name_2",
+    "claimed_caste",
+    "claimed_caste_confirm",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
