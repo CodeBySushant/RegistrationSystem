@@ -4481,6 +4481,30 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"old-age-allowance": {
+  "table": "old_age_allowance_applications",
+  "columns": [
+    "municipality",
+    "ward_no",
+    "date_bs",
+    "subject",
+    "target_group",
+    "applicant_name",
+    "father_name",
+    "mother_name",
+    "address",
+    "npr_no",
+    "npr_issue_district",
+    "gender",
+    "dob_bs",
+    "age_reach_date",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
