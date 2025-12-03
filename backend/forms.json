@@ -4662,6 +4662,31 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"three-generation-certificate": {
+  "table": "three_generation_certificate",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date_bs",
+    "previous_admin_type",
+    "previous_ward_no",
+    "resident_prefix",
+    "resident_name",
+    "lands",
+    "generations",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
