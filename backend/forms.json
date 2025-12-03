@@ -4630,6 +4630,38 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"temporary-residence-recommendation": {
+  "table": "temporary_residence_recommendation",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date_bs",
+    "salutation_prefix",
+    "applicant_name_full",
+    "current_municipality",
+    "previous_admin_type",
+    "previous_ward_no",
+    "house_owner_prefix",
+    "house_owner_name",
+    "plot_no",
+    "since_date_bs",
+    "is_foreigner",
+    "resident_napr_no",
+    "resident_district",
+    "resident_issue_date",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
