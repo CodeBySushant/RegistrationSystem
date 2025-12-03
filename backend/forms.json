@@ -4599,6 +4599,37 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"social-security-allowance-recommendation": {
+  "table": "social_security_allowance_recommendation",
+  "columns": [
+    "reference_no",
+    "chalani_no",
+    "date_bs",
+    "addressee_line1",
+    "addressee_line2",
+    "bank_name",
+    "bank_branch",
+    "beneficiary_name",
+    "beneficiary_address",
+    "beneficiary_citizenship_no",
+    "beneficiary_phone",
+    "allowance_type",
+    "fiscal_year",
+    "quarter",
+    "serial_no",
+    "signatory_name",
+    "signatory_designation",
+    "applicant_name",
+    "applicant_address",
+    "applicant_citizenship_no",
+    "applicant_phone",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
