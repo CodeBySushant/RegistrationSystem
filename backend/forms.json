@@ -4403,6 +4403,51 @@
     "created_at",
     "updated_at"
   ]
+},
+
+"new-birth-verification": {
+  "table": "birth_verification",
+  "columns": [
+    "letter_no",
+    "ref_no",
+    "date_bs",
+    "applicant_prefix",
+    "applicant_name",
+    "subject_person_prefix",
+    "subject_person_name",
+    "full_name_np",
+    "full_name_en",
+    "dob_bs",
+    "dob_ad",
+    "sex",
+    "perm_province",
+    "perm_district",
+    "perm_palika",
+    "perm_ward",
+    "perm_palika_en",
+    "perm_ward_en",
+    "birth_province",
+    "birth_district",
+    "birth_palika",
+    "birth_ward",
+    "birth_place_name",
+    "birth_palika_en",
+    "birth_ward_en",
+    "father_full_name_np",
+    "father_full_name_en",
+    "father_document_type",
+    "father_document_no",
+    "mother_full_name_np",
+    "mother_full_name_en",
+    "mother_document_type",
+    "mother_document_no",
+    "signatory_designation",
+    "signatory_name",
+    "municipality_name",
+    "ward_title",
+    "created_at",
+    "updated_at"
+  ]
 }
 
 
