@@ -1,51 +1,49 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add login logic here (e.g., Axios POST to backend)
-    console.log('Login:', { username, password });
+    setError('');
+
+    const success = login(username, password);   // <-- calls the context
+    if (success) {
+      navigate('/dashboard');                    // go to the first protected page
+    } else {
+      setError('Invalid username or password');
+    }
   };
 
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url('/background.jpg')`, // Replace with your background
-      }}
+      style={{ backgroundImage: `url('/background.jpg')` }}
     >
-      {/* Overlay for better readability */}
-      <div className="absolute inset-0 bg-blue-100 opacity-80"></div>
-
-      {/* Login Card */}
+      <div className="absolute inset-0 bg-blue-100 opacity-80" />
       <div className="relative bg-white rounded-lg shadow-2xl p-8 w-full max-w-md mx-4">
-        {/* Logo & Header */}
+        {/* ---- Logo & Header ---- */}
         <div className="text-center mb-6">
-          <img
-            src="/logo.png" // Replace with your logo
-            alt="नागार्जुन नगरपालिका"
-            className="w-20 h-20 mx-auto mb-3 object-contain"
-          />
+          <img src="/nepallogo.svg" alt="नागार्जुन नगरपालिका" className="w-20 h-20 mx-auto mb-3 object-contain" />
           <h1 className="text-sm font-medium text-gray-700 leading-tight">
-            नागार्जुन नगरपालिका
-            <br />
-            नगर कार्यपालिकाको कार्यालय, काठमाडौं
+            नागार्जुन नगरपालिका<br />नगर कार्यपालिकाको कार्यालय, काठमाडौं
           </h1>
         </div>
-
         <hr className="mb-6 border-gray-300" />
 
-        {/* Title */}
         <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
           गुनासो रिर्पोटिङ सिस्टम
         </h2>
 
-        {/* Form */}
+        {/* ---- Form ---- */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Username Field */}
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
               प्रयोगकर्ता नाम
@@ -61,7 +59,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Password Field */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               पासवर्ड
@@ -77,7 +74,8 @@ const Login = () => {
             />
           </div>
 
-          {/* Submit Button */}
+          {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+
           <button
             type="submit"
             className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 transition font-medium"
