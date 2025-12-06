@@ -28,7 +28,6 @@ const initial = {
   // signature / applicant
   signature_name: "",
   signature_designation: "",
-  applicant_name: "",
   applicant_address: "",
   applicant_citizenship_no: "",
   applicant_phone: ""
