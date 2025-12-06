@@ -1,9 +1,17 @@
+// src/App.jsx
 import React, { useState, useMemo } from "react";
 import { Search, Menu, User } from "lucide-react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import { NAV_ITEMS } from "./data/NavItems.js";
 import SidebarItem from "./components/SidebarItem.jsx";
+
 import Dashboard from "./pages/Dashboard.jsx";
 import PlaceholderPage from "./pages/PlaceholderPage.jsx";
+import Login from "./pages/Login.jsx";                     // NEW
+
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";   // NEW
+import ProtectedRoute from "./components/ProtectedRoute.jsx";       // NEW
 // pages/application
 import AllowanceForm from "./pages/application/AllowanceForm.jsx"
 import ApplicationforIndigenousNationalityCertification from "./pages/application/ApplicationforIndigenousNationalityCertification.jsx"
@@ -210,7 +218,7 @@ import SeniorCitizenIdentityCardList from "./pages/report/SeniorCitizenIdentityC
 // pages/daily-work-execute
 import DailyWorkPerformanceList from "./pages/daily-work-execute/DailyWorkPerformanceList.jsx";
 
-const App = () => {
+const Layout = () => {
   const [openMenu, setOpenMenu] = useState("application");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeLink, setActiveLink] = useState("व्यवसाय दर्ता दरखास्त फारम");
@@ -237,7 +245,6 @@ const App = () => {
   const handleLinkClick = (linkName) => {
     setActiveLink(linkName);
     let parentId = NAV_ITEMS.find((item) => item.label === linkName)?.id;
-
     if (!parentId) {
       const parent = NAV_ITEMS.find((item) => item.children.includes(linkName));
       parentId = parent ? parent.id : null;
@@ -763,6 +770,32 @@ const App = () => {
         <div className="p-6">{renderMainContent()}</div>
       </main>
     </div>
+  );
+};
+
+/* ------------------------------------------------------------------
+    The real App – router + auth
+------------------------------------------------------------------ */
+const App = () => {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public route */}
+          <Route path="/" element={<Login />} />
+
+          {/* All protected routes – everything inside Layout */}
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
 
