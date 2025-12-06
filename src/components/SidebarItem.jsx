@@ -55,16 +55,17 @@ const SidebarItem = ({
         </button>
 
         <div
-          className={`
-                        mt-1 space-y-1 border-l border-gray-700 ml-4
-                        overflow-hidden transition-all duration-300 ease-in-out 
-                        ${
-                          isOpen || searchTerm
-                            ? "max-h-[500px] opacity-100"
-                            : "max-h-0 opacity-0"
-                        }
-                    `}
+            className={`
+                  mt-1 space-y-1 border-l border-gray-700 ml-4
+                  overflow-hidden transition-all duration-300 ease-in-out 
+                  ${
+                  isOpen || searchTerm
+                  ? "max-h-[2000px] opacity-100"
+                  : "max-h-0 opacity-0"
+                  }
+            `}
         >
+
           {filteredChildren.map((child, index) => (
             <div
               key={index}
