@@ -185,7 +185,7 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold text-gray-700 mb-4">
             यस साताको रेकर्डहरू (Weekly Record)
           </h3>
-          <div className="w-full h-64 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center">
+          <div className="relative w-full h-64 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
             <Chart
               chartType="PieChart"
               width="100%"
