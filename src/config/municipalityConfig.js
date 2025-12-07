@@ -1,14 +1,13 @@
-// src/config/municipalityConfig.js
 export const MUNICIPALITY = {
-  // Main display name
+// Nepali
   name: "नागार्जुन नगरपालिका",
-
-  // Line used in headers/forms
   officeLine: "नगर कार्यपालिकाको कार्यालय, काठमाडौं",
+  provinceLine: "बागमती प्रदेश, नेपाल",
 
-  // Optional extra line
-  provinceLine: "बाग्मती प्रदेश, नेपाल",
+// English
+  englishMunicipality: "Nagarjun Municipality",
+  englishDistrict: "Kathmandu",
+  englishProvince: "Bagmati Province",
 
-  // Logo path if you want to centralize that too
-  logoSrc: "/nepallogo.svg",
+  wardNumber: "1",
 };
