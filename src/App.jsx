@@ -221,7 +221,7 @@ import DailyWorkPerformanceList from "./pages/daily-work-execute/DailyWorkPerfor
 const Layout = () => {
   const [openMenu, setOpenMenu] = useState("application");
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeLink, setActiveLink] = useState("व्यवसाय दर्ता दरखास्त फारम");
+  const [activeLink, setActiveLink] = useState("गृहपृष्ठ");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const today = new Date().toLocaleDateString("ne-NP", {
@@ -243,12 +243,20 @@ const Layout = () => {
   };
 
   const handleLinkClick = (linkName) => {
-    setActiveLink(linkName);
-    let parentId = NAV_ITEMS.find((item) => item.label === linkName)?.id;
-    if (!parentId) {
-      const parent = NAV_ITEMS.find((item) => item.children.includes(linkName));
-      parentId = parent ? parent.id : null;
+    const item = NAV_ITEMS.find((i) => i.label === linkName);
+
+    // If a parent menu (has children) is clicked,
+    // just toggle its open/close state and KEEP current activeLink (Dashboard or whatever).
+    if (item && item.children && item.children.length > 0) {
+      setOpenMenu((prevId) => (prevId === item.id ? null : item.id));
+      return;
     }
+
+    // Otherwise it's a leaf page (actual form) → change content.
+    setActiveLink(linkName);
+
+    let parentId =
+      NAV_ITEMS.find((i) => i.children.includes(linkName))?.id || null;
     setOpenMenu(parentId);
   };
 
