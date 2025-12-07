@@ -1,12 +1,7 @@
 // src/App.jsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Search, Menu, User } from "lucide-react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
 import { NAV_ITEMS } from "./data/NavItems.js";
 import SidebarItem from "./components/SidebarItem.jsx";
@@ -238,6 +233,16 @@ const Layout = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  // Auto-hide logout menu after 4 seconds
+  useEffect(() => {
+    if (isUserMenuOpen) {
+      const timer = setTimeout(() => {
+        setIsUserMenuOpen(false);
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isUserMenuOpen]);
 
   const handleLogout = () => {
     logout(); // from AuthContext
@@ -886,7 +891,8 @@ const Layout = () => {
           <button
             type="button"
             onClick={() => setIsUserMenuOpen((prev) => !prev)}
-            className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+            className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center 
+             hover:bg-blue-700 active:bg-blue-800 transition"
           >
             <User className="w-6 h-6" />
           </button>
