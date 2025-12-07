@@ -34,7 +34,7 @@ const Login = () => {
         <div className="text-center mb-6">
           <img
             src="/nepallogo.svg"
-            alt="नागार्जुन नगरपालिका"
+            alt={MUNICIPALITY.name}
             className="w-20 h-20 mx-auto mb-3 object-contain"
           />
           <h1 className="text-sm font-medium text-gray-700 leading-tight">
