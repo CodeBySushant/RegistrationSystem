@@ -4944,6 +4944,8 @@ INSERT INTO BusinessIndustryRegistrationNewList (businessName) VALUES ("Biz 1");
 INSERT INTO BusinessRegistrationCertificate (fullName) VALUES ("Cert 1");
 INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 1");
 INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 2");
+INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 3");
+INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 4");
 
 
 
