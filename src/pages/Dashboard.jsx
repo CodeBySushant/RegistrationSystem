@@ -77,9 +77,7 @@ const DashboardCard = ({ label, value, icon: Icon, color, linkText }) => {
           <Icon className="w-5 h-5" />
         </div>
       </div>
-      <div className="text-4xl font-extrabold text-gray-800 mb-2">
-        {value}
-      </div>
+      <div className="text-4xl font-extrabold text-gray-800 mb-2">{value}</div>
       <a
         href="#"
         onClick={(e) => e.preventDefault()}
@@ -168,15 +166,9 @@ const Dashboard = () => {
     <div className="p-4 sm:p-8 space-y-8">
       <div className="flex justify-between items-center border-b pb-4">
         {loading && (
-          <span className="text-xs text-gray-500">
-            डाटा लोड हुँदैछ...
-          </span>
+          <span className="text-xs text-gray-500">डाटा लोड हुँदैछ...</span>
         )}
-        {error && (
-          <span className="text-xs text-red-500">
-            {error}
-          </span>
-        )}
+        {error && <span className="text-xs text-red-500">{error}</span>}
       </div>
 
       {/* Top cards */}
@@ -234,57 +226,55 @@ const Dashboard = () => {
         </div>
 
         {/* Breakdown full width under both on large screens */}
-<div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
-  <h3 className="text-lg font-semibold text-gray-700 mb-4">
-    यस आर्थिक वर्षको सिफारिस रेकर्डहरू (Service Category Breakdown)
-  </h3>
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">
+            यस आर्थिक वर्षको सिफारिस रेकर्डहरू (Service Category Breakdown)
+          </h3>
 
-  <div className="flex flex-col md:flex-row items-center justify-around h-80">
-    
-    {/* 🔹 Bar Chart (Dynamic from database) */}
-    <div className="w-full md:w-2/3 h-full flex items-center justify-center">
-      <Chart
-        chartType="BarChart"
-        width="100%"
-        height="100%"
-        data={[
-          ["service", "count"],
-          ...yearlyStats.map((item) => [item.label, item.value]),
-        ]}
-        options={{
-          legend: { position: "none" },
-          chartArea: { width: "80%", height: "70%" },
-          hAxis: { minValue: 0 },
-        }}
-      />
-    </div>
+          <div className="flex flex-col md:flex-row items-center justify-around h-80">
+            {/* 🔹 Bar Chart (Dynamic from database) */}
+            <div className="w-full md:w-2/3 h-full flex items-center justify-center">
+              <Chart
+                chartType="BarChart"
+                width="100%"
+                height="100%"
+                data={[
+                  ["service", "count"],
+                  ...yearlyStats.map((item) => [item.label, item.value]),
+                ]}
+                options={{
+                  legend: { position: "none" },
+                  chartArea: { width: "80%", height: "70%" },
+                  hAxis: { minValue: 0 },
+                }}
+              />
+            </div>
 
-    {/* 🔹 Legend (same as before) */}
-    <div className="mt-4 md:mt-0 md:ml-8 text-sm space-y-2">
-      <div className="flex items-center">
-        <span className="w-3 h-3 rounded-full bg-purple-500 mr-2" />
-        नेपाली नागरिकता
-      </div>
-      <div className="flex items-center">
-        <span className="w-3 h-3 rounded-full bg-pink-500 mr-2" />
-        घर / जग्गा जमिन
-      </div>
-      <div className="flex items-center">
-        <span className="w-3 h-3 rounded-full bg-blue-500 mr-2" />
-        संघ / संस्था
-      </div>
-      <div className="flex items-center">
-        <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2" />
-        व्यवसाय दर्ता
-      </div>
-      <div className="flex items-center">
-        <span className="w-3 h-3 rounded-full bg-red-500 mr-2" />
-        अन्य
-      </div>
-    </div>
-  </div>
-</div>
-
+            {/* 🔹 Legend (same as before) */}
+            <div className="mt-4 md:mt-0 md:ml-8 text-sm space-y-2">
+              <div className="flex items-center">
+                <span className="w-3 h-3 rounded-full bg-purple-500 mr-2" />
+                नेपाली नागरिकता
+              </div>
+              <div className="flex items-center">
+                <span className="w-3 h-3 rounded-full bg-pink-500 mr-2" />
+                घर / जग्गा जमिन
+              </div>
+              <div className="flex items-center">
+                <span className="w-3 h-3 rounded-full bg-blue-500 mr-2" />
+                संघ / संस्था
+              </div>
+              <div className="flex items-center">
+                <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2" />
+                व्यवसाय दर्ता
+              </div>
+              <div className="flex items-center">
+                <span className="w-3 h-3 rounded-full bg-red-500 mr-2" />
+                अन्य
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
