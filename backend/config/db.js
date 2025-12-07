@@ -1,17 +1,18 @@
 // backend/config/db.js
 const mysql = require("mysql2");
 
-const db = mysql.createPool({
+const pool = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "Sush@nt.2004",
   database: "MunicipalityForms",
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
-db.getConnection((err, connection) => {
+// Just to log once at startup
+pool.getConnection((err, connection) => {
   if (err) {
     console.error("❌ Database connection failed:", err);
   } else {
@@ -20,4 +21,5 @@ db.getConnection((err, connection) => {
   }
 });
 
-module.exports = db;
+// ⬅ export the *promise* wrapper so `await db.execute()` works
+module.exports = pool.promise();
