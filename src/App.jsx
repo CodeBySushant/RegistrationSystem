@@ -903,7 +903,8 @@ const Layout = () => {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 text-sm font-semibold text-red-600 
+             hover:bg-red-200 hover:text-red-800 transition flex items-center gap-2"
               >
                 लग आउट
               </button>
