@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { MUNICIPALITY } from "../config/municipalityConfig";
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
-    const success = login(username, password);   // <-- calls the context
+    const success = login(username, password); // <-- calls the context
     if (success) {
-      navigate('/dashboard');                    // go to the first protected page
+      navigate("/dashboard"); // go to the first protected page
     } else {
-      setError('Invalid username or password');
+      setError("Invalid username or password");
     }
   };
 
@@ -31,9 +32,15 @@ const Login = () => {
       <div className="relative bg-white rounded-lg shadow-2xl p-8 w-full max-w-md mx-4">
         {/* ---- Logo & Header ---- */}
         <div className="text-center mb-6">
-          <img src="/nepallogo.svg" alt="नागार्जुन नगरपालिका" className="w-20 h-20 mx-auto mb-3 object-contain" />
+          <img
+            src="/nepallogo.svg"
+            alt="नागार्जुन नगरपालिका"
+            className="w-20 h-20 mx-auto mb-3 object-contain"
+          />
           <h1 className="text-sm font-medium text-gray-700 leading-tight">
-            नागार्जुन नगरपालिका<br />नगर कार्यपालिकाको कार्यालय, काठमाडौं
+            {MUNICIPALITY.name}
+            <br />
+            {MUNICIPALITY.officeLine}
           </h1>
         </div>
         <hr className="mb-6 border-gray-300" />
@@ -45,7 +52,10 @@ const Login = () => {
         {/* ---- Form ---- */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               प्रयोगकर्ता नाम
             </label>
             <input
@@ -60,7 +70,10 @@ const Login = () => {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               पासवर्ड
             </label>
             <input
