@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Search, Menu, User } from "lucide-react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { MUNICIPALITY } from "./config/municipalityConfig";
 
 import { NAV_ITEMS } from "./data/NavItems.js";
 import SidebarItem from "./components/SidebarItem.jsx";
@@ -878,9 +879,10 @@ const Layout = () => {
             <div className="w-6" aria-hidden="true" />
 
             <h1 className="text-lg font-bold">
-              नागार्जुन नगरपालिका, नगर कार्यपालिकाको कार्यालय <br />
+              {MUNICIPALITY.name}, {MUNICIPALITY.officeLine}
+              <br />
               <div className="w-6" aria-hidden="true" />
-              बाग्मती प्रदेश, नेपाल
+              {MUNICIPALITY.provinceLine}
             </h1>
           </div>
         </div>
