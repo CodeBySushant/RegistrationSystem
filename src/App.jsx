@@ -1,7 +1,12 @@
 // src/App.jsx
 import React, { useState, useMemo } from "react";
 import { Search, Menu, User } from "lucide-react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 
 import { NAV_ITEMS } from "./data/NavItems.js";
 import SidebarItem from "./components/SidebarItem.jsx";
@@ -230,6 +235,15 @@ const Layout = () => {
     day: "numeric",
   });
 
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout(); // from AuthContext
+    navigate("/"); // go back to login page
+  };
+
   const handleToggle = (id) => {
     if (searchTerm) return;
     setOpenMenu((prevId) => (prevId === id ? null : id));
@@ -243,21 +257,11 @@ const Layout = () => {
   };
 
   const handleLinkClick = (linkName) => {
-    const item = NAV_ITEMS.find((i) => i.label === linkName);
-
-    // If a parent menu (has children) is clicked,
-    // just toggle its open/close state and KEEP current activeLink (Dashboard or whatever).
-    if (item && item.children && item.children.length > 0) {
-      setOpenMenu((prevId) => (prevId === item.id ? null : item.id));
-      return;
-    }
-
-    // Otherwise it's a leaf page (actual form) → change content.
+    // only called for leaf items (children)
     setActiveLink(linkName);
 
-    let parentId =
-      NAV_ITEMS.find((i) => i.children.includes(linkName))?.id || null;
-    setOpenMenu(parentId);
+    const parent = NAV_ITEMS.find((i) => i.children.includes(linkName));
+    setOpenMenu(parent ? parent.id : null);
   };
 
   const getParentIdOfActiveLink = useMemo(() => {
@@ -875,11 +879,30 @@ const Layout = () => {
             </h1>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 relative">
           <span className="text-sm">{today}</span>
-          <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+
+          {/* User avatar button */}
+          <button
+            type="button"
+            onClick={() => setIsUserMenuOpen((prev) => !prev)}
+            className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+          >
             <User className="w-6 h-6" />
-          </div>
+          </button>
+
+          {/* Dropdown menu */}
+          {isUserMenuOpen && (
+            <div className="absolute right-0 top-12 mt-2 w-40 bg-white text-gray-800 rounded-md shadow-lg py-1 z-50">
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                लग आउट
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
