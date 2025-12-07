@@ -1,3 +1,4 @@
+const dashboardRoutes = require("./routes/dashboard.js");
 const express = require("express");
 const cors = require("cors");
 
@@ -25,6 +26,9 @@ app.use("/api/disability", disability);
 
 const senior = require("./routes/senior");
 app.use("/api/senior", senior);
+
+app.use("/api", dashboardRoutes);
+
 
 // Generic 404
 app.use((req, res) => {
