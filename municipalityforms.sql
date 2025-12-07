@@ -4939,12 +4939,11 @@ CREATE TABLE `unmarried_verification_form` (
 
 
 
-
-
-
-
- 
-
+INSERT INTO BusinessIndustryRegistrationForm (full_name) VALUES ("Test 1");
+INSERT INTO BusinessIndustryRegistrationNewList (businessName) VALUES ("Biz 1");
+INSERT INTO BusinessRegistrationCertificate (fullName) VALUES ("Cert 1");
+INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 1");
+INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 2");
 
 
 
