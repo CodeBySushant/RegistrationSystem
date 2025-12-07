@@ -23,9 +23,25 @@ const CARD_GROUPS = [
   },
   {
     label: "दैनिक कार्य सम्पादन",
-    tables: ["DailyWorkPerformanceList"], 
+    tables: ["DailyWorkPerformanceList"],
   },
 ];
+
+// helper: get count(*) from one table using callback-style db
+function getCountForTable(table) {
+  return new Promise((resolve) => {
+    db.query(`SELECT COUNT(*) AS count FROM \`${table}\``, (err, rows) => {
+      if (err) {
+        console.error(
+          `⚠️ Error counting table ${table}:`,
+          err.code || err.message
+        );
+        return resolve(0); // don't crash dashboard, just treat as 0
+      }
+      resolve(rows[0]?.count || 0);
+    });
+  });
+}
 
 /**
  * Helper – safely sum COUNT(*) from multiple tables.
@@ -35,15 +51,8 @@ async function getTotalForTables(tables) {
   let total = 0;
 
   for (const table of tables) {
-    try {
-      const [rows] = await db.execute(
-        `SELECT COUNT(*) AS count FROM \`${table}\``
-      );
-      total += rows[0]?.count || 0;
-    } catch (err) {
-      console.error(`⚠️ Error counting table ${table}:`, err.code || err.message);
-      // continue with other tables instead of crashing
-    }
+    const count = await getCountForTable(table);
+    total += count;
   }
 
   return total;

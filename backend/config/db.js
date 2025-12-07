@@ -21,5 +21,5 @@ pool.getConnection((err, connection) => {
   }
 });
 
-// ⬅ export the *promise* wrapper so `await db.execute()` works
-module.exports = pool.promise();
+// ⬅ export the *callback* pool (NOT promise)
+module.exports = pool;
