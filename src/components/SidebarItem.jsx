@@ -42,19 +42,15 @@ const SidebarItem = ({
     return (
       <div className="transition-all duration-300">
         <button
-          // Don't toggle accordion while searching – everything relevant is open
           onClick={() => !filter && handleToggle(item.id)}
           className={`w-full flex items-center justify-between p-2.5 text-gray-300 transition duration-150 ease-in-out hover:bg-gray-800
-            ${isOpen ? "bg-gray-800" : ""} 
-            ${isParentActive ? "text-blue-400" : ""}
-          `}
+    ${isOpen ? "bg-gray-800" : ""} 
+    ${isParentActive ? "text-blue-400" : ""}
+  `}
           aria-expanded={isOpen}
           type="button"
         >
-          <div
-            className="flex items-center space-x-3"
-            onClick={() => handleLinkClick(item.label)}
-          >
+          <div className="flex items-center space-x-3">
             {item.icon &&
               React.createElement(item.icon, {
                 size: 20,
@@ -77,7 +73,11 @@ const SidebarItem = ({
           className={`
             mt-1 space-y-1 border-l border-gray-700 ml-4
             overflow-hidden transition-all duration-300 ease-in-out 
-            ${isOpen || !!filter ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"}
+            ${
+              isOpen || !!filter
+                ? "max-h-[2000px] opacity-100"
+                : "max-h-0 opacity-0"
+            }
           `}
         >
           {filteredChildren.map((child) => (
