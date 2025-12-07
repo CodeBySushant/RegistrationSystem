@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import "./AddressVerification.css";
 
+// NEW imports
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const AddressVerification = () => {
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
@@ -8,10 +12,11 @@ const AddressVerification = () => {
     date: "2025-10-31",
     govLocation: "",
     oldWardNo: "",
-    newWardNo: "1",
-    newMunicipality: "Kathmandu",
-    newDistrict: "Kathmandu",
-    newProvince: "",
+    // 🔹 Defaults now from MUNICIPALITY config
+    newWardNo: MUNICIPALITY.wardNumber || "1",
+    newMunicipality: MUNICIPALITY.englishMunicipality || "",
+    newDistrict: MUNICIPALITY.englishDistrict || "",
+    newProvince: MUNICIPALITY.englishProvince || "",
     designation: "",
     applicantName: "",
     applicantAddress: "",
@@ -30,9 +35,17 @@ const AddressVerification = () => {
   };
 
   const validate = () => {
-    const required = ["applicantName", "applicantAddress", "applicantCitizenship", "applicantPhone", "designation"];
+    const required = [
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
+      "designation",
+    ];
     for (let k of required) {
-      if (!formData[k] || formData[k].toString().trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || formData[k].toString().trim() === "") {
+        return { ok: false, missing: k };
+      }
     }
     return { ok: true };
   };
@@ -72,35 +85,42 @@ const AddressVerification = () => {
   return (
     <div className="address-container">
       <form onSubmit={handleSubmit}>
+        {/* 🔁 Replaced old hardcoded header with reusable component */}
         <div className="header">
-          <img
-            src="https://i.imgur.com/YOUR_LOGO_URL.png"
-            alt="Nagarjun Municipality Logo"
-            className="logo"
-            onError={(e) => (e.currentTarget.style.display = "none")}
-          />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="letterNo"
+              value={formData.letterNo}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>Date:</label>
-            <input type="date" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
             <label>Ref No.:</label>
-            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="refNo"
+              value={formData.refNo}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
@@ -115,7 +135,8 @@ const AddressVerification = () => {
         </div>
 
         <p className="certificate-body">
-          This is to certify that according to the ministry level meeting of Nepal Government,
+          This is to certify that according to the ministry level meeting of
+          Nepal Government,
           <input
             className="inline-input"
             type="text"
@@ -136,11 +157,16 @@ const AddressVerification = () => {
             required
           />{" "}
           Nepal has been changed to Ward No.
-          <select name="newWardNo" value={formData.newWardNo} onChange={handleChange}>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
+          <select
+            name="newWardNo"
+            value={formData.newWardNo}
+            onChange={handleChange}
+          >
+            {/* you can expand this as needed */}
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
           </select>{" "}
           <input
             className="inline-input"
@@ -165,12 +191,18 @@ const AddressVerification = () => {
             value={formData.newProvince}
             onChange={handleChange}
           />
-          . All of the addresses are same and does not make any difference using any of them.
+          . All of the addresses are same and does not make any difference using
+          any of them.
         </p>
 
         <div className="designation-section">
           <input type="text" placeholder="Signature" disabled />
-          <select name="designation" value={formData.designation} onChange={handleChange} required>
+          <select
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+            required
+          >
             <option value="">Select Designation</option>
             <option value="Ward-Chairperson">Ward Chairperson</option>
             <option value="Ward-Secretary">Ward Secretary</option>
@@ -181,11 +213,23 @@ const AddressVerification = () => {
           <h3>Applicant Details</h3>
           <div className="form-group-column">
             <label>Applicant Name *</label>
-            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required />
+            <input
+              type="text"
+              name="applicantName"
+              value={formData.applicantName}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="form-group-column">
             <label>Applicant Address *</label>
-            <input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required />
+            <input
+              type="text"
+              name="applicantAddress"
+              value={formData.applicantAddress}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="form-group-column">
             <label>Applicant Citizenship Number *</label>
@@ -199,7 +243,13 @@ const AddressVerification = () => {
           </div>
           <div className="form-group-column">
             <label>Applicant Phone Number *</label>
-            <input type="tel" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
+            <input
+              type="tel"
+              name="applicantPhone"
+              value={formData.applicantPhone}
+              onChange={handleChange}
+              required
+            />
           </div>
         </div>
 
