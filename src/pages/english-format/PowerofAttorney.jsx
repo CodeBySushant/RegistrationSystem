@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./PowerofAttorney.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const PowerOfAttorney = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +20,12 @@ const PowerOfAttorney = () => {
     applicantAddress: "",
     applicantCitizenship: "",
     applicantPhone: "",
+
+    // from config
+    municipality: MUNICIPALITY.englishMunicipality || "Nagarjun Municipality",
+    wardNo: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    district: MUNICIPALITY.englishDistrict || "Kathmandu",
+    province: MUNICIPALITY.englishProvince || "Bagmati Province",
   });
 
   const [relatives, setRelatives] = useState([
@@ -93,11 +101,7 @@ const PowerOfAttorney = () => {
     <div className="power-of-attorney-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo variant="english" showWardLine />
         </div>
 
         <div className="form-row">
