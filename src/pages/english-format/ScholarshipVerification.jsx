@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import "./ScholarshipVerification.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const ScholarshipVerification = () => {
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
-    date: "2025-10-31",
+    date: "",
     applicantTitle: "Mr.",
     applicantNameBody: "",
     relation: "grandson",
     guardianTitle: "Mr.",
     guardianName: "",
-    residentOf: "Kathmandu",
-    district: "",
+    residentOf: MUNICIPALITY.englishDistrict || "Kathmandu",
+    district: MUNICIPALITY.englishDistrict || "Kathmandu",
     previouslyKnownAs: "",
-    wardNo1: "1",
-    municipality: "Nagarjun Municipality",
-    wardNo2: "1",
+    wardNo1: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    municipality: MUNICIPALITY.englishMunicipality || "Nagarjun Municipality",
+    wardNo2: (MUNICIPALITY.wardNumber ?? 1).toString(),
     annualIncome: "",
     pronounHeShe: "He",
     pronounHimHer: "him",
@@ -32,29 +34,40 @@ const ScholarshipVerification = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
     const required = [
-      "applicantNameBody", "guardianName",
-      "wardNo2", "municipality",
+      "applicantNameBody",
+      "guardianName",
+      "wardNo2",
+      "municipality",
       "annualIncome",
       "designation",
-      "applicantName", "applicantAddress", "applicantCitizenship", "applicantPhone"
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
     ];
     for (let k of required) {
-      if (!formData[k] || formData[k].toString().trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || formData[k].toString().trim() === "")
+        return { ok: false, missing: k };
     }
-    // numeric check for annualIncome (loose)
-    if (isNaN(Number(formData.annualIncome.toString().replace(/[, ]+/g, "")))) return { ok: false, missing: "annualIncome (must be numeric)" };
+    // numeric check for annualIncome (loose) — allow commas/spaces
+    const numStr = formData.annualIncome.toString().replace(/[, ]+/g, "");
+    if (numStr === "" || Number.isNaN(Number(numStr)))
+      return { ok: false, missing: "annualIncome (must be numeric)" };
     return { ok: true };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const v = validate();
-    if (!v.ok) { alert("Please fill/validate required field: " + v.missing); return; }
+    if (!v.ok) {
+      alert("Please fill/validate required field: " + v.missing);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -82,10 +95,7 @@ const ScholarshipVerification = () => {
     <div className="scholarship-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo variant="english" showWardLine />
         </div>
 
         {/* meta */}
@@ -129,11 +139,13 @@ const ScholarshipVerification = () => {
           previously known as
           <input type="text" name="previouslyKnownAs" value={formData.previouslyKnownAs} onChange={handleChange} />
           Ward No.
-          <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}><option>1</option><option>2</option><option>3</option></select>,
+          <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}><option value={formData.wardNo1}>{formData.wardNo1}</option><option>1</option><option>2</option><option>3</option></select>,
           currently known as
-          <select name="municipality" value={formData.municipality} onChange={handleChange}><option>Nagarjun Municipality</option></select>,
+          <select name="municipality" value={formData.municipality} onChange={handleChange}>
+            <option>{formData.municipality}</option>
+          </select>,
           Ward No.
-          <select name="wardNo2" value={formData.wardNo2} onChange={handleChange}><option>1</option><option>2</option><option>3</option></select>
+          <select name="wardNo2" value={formData.wardNo2} onChange={handleChange}><option value={formData.wardNo2}>{formData.wardNo2}</option><option>1</option><option>2</option><option>3</option></select>
           is recommended for the scholarship. {formData.pronounHeShe} belongs to a low-income family with annual income less than NPR
           <input type="text" name="annualIncome" placeholder="Amount" value={formData.annualIncome} onChange={handleChange} required /> only.
           <br/><br/>
@@ -143,7 +155,9 @@ const ScholarshipVerification = () => {
         <div className="designation-section">
           <input type="text" placeholder="Signature" disabled />
           <select name="designation" value={formData.designation} onChange={handleChange} required>
-            <option value="">Select Designation</option><option value="Ward-Chairperson">Ward Chairperson</option><option value="Ward-Secretary">Ward Secretary</option>
+            <option value="">Select Designation</option>
+            <option value="Ward-Chairperson">Ward Chairperson</option>
+            <option value="Ward-Secretary">Ward Secretary</option>
           </select>
         </div>
 
