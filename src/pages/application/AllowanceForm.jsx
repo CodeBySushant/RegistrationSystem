@@ -1,13 +1,16 @@
-// AllowanceForm.jsx
 import React, { useState } from "react";
 import "./AllowanceForm.css";
-// optionally: import axios from "axios";
+import axios from "axios";
+
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const AllowanceForm = () => {
   const [formData, setFormData] = useState({
-    nagarpalika: "नागार्जुन नगरपालिका",
-    ward: "",
-    targetGroup: "जेष्ठ नागरिक (दलित)", // added missing field
+    // pull Nepali tokens from MUNICIPALITY where appropriate
+    nagarpalika: MUNICIPALITY.name || "",
+    ward: MUNICIPALITY.wardNumber || "",
+    targetGroup: "जेष्ठ नागरिक (दलित)",
     gender: "पुरुष",
     fullName: "",
     fatherName: "",
@@ -15,13 +18,13 @@ const AllowanceForm = () => {
     address: "",
     nagariktaNo: "",
     jariJilla: "",
-    birthDate: "", // YYYY-MM-DD (for type="date")
+    birthDate: "",
     mobileNo: "",
     patiMrituNo: "",
-    patiMrituMiti: "", // YYYY-MM-DD (for type="date")
+    patiMrituMiti: "",
     allowanceType: "",
     parichayaNo: "",
-    allowanceStartDate: "", // can be YYYY-MM-DD or string depending on your use-case
+    allowanceStartDate: "",
     allowanceStartQuarter: "",
     applicantName: "",
     applicantAddress: "",
@@ -41,7 +44,6 @@ const AllowanceForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // quick client-side required check example (optional)
     if (!formData.fullName || !formData.applicantName) {
       alert("कृपया आवश्यक क्षेत्रहरू भर्नुहोस् (नाम र निवेदकको नाम)।");
       return;
@@ -52,21 +54,40 @@ const AllowanceForm = () => {
     try {
       console.log("Submitting:", formData);
 
-      // Option B: Uncomment to send to backend (adjust URL/formKey)
-      const url = "http://localhost:5000/api/forms/allowance-form"; // <-- change formKey/table as needed
+      // change URL/formKey if your backend endpoint differs
+      const url = "/api/forms/allowance-form"; // relative is usually fine in dev/prod proxy setup
       const res = await axios.post(url, formData);
-      if (res.status === 201) {
-        alert("Saved. ID: " + res.data.id);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("Saved. ID: " + (res.data.id || "(no id returned)"));
         setFormData({
-          nagarpalika: "नागार्जुन नगरपालिका", ward: "", targetGroup: "जेष्ठ नागरिक (दलित)", gender: "पुरुष",
-          fullName: "", fatherName: "", motherName: "", address: "", nagariktaNo: "", jariJilla: "",
-          birthDate: "", mobileNo: "", patiMrituNo: "", patiMrituMiti: "", allowanceType: "", parichayaNo: "",
-          allowanceStartDate: "", allowanceStartQuarter: "", applicantName: "", applicantAddress: "", applicantNagarikta: "", applicantPhone: ""
+          nagarpalika: MUNICIPALITY.name || "",
+          ward: MUNICIPALITY.wardNumber || "",
+          targetGroup: "जेष्ठ नागरिक (दलित)",
+          gender: "पुरुष",
+          fullName: "",
+          fatherName: "",
+          motherName: "",
+          address: "",
+          nagariktaNo: "",
+          jariJilla: "",
+          birthDate: "",
+          mobileNo: "",
+          patiMrituNo: "",
+          patiMrituMiti: "",
+          allowanceType: "",
+          parichayaNo: "",
+          allowanceStartDate: "",
+          allowanceStartQuarter: "",
+          applicantName: "",
+          applicantAddress: "",
+          applicantNagarikta: "",
+          applicantPhone: "",
         });
+        setTimeout(() => window.print(), 100);
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
-      
     } catch (err) {
       console.error(err);
       alert("Submission failed: " + (err.response?.data?.message || err.message));
@@ -78,14 +99,21 @@ const AllowanceForm = () => {
   return (
     <div className="form-wrapper">
       <form className="form-container" onSubmit={handleSubmit}>
-        {/* --- Header --- */}
+        {/* --- Reusable Nepali header --- */}
+        <div className="header-row">
+          <div style={{ width: "100%" }}>
+            <MunicipalityHeader showLogo />
+          </div>
+        </div>
+
+        {/* keep your previous local header pieces if you want — I left the date/left-text layout */}
         <div className="header-row">
           <div className="left-text">श्री अध्यक्ष ज्यु,</div>
           <div className="right-text">मिति: २०८२।०७।०५</div>
         </div>
 
         <div className="form-group-inline">
-          <label>नागार्जुन नगरपालिका</label>
+          <label>{MUNICIPALITY.name || ""}</label>
           <label>वडा नं.</label>
           <input
             type="text"

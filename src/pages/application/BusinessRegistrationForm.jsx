@@ -1,12 +1,18 @@
-// BusinessRegistrationSignatureForm.jsx
+// src/pages/application/BusinessRegistrationForm.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./BusinessRegistrationForm.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialState = {
   regNo: "",
   regDate: "",
-  headerTo: "",
+  headerTo: "श्री",
+  // prefer MUNICIPALITY Nepali tokens if available
+  headerMunicipality: MUNICIPALITY?.name || "",
+  headerOffice: MUNICIPALITY?.englishDistrict || "",
   businessName: "",
   pan: "",
   phone: "",
@@ -47,6 +53,9 @@ const initialState = {
   applicantAddress: "",
   applicantCitizenship: "",
   applicantPhone: "",
+  // defaults
+  municipality: MUNICIPALITY?.name || "",
+  wardNo: MUNICIPALITY?.wardNumber || "",
 };
 
 const BusinessRegistrationForm = () => {
@@ -75,12 +84,14 @@ const BusinessRegistrationForm = () => {
   };
 
   const validate = (data) => {
-    // basic required checks - adjust as needed
     if (!data.businessName || data.businessName.trim() === "") return "businessName is required";
     if (!data.applicantName || data.applicantName.trim() === "") return "applicantName is required";
-    // require at least one proprietor filled
     const anyProp = proprietors.some((pr) => pr.name?.trim() || pr.address?.trim() || pr.ward?.trim());
     if (!anyProp) return "At least one proprietor is required";
+    // optional phone check
+    if (data.applicantPhone && !/^[0-9+\-\s]{6,20}$/.test(String(data.applicantPhone))) {
+      return "applicantPhone (invalid format)";
+    }
     return null;
   };
 
@@ -96,21 +107,20 @@ const BusinessRegistrationForm = () => {
 
     setSubmitting(true);
     try {
-      // prepare payload: convert empty strings -> null and proprietors -> JSON string
       const payload = { ...formData };
       Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
 
-      // attach proprietors as JSON string
+      // attach proprietors as JSON string (backend expects stringified)
       payload.proprietors = JSON.stringify(proprietors);
 
-      const url = "http://localhost:5000/api/forms/business-registration";
+      const url = "/api/forms/business-registration";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("Saved successfully. ID: " + (res.data?.id ?? ""));
-        // reset
         setFormData(initialState);
         setProprietors([{ id: 1, name: "", address: "", ward: "" }]);
+        setTimeout(() => window.print(), 150);
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
@@ -126,6 +136,13 @@ const BusinessRegistrationForm = () => {
   return (
     <div className="business-reg-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable Nepali header */}
+        <div className="top-meta-row">
+          <div style={{ width: "100%" }}>
+            <MunicipalityHeader showLogo />
+          </div>
+        </div>
+
         {/* top meta */}
         <div className="top-meta-row">
           <div className="form-group-inline">
@@ -149,16 +166,14 @@ const BusinessRegistrationForm = () => {
           <strong>विषय: <u>व्यवसाय दर्ता गरि पाउँ</u></strong>
         </div>
 
-        {/* message */}
         <p className="certificate-body">
           महोदय,<br />
           तल लेखिए बमोजिमको व्यहोरा जनाइ म / हामी निम्न लिखित फर्म/कम्पनि व्यवसाय दर्ता गरी पाउन रीतपूर्वक निवेदन पेस गरेको छु। निवेदन साथ सक्कली कागजातहरु यसै साथ संलग्न छ। सो को जाँचबुझ गरी कानुन बमोजिम दर्ता गरिदिनुहुन अनुरोध छ।
         </p>
 
-        {/* main fields - condensed version (keeps your original inputs) */}
+        {/* main fields - keep your inputs unchanged */}
         <div className="form-section">
           <div className="form-grid">
-            {/* you can keep the rest of your inputs as-is; for brevity I include a chunk */}
             <div className="form-group-column">
               <label>१. व्यवसायको पूरा नाम:</label>
               <input type="text" name="businessName" value={formData.businessName} onChange={handleChange} />
@@ -168,8 +183,6 @@ const BusinessRegistrationForm = () => {
               <input type="text" name="pan" value={formData.pan} onChange={handleChange} />
             </div>
 
-            {/* ... keep other inputs exactly as in your original form ... */}
-            {/* I'll include the rest of fields so you can paste directly */}
             <div className="form-group-column">
               <label>फोन नं:</label>
               <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
@@ -285,19 +298,16 @@ const BusinessRegistrationForm = () => {
           </table>
         </div>
 
-        {/* remarks */}
         <div className="form-group-column">
           <label>कैफियत:</label>
           <textarea name="remarks" rows="3" value={formData.remarks} onChange={handleChange}></textarea>
         </div>
 
-        {/* kabuliyatnama */}
         <fieldset className="kabuliyatnama">
           <legend>कबुलियतनामा</legend>
           <p>यसमा लेखिएको व्यहोरा सत्य साँचो छ...</p>
         </fieldset>
 
-        {/* applicant signature */}
         <div className="applicant-signature-section">
           <div className="thumb-box">
             <label>बायाँ</label>
@@ -317,7 +327,6 @@ const BusinessRegistrationForm = () => {
           <input type="text" name="applicantNameSignature" value={formData.applicantNameSignature} onChange={handleChange} />
         </div>
 
-        {/* tippadi, approver, voucher sections (kept as your inputs) */}
         <fieldset className="tippadi-section">
           <legend>टिप्पणी</legend>
           <div className="tippadi-grid">
@@ -347,7 +356,6 @@ const BusinessRegistrationForm = () => {
           </div>
         </fieldset>
 
-        {/* applicant details */}
         <div className="applicant-details">
           <h3>निवेदकको विवरण</h3>
           <div className="form-group-column">

@@ -1,17 +1,20 @@
-// TribalVerificationRecommendation.jsx
+// src/pages/appeal/TribalVerificationRecommendation.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./TribalVerificationRecommendation.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialState = {
   date: "२०८२.०७.१५",
   headerTo: "श्री वडा सचिव ज्यु",
-  municipality1: "नागार्जुन नगरपालिका",
-  wardNo1: "१",
+  municipality1: MUNICIPALITY?.name || "नागार्जुन नगरपालिका",
+  wardNo1: MUNICIPALITY?.wardNumber || "१",
   officeName: "नं वडा कार्यालय",
-  address1: "काठमाडौँ",
-  municipality2: "नागार्जुन नगरपालिका",
-  wardNo2: "१",
+  address1: MUNICIPALITY?.district || "काठमाडौँ",
+  municipality2: MUNICIPALITY?.name || "নागार्जुन नगरपालिका",
+  wardNo2: MUNICIPALITY?.wardNumber || "१",
   residentTitle: "श्री",
   relation: "बाबु",
   guardianTitle: "श्री",
@@ -27,13 +30,15 @@ const initialState = {
   applicantPhone: "",
 };
 
+const phoneRegex = /^[0-9+\-\s]{6,20}$/;
+
 const TribalVerificationRecommendation = () => {
   const [formData, setFormData] = useState(initialState);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = (fd) => {
@@ -43,6 +48,7 @@ const TribalVerificationRecommendation = () => {
     if (!fd.applicantAddress?.trim()) return "निवेदकको ठेगाना भर्नुहोस्";
     if (!fd.applicantCitizenship?.trim()) return "नागरिकता नं. भर्नुहोस्";
     if (!fd.applicantPhone?.trim()) return "सम्पर्क नं. भर्नुहोस्";
+    if (!phoneRegex.test(String(fd.applicantPhone))) return "सम्पर्क नं. अमान्य छ";
     return null;
   };
 
@@ -59,8 +65,10 @@ const TribalVerificationRecommendation = () => {
     setSubmitting(true);
     try {
       const payload = { ...formData };
-      // normalize empty strings to null
-      Object.keys(payload).forEach(k => { if (payload[k] === "") payload[k] = null; });
+      // normalize empty strings -> null
+      Object.keys(payload).forEach((k) => {
+        if (payload[k] === "") payload[k] = null;
+      });
 
       const url = "/api/forms/tribal-verification-recommendation";
       const res = await axios.post(url, payload);
@@ -68,6 +76,7 @@ const TribalVerificationRecommendation = () => {
       if (res.status === 201 || res.status === 200) {
         alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
         setFormData(initialState);
+        setTimeout(() => window.print(), 150);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -83,17 +92,21 @@ const TribalVerificationRecommendation = () => {
   return (
     <div className="tribal-verification-container">
       <form onSubmit={handleSubmit}>
+        <div className="header-row">
+          <MunicipalityHeader showLogo />
+        </div>
+
         <div className="form-row">
           <div className="form-group header-to">
-            <input type="text" name="headerTo" value={formData.headerTo} onChange={handleChange} className="header-input"/>
+            <input type="text" name="headerTo" value={formData.headerTo} onChange={handleChange} className="header-input" />
             <select name="municipality1" value={formData.municipality1} onChange={handleChange} className="header-select">
-              <option>नागार्जुन नगरपालिका</option>
+              <option>{formData.municipality1}</option>
             </select>
             <select name="wardNo1" value={formData.wardNo1} onChange={handleChange} className="header-select short">
               <option>१</option><option>२</option><option>३</option>
             </select>
-            <input type="text" name="officeName" value={formData.officeName} onChange={handleChange} className="header-input"/>
-            <input type="text" name="address1" value={formData.address1} onChange={handleChange} className="header-input"/>
+            <input type="text" name="officeName" value={formData.officeName} onChange={handleChange} className="header-input" />
+            <input type="text" name="address1" value={formData.address1} onChange={handleChange} className="header-input" />
           </div>
 
           <div className="form-group date-group">
@@ -109,7 +122,7 @@ const TribalVerificationRecommendation = () => {
         <p className="certificate-body">
           प्रस्तुत विषयमा यस
           <select name="municipality2" value={formData.municipality2} onChange={handleChange}>
-            <option>नागार्जुन नगरपालिका</option>
+            <option>{formData.municipality2}</option>
           </select>
           वडा नं
           <select name="wardNo2" value={formData.wardNo2} onChange={handleChange}>

@@ -1,14 +1,17 @@
-// RequestforCertification.jsx
+// src/pages/application/RequestforCertification.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./RequestforCertification.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialState = {
   date: "२०८२.०७.१५",
-  headerDistrict: "काठमाडौँ",
-  mainDistrict: "काठमाडौँ",
-  palikaName: "",
-  wardNo: "",
+  headerDistrict: MUNICIPALITY?.englishDistrict || "काठमाडौँ",
+  mainDistrict: MUNICIPALITY?.englishDistrict || "काठमाडौँ",
+  palikaName: MUNICIPALITY?.name || "",
+  wardNo: MUNICIPALITY?.wardNumber || "1",
   residentName: "",
   relation: "छोरा",
   guardianName: "",
@@ -23,6 +26,8 @@ const initialState = {
   sigSignature: "",
 };
 
+const phoneRegex = /^[0-9+\-\s]{6,20}$/;
+
 const RequestforCertification = () => {
   const [formData, setFormData] = useState(initialState);
   const [submitting, setSubmitting] = useState(false);
@@ -35,13 +40,14 @@ const RequestforCertification = () => {
   const validate = (fd) => {
     if (!fd.mainDistrict?.trim()) return "मुख्य जिल्ला भर्नुहोस्";
     if (!fd.palikaName?.trim()) return "पालिका/नगरपालिका भर्नुहोस्";
-    if (!fd.wardNo?.trim()) return "वडा नं. भर्नुहोस्";
+    if (!fd.wardNo?.toString().trim()) return "वडा नं. भर्नुहोस्";
     if (!fd.residentName?.trim()) return "निवेदकको नाम भर्नुहोस्";
     if (!fd.guardianName?.trim()) return "अभिभावक/सम्बन्धको नाम भर्नुहोस्";
     if (!fd.doc1Detail?.trim()) return "पहिलो कागजात विवरण भर्नुहोस्";
     if (!fd.doc2Detail?.trim()) return "दोश्रो कागजात विवरण भर्नुहोस्";
     if (!fd.sigName?.trim()) return "दस्तखत गर्नेको नाम भर्नुहोस्";
     if (!fd.sigMobile?.trim()) return "मोबाइल नम्बर भर्नुहोस्";
+    if (!phoneRegex.test(String(fd.sigMobile))) return "मोबाइल नम्बर अमान्य छ";
     return null;
   };
 
@@ -58,8 +64,9 @@ const RequestforCertification = () => {
     setSubmitting(true);
     try {
       const payload = { ...formData };
-      // convert empty strings to null (optional)
-      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+      Object.keys(payload).forEach((k) => {
+        if (payload[k] === "") payload[k] = null;
+      });
 
       const url = "/api/forms/request-for-certification";
       const res = await axios.post(url, payload);
@@ -67,6 +74,7 @@ const RequestforCertification = () => {
       if (res.status === 201 || res.status === 200) {
         alert("रेकर्ड सफलतापूर्वक सेभ भयो। ID: " + (res.data?.id ?? ""));
         setFormData(initialState);
+        setTimeout(() => window.print(), 150);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -82,10 +90,21 @@ const RequestforCertification = () => {
   return (
     <div className="request-cert-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header */}
+        <div className="header-row">
+          <MunicipalityHeader showLogo />
+        </div>
+
         <div className="form-row">
           <div className="header-to-group">
             <h3>श्रीमान् प्रमुख जिल्ला अधिकारीज्यु,</h3>
-            <input type="text" name="headerDistrict" value={formData.headerDistrict} onChange={handleChange} required />
+            <input
+              type="text"
+              name="headerDistrict"
+              value={formData.headerDistrict}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="form-group date-group">
             <label>मिति :</label>

@@ -1,14 +1,18 @@
-// ApplicationforKhasAryaCasteCertification.jsx
+// src/pages/application/ApplicationforKhasAryaCasteCertification.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./ApplicationforKhasAryaCasteCertification.css";
+
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const initialState = {
   date: "२०८२.०७.१५",
   headerDistrict: "काठमाडौँ",
   mainDistrict: "काठमाडौँ",
-  palikaName: "",
-  wardNo: "",
+  // prefer MUNICIPALITY Nepali name / ward if available
+  palikaName: MUNICIPALITY?.name || "",
+  wardNo: MUNICIPALITY?.wardNumber || "",
   residentName: "",
   relation: "छोरा",
   guardianName: "",
@@ -46,6 +50,10 @@ const ApplicationforKhasAryaCasteCertification = () => {
         return `${f} is required`;
       }
     }
+    // phone basic check
+    if (!/^[0-9+\-\s]{6,20}$/.test(String(data.sigMobile))) {
+      return "sigMobile (invalid format)";
+    }
     return null;
   };
 
@@ -61,19 +69,21 @@ const ApplicationforKhasAryaCasteCertification = () => {
 
     setSubmitting(true);
     try {
-      // prepare payload: convert empty strings to null
+      // prepare payload (convert empty strings to null if you prefer)
       const payload = { ...formData };
       Object.keys(payload).forEach((k) => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "http://localhost:5000/api/forms/khas-arya-certification";
+      // use relative endpoint; change if your API path differs
+      const url = "/api/forms/khas-arya-certification";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
         setFormData(initialState);
         console.log("Saved:", res.data);
+        setTimeout(() => window.print(), 150);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -93,6 +103,11 @@ const ApplicationforKhasAryaCasteCertification = () => {
   return (
     <div className="khas-arya-cert-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable Nepali header */}
+        <div className="header-row">
+          <MunicipalityHeader showLogo />
+        </div>
+
         <div className="form-row">
           <div className="header-to-group">
             <h3>श्रीमान् प्रमुख जिल्ला अधिकारीज्यु,</h3>
@@ -117,7 +132,9 @@ const ApplicationforKhasAryaCasteCertification = () => {
         </div>
 
         <div className="subject-line">
-          <strong>विषय: <u>खस आर्य जाति प्रमाणित गरि पाउँ ।</u></strong>
+          <strong>
+            विषय: <u>खस आर्य जाति प्रमाणित गरि पाउँ ।</u>
+          </strong>
         </div>
 
         <p className="certificate-body">
