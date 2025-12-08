@@ -678,7 +678,7 @@ const Layout = () => {
         return <BirthCertificateNew setActiveLink={setActiveLink} />;
       case "Verify Revised Emblem New":
         return <VerifyRevisedEmblem setActiveLink={setActiveLink} />;
-      case "Tax Clearance Format New":
+      case "Tax Clearance New Format":
         return <TaxClearanceNewFormat setActiveLink={setActiveLink} />;
       case "Annual Income Verification New":
         return <AnnualIncomeVerificationNew setActiveLink={setActiveLink} />;
