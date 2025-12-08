@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import "./UnmarriedVerificationEnglish.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const UnmarriedVerification = () => {
   const [formData, setFormData] = useState({
-    letterNo: "2082/83",
+    letterNo: "0000/00",
     refNo: "",
-    date: "2025-10-31",
+    date: "", // let user pick
     applicantTitle: "Mr.",
     applicantNameBody: "",
     relation: "son",
@@ -16,15 +18,15 @@ const UnmarriedVerification = () => {
     docType: "Citizenship",
     docNo: "",
     residencyType: "permanent",
-    municipality: "Nagarjun Municipality",
-    wardNo1: "1",
-    district1: "Kathmandu",
+    municipality: MUNICIPALITY.englishMunicipality,
+    wardNo1: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    district1: MUNICIPALITY.englishDistrict,
     country1: "Nepal",
     prevDesignation: "",
     prevWardNo: "",
     prevDistrict: "",
     pronoun: "he",
-    asOfDate: "2025-10-31",
+    asOfDate: "", // let user pick
     designation: "",
     applicantName: "",
     applicantAddress: "",
@@ -36,33 +38,46 @@ const UnmarriedVerification = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
+    // Only validate keys that actually exist and make sense.
     const required = [
-      "applicantNameBody", "fatherName", "motherName", "docNo",
-      "wardNo1", "prevWardNo", "prevDistrict", "asOfDate",
-      "designation", "applicantName", "applicantAddress",
-      "applicantCitizenship", "applicantPhone"
+      "applicantNameBody",
+      "fatherName",
+      "motherName",
+      "docNo",
+      "wardNo1",
+      "asOfDate",
+      "designation",
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
     ];
+
     for (let k of required) {
       if (!formData[k] || formData[k].toString().trim() === "") {
         return { ok: false, missing: k };
       }
     }
-    // optional: basic phone numeric check (loose)
+
+    // Loose phone validation: allow +, digits, spaces and -; between 6 and 20 chars
     if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
       return { ok: false, missing: "applicantPhone (invalid format)" };
     }
-    // ensure docNo isn't empty
+
     return { ok: true };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const v = validate();
-    if (!v.ok) { alert("Please fill/validate field: " + v.missing); return; }
+    if (!v.ok) {
+      alert("Please fill/validate required field: " + v.missing);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -90,14 +105,7 @@ const UnmarriedVerification = () => {
     <div className="unmarried-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png"
-               alt="Nagarjun Municipality Logo"
-               className="logo"
-               onError={(e) => (e.currentTarget.style.display = "none")} />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo variant="english" showWardLine showCountry />
         </div>
 
         {/* meta */}
@@ -146,9 +154,14 @@ const UnmarriedVerification = () => {
           ,
           <select name="residencyType" value={formData.residencyType} onChange={handleChange}><option>permanent</option><option>temporary</option></select>
           resident of
-          <select name="municipality" value={formData.municipality} onChange={handleChange}><option>Nagarjun Municipality</option></select>
+          <select name="municipality" value={formData.municipality} onChange={handleChange}>
+            <option>{formData.municipality}</option>
+          </select>
           Ward No.
-          <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}><option>1</option><option>2</option><option>3</option></select>
+          <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}>
+            <option value={formData.wardNo1}>{formData.wardNo1}</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          </select>
           ,
           <input type="text" name="district1" value={formData.district1} onChange={handleChange} /> ,
           <input type="text" name="country1" value={formData.country1} onChange={handleChange} />
@@ -157,9 +170,9 @@ const UnmarriedVerification = () => {
             <option value="">--Select--</option><option value="VDC">V.D.C</option><option value="Municipality">Municipality</option>
           </select>
           Ward No.
-          <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} required />
+          <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} />
           ,
-          <input type="text" name="prevDistrict" placeholder="District" value={formData.prevDistrict} onChange={handleChange} required />
+          <input type="text" name="prevDistrict" placeholder="District" value={formData.prevDistrict} onChange={handleChange} />
           , Nepal) has submitted an application for Marital Status Certificate and according to witnesses at ward level,
           <select name="pronoun" value={formData.pronoun} onChange={handleChange}><option>he</option><option>she</option></select>
           has been found to be single in Marital Status as of
@@ -177,14 +190,28 @@ const UnmarriedVerification = () => {
 
         <div className="applicant-details">
           <h3>Applicant Details</h3>
-          <div className="form-group-column"><label>Applicant Name *</label><input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required /></div>
-          <div className="form-group-column"><label>Applicant Address *</label><input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required /></div>
-          <div className="form-group-column"><label>Applicant Citizenship Number *</label><input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required /></div>
-          <div className="form-group-column"><label>Applicant Phone Number *</label><input type="tel" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required /></div>
+          <div className="form-group-column">
+            <label>Applicant Name *</label>
+            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required />
+          </div>
+          <div className="form-group-column">
+            <label>Applicant Address *</label>
+            <input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required />
+          </div>
+          <div className="form-group-column">
+            <label>Applicant Citizenship Number *</label>
+            <input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required />
+          </div>
+          <div className="form-group-column">
+            <label>Applicant Phone Number *</label>
+            <input type="tel" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
+          </div>
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn" disabled={loading}>{loading ? "Saving..." : "Save and Print Record"}</button>
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save and Print Record"}
+          </button>
         </div>
       </form>
     </div>
