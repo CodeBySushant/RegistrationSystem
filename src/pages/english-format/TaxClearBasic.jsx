@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import "./TaxClearBasic.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const TaxClearBasic = () => {
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
-    date: "2025-10-31",
+    date: "",
     applicantNameBody: "",
     residencyType: "Permanent/Temporary",
-    municipality: "Nagarjun Municipality",
-    wardNo: "1",
+    municipality: MUNICIPALITY.englishMunicipality,
+    wardNo: (MUNICIPALITY.wardNumber ?? 1).toString(),
     prevWardNo: "",
-    district: "Kathmandu",
+    district: MUNICIPALITY.englishDistrict,
     country: "Nepal",
     designation: "",
     applicantName: "",
@@ -24,7 +26,7 @@ const TaxClearBasic = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
@@ -40,10 +42,11 @@ const TaxClearBasic = () => {
       "applicantName",
       "applicantAddress",
       "applicantCitizenship",
-      "applicantPhone"
+      "applicantPhone",
     ];
     for (let k of required) {
-      if (!formData[k] || formData[k].toString().trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || formData[k].toString().trim() === "")
+        return { ok: false, missing: k };
     }
     return { ok: true };
   };
@@ -82,11 +85,7 @@ const TaxClearBasic = () => {
     <div className="tax-clear-basic-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo variant="english" showWardLine showCountry />
         </div>
 
         {/* meta */}
@@ -115,20 +114,40 @@ const TaxClearBasic = () => {
 
         <p className="certificate-body">
           As per the submission of documents required for the given application, this is to certify that
-          <input type="text" name="applicantNameBody" placeholder="Applicant Name" value={formData.applicantNameBody} onChange={handleChange} required className="long-input" />,
+          <input
+            type="text"
+            name="applicantNameBody"
+            placeholder="Applicant Name"
+            value={formData.applicantNameBody}
+            onChange={handleChange}
+            required
+            className="long-input"
+          />,
           <select name="residencyType" value={formData.residencyType} onChange={handleChange}>
-            <option>Permanent/Temporary</option><option>Permanent</option><option>Temporary</option>
+            <option>Permanent/Temporary</option>
+            <option>Permanent</option>
+            <option>Temporary</option>
           </select>
           resident of
           <select name="municipality" value={formData.municipality} onChange={handleChange}>
-            <option>Nagarjun Municipality</option>
+            <option>{formData.municipality}</option>
           </select>
           Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option>1</option><option>2</option><option>3</option>
+            <option value={formData.wardNo}>{formData.wardNo}</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
           </select>
           (previously Ward No.
-          <input type="text" name="prevWardNo" placeholder="Prev. Ward" value={formData.prevWardNo} onChange={handleChange} required />)
+          <input
+            type="text"
+            name="prevWardNo"
+            placeholder="Prev. Ward"
+            value={formData.prevWardNo}
+            onChange={handleChange}
+            required
+          />)
           <input type="text" name="district" value={formData.district} onChange={handleChange} />,
           <input type="text" name="country" value={formData.country} onChange={handleChange} />,
           Nepal have paid all the taxes of properties, and annual income as per the rules of Nepal Government.
@@ -147,14 +166,28 @@ const TaxClearBasic = () => {
 
         <div className="applicant-details">
           <h3>Applicant Details</h3>
-          <div className="form-group-column"><label>Applicant Name *</label><input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required /></div>
-          <div className="form-group-column"><label>Applicant Address *</label><input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required /></div>
-          <div className="form-group-column"><label>Applicant Citizenship Number *</label><input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required /></div>
-          <div className="form-group-column"><label>Applicant Phone Number *</label><input type="tel" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required /></div>
+          <div className="form-group-column">
+            <label>Applicant Name *</label>
+            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required />
+          </div>
+          <div className="form-group-column">
+            <label>Applicant Address *</label>
+            <input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required />
+          </div>
+          <div className="form-group-column">
+            <label>Applicant Citizenship Number *</label>
+            <input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required />
+          </div>
+          <div className="form-group-column">
+            <label>Applicant Phone Number *</label>
+            <input type="tel" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
+          </div>
         </div>
 
         <div className="submit-area">
-          <button type="submit" className="submit-btn" disabled={loading}>{loading ? "Saving..." : "Save and Print Record"}</button>
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save and Print Record"}
+          </button>
         </div>
       </form>
     </div>
