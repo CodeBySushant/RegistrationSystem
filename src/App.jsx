@@ -129,7 +129,7 @@ import TapInstallationRecommendation from "./pages/physical-development/TapInsta
 import AddressVerification from "./pages/english-format/AddressVerification.jsx";
 import AnnualIncomeCertificate from "./pages/english-format/AnnualIncomeCertificate.jsx";
 import BirthDateVerification from "./pages/english-format/BirthDateVerification.jsx";
-import CertificateofOccupation from "./pages/english-format/CertificateofOccupation.jsx";
+import CertificateOfOccupation from "./pages/english-format/CertificateofOccupation.jsx";
 import DigitalVerification from "./pages/english-format/DigitalVerification.jsx";
 import EconomicStatus from "./pages/english-format/EconomicStatus.jsx";
 import MarriageCerificateEnglish from "./pages/english-format/MarriageCertificateEnglish.jsx";
@@ -144,7 +144,7 @@ import TaxClearanceCertificate from "./pages/english-format/TaxCleranceCertifica
 import UnmarriedVerificationEnglish from "./pages/english-format/UnmarriedVerificationEnglish.jsx";
 import AddressVerificationNew from "./pages/english-format/new/AddressVerificationNew.jsx";
 import AnnualIncomeVerificationNew from "./pages/english-format/new/AnnualIncomeVerificationNew.jsx";
-import BirthCertificateNew from "./pages/english-format/new/BirthCertificate.jsx";
+import BirthCertificateNew from "./pages/english-format/new/BirthCertificateNew.jsx";
 import OccupationVerificationNew from "./pages/english-format/new/OccupationVerificationNew.jsx";
 import SurnameVerificationAfterMarriage from "./pages/english-format/new/SurnameVerificationAfterMarriage.jsx";
 import SurnameVerificationCertificateNew from "./pages/english-format/new/SurnameVerificationCertificateNew.jsx";
@@ -176,7 +176,7 @@ import FreeHealthInsuranceRequest from "./pages/social-family/FreeHealthInsuranc
 import IncomeSourceCertification from "./pages/social-family/IncomeSourceCertification.jsx";
 import InternalMigrationRecommendation from "./pages/social-family/InternalMigrationRecommendation.jsx";
 import JesthaNagarikSifarisWada from "./pages/social-family/JesthaNagarikSifarisWada.jsx";
-import MarriageCertificate from "./pages/social-family/MarriageCertificate.jsx";
+import MarriageCertificateOfficial from "./pages/social-family/MarriageCertificate.jsx";
 import MinorIdentityCard from "./pages/social-family/MinorIdentityCard.jsx";
 import MinorIdentityCardRecommendation from "./pages/social-family/MinorIdentityCardRecommendation.jsx";
 import NewBirthVerification from "./pages/social-family/NewBirthVerification.jsx";
@@ -664,8 +664,8 @@ const Layout = () => {
         return <MarriageCerificateEnglish setActiveLink={setActiveLink} />;
       case "Same Person Certificate":
         return <SamePersonCertificate setActiveLink={setActiveLink} />;
-      case "Certificate of Occupation":
-        return <CertificateofOccupation setActiveLink={setActiveLink} />;
+      case "Certification of Occupation":
+        return <CertificateOfOccupation setActiveLink={setActiveLink} />;
       case "Tax Clear Basic":
         return <TaxClearBasic setActiveLink={setActiveLink} />;
       case "Digital Verification":
@@ -674,7 +674,7 @@ const Layout = () => {
         return <OccupationVerificationNew setActiveLink={setActiveLink} />;
       case "Address Verification New":
         return <AddressVerificationNew setActiveLink={setActiveLink} />;
-      case "Birth Certificate New":
+      case "Birth Certification New":
         return <BirthCertificateNew setActiveLink={setActiveLink} />;
       case "Verify Revised Emblem New":
         return <VerifyRevisedEmblem setActiveLink={setActiveLink} />;
@@ -682,7 +682,7 @@ const Layout = () => {
         return <TaxClearanceNewFormat setActiveLink={setActiveLink} />;
       case "Annual Income Verification New":
         return <AnnualIncomeVerificationNew setActiveLink={setActiveLink} />;
-      case "Surname Verification Certificate New":
+      case "Surname Verification Certificate":
         return (
           <SurnameVerificationCertificateNew setActiveLink={setActiveLink} />
         );
@@ -725,13 +725,15 @@ const Layout = () => {
           <PermanentResidenceRecommendation setActiveLink={setActiveLink} />
         );
       case "विवाह प्रमाणित":
-        return <MarriageCerificate setActiveLink={setActiveLink} />;
+        return <MarriageCertificateOfficial setActiveLink={setActiveLink} />;
       case "जन्म मिति प्रमाणित":
         return <BirthVerificationNepali setActiveLink={setActiveLink} />;
       case "जन्म प्रमाणिकरण new":
         return <NewBirthVerification setActiveLink={setActiveLink} />;
       case "अविवाहित प्रमाणित":
         return <UnmarriedVerification setActiveLink={setActiveLink} />;
+      case "नाता प्रमाणित":
+        return <RelationTemporaryResidence setActiveLink={setActiveLink} />;
       case "नाता प्रमाणित प्रमाण पत्र new":
         return <RelationshipVerification setActiveLink={setActiveLink} />;
       case "तीन पुस्ते प्रमाणित":
