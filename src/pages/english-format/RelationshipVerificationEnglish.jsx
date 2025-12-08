@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./RelationshipVerificationEnglish.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const RelationshipVerification = () => {
   const [formData, setFormData] = useState({
@@ -16,12 +18,12 @@ const RelationshipVerification = () => {
     motherName: "",
     mrsName: "",
     residencyType: "Permanent",
-    municipality: "Nagarjun Municipality",
-    wardNo1: "1",
-    district1: "Kathmandu",
-    country1: "Nepal",
+    municipality: MUNICIPALITY.englishMunicipality,
+    wardNo1: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    district1: MUNICIPALITY.englishDistrict,
+    country1: MUNICIPALITY.englishCountry,
     prevWardNo: "",
-    prevDistrict: "Koshi Province",
+    prevDistrict: MUNICIPALITY.englishProvince,
     prevCountry: "Nepal",
     designation: "",
     applicantName: "",
@@ -38,12 +40,12 @@ const RelationshipVerification = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRelativeChange = (index, e) => {
     const { name, value } = e.target;
-    setRelatives(prev => {
+    setRelatives((prev) => {
       const copy = [...prev];
       copy[index] = { ...copy[index], [name]: value };
       return copy;
@@ -51,7 +53,7 @@ const RelationshipVerification = () => {
   };
 
   const addRelative = () => {
-    setRelatives(prev => [...prev, { id: prev.length + 1, title: "Mr.", name: "", relation: "" }]);
+    setRelatives((prev) => [...prev, { id: prev.length + 1, title: "Mr.", name: "", relation: "" }]);
   };
 
   const validate = () => {
@@ -101,10 +103,7 @@ const RelationshipVerification = () => {
     <div className="verification-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo variant="english" showWardLine />
         </div>
 
         {/* top meta */}
@@ -143,19 +142,28 @@ const RelationshipVerification = () => {
           <input type="text" name="fatherName" placeholder="Father's/Grandfather's Name" value={formData.fatherName} onChange={handleChange} required />,
           <select name="motherRelation" value={formData.motherRelation} onChange={handleChange}><option>son</option><option>daughter</option></select>
           of
-          <select name="motherTitle" value={formData.motherTitle} onChange={handleChange}><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select>
+          <select name="motherTitle" value={formData.motherTitle} onChange={handleChange}><option>Mrs.</option><option>Ms.</option></select>
           <input type="text" name="motherName" placeholder="Mother's Name" value={formData.motherName} onChange={handleChange} required />
           and Mrs.
           <input type="text" name="mrsName" value={formData.mrsName} onChange={handleChange} required />,
           <select name="residencyType" value={formData.residencyType} onChange={handleChange}><option>Permanent</option><option>Temporary</option></select>
           resident of
-          <select name="municipality" value={formData.municipality} onChange={handleChange}><option>Nagarjun Municipality</option></select>
+          <select name="municipality" value={formData.municipality} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
+          </select>
           , Ward No.
-          <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}><option>1</option><option>2</option><option>3</option></select>,
+          <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}>
+            <option value={(MUNICIPALITY.wardNumber ?? 1).toString()}>{MUNICIPALITY.wardNumber ?? 1}</option>
+            <option>1</option><option>2</option><option>3</option>
+          </select>,
           <input type="text" name="district1" value={formData.district1} onChange={handleChange} /> District, {formData.country1}
           (Previously: Ward No.
           <input type="text" name="prevWardNo" value={formData.prevWardNo} onChange={handleChange} required /> ,
-          <select name="prevDistrict" value={formData.prevDistrict} onChange={handleChange}><option>Koshi Province</option><option>Bagmati Province</option></select>
+          <select name="prevDistrict" value={formData.prevDistrict} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishProvince || "Koshi Province"}</option>
+            <option>Bagmati Province</option>
+            <option>Gandaki Province</option>
+          </select>
           District, <input type="text" name="prevCountry" value={formData.prevCountry} onChange={handleChange} /> ). This certificate is issued according to Section 12...
         </p>
 
