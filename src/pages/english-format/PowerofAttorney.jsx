@@ -22,10 +22,10 @@ const PowerOfAttorney = () => {
     applicantPhone: "",
 
     // from config
-    municipality: MUNICIPALITY.englishMunicipality || "Nagarjun Municipality",
+    municipality: MUNICIPALITY.englishMunicipality || "Biratnagar Municipality",
     wardNo: (MUNICIPALITY.wardNumber ?? 1).toString(),
-    district: MUNICIPALITY.englishDistrict || "Kathmandu",
-    province: MUNICIPALITY.englishProvince || "Bagmati Province",
+    district: MUNICIPALITY.englishDistrict || "Biratnagar",
+    province: MUNICIPALITY.englishProvince || "Koshi Province",
   });
 
   const [relatives, setRelatives] = useState([
