@@ -1,27 +1,40 @@
 import React, { useState } from "react";
 import "./AddressVerificationNew.css";
 
+import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../../config/municipalityConfig";
+
 const AddressVerificationNew = () => {
   const [formData, setFormData] = useState({
-    letterNo: "2082/83",
+    letterNo: "0000/00",
     refNo: "",
-    date: "2025-10-31",
+    date: "",
+
+    // body/applicant name in sentence
     applicantNameBody: "",
-    oldWardNo: "1",
-    oldMunicipality: "",
-    oldProvince: "Koshi Province",
-    newMunicipality: "Nagarjun Municipality",
-    newWardNo: "",
-    newProvince: "",
+
+    // old (pre-change)
+    oldWardNo: MUNICIPALITY.wardNumber || "1",
+    oldMunicipality: MUNICIPALITY.englishMunicipality || "",
+    oldProvince: MUNICIPALITY.englishProvince || "",
+
+    // new (post-change) — default to municipality config where sensible
+    newMunicipality: MUNICIPALITY.englishMunicipality || "",
+    newWardNo: MUNICIPALITY.wardNumber || "",
+    newProvince: MUNICIPALITY.englishProvince || "",
     newCountry: "Nepal",
+
     decisionSource: "Council of Ministry",
     govSource: "Government of Nepal",
     decisionDate: "10th March, 2017",
+
+    // final addresses (use municipality config)
     finalAddress1: "",
-    finalAddress2: "Nagarjun Municipality",
-    finalWardNo: "1",
-    finalProvince: "Koshi Province",
+    finalAddress2: MUNICIPALITY.englishMunicipality || "Nagarjun Municipality",
+    finalWardNo: MUNICIPALITY.wardNumber || "1",
+    finalProvince: MUNICIPALITY.englishProvince || "Bagmati Province",
     finalCountry: "Nepal",
+
     designation: "",
     applicantName: "",
     applicantAddress: "",
@@ -61,7 +74,8 @@ const AddressVerificationNew = () => {
       "applicantPhone",
     ];
     for (let k of required) {
-      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || String(formData[k]).trim() === "")
+        return { ok: false, missing: k };
     }
     // basic phone check
     if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
@@ -102,12 +116,9 @@ const AddressVerificationNew = () => {
   return (
     <div className="address-verification-new-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header — English */}
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">
