@@ -1,43 +1,56 @@
-import React, { useState } from 'react';
-import './BirthCertificateNew.css';
+// src/pages/english-format/new/BirthCertificateNew.jsx
+import React, { useState } from "react";
+import "./BirthCertificateNew.css";
+
+import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../../config/municipalityConfig";
 
 const BirthCertificateNew = () => {
   const [formData, setFormData] = useState({
-    letterNo: '2082/83',
-    refNo: '',
-    date: '2025-11-01',
-    childTitle: 'Master.',
-    childName: '',
-    relation: 'son',
-    fatherTitle: 'Master.',
-    fatherName: '',
-    motherTitle: 'Master.',
-    motherName: '',
-    municipality: 'Nagarjun Municipality',
-    wardNo: '1',
-    prevAddress1: '',
-    prevWardNo: '',
-    prevAddress2: '',
-    prevProvince: 'Koshi Province',
-    prevCountry: 'Nepal',
-    dobBS: '',
-    dobAD: '',
-    birthMunicipality: 'Nagarjun Municipality',
-    birthWardNo: '1',
-    birthPrevAddress1: '',
-    birthPrevWardNo: '',
-    birthPrevAddress2: '',
-    birthPrevProvince: 'Koshi Province',
-    birthPrevCountry: 'Nepal',
-    recordLocation: 'this Nagarjun Municipality',
-    recordWardNo: '1',
-    recordOffice: 'No. ward Office',
-    imageBoxTitle: 'Master.',
-    designation: '',
-    applicantName: '',
-    applicantAddress: '',
-    applicantCitizenship: '',
-    applicantPhone: '',
+    letterNo: "0000/00",
+    refNo: "",
+    date: "",
+
+    childTitle: "Master.",
+    childName: "",
+    relation: "son",
+
+    fatherTitle: "Master.",
+    fatherName: "",
+    motherTitle: "Master.",
+    motherName: "",
+
+    // defaults from MUNICIPALITY config
+    municipality: MUNICIPALITY.englishMunicipality || "",
+    wardNo: MUNICIPALITY.wardNumber || "1",
+
+    prevAddress1: "",
+    prevWardNo: "",
+    prevAddress2: "",
+    prevProvince: MUNICIPALITY.englishProvince || "",
+    prevCountry: "Nepal",
+
+    dobBS: "",
+    dobAD: "",
+
+    birthMunicipality: MUNICIPALITY.englishMunicipality || "",
+    birthWardNo: MUNICIPALITY.wardNumber || "1",
+    birthPrevAddress1: "",
+    birthPrevWardNo: "",
+    birthPrevAddress2: "",
+    birthPrevProvince: MUNICIPALITY.englishProvince || "",
+    birthPrevCountry: "Nepal",
+
+    recordLocation: `this ${MUNICIPALITY.englishMunicipality || ""}`,
+    recordWardNo: MUNICIPALITY.wardNumber || "1",
+    recordOffice: "No. ward Office",
+
+    imageBoxTitle: "Master.",
+    designation: "",
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -50,14 +63,21 @@ const BirthCertificateNew = () => {
   const validate = () => {
     // minimal validation: required applicant fields and child/father/mother names
     const required = [
-      'childName', 'fatherName', 'motherName',
-      'applicantName', 'applicantAddress', 'applicantCitizenship', 'applicantPhone'
+      "childName",
+      "fatherName",
+      "motherName",
+      "designation",
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
     ];
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === '') return { ok: false, missing: k };
+      if (!formData[k] || String(formData[k]).trim() === "")
+        return { ok: false, missing: k };
     }
     if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
-      return { ok: false, missing: 'applicantPhone (invalid)' };
+      return { ok: false, missing: "applicantPhone (invalid)" };
     }
     return { ok: true };
   };
@@ -66,16 +86,16 @@ const BirthCertificateNew = () => {
     e.preventDefault();
     const v = validate();
     if (!v.ok) {
-      alert('Please fill/validate field: ' + v.missing);
+      alert("Please fill/validate field: " + v.missing);
       return;
     }
 
     setLoading(true);
     try {
       const payload = { ...formData };
-      const res = await fetch('/api/forms/birth-certificate-new', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/forms/birth-certificate-new", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
@@ -83,11 +103,11 @@ const BirthCertificateNew = () => {
         throw new Error(err?.message || `Server returned ${res.status}`);
       }
       const body = await res.json();
-      alert('Saved successfully (id: ' + body.id + ')');
+      alert("Saved successfully (id: " + body.id + ")");
       setTimeout(() => window.print(), 200);
     } catch (err) {
-      console.error('Submit error:', err);
-      alert('Failed to save: ' + (err.message || 'unknown error'));
+      console.error("Submit error:", err);
+      alert("Failed to save: " + (err.message || "unknown error"));
     } finally {
       setLoading(false);
     }
@@ -96,12 +116,9 @@ const BirthCertificateNew = () => {
   return (
     <div className="birth-cert-new-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header — English */}
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">
@@ -151,10 +168,10 @@ const BirthCertificateNew = () => {
           </select>
           <input type="text" name="motherName" placeholder="Mother's Name" value={formData.motherName} onChange={handleChange} required /> of
           <select name="municipality" value={formData.municipality} onChange={handleChange}>
-            <option>Nagarjun Municipality</option>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
           </select>, Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option>1</option>
+            <option>{MUNICIPALITY.wardNumber || "1"}</option>
             <option>2</option>
             <option>3</option>
           </select> (Previously:
@@ -162,8 +179,8 @@ const BirthCertificateNew = () => {
           <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} /> ),
           <input type="text" name="prevAddress2" placeholder="Address" value={formData.prevAddress2} onChange={handleChange} /> ,
           <select name="prevProvince" value={formData.prevProvince} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishProvince || "Bagmati Province"}</option>
             <option>Koshi Province</option>
-            <option>Bagmati Province</option>
           </select> ,
           <select name="prevCountry" value={formData.prevCountry} onChange={handleChange}>
             <option>Nepal</option>
@@ -171,10 +188,10 @@ const BirthCertificateNew = () => {
           <input type="text" name="dobBS" placeholder="DOB B.S." value={formData.dobBS} onChange={handleChange} /> /
           <input type="date" name="dobAD" placeholder="DOB A.D." value={formData.dobAD} onChange={handleChange} /> ) at
           <select name="birthMunicipality" value={formData.birthMunicipality} onChange={handleChange}>
-            <option>Nagarjun Municipality</option>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
           </select>, Ward No.
           <select name="birthWardNo" value={formData.birthWardNo} onChange={handleChange}>
-            <option>1</option>
+            <option>{MUNICIPALITY.wardNumber || "1"}</option>
             <option>2</option>
             <option>3</option>
           </select> (Previously:
@@ -182,8 +199,8 @@ const BirthCertificateNew = () => {
           <input type="text" name="birthPrevWardNo" placeholder="Ward" value={formData.birthPrevWardNo} onChange={handleChange} /> ),
           <input type="text" name="birthPrevAddress2" placeholder="Address" value={formData.birthPrevAddress2} onChange={handleChange} /> ,
           <select name="birthPrevProvince" value={formData.birthPrevProvince} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishProvince || "Bagmati Province"}</option>
             <option>Koshi Province</option>
-            <option>Bagmati Province</option>
           </select> ,
           <select name="birthPrevCountry" value={formData.birthPrevCountry} onChange={handleChange}>
             <option>Nepal</option>
@@ -236,7 +253,7 @@ const BirthCertificateNew = () => {
 
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'Saving...' : 'Save and Print Record'}
+            {loading ? "Saving..." : "Save and Print Record"}
           </button>
         </div>
       </form>

@@ -1,24 +1,35 @@
+// src/pages/english-format/new/OccupationVerificationNew.jsx
 import React, { useState } from "react";
 import "./OccupationVerificationNew.css";
 
+import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../../config/municipalityConfig";
+
 const OccupationVerificationNew = () => {
   const [formData, setFormData] = useState({
-    letterNo: "2082/83",
+    letterNo: "0000/00",
     refNo: "",
-    date: "2025-10-31",
+    date: "",
+
     applicantTitle: "Master.",
     applicantNameBody: "",
     relation: "son",
+
     fatherTitle: "Master.",
     fatherName: "",
+
     residencyType: "permanent",
-    municipality: "Nagarjun Municipality",
-    wardNo: "1",
+
+    // defaults from MUNICIPALITY
+    municipality: MUNICIPALITY.englishMunicipality || "",
+    wardNo: MUNICIPALITY.wardNumber || "",
+
     prevAddress1: "",
     prevWardNo: "",
     prevAddress2: "",
-    prevProvince: "Koshi Province",
+    prevProvince: MUNICIPALITY.englishProvince || "",
     prevCountry: "Nepal",
+
     description: "is a respected person as well as one of the renowned farmer ...",
     designation: "",
     applicantName: "",
@@ -45,7 +56,8 @@ const OccupationVerificationNew = () => {
       "designation",
     ];
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || String(formData[k]).trim() === "")
+        return { ok: false, missing: k };
     }
     if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
       return { ok: false, missing: "applicantPhone (invalid)" };
@@ -86,12 +98,9 @@ const OccupationVerificationNew = () => {
   return (
     <div className="occupation-verification-new-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header (English) */}
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">
@@ -143,11 +152,11 @@ const OccupationVerificationNew = () => {
           </select>
           resident of
           <select name="municipality" value={formData.municipality} onChange={handleChange}>
-            <option>Nagarjun Municipality</option>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
           </select>
           , Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option>1</option>
+            <option>{MUNICIPALITY.wardNumber || "1"}</option>
             <option>2</option>
             <option>3</option>
           </select>
@@ -156,8 +165,8 @@ const OccupationVerificationNew = () => {
           <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} /> ),
           <input type="text" name="prevAddress2" placeholder="Address" value={formData.prevAddress2} onChange={handleChange} /> ,
           <select name="prevProvince" value={formData.prevProvince} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishProvince || "Bagmati Province"}</option>
             <option>Koshi Province</option>
-            <option>Bagmati Province</option>
           </select>
           ,
           <select name="prevCountry" value={formData.prevCountry} onChange={handleChange}>

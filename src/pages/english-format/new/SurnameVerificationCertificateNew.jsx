@@ -1,13 +1,18 @@
+// src/pages/english-format/new/SurnameVerificationCertificateNew.jsx
 import React, { useState } from "react";
 import "./SurnameVerificationCertificateNew.css";
 
+import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../../config/municipalityConfig";
+
 const SurnameVerificationCertificateNew = () => {
   const [formData, setFormData] = useState({
-    letterNo: "2082/83",
+    letterNo: "0000/00",
     refNo: "",
-    date: "2025-11-01",
+    date: "",
+
     applicantTitle: "Mr.",
-    applicantNameBody: "Manjit Thapa Magar (Appli",
+    applicantNameBody: "Manjit Thapa Magar",
     surname1: "Thapa Magar",
     applicantNameAgain: "Mr. Manjit Thapa Magar",
     surname2: "Thapa",
@@ -16,6 +21,14 @@ const SurnameVerificationCertificateNew = () => {
     surname3: "Thapa Magar",
     surname4: "Thapa",
     relationship: "son",
+
+    // defaults from MUNICIPALITY (kept if you later want to show or use them)
+    municipality: MUNICIPALITY.englishMunicipality || "",
+    wardNo: MUNICIPALITY.wardNumber || "",
+    district: MUNICIPALITY.englishDistrict || "",
+    province: MUNICIPALITY.englishProvince || "",
+    country: "Nepal",
+
     designation: "",
     applicantName: "",
     applicantAddress: "",
@@ -46,7 +59,8 @@ const SurnameVerificationCertificateNew = () => {
       "designation",
     ];
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || String(formData[k]).trim() === "")
+        return { ok: false, missing: k };
     }
     if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
       return { ok: false, missing: "applicantPhone (invalid)" };
@@ -87,12 +101,9 @@ const SurnameVerificationCertificateNew = () => {
   return (
     <div className="surname-verification-new-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header (English) */}
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">
