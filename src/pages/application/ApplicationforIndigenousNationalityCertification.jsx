@@ -1,14 +1,18 @@
-// ApplicationforIndigenousNationalityCertification.jsx
+// src/pages/application/ApplicationforIndigenousNationalityCertification.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./ApplicationforIndigenousNationalityCertification.css";
+
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const initialState = {
   date: "२०८२.०७.१५",
   headerDistrict: "काठमाडौँ",
   mainDistrict: "काठमाडौँ",
-  palikaName: "",
-  wardNo: "",
+  // use MUNICIPALITY Nepali name if available
+  palikaName: MUNICIPALITY?.name || "",
+  wardNo: MUNICIPALITY?.wardNumber || "",
   residentName: "",
   relation: "छोरा",
   guardianName: "",
@@ -29,12 +33,26 @@ const ApplicationforIndigenousNationalityCertification = () => {
   };
 
   const validate = (data) => {
-    // basic required checks — expand if you want more rules
-    const required = ["headerDistrict", "mainDistrict", "palikaName", "wardNo", "residentName", "guardianName", "tribeName", "sigName", "sigAddress", "sigMobile"];
+    const required = [
+      "headerDistrict",
+      "mainDistrict",
+      "palikaName",
+      "wardNo",
+      "residentName",
+      "guardianName",
+      "tribeName",
+      "sigName",
+      "sigAddress",
+      "sigMobile",
+    ];
     for (let f of required) {
       if (!data[f] || (typeof data[f] === "string" && data[f].trim() === "")) {
         return `${f} is required`;
       }
+    }
+    // optional: phone format check (Nepali numbers + symbols)
+    if (!/^[0-9+\-\s]{6,20}$/.test(String(data.sigMobile))) {
+      return "sigMobile (invalid format)";
     }
     return null;
   };
@@ -51,26 +69,30 @@ const ApplicationforIndigenousNationalityCertification = () => {
 
     setSubmitting(true);
     try {
-      // prepare payload: convert empty strings to null
       const payload = { ...formData };
       Object.keys(payload).forEach((k) => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      // POST to generic form endpoint (make sure forms.json contains 'indigenous-certification')
-      const url = "http://localhost:5000/api/forms/indigenous-certification";
+      // Use relative endpoint (adjust if your API path differs)
+      const url = "/api/forms/indigenous-certification";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
         console.log("Saved:", res.data);
-        setFormData(initialState); // reset
+        setFormData(initialState);
+        setTimeout(() => window.print(), 150);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
@@ -80,6 +102,11 @@ const ApplicationforIndigenousNationalityCertification = () => {
   return (
     <div className="indigenous-cert-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable Nepali header */}
+        <div className="header-row">
+          <MunicipalityHeader showLogo />
+        </div>
+
         <div className="form-row">
           <div className="header-to-group">
             <h3>श्रीमान् प्रमुख जिल्ला अधिकारीज्यु,</h3>

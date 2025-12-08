@@ -1,15 +1,18 @@
-// CitizenshipwithHusbandSurname.jsx
+// src/pages/application/CitizenshipwithHusbandSurname.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./CitizenshipwithHusbandSurname.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialState = {
   date: "२०८२.०७.१५",
-  districtOffice: "काठमाडौँ",
+  districtOffice: MUNICIPALITY?.englishDistrict || "काठमाडौँ",
   preMarriageDate: "२०८२.०७.१५",
   preMarriageDistrict: "",
-  currentMunicipality: "",
-  currentWard: "",
+  currentMunicipality: MUNICIPALITY?.name || "",
+  currentWard: MUNICIPALITY?.wardNumber || "",
   husbandName: "",
   sigName: "",
   sigAddress: "",
@@ -32,6 +35,9 @@ const CitizenshipwithHusbandSurname = () => {
     if (!data.currentWard?.trim()) return "currentWard is required";
     if (!data.husbandName?.trim()) return "husbandName is required";
     if (!data.sigName?.trim()) return "sigName is required";
+    if (!data.sigMobile || !/^[0-9+\-\s]{6,20}$/.test(String(data.sigMobile))) {
+      return "sigMobile (required/invalid)";
+    }
     return null;
   };
 
@@ -47,23 +53,29 @@ const CitizenshipwithHusbandSurname = () => {
 
     setSubmitting(true);
     try {
-      // convert empty strings to null optionally
       const payload = { ...formData };
-      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+      Object.keys(payload).forEach((k) => {
+        if (payload[k] === "") payload[k] = null;
+      });
 
-      const url = "/api/forms/citizenship-husband-surname"; // relative works if proxy is configured; else use full http://localhost:5000/...
+      const url = "/api/forms/citizenship-husband-surname";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("Saved successfully. ID: " + (res.data?.id ?? ""));
         setFormData(initialState);
+        setTimeout(() => window.print(), 150);
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Submission failed";
-      alert("त्रुटि: " + JSON.stringify(msg));
+      const msg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Submission failed";
+      alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
     }
@@ -72,6 +84,11 @@ const CitizenshipwithHusbandSurname = () => {
   return (
     <div className="citizenship-husband-container">
       <form onSubmit={handleSubmit}>
+        {/* reusable Nepali header */}
+        <div className="header-row">
+          <MunicipalityHeader showLogo />
+        </div>
+
         <div className="form-row">
           <div className="header-to-group">
             <h3>श्रीमान् प्रमुख जिल्ला अधिकारीज्यु,</h3>

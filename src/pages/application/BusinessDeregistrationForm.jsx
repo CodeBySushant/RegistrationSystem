@@ -1,14 +1,18 @@
-// BusinessDeregistrationForm.jsx
+// src/pages/application/BusinessDeregistrationForm.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./BusinessDeregistrationForm.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialState = {
   headerTo: "श्रीमान्",
-  headerMunicipality: "नागार्जुन नगरपालिका",
-  headerOffice: "काठमाडौँ",
+  // prefer MUNICIPALITY Nepali tokens if available
+  headerMunicipality: MUNICIPALITY?.name || "",
+  headerOffice: MUNICIPALITY?.englishDistrict || "",
   date: "२०८२.०७.१५",
-  municipality: "नागार्जुन नगरपालिका",
+  municipality: MUNICIPALITY?.name || "",
   firmType: "प्राइभेट फर्म",
   firmRegNo: "",
   firmName: "",
@@ -22,6 +26,8 @@ const initialState = {
   applicantAddress: "",
   applicantCitizenship: "",
   applicantPhone: "",
+  // add ward default if you want it shown elsewhere
+  wardNo: MUNICIPALITY?.wardNumber || "",
 };
 
 const BusinessDeregistrationForm = () => {
@@ -52,6 +58,10 @@ const BusinessDeregistrationForm = () => {
         return `${f} is required`;
       }
     }
+    // optional: phone format check
+    if (d.applicantPhone && !/^[0-9+\-\s]{6,20}$/.test(String(d.applicantPhone))) {
+      return "applicantPhone (invalid format)";
+    }
     return null;
   };
 
@@ -68,21 +78,29 @@ const BusinessDeregistrationForm = () => {
     setSubmitting(true);
     try {
       const payload = { ...formData };
-      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+      Object.keys(payload).forEach((k) => {
+        if (payload[k] === "") payload[k] = null;
+      });
 
-      const url = "http://localhost:5000/api/forms/business-deregistration";
+      // use relative API endpoint (adjust if your backend differs)
+      const url = "/api/forms/business-deregistration";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
         setFormData(initialState);
         console.log("Saved:", res.data);
+        setTimeout(() => window.print(), 150);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
@@ -92,7 +110,9 @@ const BusinessDeregistrationForm = () => {
   return (
     <div className="business-dereg-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable Nepali header */}
         <div className="title-header">
+          <MunicipalityHeader showLogo />
           <h3>अनुसूची-१५.३</h3>
           <h4>प्राइभेट फर्म तथा साझेदारी फर्म खारेजीको लागि निवेदन</h4>
         </div>
@@ -100,12 +120,33 @@ const BusinessDeregistrationForm = () => {
         <div className="form-row">
           <div className="header-to-group">
             <div className="form-group-inline">
-              <input type="text" name="headerTo" value={formData.headerTo} onChange={handleChange} className="header-input" />
+              <input
+                type="text"
+                name="headerTo"
+                value={formData.headerTo}
+                onChange={handleChange}
+                className="header-input"
+              />
               <span>ज्यु,</span>
             </div>
-            <input type="text" name="headerMunicipality" value={formData.headerMunicipality} onChange={handleChange} className="header-input" />
-            <input type="text" name="headerOffice" value={formData.headerOffice} onChange={handleChange} className="header-input" />
+
+            <input
+              type="text"
+              name="headerMunicipality"
+              value={formData.headerMunicipality}
+              onChange={handleChange}
+              className="header-input"
+            />
+
+            <input
+              type="text"
+              name="headerOffice"
+              value={formData.headerOffice}
+              onChange={handleChange}
+              className="header-input"
+            />
           </div>
+
           <div className="header-meta">
             <div className="stamp-box">रु. २० को टिकट</div>
             <div className="form-group date-group">
@@ -122,7 +163,7 @@ const BusinessDeregistrationForm = () => {
         <p className="certificate-body">
           उपर्युक्त सम्बन्धमा मेरो नाममा यस
           <select name="municipality" value={formData.municipality} onChange={handleChange}>
-            <option>नागार्जुन नगरपालिका</option>
+            <option>{MUNICIPALITY?.name || "नागार्जुन नगरपालिका"}</option>
           </select>
           मा व्यापारिक प्रयोजनको लागि दर्ता भएको
           <select name="firmType" value={formData.firmType} onChange={handleChange}>
@@ -130,13 +171,41 @@ const BusinessDeregistrationForm = () => {
             <option>साझेदारी फर्म</option>
           </select>
           नं.
-          <input type="text" name="firmRegNo" value={formData.firmRegNo} onChange={handleChange} required className="short-input" />
+          <input
+            type="text"
+            name="firmRegNo"
+            value={formData.firmRegNo}
+            onChange={handleChange}
+            required
+            className="short-input"
+          />
           को
-          <input type="text" name="firmName" placeholder="फर्मको नाम" value={formData.firmName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="firmName"
+            placeholder="फर्मको नाम"
+            value={formData.firmName}
+            onChange={handleChange}
+            required
+          />
           नामको फर्म
-          <input type="text" name="dissolveReason" placeholder="कारण" value={formData.dissolveReason} onChange={handleChange} required />
+          <input
+            type="text"
+            name="dissolveReason"
+            placeholder="कारण"
+            value={formData.dissolveReason}
+            onChange={handleChange}
+            required
+          />
           कारणले खारेज गरी पाउन रु. २० को टिकट टाँसी यो निवेदन दिएको छु। उक्त फर्मको नामबाट नेपाल सरकार र अन्य कुनै निकायमा कुनै राजस्व र अन्य रकम बुझाउन बाँकी छैन। कुनै किसिमको रकमा वा राजस्व बुझाउन बाँकी देखिएमा पछि कुनै उजुरबाजुर नगरी सम्बन्धित निकायमा बुझाउन मेरो मन्जुरी छ। निम्नानुसार लाग्ने दस्तुर तिरी मेरो
-          <input type="text" name="applicantNameForDissolve" placeholder="तपाईको नाम" value={formData.applicantNameForDissolve} onChange={handleChange} required />
+          <input
+            type="text"
+            name="applicantNameForDissolve"
+            placeholder="तपाईको नाम"
+            value={formData.applicantNameForDissolve}
+            onChange={handleChange}
+            required
+          />
           नामको उक्त फर्म खारेज गरी पाउन श्रीमान समक्ष अनुरोध गर्दछु।
         </p>
 

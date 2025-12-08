@@ -1,14 +1,17 @@
-// DalitCasteCertification.jsx
+// src/pages/application/DalitCasteCertification.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./DalitCasteCertification.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialState = {
   date: "२०८२.०७.१५",
-  headerDistrict: "काठमाडौँ",
-  mainDistrict: "काठमाडौँ",
-  palikaName: "",
-  wardNo: "",
+  headerDistrict: MUNICIPALITY?.englishDistrict || "काठमाडौँ",
+  mainDistrict: MUNICIPALITY?.englishDistrict || "काठमाडौँ",
+  palikaName: MUNICIPALITY?.name || "",
+  wardNo: MUNICIPALITY?.wardNumber || "",
   residentName: "",
   relation: "छोरा",
   guardianName: "",
@@ -35,6 +38,9 @@ const DalitCasteCertification = () => {
     if (!d.residentName?.trim()) return "residentName is required";
     if (!d.casteName?.trim()) return "casteName is required";
     if (!d.sigName?.trim()) return "sigName is required";
+    if (!d.sigMobile || !/^[0-9+\-\s]{6,20}$/.test(String(d.sigMobile))) {
+      return "sigMobile (required/invalid)";
+    }
     return null;
   };
 
@@ -51,22 +57,28 @@ const DalitCasteCertification = () => {
     setSubmitting(true);
     try {
       const payload = { ...formData };
-      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+      Object.keys(payload).forEach((k) => {
+        if (payload[k] === "") payload[k] = null;
+      });
 
-      // Use relative URL if dev proxy is configured; otherwise use full http://localhost:5000/...
       const url = "/api/forms/dalit-caste-certification";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("Saved successfully. ID: " + (res.data?.id ?? ""));
         setFormData(initialState);
+        setTimeout(() => window.print(), 150);
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
     } catch (error) {
       console.error("Submit error:", error);
       console.error("server response:", error.response?.data);
-      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Submission failed";
       alert("त्रुटि: " + JSON.stringify(msg));
     } finally {
       setSubmitting(false);
@@ -76,6 +88,11 @@ const DalitCasteCertification = () => {
   return (
     <div className="dalit-cert-container">
       <form onSubmit={handleSubmit}>
+        {/* reusable Nepali header */}
+        <div className="header-row">
+          <MunicipalityHeader showLogo />
+        </div>
+
         <div className="form-row">
           <div className="header-to-group">
             <h3>श्रीमान् प्रमुख जिल्ला अधिकारीज्यु,</h3>
@@ -113,7 +130,7 @@ const DalitCasteCertification = () => {
             <option>पत्नी</option>
           </select>
           म
-          <input type="text" name="guardianName" placeholder="अभिभावकको नाम" value={formData.guardianName} onChange={handleChange} required />
+          <input type="text" name="guardianName" placeholder="अभिभावकको नाम" value={formData.guardianName} onChange={handleChange} />
           दलित जाति अन्तर्गत
           <input type="text" name="casteName" placeholder="जातिको नाम" value={formData.casteName} onChange={handleChange} required />
           जातिमा पर्ने भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा कार्यालयको सिफारिस, नागरिकता प्रमाणपत्रको फोटोकपी सहित रु १०।- को टिकट टाँसी यो निवेदन पेश गरेको छु ।
