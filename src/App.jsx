@@ -18,7 +18,7 @@ import AllowanceForm from "./pages/application/AllowanceForm.jsx";
 import ApplicationforIndigenousNationalityCertification from "./pages/application/ApplicationforIndigenousNationalityCertification.jsx";
 import ApplicationforKhasAryaCasteCertification from "./pages/application/ApplicationforKhasAryaCasteCertification.jsx";
 import BusinessDeregistration from "./pages/application/BusinessDeregistrationForm.jsx";
-import BusinessRegistrationForm from "./pages/application/BusinessRegistrationForm.jsx";
+import BusinessRegistrationApplicationForm from "./pages/application/BusinessRegistrationApplicationForm.jsx";
 import CitizenshipwithHusbandSurname from "./pages/application/CitizenshipwithHusbandSurname.jsx";
 import CitizenshipwithoutHusbandSurname from "./pages/application/CitizenshipwithoutHusbandSurname.jsx";
 import DalitCasteCertification from "./pages/application/DalitCasteCertification.jsx";
@@ -281,7 +281,7 @@ const Layout = () => {
         return <Dashboard />;
       // pages/application
       case "व्यवसाय दर्ता दरखास्त फारम":
-        return <BusinessRegistrationForm setActiveLink={setActiveLink} />;
+        return <BusinessRegistrationApplicationForm setActiveLink={setActiveLink} />;
       case "आदिवासी प्रमाणित सिफारिस":
         return (
           <TribalVerificationRecommendation setActiveLink={setActiveLink} />

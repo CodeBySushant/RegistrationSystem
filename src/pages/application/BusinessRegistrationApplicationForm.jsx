@@ -1,10 +1,10 @@
 // src/pages/application/BusinessRegistrationForm.jsx
 import React, { useState } from "react";
 import axios from "axios";
-import "./BusinessRegistrationForm.css";
+import "./BusinessRegistrationApplicationForm.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
-import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { MUNICIPALITY } from "../../config/municipalityConfig.js";
 
 const initialState = {
   regNo: "",
@@ -58,7 +58,7 @@ const initialState = {
   wardNo: MUNICIPALITY?.wardNumber || "",
 };
 
-const BusinessRegistrationForm = () => {
+const BusinessRegistrationApplicationForm = () => {
   const [formData, setFormData] = useState(initialState);
   const [proprietors, setProprietors] = useState([
     { id: 1, name: "", address: "", ward: "" },
@@ -386,4 +386,4 @@ const BusinessRegistrationForm = () => {
   );
 };
 
-export default BusinessRegistrationForm;
+export default BusinessRegistrationApplicationForm;
