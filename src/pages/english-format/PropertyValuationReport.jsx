@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./PropertyValuationReport.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const PropertyValuationReport = () => {
   const [formData, setFormData] = useState({
@@ -12,12 +14,12 @@ const PropertyValuationReport = () => {
     guardianTitle: "Mr.",
     guardianName: "",
     residencyType: "permanent/temporary",
-    municipality: "Nagarjun Municipality",
-    wardNo1: "1",
-    district1: "Bagmati Province",
-    propertyMunicipality: "Nagarjun Municipality",
+    municipality: MUNICIPALITY.englishMunicipality || "Biratnagar Municipality",
+    wardNo1: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    district1: MUNICIPALITY.englishDistrict || "Biratnagar",
+    propertyMunicipality: MUNICIPALITY.englishMunicipality || "Biratnagar Municipality",
     wardNo2: "",
-    propertyDistrict: "Bagmati Province",
+    propertyDistrict: MUNICIPALITY.englishDistrict || "Biratnagar",
     valuationNRs: "",
     valuationWords: "",
     usdRate: "",
@@ -103,11 +105,7 @@ const PropertyValuationReport = () => {
     <div className="property-valuation-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo variant="english" showWardLine />
         </div>
 
         <div className="form-row">
@@ -143,12 +141,19 @@ const PropertyValuationReport = () => {
           <input type="text" name="guardianName" placeholder="Guardian's Name" value={formData.guardianName} onChange={handleChange} required /> is a
           <select name="residencyType" value={formData.residencyType} onChange={handleChange}><option>permanent/temporary</option><option>permanent</option><option>temporary</option></select>
           resident of
-          <select name="municipality" value={formData.municipality} onChange={handleChange}><option>Nagarjun Municipality</option></select>
+          <select name="municipality" value={formData.municipality} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
+          </select>
           Ward No.
-          <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}><option>1</option><option>2</option><option>3</option></select>
+          <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}>
+            <option value={(MUNICIPALITY.wardNumber ?? 1).toString()}>{MUNICIPALITY.wardNumber ?? 1}</option>
+            <option>1</option><option>2</option><option>3</option>
+          </select>
           <input type="text" name="district1" value={formData.district1} onChange={handleChange} /> District,
           <input type="text" name="province" value={formData.province} onChange={handleChange} />, Nepal. The following properties are in
-          <select name="propertyMunicipality" value={formData.propertyMunicipality} onChange={handleChange}><option>Nagarjun Municipality</option></select>
+          <select name="propertyMunicipality" value={formData.propertyMunicipality} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
+          </select>
           Ward No.
           <input type="text" name="wardNo2" placeholder="Ward" value={formData.wardNo2} onChange={handleChange} required />
           District
