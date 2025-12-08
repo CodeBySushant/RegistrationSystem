@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./SamePersonCertificate.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const SamePersonCertificate = () => {
   const [formData, setFormData] = useState({
@@ -11,10 +13,10 @@ const SamePersonCertificate = () => {
     applicantRelation: "Son",
     applicantGuardianTitle: "Mr.",
     applicantGuardianName: "",
-    municipality: "Nagarjun Municipality",
-    wardNo: "1",
-    district: "Kathmandu",
-    province: "Bagmati Province",
+    municipality: MUNICIPALITY.englishMunicipality,
+    wardNo: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    district: MUNICIPALITY.englishDistrict,
+    province: MUNICIPALITY.englishProvince,
     doc1Source: "",
     doc1NameTitle: "Mr.",
     doc1Name: "",
@@ -46,22 +48,36 @@ const SamePersonCertificate = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
     const required = [
-      "applicantNameBody", "applicantGuardianName",
-      "wardNo", "district", "province",
-      "doc1Source", "doc1Name",
-      "doc2Source", "doc2Name", "doc2GuardianName",
-      "doc3Source", "doc4Source", "doc4Name", "doc4GuardianName",
-      "finalName1", "finalName2",
+      "applicantNameBody",
+      "applicantGuardianName",
+      "wardNo",
+      "district",
+      "province",
+      "doc1Source",
+      "doc1Name",
+      "doc2Source",
+      "doc2Name",
+      "doc2GuardianName",
+      "doc3Source",
+      "doc4Source",
+      "doc4Name",
+      "doc4GuardianName",
+      "finalName1",
+      "finalName2",
       "designation",
-      "applicantName", "applicantAddress", "applicantCitizenship", "applicantPhone"
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
     ];
     for (let k of required) {
-      if (!formData[k] || formData[k].toString().trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || formData[k].toString().trim() === "")
+        return { ok: false, missing: k };
     }
     return { ok: true };
   };
@@ -100,11 +116,7 @@ const SamePersonCertificate = () => {
     <div className="same-person-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Logo" className="logo" onError={(e)=>e.currentTarget.style.display='none'} />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo variant="english" showWardLine />
         </div>
 
         <div className="form-row">
@@ -132,16 +144,27 @@ const SamePersonCertificate = () => {
 
         <p className="certificate-body">
           This is to certify that
-          <select name="applicantTitle" value={formData.applicantTitle} onChange={handleChange}><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select>
+          <select name="applicantTitle" value={formData.applicantTitle} onChange={handleChange}>
+            <option>Mr.</option><option>Mrs.</option><option>Ms.</option>
+          </select>
           <input type="text" name="applicantNameBody" placeholder="Name" value={formData.applicantNameBody} onChange={handleChange} required />,
-          <select name="applicantRelation" value={formData.applicantRelation} onChange={handleChange}><option>Son</option><option>Daughter</option><option>Grandson</option></select>
+          <select name="applicantRelation" value={formData.applicantRelation} onChange={handleChange}>
+            <option>Son</option><option>Daughter</option><option>Grandson</option>
+          </select>
           of
-          <select name="applicantGuardianTitle" value={formData.applicantGuardianTitle} onChange={handleChange}><option>Mr.</option></select>
+          <select name="applicantGuardianTitle" value={formData.applicantGuardianTitle} onChange={handleChange}>
+            <option>Mr.</option>
+          </select>
           <input type="text" name="applicantGuardianName" placeholder="Guardian's Name" value={formData.applicantGuardianName} onChange={handleChange} required />,
           is permanent resident of
-          <select name="municipality" value={formData.municipality} onChange={handleChange}><option>Nagarjun Municipality</option></select>,
+          <select name="municipality" value={formData.municipality} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
+          </select>,
           Ward No.
-          <select name="wardNo" value={formData.wardNo} onChange={handleChange}><option>1</option><option>2</option><option>3</option></select>,
+          <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
+            <option value={(MUNICIPALITY.wardNumber ?? 1).toString()}>{MUNICIPALITY.wardNumber ?? 1}</option>
+            <option>1</option><option>2</option><option>3</option>
+          </select>,
           <input type="text" name="district" value={formData.district} onChange={handleChange} /> District,
           <input type="text" name="province" value={formData.province} onChange={handleChange} /> , Nepal.
         </p>
