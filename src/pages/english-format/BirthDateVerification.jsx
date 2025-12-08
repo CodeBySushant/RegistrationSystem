@@ -7,7 +7,7 @@ const BirthdateVerification = () => {
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
-    date: "2025-10-31",
+    date: "",
     applicantTitle: "Mr.",
     applicantNameBody: "",
     relation: "son",

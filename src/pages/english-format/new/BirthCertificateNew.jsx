@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './BirthCertificate.css';
+import './BirthCertificateNew.css';
 
 const BirthCertificateNew = () => {
   const [formData, setFormData] = useState({
