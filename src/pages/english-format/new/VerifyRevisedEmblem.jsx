@@ -1,24 +1,33 @@
+// src/pages/english-format/new/VerifyRevisedEmblem.jsx
 import React, { useState } from "react";
 import "./VerifyRevisedEmblem.css";
 
+import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../../config/municipalityConfig";
+
 const VerifyRevisedEmblem = () => {
   const [formData, setFormData] = useState({
-    letterNo: "2082/83",
+    letterNo: "0000/00",
     refNo: "",
-    date: "2025-11-01",
+    date: "",
+
     billName: "",
     amendmentName: "",
     mapLocation: "",
     stampLocation: "Stamp of our Ward Office",
+
     villageName: "",
-    stampMunicipality: "Nagarjun Municipality",
-    stampWardNo: "1",
+    stampMunicipality: MUNICIPALITY.englishMunicipality || "",
+    stampWardNo: MUNICIPALITY.wardNumber || "",
+
     provinceNameLetterhead: "",
-    provinceNameStamp: "Nagarjun Municipality",
-    stampWardNo2: "1",
+    provinceNameStamp: MUNICIPALITY.englishProvince || "",
+    stampWardNo2: MUNICIPALITY.wardNumber || "",
+
     wardOfficeName1: "",
     wardOfficeName2: "",
     designation: "",
+
     applicantName: "",
     applicantAddress: "",
     applicantCitizenship: "",
@@ -92,12 +101,9 @@ const VerifyRevisedEmblem = () => {
   return (
     <div className="verify-emblem-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header (English) */}
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">

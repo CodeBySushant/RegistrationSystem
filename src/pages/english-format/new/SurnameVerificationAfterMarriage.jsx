@@ -1,33 +1,42 @@
-import React, { useState } from 'react';
-import './SurnameVerificationAfterMarriage.css';
+// src/pages/english-format/new/SurnameVerificationAfterMarriage.jsx
+import React, { useState } from "react";
+import "./SurnameVerificationAfterMarriage.css";
+
+import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../../config/municipalityConfig";
 
 const SurnameVerificationAfterMarriage = () => {
   const [formData, setFormData] = useState({
-    letterNo: '2082/83',
-    refNo: '',
-    date: '2025-11-01',
-    applicantNameBody: '',
-    residencyType1: 'permanent resident',
-    municipality1: 'Nagarjun Municipality',
-    wardNo1: '1',
-    district1: 'Kathmandu',
-    province1: 'Bagmati Province',
-    country1: 'Nepal',
-    name1: '',
-    name2: '',
-    name3: '',
-    name4: '',
-    residencyType2: 'permanent/temporary resident',
-    municipality2: 'Nagarjun Municipality',
-    wardNo2: '1',
-    district2: 'Kathmandu',
-    province2: 'Bagmati Province',
-    country2: 'Nepal',
-    designation: '',
-    applicantName: '',
-    applicantAddress: '',
-    applicantCitizenship: '',
-    applicantPhone: '',
+    letterNo: "0000/00",
+    refNo: "",
+    date: "",
+
+    applicantNameBody: "",
+
+    residencyType1: "permanent resident",
+    municipality1: MUNICIPALITY.englishMunicipality || "",
+    wardNo1: MUNICIPALITY.wardNumber || "",
+    district1: MUNICIPALITY.englishDistrict || "",
+    province1: MUNICIPALITY.englishProvince || "",
+    country1: "Nepal",
+
+    name1: "",
+    name2: "",
+    name3: "",
+    name4: "",
+
+    residencyType2: "permanent/temporary resident",
+    municipality2: MUNICIPALITY.englishMunicipality || "",
+    wardNo2: MUNICIPALITY.wardNumber || "",
+    district2: MUNICIPALITY.englishDistrict || "",
+    province2: MUNICIPALITY.englishProvince || "",
+    country2: "Nepal",
+
+    designation: "",
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -39,19 +48,23 @@ const SurnameVerificationAfterMarriage = () => {
 
   const validate = () => {
     const required = [
-      'applicantNameBody',
-      'name1', 'name2', 'name3', 'name4',
-      'applicantName',
-      'applicantAddress',
-      'applicantCitizenship',
-      'applicantPhone',
-      'designation'
+      "applicantNameBody",
+      "name1",
+      "name2",
+      "name3",
+      "name4",
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone",
+      "designation",
     ];
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === '') return { ok: false, missing: k };
+      if (!formData[k] || String(formData[k]).trim() === "")
+        return { ok: false, missing: k };
     }
     if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
-      return { ok: false, missing: 'applicantPhone (invalid)' };
+      return { ok: false, missing: "applicantPhone (invalid)" };
     }
     return { ok: true };
   };
@@ -60,16 +73,16 @@ const SurnameVerificationAfterMarriage = () => {
     e.preventDefault();
     const v = validate();
     if (!v.ok) {
-      alert('Please fill/validate field: ' + v.missing);
+      alert("Please fill/validate field: " + v.missing);
       return;
     }
 
     setLoading(true);
     try {
       const payload = { ...formData };
-      const res = await fetch('/api/forms/surname-verification-after-marriage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/forms/surname-verification-after-marriage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
@@ -77,11 +90,11 @@ const SurnameVerificationAfterMarriage = () => {
         throw new Error(err?.message || `Server returned ${res.status}`);
       }
       const body = await res.json();
-      alert('Saved successfully (id: ' + body.id + ')');
+      alert("Saved successfully (id: " + body.id + ")");
       setTimeout(() => window.print(), 200);
     } catch (err) {
-      console.error('Submit error:', err);
-      alert('Failed to save: ' + (err.message || 'unknown error'));
+      console.error("Submit error:", err);
+      alert("Failed to save: " + (err.message || "unknown error"));
     } finally {
       setLoading(false);
     }
@@ -90,12 +103,9 @@ const SurnameVerificationAfterMarriage = () => {
   return (
     <div className="surname-verification-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header (English) */}
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">
@@ -131,11 +141,11 @@ const SurnameVerificationAfterMarriage = () => {
           </select>
           of
           <select name="municipality1" value={formData.municipality1} onChange={handleChange}>
-            <option>Nagarjun Municipality</option>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
           </select>
           Ward No.
           <select name="wardNo1" value={formData.wardNo1} onChange={handleChange}>
-            <option>1</option>
+            <option>{MUNICIPALITY.wardNumber || "1"}</option>
             <option>2</option>
             <option>3</option>
           </select>,
@@ -158,11 +168,11 @@ const SurnameVerificationAfterMarriage = () => {
           </select>
           of
           <select name="municipality2" value={formData.municipality2} onChange={handleChange}>
-            <option>Nagarjun Municipality</option>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
           </select>
           , Ward No.
           <select name="wardNo2" value={formData.wardNo2} onChange={handleChange}>
-            <option>1</option>
+            <option>{MUNICIPALITY.wardNumber || "1"}</option>
             <option>2</option>
             <option>3</option>
           </select>,
@@ -202,7 +212,7 @@ const SurnameVerificationAfterMarriage = () => {
 
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'Saving...' : 'Save and Print Record'}
+            {loading ? "Saving..." : "Save and Print Record"}
           </button>
         </div>
       </form>

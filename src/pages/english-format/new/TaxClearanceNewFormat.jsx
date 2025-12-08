@@ -1,22 +1,30 @@
+// src/pages/english-format/new/TaxClearanceNewFormat.jsx
 import React, { useState } from "react";
 import "./TaxClearanceNewFormat.css";
 
+import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../../config/municipalityConfig";
+
 const TaxClearanceNewFormat = () => {
   const [formData, setFormData] = useState({
-    letterNo: "2082/83",
+    letterNo: "0000/00",
     refNo: "",
-    date: "2025-11-01",
+    date: "",
+
     applicantTitle: "Master.",
     applicantNameBody: "",
     relation: "son",
     guardianTitle: "Master.",
     guardianName: "",
-    municipality: "Nagarjun Municipality",
-    wardNo: "1",
+
+    // defaults from MUNICIPALITY
+    municipality: MUNICIPALITY.englishMunicipality || "",
+    wardNo: MUNICIPALITY.wardNumber || "",
     prevAddress: "",
     prevWardNo: "",
-    prevProvince: "Koshi Province",
+    prevProvince: MUNICIPALITY.englishProvince || "",
     prevCountry: "Nepal",
+
     fiscalYear: "2022/2023",
     designation: "",
     applicantName: "",
@@ -90,7 +98,8 @@ const TaxClearanceNewFormat = () => {
       "applicantPhone",
     ];
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || String(formData[k]).trim() === "")
+        return { ok: false, missing: k };
     }
     if (!Array.isArray(incomeSources) || incomeSources.length === 0) {
       return { ok: false, missing: "incomeSources (at least 1 row required)" };
@@ -112,7 +121,7 @@ const TaxClearanceNewFormat = () => {
     try {
       const payload = {
         ...formData,
-        table_rows: incomeSources, // controller will stringify if needed
+        table_rows: incomeSources, // backend/controller expects table_rows
       };
       const res = await fetch("/api/forms/tax-clearance-new-format", {
         method: "POST",
@@ -137,12 +146,9 @@ const TaxClearanceNewFormat = () => {
   return (
     <div className="tax-clearance-new-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header (English) */}
         <div className="header">
-          <img src="https://i.imgur.com/YOUR_LOGO_URL.png" alt="Nagarjun Municipality Logo" className="logo" />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">
@@ -187,18 +193,18 @@ const TaxClearanceNewFormat = () => {
           <input type="text" name="guardianName" placeholder="Guardian's Name" value={formData.guardianName} onChange={handleChange} required /> ,
           resident of
           <select name="municipality" value={formData.municipality} onChange={handleChange}>
-            <option>Nagarjun Municipality</option>
+            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
           </select>
           , Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option>1</option>
+            <option>{MUNICIPALITY.wardNumber || "1"}</option>
           </select>
           , (Previously:
           <input type="text" name="prevAddress" placeholder="Address" value={formData.prevAddress} onChange={handleChange} /> , Ward No.
           <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} /> ),
           <select name="prevProvince" value={formData.prevProvince} onChange={handleChange}>
+            <option>{MUNICIPALITY.englishProvince || "Bagmati Province"}</option>
             <option>Koshi Province</option>
-            <option>Bagmati Province</option>
           </select>
           ,
           <select name="prevCountry" value={formData.prevCountry} onChange={handleChange}>

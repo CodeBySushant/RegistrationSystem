@@ -1,22 +1,30 @@
+// src/pages/english-format/new/AnnualIncomeVerificationNew.jsx
 import React, { useState } from "react";
 import "./AnnualIncomeVerificationNew.css";
 
+import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../../config/municipalityConfig";
+
 const AnnualIncomeVerificationNew = () => {
   const [formData, setFormData] = useState({
-    letterNo: "2082/83",
+    letterNo: "0000/00",
     refNo: "",
-    date: "2025-11-01",
+    date: "",
+
     applicantNameBody: "",
     relation: "son",
     guardianTitle: "Mr.",
     guardianName: "",
-    municipality: "Nagarjun Municipality",
-    wardNo: "1",
+
+    // defaults from MUNICIPALITY config where appropriate
+    municipality: MUNICIPALITY.englishMunicipality || "",
+    wardNo: MUNICIPALITY.wardNumber || "1",
     prevAddress: "",
     prevWardNo: "",
-    district: "Kathmandu",
-    province: "Bagmati Province",
+    district: MUNICIPALITY.englishDistrict || "",
+    province: MUNICIPALITY.englishProvince || "",
     country: "Nepal",
+
     totalNPR_fy1: "",
     totalNPR_fy2: "",
     totalNPR_fy3: "",
@@ -104,7 +112,7 @@ const AnnualIncomeVerificationNew = () => {
     try {
       const payload = {
         ...formData,
-        table_rows: incomeSources, // <-- backend/controller expects table_rows (stringified server-side)
+        table_rows: incomeSources,
       };
 
       const res = await fetch("/api/forms/annual-income-verification-new", {
@@ -119,8 +127,7 @@ const AnnualIncomeVerificationNew = () => {
       }
       const body = await res.json();
       alert("Saved successfully (id: " + body.id + ")");
-      // Optionally print the page:
-      setTimeout(() => window.print(), 100); // give small time for alert to clear
+      setTimeout(() => window.print(), 100);
     } catch (err) {
       console.error("Submit error:", err);
       alert("Failed to save: " + (err.message || "unknown error"));
@@ -132,17 +139,9 @@ const AnnualIncomeVerificationNew = () => {
   return (
     <div className="annual-income-verification-container">
       <form onSubmit={handleSubmit}>
+        {/* Reusable header (English) */}
         <div className="header">
-          <img
-            src="https://i.imgur.com/YOUR_LOGO_URL.png"
-            alt="Logo"
-            className="logo"
-            onError={(e) => (e.currentTarget.style.display = "none")}
-          />
-          <h1>Nagarjun Municipality</h1>
-          <h2>1 No. Ward Office</h2>
-          <h3>Kathmandu, Kathmandu</h3>
-          <h3>Bagmati Province, Nepal</h3>
+          <MunicipalityHeader showLogo english />
         </div>
 
         <div className="form-row">
@@ -209,9 +208,11 @@ const AnnualIncomeVerificationNew = () => {
                       required
                     />
                   </td>
-                  <td>{index === incomeSources.length - 1 && (
-                    <button type="button" onClick={addIncomeRow} className="add-btn">+</button>
-                  )}</td>
+                  <td>
+                    {index === incomeSources.length - 1 && (
+                      <button type="button" onClick={addIncomeRow} className="add-btn">+</button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
