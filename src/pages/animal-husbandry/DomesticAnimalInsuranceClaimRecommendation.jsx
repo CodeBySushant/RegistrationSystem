@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./DomesticAnimalInsuranceClaimRecommendation.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialState = {
   // meta / header
   chalan_no: "",
@@ -13,8 +16,8 @@ const initialState = {
   addressee_line2: "",
   addressee_line3: "",
 
-  municipality_name: "नागार्जुन नगरपालिका",
-  ward_no: "1",
+  municipality_name: MUNICIPALITY.name,
+  ward_no: MUNICIPALITY.wardNumber,
 
   // paragraph inline fields
   resident_name_in_paragraph: "",
@@ -36,7 +39,7 @@ const initialState = {
 
   // signature
   signer_name: "",
-  signer_designation: ""
+  signer_designation: "",
 };
 
 const DomesticAnimalInsuranceClaimRecommendation = () => {
@@ -66,7 +69,11 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
     } catch (err) {
       setLoading(false);
       console.error("Submit error:", err.response || err.message || err);
-      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Submission failed";
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
       alert("Error: " + msg);
     }
   };
@@ -85,17 +92,19 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
           <img src="/logo.png" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
+          <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+          <h2 className="ward-title">{MUNICIPALITY.wardNumber} नं. वडा कार्यालय</h2>
+          <p className="address-text">{MUNICIPALITY.officeLine}</p>
+          <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
       </div>
 
       {/* --- Meta Data (Date/Ref) --- */}
       <div className="meta-data-row">
         <div className="meta-left">
-          <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
+          <p>
+            पत्र संख्या : <span className="bold-text">२०८२/८३</span>
+          </p>
           <p>
             चलानी नं. :
             <input
@@ -108,14 +117,18 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
           </p>
         </div>
         <div className="meta-right">
-          <p>मिति : <span className="bold-text">२०८२-०८-०६</span></p>
+          <p>
+            मिति : <span className="bold-text">२०८२-०८-०६</span>
+          </p>
           <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
         </div>
       </div>
 
       {/* --- Subject --- */}
       <div className="subject-section">
-        <p>विषय: <span className="underline-text">{form.subject}</span></p>
+        <p>
+          विषय: <span className="underline-text">{form.subject}</span>
+        </p>
       </div>
 
       {/* --- Addressee Section --- */}
@@ -235,7 +248,8 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             required
             value={form.tag_subtype}
             onChange={handleChange}
-          /> रङको
+          />{" "}
+          रङको
           <input
             name="animal_color"
             type="text"
@@ -261,7 +275,8 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             value={form.report_brief}
             onChange={handleChange}
           />
-          रोग लागि उपचारको क्रममा मृत्यु भएको व्यहोरा प्रमाणित साथ आवश्यक कारवाहिको लागि सिफारिस गरि पठाइएको व्यहोरा अनुरोध छ।
+          रोग लागि उपचारको क्रममा मृत्यु भएको व्यहोरा प्रमाणित साथ आवश्यक
+          कारवाहिको लागि सिफारिस गरि पठाइएको व्यहोरा अनुरोध छ।
         </p>
       </div>
 
@@ -346,7 +361,7 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
       </div>
 
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </form>
   );
