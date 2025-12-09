@@ -2,6 +2,9 @@
 import React from "react";
 import "./ShopRegistrationForm.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 function ShopRegistrationForm() {
   return (
     <div className="srf-page">
@@ -18,18 +21,17 @@ function ShopRegistrationForm() {
         {/* Letterhead */}
         <div className="srf-letterhead">
           <div className="srf-logo">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Emblem_of_Nepal.svg/240px-Emblem_of_Nepal.svg.png"
-              alt="Nepal Emblem"
-            />
+            <img src="./nepallogo.svg" alt="Nepal Emblem" />
           </div>
 
           <div className="srf-head-text">
-            <div className="srf-head-main">नागार्जुन नगरपालिका</div>
-            <div className="srf-head-ward">१ नं. वडा कार्यालय</div>
+            <div className="srf-head-main">{MUNICIPALITY.name}</div>
+            <div className="srf-head-ward">
+              वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
+            </div>
             <div className="srf-head-sub">
-              नागार्जुन, काठमाडौं <br />
-              बागमती प्रदेश, नेपाल
+              {MUNICIPALITY.officeLine} <br />
+              {MUNICIPALITY.provinceLine}
             </div>
           </div>
 
@@ -37,9 +39,7 @@ function ShopRegistrationForm() {
             <div>
               मिति : <input type="text" className="srf-small-input" />
             </div>
-            <div className="srf-meta-line">
-              ने.सं.: ११४६ भाद्र, २ शनिवार
-            </div>
+            <div className="srf-meta-line">ने.सं.: ११४६ भाद्र, २ शनिवार</div>
           </div>
         </div>
 
@@ -79,7 +79,7 @@ function ShopRegistrationForm() {
           <input type="text" className="srf-medium-input" />
           <span>जिल्ला</span>
           <input type="text" className="srf-medium-input" />
-          <span>नागार्जुन नगरपालिका वडा नं.</span>
+          <span>{MUNICIPALITY.name} वडा नं.</span>
           <input type="text" className="srf-tiny-input" />
           <span>साबिक</span>
           <input type="text" className="srf-tiny-input" />
@@ -112,13 +112,14 @@ function ShopRegistrationForm() {
         </div>
 
         <p className="srf-body">
-          संचालन गर्नका लागि सिफारिस गरी पाउँ भनी यस <input type="text" className="srf-short-input" /> नं. वडा
-          कार्यालयमा निवेदन दिनु भएको उक्त उद्योग संचालन गर्दा कुनै पनि
-          जनस्वास्थ्य महत्त्वपूर्ण स्थल, विद्यालय, मन्दिर र धार्मिकस्थलहरूलाई
-          कुनै बाधा नपरी तथा वातावरणीय प्रदूषण समेत नहुने हुँदा यस वडा
-          कार्यालयबाट सिफारिस साथ संलग्न सिफारिस पत्र पठाइएको छ । निजको
-          नाममा उक्त <input type="text" className="srf-short-input" /> दर्ता
-          गरिदिनु हुन सिफारिस साथ अनुरोध छ ।
+          संचालन गर्नका लागि सिफारिस गरी पाउँ भनी यस{" "}
+          <input type="text" className="srf-short-input" /> नं. वडा कार्यालयमा
+          निवेदन दिनु भएको उक्त उद्योग संचालन गर्दा कुनै पनि जनस्वास्थ्य
+          महत्त्वपूर्ण स्थल, विद्यालय, मन्दिर र धार्मिकस्थलहरूलाई कुनै बाधा नपरी
+          तथा वातावरणीय प्रदूषण समेत नहुने हुँदा यस वडा कार्यालयबाट सिफारिस साथ
+          संलग्न सिफारिस पत्र पठाइएको छ । निजको नाममा उक्त{" "}
+          <input type="text" className="srf-short-input" /> दर्ता गरिदिनु हुन
+          सिफारिस साथ अनुरोध छ ।
         </p>
 
         {/* Signature / position section */}
@@ -154,13 +155,15 @@ function ShopRegistrationForm() {
 
         {/* Submit button */}
         <div className="srf-submit-row">
-          <button className="srf-submit-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button className="srf-submit-btn">
+            रेकर्ड सेभ र प्रिन्ट गर्नुहोस्
+          </button>
         </div>
       </div>
 
       {/* Footer */}
       <footer className="srf-footer">
-        © सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

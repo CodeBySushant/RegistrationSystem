@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import "./IndustryTransferAcceptanceLetter.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 export default function IndustryTransferAcceptanceLetter() {
   const [form, setForm] = useState({
     date: "",
     to_line1: "",
     to_line2: "",
     original_reg_date: "",
-    province: "बागमती प्रदेश",
+    province: MUNICIPALITY.provinceLine,
     district: "",
     from_municipality: "",
     from_ward: "",
@@ -67,7 +70,7 @@ export default function IndustryTransferAcceptanceLetter() {
         to_line1: "",
         to_line2: "",
         original_reg_date: "",
-        province: "बागमती प्रदेश",
+        province: MUNICIPALITY.provinceLine,
         district: "",
         from_municipality: "",
         from_ward: "",
@@ -123,7 +126,7 @@ export default function IndustryTransferAcceptanceLetter() {
         </div>
 
         <p className="ital-body">
-          महोदय, यस <input type="text" className="ital-small" value={form.original_reg_date} onChange={e => update("original_reg_date", e.target.value)} /> मा दर्ता भएको {form.province}
+          महोदय, यस <input type="text" className="ital-small" value={form.original_reg_date} onChange={e => update("original_reg_date", e.target.value)} /> मा दर्ता भएको {MUNICIPALITY.provinceLine}
           <input type="text" className="ital-small" value={form.district} onChange={e => update("district", e.target.value)} /> जिल्ला
           <input type="text" className="ital-medium" value={form.from_municipality} onChange={e => update("from_municipality", e.target.value)} /> नगरपालिका वडा नं.
           <input type="text" className="ital-tiny" value={form.from_ward} onChange={e => update("from_ward", e.target.value)} /> मा रहेको उद्योग
@@ -174,7 +177,7 @@ export default function IndustryTransferAcceptanceLetter() {
         {message && <div className={`ital-message ${message.type === "error" ? "error" : "success"}`}>{message.text}</div>}
       </form>
 
-      <footer className="ital-footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
+      <footer className="ital-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
     </div>
   );
 }
