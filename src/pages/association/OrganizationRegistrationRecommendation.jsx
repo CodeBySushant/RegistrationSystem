@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./OrganizationRegistrationRecommendation.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 function OrganizationRegistrationRecommendation() {
   const [form, setForm] = useState({
     date: "२०८२.०७.१५",
@@ -10,16 +13,16 @@ function OrganizationRegistrationRecommendation() {
     chalaniNo: "",
     toOffice: "",
     toOfficeLine2: "",
-    toOfficeLine3: "",
-    wardNo: "",
+    toOfficeLine3: MUNICIPALITY.name,
+    wardNo: MUNICIPALITY.wardNumber,
     sabikWardNo: "",
     sabikWardNo2: "",
     residentName: "",
     applicantName: "",        // person name in paragraph
     industryName: "",        // industry / business name
     industryAddress: "",     // place / location field
-    locationMunicipality: "",
-    locationWard: "",
+    locationMunicipality: MUNICIPALITY.name,
+    locationWard: MUNICIPALITY.wardNumber,
     locationTole: "",
     kittaNo: "",
     area: "",
@@ -102,7 +105,7 @@ function OrganizationRegistrationRecommendation() {
         </div>
 
         <p className="orr-body">
-          उपर्युक्त सम्बन्धमा जिल्ला काठमाडौं <span className="orr-bold">नागार्जुन नगरपालिका</span> वडा नं.
+          उपर्युक्त सम्बन्धमा जिल्ला {Municipality.district} <span className="orr-bold">{MUNICIPALITY.name}</span> वडा नं.
           <input className="orr-tiny-input" name="wardNo" value={form.wardNo} onChange={onChange} /> साबिक
           <input className="orr-small-inline" name="sabikWardNo" value={form.sabikWardNo} onChange={onChange} /> वडा नं.
           <input className="orr-tiny-input" name="sabikWardNo2" value={form.sabikWardNo2} onChange={onChange} /> मा बस्ने
@@ -157,7 +160,7 @@ function OrganizationRegistrationRecommendation() {
         </div>
       </form>
 
-      <footer className="orr-footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
+      <footer className="orr-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}:</footer>
     </div>
   );
 }

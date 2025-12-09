@@ -3,16 +3,19 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./OrganizationRenewRecommendation.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 function OrganizationRenewal() {
   const [form, setForm] = useState({
     date: "२०८२.०७.१५",
     refLetterNo: "",
     chalaniNo: "",
-    toOffice: "",
-    toOfficeLine2: "",
-    wardNo: "",
-    sabikWardNo: "",
-    sabikWardNo2: "",
+    toOffice: MUNICIPALITY.officeLine, 
+    toOfficeLine2: MUNICIPALITY.name, 
+    wardNo: MUNICIPALITY.wardNumber,
+    sabikWardNo: MUNICIPALITY.wardNumber,
+    sabikWardNo2: MUNICIPALITY.wardNumber,
     personName: "",        // person owning the organization
     orgName: "",
     orgAddress: "",
@@ -89,7 +92,7 @@ function OrganizationRenewal() {
         </div>
 
         <p className="org-body">
-          उपर्युक्त विषयमा <span className="org-bold">नागार्जुन नगरपालिका</span> वडा नं.
+          उपर्युक्त विषयमा उपर्युक्त विषयमा <span className="org-bold">{MUNICIPALITY.name}</span> वडा नं.
           <input type="text" className="org-tiny-input" name="wardNo" value={form.wardNo} onChange={onChange} /> (साबिक
           <input type="text" className="org-small-inline" name="sabikWardNo" value={form.sabikWardNo} onChange={onChange} />) वडा नं.
           <input type="text" className="org-tiny-input" name="sabikWardNo2" value={form.sabikWardNo2} onChange={onChange} /> मा बस्ने श्री
@@ -122,7 +125,7 @@ function OrganizationRenewal() {
         </div>
       </form>
 
-      <footer className="org-footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
+      <footer className="org-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
     </div>
   );
 }
