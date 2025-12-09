@@ -3,6 +3,7 @@ export const MUNICIPALITY = {
   name: "नागार्जुन नगरपालिका",
   officeLine: "नगर कार्यपालिकाको कार्यालय, काठमाडौं",
   provinceLine: "बागमती प्रदेश, नेपाल",
+  district: "काठमाडौँ",
 
 // English
   englishMunicipality: "Nagarjun Municipality",
