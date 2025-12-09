@@ -183,7 +183,7 @@ const DailyWorkPerformanceList = () => {
       </div>
 
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </div>
   );
