@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./NewBankAccountRecommendation.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialOfficials = [
   { title: "श्री", name: "", designation: "अध्यक्ष" },
   { title: "श्री", name: "", designation: "कोषाध्यक्ष" },
@@ -14,11 +17,11 @@ const initialState = {
   patraSankhya: "",
   chalanNo: "",
   toName: "",
-  toPlace: "काठमाडौं",
-  district: "काठमाण्डौ",
-  municipalityWardNo: "",
+  toPlace: MUNICIPALITY.officeLine, // e.g. "नगर कार्यपालिकाको कार्यालय, काठमाडौं"
+  district: MUNICIPALITY.englishDistrict, // or add/use a Nepali district field in config if preferred
+  municipalityWardNo: MUNICIPALITY.wardNumber,
   groupName: "",
-  groupWardNo: "",
+  groupWardNo: MUNICIPALITY.wardNumber, // optional: default to same ward; editable by user
   groupRefPatraNo: "",
   groupRefChalanNo: "",
   officials: initialOfficials,
@@ -87,7 +90,8 @@ export default function NewBankAccountRecommendation() {
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message || error.message || "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
@@ -104,18 +108,32 @@ export default function NewBankAccountRecommendation() {
       <div className="nbcr-paper">
         <div className="nbcr-letterhead">
           <div className="nbcr-logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Emblem_of_Nepal.svg/240px-Emblem_of_Nepal.svg.png" alt="Emblem" />
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Emblem_of_Nepal.svg/240px-Emblem_of_Nepal.svg.png"
+              alt="Emblem"
+            />
           </div>
 
           <div className="nbcr-head-text">
-            <div className="nbcr-head-main">नागार्जुन नगरपालिका</div>
-            <div className="nbcr-head-ward">१ नं. वडा कार्यालय</div>
-            <div className="nbcr-head-sub">नागार्जुन, काठमाडौं <br /> बागमती प्रदेश, नेपाल</div>
+            <div className="nbcr-head-main">{MUNICIPALITY.name}</div>
+            <div className="nbcr-head-ward">
+              {MUNICIPALITY.wardNumber} नं. वडा कार्यालय
+            </div>
+            <div className="nbcr-head-sub">
+              {MUNICIPALITY.officeLine} <br /> {MUNICIPALITY.provinceLine}
+            </div>
           </div>
 
           <div className="nbcr-head-meta">
             <div className="nbcr-meta-line">
-              मिति : <input type="text" name="date" value={form.date} onChange={handleChange} className="nbcr-small-input" />
+              मिति :{" "}
+              <input
+                type="text"
+                name="date"
+                value={form.date}
+                onChange={handleChange}
+                className="nbcr-small-input"
+              />
             </div>
             <div className="nbcr-meta-line">ने.सं.: ११४६ भदौ, २ शनिवार</div>
           </div>
@@ -125,20 +143,42 @@ export default function NewBankAccountRecommendation() {
           <div className="nbcr-ref-row">
             <div className="nbcr-ref-block">
               <label>पत्र संख्या :</label>
-              <input type="text" name="patraSankhya" value={form.patraSankhya} onChange={handleChange} />
+              <input
+                type="text"
+                name="patraSankhya"
+                value={form.patraSankhya}
+                onChange={handleChange}
+              />
             </div>
             <div className="nbcr-ref-block">
               <label>चलानी नं. :</label>
-              <input type="text" name="chalanNo" value={form.chalanNo} onChange={handleChange} />
+              <input
+                type="text"
+                name="chalanNo"
+                value={form.chalanNo}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
           <div className="nbcr-to-block">
             <span>श्री</span>
-            <input type="text" name="toName" className="nbcr-long-input" value={form.toName} onChange={handleChange} />
+            <input
+              type="text"
+              name="toName"
+              className="nbcr-long-input"
+              value={form.toName}
+              onChange={handleChange}
+            />
             <span>ज्यु,</span>
             <br />
-            <input type="text" name="toPlace" className="nbcr-long-input nbcr-to-second" value={form.toPlace} onChange={handleChange} />
+            <input
+              type="text"
+              name="toPlace"
+              className="nbcr-long-input nbcr-to-second"
+              value={form.toPlace}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="nbcr-subject-row">
@@ -147,13 +187,51 @@ export default function NewBankAccountRecommendation() {
           </div>
 
           <p className="nbcr-body">
-            जिल्ला <input type="text" name="district" className="nbcr-small-inline" value={form.district} onChange={handleChange} /> -{" "}
-            <span className="nbcr-bold">नागार्जुन नगरपालिका</span> वडा नं.{" "}
-            <input type="text" name="municipalityWardNo" className="nbcr-tiny-input" value={form.municipalityWardNo} onChange={handleChange} />{" "}
-            अन्तर्गत रहने <input type="text" name="groupName" className="nbcr-medium-input" placeholder="समूह / समिति / संस्था नाम" value={form.groupName} onChange={handleChange} />{" "}
-            ले { /* keep the wording similar to your original */ }
-            पत्र संख्या <input type="text" name="groupRefPatraNo" className="nbcr-small-inline" value={form.groupRefPatraNo} onChange={handleChange} /> च.न.{" "}
-            <input type="text" name="groupRefChalanNo" className="nbcr-small-inline" value={form.groupRefChalanNo} onChange={handleChange} /> को प्राप्त पत्र अनुसार सो समूहको खाता खोल्न बैंकको नियमानुसार निम्न पदाधिकारीको संयुक्त दस्तखतबाट संचालन हुने गरी खाता खोलिदिन सिफारिस साथ आग्रह गरेको छ ।
+            जिल्ला{" "}
+            <input
+              type="text"
+              name="district"
+              className="nbcr-small-inline"
+              value={form.district}
+              onChange={handleChange}
+            />{" "}
+            - <span className="nbcr-bold">{MUNICIPALITY.name}</span> वडा नं.{" "}
+            <input
+              type="text"
+              name="municipalityWardNo"
+              className="nbcr-tiny-input"
+              value={form.municipalityWardNo}
+              onChange={handleChange}
+            />{" "}
+            अन्तर्गत रहने{" "}
+            <input
+              type="text"
+              name="groupName"
+              className="nbcr-medium-input"
+              placeholder="समूह / समिति / संस्था नाम"
+              value={form.groupName}
+              onChange={handleChange}
+            />{" "}
+            ले {/* keep the wording similar to your original */}
+            पत्र संख्या{" "}
+            <input
+              type="text"
+              name="groupRefPatraNo"
+              className="nbcr-small-inline"
+              value={form.groupRefPatraNo}
+              onChange={handleChange}
+            />{" "}
+            च.न.{" "}
+            <input
+              type="text"
+              name="groupRefChalanNo"
+              className="nbcr-small-inline"
+              value={form.groupRefChalanNo}
+              onChange={handleChange}
+            />{" "}
+            को प्राप्त पत्र अनुसार सो समूहको खाता खोल्न बैंकको नियमानुसार निम्न
+            पदाधिकारीको संयुक्त दस्तखतबाट संचालन हुने गरी खाता खोलिदिन सिफारिस
+            साथ आग्रह गरेको छ ।
           </p>
 
           <div className="nbcr-table-title">तपशिल :</div>
@@ -172,14 +250,32 @@ export default function NewBankAccountRecommendation() {
                   <tr key={i}>
                     <td>{i + 1}.</td>
                     <td>
-                      <select value={o.title} onChange={(e) => handleOfficialChange(i, "title", e.target.value)}>
+                      <select
+                        value={o.title}
+                        onChange={(e) =>
+                          handleOfficialChange(i, "title", e.target.value)
+                        }
+                      >
                         <option>श्री</option>
                         <option>सुश्री</option>
                       </select>
                     </td>
-                    <td><input type="text" value={o.name} onChange={(e) => handleOfficialChange(i, "name", e.target.value)} /></td>
                     <td>
-                      <select value={o.designation} onChange={(e) => handleOfficialChange(i, "designation", e.target.value)}>
+                      <input
+                        type="text"
+                        value={o.name}
+                        onChange={(e) =>
+                          handleOfficialChange(i, "name", e.target.value)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <select
+                        value={o.designation}
+                        onChange={(e) =>
+                          handleOfficialChange(i, "designation", e.target.value)
+                        }
+                      >
                         <option>अध्यक्ष</option>
                         <option>कोषाध्यक्ष</option>
                         <option>सचिव</option>
@@ -193,8 +289,20 @@ export default function NewBankAccountRecommendation() {
           </div>
 
           <div className="nbcr-sign-top">
-            <input type="text" name="signerName" className="nbcr-sign-name" placeholder="नाम, थर" value={form.signerName} onChange={handleChange} />
-            <select className="nbcr-post-select" name="signerDesignation" value={form.signerDesignation} onChange={handleChange}>
+            <input
+              type="text"
+              name="signerName"
+              className="nbcr-sign-name"
+              placeholder="नाम, थर"
+              value={form.signerName}
+              onChange={handleChange}
+            />
+            <select
+              className="nbcr-post-select"
+              name="signerDesignation"
+              value={form.signerDesignation}
+              onChange={handleChange}
+            >
               <option value="">पद छनौट गर्नुहोस्</option>
               <option>अध्यक्ष</option>
               <option>सचिव</option>
@@ -204,21 +312,61 @@ export default function NewBankAccountRecommendation() {
 
           <h3 className="nbcr-section-title">निवेदकको विवरण</h3>
           <div className="nbcr-applicant-box">
-            <div className="nbcr-field"><label>निवेदकको नाम *</label><input type="text" name="applicantName" value={form.applicantName} onChange={handleChange} /></div>
-            <div className="nbcr-field"><label>निवेदकको ठेगाना *</label><input type="text" name="applicantAddress" value={form.applicantAddress} onChange={handleChange} /></div>
-            <div className="nbcr-field"><label>निवेदकको नागरिकता नं. *</label><input type="text" name="applicantCitizenship" value={form.applicantCitizenship} onChange={handleChange} /></div>
-            <div className="nbcr-field"><label>निवेदकको फोन नं. *</label><input type="text" name="applicantPhone" value={form.applicantPhone} onChange={handleChange} /></div>
+            <div className="nbcr-field">
+              <label>निवेदकको नाम *</label>
+              <input
+                type="text"
+                name="applicantName"
+                value={form.applicantName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="nbcr-field">
+              <label>निवेदकको ठेगाना *</label>
+              <input
+                type="text"
+                name="applicantAddress"
+                value={form.applicantAddress}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="nbcr-field">
+              <label>निवेदकको नागरिकता नं. *</label>
+              <input
+                type="text"
+                name="applicantCitizenship"
+                value={form.applicantCitizenship}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="nbcr-field">
+              <label>निवेदकको फोन नं. *</label>
+              <input
+                type="text"
+                name="applicantPhone"
+                value={form.applicantPhone}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
           <div className="nbcr-submit-row">
-            <button className="nbcr-submit-btn" type="submit" disabled={submitting}>
-              {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+            <button
+              className="nbcr-submit-btn"
+              type="submit"
+              disabled={submitting}
+            >
+              {submitting
+                ? "पठाइँ हुँदैछ..."
+                : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
             </button>
           </div>
         </form>
       </div>
 
-      <footer className="nbcr-footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
+      <footer className="nbcr-footer">
+        <footer className="nbcr-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+      </footer>
     </div>
   );
 }
