@@ -1,221 +1,253 @@
-// 3
-import React, { useState } from 'react';
-import './BusinessIndustryRegistrationList.css';
+// src/pages/business/BusinessIndustryRegistrationNewList.jsx
+import React, { useEffect, useState } from "react";
+import "./BusinessIndustryRegistrationList.css";
 
-const initialData = [
-  {
-    id: 1,
-    sn: '१',
-    regDate: '२०८२-०७-१६',
-    regNo: '१/२०८१/८२',
-    businessName: 'John Kirby',
-    ownerName: 'Abel Mcbride',
-    address: 'Ifeoma Ayala, वडा नं 696',
-    capital: 'Et qui exercitatione',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'active'
-  },
-  {
-    id: 2,
-    sn: '२',
-    regDate: '२०८२-०४-२०',
-    regNo: '१७/२०८२/८३',
-    businessName: 'q',
-    ownerName: 'q',
-    address: 'q, वडा नं q',
-    capital: 'a',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'active'
-  },
-  {
-    id: 3,
-    sn: '३',
-    regDate: '२०८२-०४-०७',
-    regNo: '१६/२०८२/८३',
-    businessName: 'बि.बि.एस. ग्रुप प्रा.ली.',
-    ownerName: 'पारस पौडेल',
-    address: 'शान्ति, वडा नं ११',
-    capital: '२००००',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'active'
-  },
-  {
-    id: 4,
-    sn: '४',
-    regDate: '२०८२-०३-२६',
-    regNo: '१५/२०८१/८२',
-    businessName: 'Maisie Moran',
-    ownerName: 'Keiko Fuller',
-    address: 'Driscoll Hubbard, वडा नं 705',
-    capital: 'Reiciendis dolor sim',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'active'
-  },
-  {
-    id: 5,
-    sn: '५',
-    regDate: '२०८२-०३-२३',
-    regNo: '७/२०८०/८१',
-    businessName: 'निर्देश',
-    ownerName: 'निर्देश',
-    address: 'निर्देश, वडा नं 12',
-    capital: 'निर्देश',
-    renewDate: 'नयाँ दर्ता',
-    type: 'पुरानो',
-    status: 'closed'
-  },
-  {
-    id: 6,
-    sn: '६',
-    regDate: '२०८२-०३-२३',
-    regNo: '१४/२०८१/८२',
-    businessName: 'निर्देश',
-    ownerName: 'निर्देश',
-    address: 'निर्देश, वडा नं निर्देश',
-    capital: 'निर्देश',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'closed'
-  },
-  {
-    id: 7,
-    sn: '७',
-    regDate: '२०८२-०३-२२',
-    regNo: '१३/२०८१/८२',
-    businessName: 'नयवेऔबचकगन',
-    ownerName: 'राम बहादुर राना',
-    address: 'कजन, वडा नं जकन',
-    capital: '87456',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'active'
-  },
-  {
-    id: 8,
-    sn: '८',
-    regDate: '२०८२-०२-३०',
-    regNo: '१२/२०८१/८२',
-    businessName: 'यूनिक',
-    ownerName: 'ऐन बहादुर रोकाया',
-    address: 'ब, वडा नं ब',
-    capital: 'ज',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'active'
-  },
-  {
-    id: 9,
-    sn: '९',
-    regDate: '२०८२-०१-२३',
-    regNo: '११/२०८१/८२',
-    businessName: '--',
-    ownerName: '-',
-    address: '-, वडा नं -',
-    capital: '-',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'active'
-  },
-  {
-    id: 10,
-    sn: '१०',
-    regDate: '२०८२-०१-२१',
-    regNo: '१०/२०८१/८२',
-    businessName: 'सुन्दर किराना पसल',
-    ownerName: 'रमेश यादव',
-    address: 'पुनम पथ, वडा नं २',
-    capital: '८०००००००',
-    renewDate: 'नयाँ दर्ता',
-    type: 'नया',
-    status: 'closed'
-  }
-];
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const BusinessIndustryRegistrationNewList = () => {
-  const [data] = useState(initialData);
+  // data + ui state
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // filters & pagination
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [qName, setQName] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+
+  // server-provided total (optional)
+  const [total, setTotal] = useState(null);
+
+  // helper: build query string
+  const buildUrl = () => {
+    const params = new URLSearchParams();
+    if (dateFrom) params.append("dateFrom", dateFrom);
+    if (dateTo) params.append("dateTo", dateTo);
+    if (qName) params.append("name", qName);
+    if (page) params.append("page", String(page));
+    if (pageSize) params.append("limit", String(pageSize));
+    return `/api/businesses?${params.toString()}`;
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    setError(null);
+
+    fetch(buildUrl())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        return res.json();
+      })
+      .then((json) => {
+        if (!mounted) return;
+        // support both array responses or { data: [...], total: N }
+        if (Array.isArray(json)) {
+          setData(json);
+          setTotal(json.length);
+        } else if (Array.isArray(json.data)) {
+          setData(json.data);
+          setTotal(typeof json.total === "number" ? json.total : json.data.length);
+        } else {
+          // fallback: if payload is object of rows
+          setData([]);
+          setTotal(0);
+        }
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err.message || "त्रुटि आएको छ");
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateFrom, dateTo, qName, page, pageSize]); // refetch when filters/page change
+
+  // computed pagination
+  const totalPages = total ? Math.max(1, Math.ceil(total / pageSize)) : null;
+
+  // render helpers
+  const handleExportExcel = () => {
+    // trigger an export endpoint (optional)
+    const url = buildUrl() + "&export=excel";
+    window.open(url, "_blank");
+  };
 
   return (
     <div className="business-list-container">
       {/* --- Top Action Bar --- */}
       <div className="top-action-bar">
-        <button className="excel-btn">एक्सेल निर्यात गर्नुहोस्</button>
+        <button className="excel-btn" onClick={handleExportExcel}>एक्सेल निर्यात गर्नुहोस्</button>
       </div>
 
       {/* --- Filter Bar --- */}
       <div className="filter-bar">
-        <input type="text" placeholder="मिति देखि" className="filter-input date-field" />
-        <input type="text" placeholder="मिति सम्म" className="filter-input date-field" />
-        <input type="text" placeholder="व्यवसायको नाम" className="filter-input" />
-        <button className="search-icon-btn">🔍</button>
+        <input
+          type="text"
+          placeholder="मिति देखि (YYYY-MM-DD)"
+          className="filter-input date-field"
+          value={dateFrom}
+          onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+        />
+        <input
+          type="text"
+          placeholder="मिति सम्म (YYYY-MM-DD)"
+          className="filter-input date-field"
+          value={dateTo}
+          onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+        />
+        <input
+          type="text"
+          placeholder="व्यवसायको नाम"
+          className="filter-input"
+          value={qName}
+          onChange={(e) => { setQName(e.target.value); setPage(1); }}
+        />
+        <button
+          className="search-icon-btn"
+          onClick={() => { setPage(1); /* triggers useEffect */ }}
+          title="खोज"
+        >
+          🔍
+        </button>
       </div>
 
       {/* --- Table Section --- */}
       <div className="table-container">
-        <table className="business-table">
-          <thead>
-            <tr>
-              <th>क्र.स.</th>
-              <th>दर्ता मिति</th>
-              <th>दर्ता नं</th>
-              <th>व्यवसायको नाम</th>
-              <th>व्यवसायीको नाम</th>
-              <th>व्यवसायको ठेगाना</th>
-              <th>व्यवसायमा लगाउने पूँजी</th>
-              <th>नविकरण गरिएको मिति</th>
-              <th>नया/ पुरानो</th>
-              <th>दर्ता सम्पादन</th>
-              <th>प्रमाणपत्र प्रिन्ट</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row) => (
-              <tr key={row.id} className={row.status === 'closed' ? 'closed-row' : ''}>
-                <td>{row.sn}</td>
-                <td>{row.regDate}</td>
-                <td>{row.regNo}</td>
-                <td>{row.businessName}</td>
-                <td>{row.ownerName}</td>
-                <td>{row.address}</td>
-                <td>{row.capital}</td>
-                <td>{row.renewDate}</td>
-                <td>{row.type}</td>
-                
-                {/* Edit Column */}
-                <td className="action-cell">
-                  {row.status === 'active' ? (
-                    <button className="icon-btn edit-btn">✏️</button>
-                  ) : (
-                     <span className="red-status-text">यो व्यवसाय बन्द गरिएको छ</span>
-                  )}
-                </td>
+        {loading ? (
+          <div className="loading">लोड हुँदैछ...</div>
+        ) : error ? (
+          <div className="error">त्रुटि: {error}</div>
+        ) : data.length === 0 ? (
+          <div className="empty">डेटा उपलब्ध छैन</div>
+        ) : null}
 
-                {/* Print Column */}
-                <td className="action-cell">
-                  {row.status === 'active' ? (
-                    <button className="icon-btn print-btn">📇</button>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        
-        {/* --- Pagination --- */}
-        <div className="pagination-container">
-            <button className="page-btn active">1</button>
-            <button className="page-btn">2</button>
-            <button className="page-btn">3</button>
-            <button className="page-btn next-btn">next</button>
-        </div>
+        {/* Table */}
+        {!loading && !error && data.length > 0 && (
+          <>
+            <table className="business-table">
+              <thead>
+                <tr>
+                  <th>क्र.स.</th>
+                  <th>दर्ता मिति</th>
+                  <th>दर्ता नं</th>
+                  <th>व्यवसायको नाम</th>
+                  <th>व्यवसायीको नाम</th>
+                  <th>व्यवसायको ठेगाना</th>
+                  <th>व्यवसायमा लगाउने पूँजी</th>
+                  <th>नविकरण गरिएको मिति</th>
+                  <th>नया/ पुरानो</th>
+                  <th>दर्ता सम्पादन</th>
+                  <th>प्रमाणपत्र प्रिन्ट</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((row) => (
+                  <tr key={row.id} className={row.status === "closed" ? "closed-row" : ""}>
+                    <td>{row.sn ?? ""}</td>
+                    <td>{row.regDate ?? ""}</td>
+                    <td>{row.regNo ?? ""}</td>
+                    <td>{row.businessName ?? ""}</td>
+                    <td>{row.ownerName ?? ""}</td>
+                    <td>{row.address ?? ""}</td>
+                    <td>{row.capital ?? ""}</td>
+                    <td>{row.renewDate ?? ""}</td>
+                    <td>{row.type ?? ""}</td>
+
+                    {/* Edit Column */}
+                    <td className="action-cell">
+                      {row.status === "active" ? (
+                        <button
+                          className="icon-btn edit-btn"
+                          onClick={() => {
+                            // navigate to edit page - replace with your routing
+                            window.location.href = `/businesses/${row.id}/edit`;
+                          }}
+                          title="सम्पादन"
+                        >
+                          ✏️
+                        </button>
+                      ) : (
+                        <span className="red-status-text">यो व्यवसाय बन्द गरिएको छ</span>
+                      )}
+                    </td>
+
+                    {/* Print Column */}
+                    <td className="action-cell">
+                      {row.status === "active" ? (
+                        <button
+                          className="icon-btn print-btn"
+                          onClick={() => {
+                            // open print view - replace as needed
+                            window.open(`/businesses/${row.id}/print`, "_blank");
+                          }}
+                          title="प्रमाणपत्र प्रिन्ट"
+                        >
+                          📇
+                        </button>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* --- Pagination --- */}
+            <div className="pagination-container">
+              <button
+                className="page-btn"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+              >
+                Prev
+              </button>
+
+              {/* show a small page window */}
+              {totalPages ? (
+                Array.from({ length: totalPages }, (_, i) => i + 1).slice(Math.max(0, page - 3), Math.min(totalPages, page + 2)).map((p) => (
+                  <button
+                    key={p}
+                    className={`page-btn ${p === page ? "active" : ""}`}
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </button>
+                ))
+              ) : (
+                // if totalPages unknown show simple pages
+                <>
+                  <button className={`page-btn ${page === 1 ? "active" : ""}`} onClick={() => setPage(1)}>1</button>
+                  <button className="page-btn" onClick={() => setPage(page + 1)}>next</button>
+                </>
+              )}
+
+              <button
+                className="page-btn"
+                onClick={() => {
+                  if (totalPages) setPage((p) => Math.min(totalPages, p + 1));
+                  else setPage((p) => p + 1);
+                }}
+                disabled={totalPages ? page >= totalPages : false}
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* --- Footer --- */}
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </div>
   );

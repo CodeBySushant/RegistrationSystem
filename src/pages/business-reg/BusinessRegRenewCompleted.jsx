@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./BusinessRegRenewCompleted.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 function BusinessRegRenewCompleted() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -126,7 +129,7 @@ function BusinessRegRenewCompleted() {
       </div>
 
       <footer className="footer">
-        © सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );
