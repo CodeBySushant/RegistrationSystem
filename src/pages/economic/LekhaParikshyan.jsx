@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import "./LekhaParikshyan.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 export default function LekhaParikshyan() {
   const [form, setForm] = useState({
     chalani_no: "",
@@ -22,7 +25,7 @@ export default function LekhaParikshyan() {
     applicant_name: "",
     applicant_address: "",
     applicant_citizenship: "",
-    applicant_phone: ""
+    applicant_phone: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -52,7 +55,7 @@ export default function LekhaParikshyan() {
       const res = await fetch("/api/forms/lekha-parikshyan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       });
 
       if (!res.ok) throw new Error("Server error");
@@ -81,7 +84,7 @@ export default function LekhaParikshyan() {
         applicant_name: "",
         applicant_address: "",
         applicant_citizenship: "",
-        applicant_phone: ""
+        applicant_phone: "",
       });
     } catch (e) {
       setMsg({ type: "error", text: e.message });
@@ -106,10 +109,12 @@ export default function LekhaParikshyan() {
           <img src="/logo.png" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
+          <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+          <h2 className="ward-title">
+            वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
+          </h2>
+          <p className="address-text">{MUNICIPALITY.officeLine}</p>
+          <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
       </div>
 
@@ -214,9 +219,7 @@ export default function LekhaParikshyan() {
             type="text"
             className="inline-box-input medium-box"
             value={form.auditor_certificate_no}
-            onChange={(e) =>
-              update("auditor_certificate_no", e.target.value)
-            }
+            onChange={(e) => update("auditor_certificate_no", e.target.value)}
           />{" "}
           संस्था दर्ता नम्बर{" "}
           <input
@@ -317,9 +320,7 @@ export default function LekhaParikshyan() {
               type="text"
               className="detail-input bg-gray"
               value={form.applicant_citizenship}
-              onChange={(e) =>
-                update("applicant_citizenship", e.target.value)
-              }
+              onChange={(e) => update("applicant_citizenship", e.target.value)}
             />
           </div>
 
@@ -352,7 +353,7 @@ export default function LekhaParikshyan() {
             color: msg.type === "error" ? "red" : "green",
             textAlign: "center",
             marginTop: "10px",
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
         >
           {msg.text}
@@ -360,7 +361,7 @@ export default function LekhaParikshyan() {
       )}
 
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </div>
   );

@@ -1,5 +1,8 @@
 import React from 'react';
 import './SocialSecurityPaymentClosure.css';
+
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
 // 7
 const SocialSecurityPaymentClosure = () => {
   return (
@@ -17,10 +20,10 @@ const SocialSecurityPaymentClosure = () => {
           <img src="/logo.png" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
+          <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+          <h2 className="ward-title">{MUNICIPALITY.wardNumber} नं. वडा कार्यालय</h2>
+          <p className="address-text">{MUNICIPALITY.officeLine}</p>
+          <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
       </div>
 
@@ -135,7 +138,7 @@ const SocialSecurityPaymentClosure = () => {
       </div>
       
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </div>
   );
