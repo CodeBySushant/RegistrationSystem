@@ -1,6 +1,9 @@
 import React from 'react';
 import './ScholarshipRecommendation.css';
 // 1
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const ScholarshipRecommendation = () => {
   return (
     <div className="scholarship-container">
@@ -17,10 +20,10 @@ const ScholarshipRecommendation = () => {
           <img src="/logo.png" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
+          <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+          <h2 className="ward-title">{MUNICIPALITY.wardNumber} नं. वडा कार्यालय</h2>
+          <p className="address-text">{MUNICIPALITY.officeLine}</p>
+          <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
       </div>
 
@@ -50,7 +53,7 @@ const ScholarshipRecommendation = () => {
       {/* --- Main Body --- */}
       <div className="form-body">
         <p className="body-paragraph">
-          उपरोक्त विषयमा <span className="bold-text underline-text">नागार्जुन नगरपालिका</span> वडा नं. १ (साविक <input type="text" className="inline-box-input medium-box" /> 
+          उपरोक्त विषयमा <span className="bold-text underline-text">{MUNICIPALITY.name}</span> वडा नं. १ (साविक <input type="text" className="inline-box-input medium-box" /> 
           , वडा नं. <input type="text" className="inline-box-input tiny-box" required /> ) अन्तर्गत 
           <select className="inline-select bold-text">
               <option>स्थायी</option>
@@ -118,7 +121,7 @@ const ScholarshipRecommendation = () => {
       </div>
       
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </div>
   );
