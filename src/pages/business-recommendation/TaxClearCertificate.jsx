@@ -2,6 +2,9 @@
 import React from "react";
 import "./TaxClearCertificate.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 function TaxClearanceCertificate() {
   return (
     <div className="tcc-page">
@@ -18,18 +21,17 @@ function TaxClearanceCertificate() {
         {/* Letterhead */}
         <div className="tcc-letterhead">
           <div className="tcc-logo">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Emblem_of_Nepal.svg/240px-Emblem_of_Nepal.svg.png"
-              alt="Emblem"
-            />
+            <img src="./nepallogo.svg" alt="Emblem" />
           </div>
 
           <div className="tcc-head-text">
-            <div className="tcc-head-main">नागार्जुन नगरपालिका</div>
-            <div className="tcc-head-ward">१ नं. वडा कार्यालय</div>
+            <div className="tcc-head-main">{MUNICIPALITY.name}</div>
+            <div className="tcc-head-ward">
+              वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
+            </div>
             <div className="tcc-head-sub">
-              नागार्जुन, काठमाडौं <br />
-              बागमती प्रदेश, नेपाल
+              {MUNICIPALITY.officeLine} <br />
+              {MUNICIPALITY.provinceLine}
             </div>
           </div>
 
@@ -70,8 +72,8 @@ function TaxClearanceCertificate() {
 
         {/* Main sentence with inline inputs */}
         <p className="tcc-body">
-          प्रस्तुत विषयमा <span className="tcc-bold">नागार्जुन नगरपालिका</span>{" "}
-          वडा नं. १ मा बस्ने श्री{" "}
+          प्रस्तुत विषयमा <span className="tcc-bold">{MUNICIPALITY.name}</span>{" "}
+          वडा नं. {MUNICIPALITY.wardNumber} मा बस्ने श्री{" "}
           <input type="text" className="tcc-medium-input" /> को नाममा रहेको
           व्यवसाय / घर जग्गा / अन्य कर सम्बन्धी विवरण अनुसार तल उल्लेख गरिएको
           आर्थिक वर्षहरू सम्मको कर भरपाई भएको / नभएको प्रमाणित गर्न अनुरोध
@@ -118,11 +120,7 @@ function TaxClearanceCertificate() {
 
         {/* Officer/signature on right */}
         <div className="tcc-sign-top">
-          <input
-            type="text"
-            className="tcc-sign-name"
-            placeholder="नाम, थर"
-          />
+          <input type="text" className="tcc-sign-name" placeholder="नाम, थर" />
           <select className="tcc-post-select">
             <option>पद छनौट गर्नुहोस्</option>
             <option>अध्यक्ष</option>
@@ -162,7 +160,7 @@ function TaxClearanceCertificate() {
 
       {/* Footer */}
       <footer className="tcc-footer">
-        © सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

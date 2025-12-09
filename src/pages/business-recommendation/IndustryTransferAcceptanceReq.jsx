@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import "./IndustryTransferAcceptanceReq.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 export default function IndustryTransferAcceptanceReq() {
   const [form, setForm] = useState({
     date: "",
     to_line1: "",
     to_line2: "",
     original_reg_date: "",
-    province: "बागमती प्रदेश",
+    province: MUNICIPALITY.provinceLine,
     district: "",
-    municipality: "नागार्जुन",
+    municipality: MUNICIPALITY.name,
     ward: "",
     industry_name: "",
     reason_short: "",
@@ -70,9 +73,9 @@ export default function IndustryTransferAcceptanceReq() {
         to_line1: "",
         to_line2: "",
         original_reg_date: "",
-        province: "बागमती प्रदेश",
+        province: MUNICIPALITY.provinceLine,
         district: "",
-        municipality: "नागार्जुन",
+        municipality: MUNICIPALITY.name,
         ward: "",
         industry_name: "",
         reason_short: "",
@@ -130,7 +133,7 @@ export default function IndustryTransferAcceptanceReq() {
         <p className="itar-body">
           महोदय, यस <input type="text" className="itar-small-input" value={form.original_reg_date} onChange={e => update("original_reg_date", e.target.value)} /> मा मिति
           <input type="text" className="itar-small-input" value={form.original_reg_date} onChange={e => update("original_reg_date", e.target.value)} /> मा दर्ता भएको {form.province}
-          <input type="text" className="itar-small-input" value={form.district} onChange={e => update("district", e.target.value)} /> जिल्ला {form.municipality}
+          <input type="text" className="itar-small-input" value={form.district} onChange={e => update("district", e.target.value)} /> जिल्ला {MUNICIPALITY.name}
           वडा नं.
           <input type="text" className="itar-tiny-input" value={form.ward} onChange={e => update("ward", e.target.value)} /> मा स्थापना भई संचालन भई रहेको
           <input type="text" className="itar-medium-input" value={form.industry_name} onChange={e => update("industry_name", e.target.value)} /> उद्योग देखाएको कारणले स्थानान्तरण गर्नुपर्ने भएकाले सम्बन्धित निवेदनसहित यसै स्थानान्तरणको स्वीकृतिको लागि अनुरोध गर्दछु ।
@@ -185,7 +188,7 @@ export default function IndustryTransferAcceptanceReq() {
         {message && <div className={`itar-message ${message.type === "error" ? "error" : "success"}`}>{message.text}</div>}
       </form>
 
-      <footer className="itar-footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
+      <footer className="itar-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
     </div>
   );
 }

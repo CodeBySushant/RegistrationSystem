@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import "./PartnershipRegistrationApplicationForm.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 export default function PartnershipRegistrationApplicationForm() {
   const [form, setForm] = useState({
     date: "",
