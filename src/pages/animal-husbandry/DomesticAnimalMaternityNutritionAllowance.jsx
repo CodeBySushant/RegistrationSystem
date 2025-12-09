@@ -3,17 +3,20 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./DomesticAnimalMaternityNutritionAllowance.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 const initialState = {
   chalan_no: "",
   subject: "गाई / भैंसी सुत्केरी पोषण भत्ता उपलब्ध गरिदिने बारे ।",
   issue_date: "",
 
   addressee_line1: "पशु सेवा शाखा",
-  addressee_line2: "नागार्जुन नगरपालिका",
+  addressee_line2: MUNICIPALITY.name,
 
-  district: "काठमाडौँ",
-  municipality_name: "नागार्जुन",
-  ward_no: "1",
+  district: MUNICIPALITY.district, 
+  municipality_name: MUNICIPALITY.name,
+  ward_no: MUNICIPALITY.wardNumber,
 
   resident_name: "",
   duration_value: "",
@@ -27,7 +30,7 @@ const initialState = {
   applicant_name: "",
   applicant_address: "",
   applicant_citizenship_no: "",
-  applicant_phone: ""
+  applicant_phone: "",
 };
 
 const DomesticAnimalMaternityNutritionAllowance = () => {
@@ -37,7 +40,11 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     // keep numbers as numbers for animal_count
-    setForm((prev) => ({ ...prev, [name]: name === "animal_count" ? (value === "" ? "" : Number(value)) : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        name === "animal_count" ? (value === "" ? "" : Number(value)) : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -65,7 +72,11 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
     } catch (err) {
       setLoading(false);
       console.error("Submit error:", err.response || err.message || err);
-      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Submission failed";
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
       alert("Error: " + msg);
     }
   };
@@ -75,7 +86,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
       {/* --- Top Bar --- */}
       <div className="top-bar-title">
         गाई / भैंसी सुत्केरी पोषण भत्ता ।
-        <span className="top-right-bread">पशुपालन &gt; गाई / भैंसी सुत्केरी पोषण भत्ता</span>
+        <span className="top-right-bread">
+          पशुपालन &gt; गाई / भैंसी सुत्केरी पोषण भत्ता
+        </span>
       </div>
 
       {/* --- Header Section --- */}
@@ -84,17 +97,19 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
           <img src="/logo.png" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
+          <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+          <h2 className="ward-title">{MUNICIPALITY.wardNumber} नं. वडा कार्यालय</h2>
+          <p className="address-text">{MUNICIPALITY.officeLine}</p>
+          <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
       </div>
 
       {/* --- Meta Data (Date/Ref) --- */}
       <div className="meta-data-row">
         <div className="meta-left">
-          <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
+          <p>
+            पत्र संख्या : <span className="bold-text">२०८२/८३</span>
+          </p>
           <p>
             चलानी नं. :
             <input
@@ -123,7 +138,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
 
       {/* --- Subject --- */}
       <div className="subject-section">
-        <p>विषय: <span className="underline-text">{form.subject}</span></p>
+        <p>
+          विषय: <span className="underline-text">{form.subject}</span>
+        </p>
       </div>
 
       {/* --- Addressee Section --- */}
@@ -154,7 +171,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
       {/* --- Main Body --- */}
       <div className="form-body">
         <p className="body-paragraph">
-          प्रस्तुत विषयमा यस नगर कार्यपालिकाबाट पारित "गाई/भैंसी सुत्केरी पोषण भत्ता, ब्याडको बोका व्यवस्थापन र भ्याक्सिनेसन कार्यक्रम कार्यान्वयन विधि, २०७४" अनुसार जिल्ला
+          प्रस्तुत विषयमा यस नगर कार्यपालिकाबाट पारित "गाई/भैंसी सुत्केरी पोषण
+          भत्ता, ब्याडको बोका व्यवस्थापन र भ्याक्सिनेसन कार्यक्रम कार्यान्वयन
+          विधि, २०७४" अनुसार जिल्ला
           <input
             name="district"
             type="text"
@@ -212,7 +231,8 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
             value={form.calving_date || ""}
             onChange={handleChange}
           />
-          मा सुत्केरी भएकोले कार्यविधि अनुसार निजले पाउने सुत्केरी पोषण भत्ता उपलब्ध गरि दिनु हुन अनुरोध छ ।
+          मा सुत्केरी भएकोले कार्यविधि अनुसार निजले पाउने सुत्केरी पोषण भत्ता
+          उपलब्ध गरि दिनु हुन अनुरोध छ ।
         </p>
       </div>
 
@@ -296,7 +316,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         </button>
       </div>
 
-      <div className="copyright-footer">© सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका</div>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </div>
     </form>
   );
 };
