@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from "react";
 import "./BusinessRegistrationRenewLeft.css";
 
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+
 function BusinessRegistrationRenewLeft() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -133,7 +136,7 @@ function BusinessRegistrationRenewLeft() {
         </div>
       </div>
 
-      <footer className="footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
+      <footer className="footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
     </div>
   );
 }
