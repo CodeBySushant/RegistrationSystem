@@ -1,4 +1,5 @@
-const dashboardRoutes = require("./routes/dashboard.js");
+require("dotenv").config(); 
+
 const express = require("express");
 const cors = require("cors");
 
@@ -30,6 +31,7 @@ app.use("/api/senior", senior);
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes);
 
+const dashboardRoutes = require("./routes/dashboard.js");
 app.use("/api", dashboardRoutes);
 
 
