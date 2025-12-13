@@ -4,6 +4,8 @@ const pool = require("../config/db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const adminAuth = require("../middleware/adminAuth");
+
 // SECRET KEY
 const JWT_SECRET = "SUPER_SECRET_KEY"; 
 
