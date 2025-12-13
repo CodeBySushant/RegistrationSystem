@@ -1,27 +1,35 @@
+// backend/middleware/adminAuth.js
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = "SUPER_ADMIN_SECRET";  // <== use ONE shared secret
+// IMPORTANT — use SAME secret used in adminRoutes.js
+const JWT_SECRET = "SUPER_SECRET_KEY";
 
 module.exports = function (roles = []) {
   return (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1];
+    const header = req.headers.authorization;
 
+    if (!header) {
+      return res.status(401).json({ message: "Authorization header missing" });
+    }
+
+    const token = header.split(" ")[1];
     if (!token) {
-      return res.status(401).json({ message: "No token provided" });
+      return res.status(401).json({ message: "Token not found" });
     }
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
-      req.admin = decoded;
+      req.admin = decoded; // attach admin info to request
 
-      // role check (optional)
+      // Role restriction
       if (roles.length > 0 && !roles.includes(decoded.role)) {
-        return res.status(403).json({ message: "Forbidden: Insufficient rights" });
+        return res.status(403).json({ message: "Forbidden: insufficient rights" });
       }
 
       next();
     } catch (err) {
-      return res.status(401).json({ message: "Invalid token" });
+      console.error("JWT Verification Error:", err);
+      return res.status(401).json({ message: "Invalid or expired token" });
     }
   };
 };
