@@ -4,6 +4,16 @@ import { Search, Menu, User } from "lucide-react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { MUNICIPALITY } from "./config/municipalityConfig";
 
+import { AdminAuthProvider } from "./admin/context/AdminAuthContext";
+import AdminProtectedRoute from "./admin/components/AdminProtectedRoute";
+
+import AdminLayout from "./admin/AdminLayout";
+import AdminLogin from "./admin/AdminLogin";
+
+import AdminDashboard from "./admin/AdminDashboard";
+import AdminUsers from "./admin/AdminUsers";
+import AdminSettings from "./admin/AdminSettings";
+
 import { NAV_ITEMS } from "./data/NavItems.js";
 import SidebarItem from "./components/SidebarItem.jsx";
 
@@ -977,24 +987,45 @@ const Layout = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public route */}
-          <Route path="/" element={<Login />} />
+      <AdminAuthProvider>
+        <BrowserRouter>
+          <Routes>
 
-          {/* All protected routes – everything inside Layout */}
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+            {/* ---------------- ADMIN ROUTES ---------------- */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+
+            <Route
+              path="/admin"
+              element={
+                <AdminProtectedRoute>
+                  <AdminLayout />
+                </AdminProtectedRoute>
+              }
+            >
+              <Route index element={<AdminDashboard />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="settings" element={<AdminSettings />} />
+            </Route>
+
+            {/* ---------------- USER LOGIN ---------------- */}
+            <Route path="/" element={<Login />} />
+
+            {/* ---------------- MAIN SYSTEM (YOUR LARGE LAYOUT) ---------------- */}
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            />
+
+          </Routes>
+        </BrowserRouter>
+      </AdminAuthProvider>
     </AuthProvider>
   );
 };
+
 
 export default App;
