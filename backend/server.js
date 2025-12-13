@@ -27,6 +27,9 @@ app.use("/api/disability", disability);
 const senior = require("./routes/senior");
 app.use("/api/senior", senior);
 
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admin", adminRoutes);
+
 app.use("/api", dashboardRoutes);
 
 

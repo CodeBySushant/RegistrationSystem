@@ -3,16 +3,16 @@ const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/genericFormController");
 
-// POST create
+// CREATE
 router.post("/:formKey", controller.createRecord);
 
-// GET all
+// GET ALL
 router.get("/:formKey", controller.getAll);
 
-// GET by id
+// GET BY ID
 router.get("/:formKey/:id", controller.getById);
 
-// PUT update
+// UPDATE
 router.put("/:formKey/:id", controller.update);
 
 // DELETE
