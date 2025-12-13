@@ -2,7 +2,7 @@
 const jwt = require("jsonwebtoken");
 
 // IMPORTANT — use SAME secret used in adminRoutes.js
-const JWT_SECRET = "SUPER_SECRET_KEY";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = function (roles = []) {
   return (req, res, next) => {
