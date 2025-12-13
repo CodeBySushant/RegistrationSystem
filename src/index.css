@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* --- FORCE OVERRIDE ALL GLOBAL INPUT BUGS --- */
+input, select, textarea {
+  all: unset;
+  box-sizing: border-box;
+
+  display: block !important;
+  width: 100% !important;
+  padding: 10px 12px !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+  background-color: #ffffff !important;
+  color: #000 !important;
+}
