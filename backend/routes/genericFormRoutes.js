@@ -1,6 +1,7 @@
 // backend/routes/genericFormRoutes.js
 const express = require("express");
 const router = express.Router();
+const adminAuth = require("../middleware/adminAuth");
 const controller = require("../controllers/genericFormController");
 
 // CREATE
@@ -17,5 +18,7 @@ router.put("/:formKey/:id", controller.update);
 
 // DELETE
 router.delete("/:formKey/:id", controller.delete);
+
+router.use(adminAuth(["ADMIN", "SUPERADMIN"]));
 
 module.exports = router;

@@ -18,6 +18,8 @@ function createModel(tableName, columns = []) {
       db.query(sql, values, cb);
     },
 
+    customQuery: (sql, params, cb) => db.query(sql, params, cb),
+
     getAll: (cb) => db.query(`SELECT * FROM ${tableName} ORDER BY created_at DESC`, cb),
 
     getById: (id, cb) => db.query(`SELECT * FROM ${tableName} WHERE id = ?`, [id], cb),

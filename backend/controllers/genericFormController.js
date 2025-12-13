@@ -74,9 +74,29 @@ exports.createRecord = (req, res) => {
 
 exports.getAll = (req, res) => {
   try {
-    const model = getModelForKey(req.params.formKey);
-    model.getAll((err, rows) => {
-      if (err) return res.status(500).json({ error: err.code, message: err.sqlMessage });
+    const formKey = req.params.formKey;
+    const meta = forms[formKey];
+    if (!meta) throw new Error("Invalid form key");
+
+    const model = getModelForKey(formKey);
+
+    const { role, ward_number } = req.admin;
+
+    let sql = `SELECT * FROM ${meta.table}`;
+    let params = [];
+
+    // 🔐 Ward isolation
+    if (role === "ADMIN") {
+      sql += " WHERE ward_number = ?";
+      params.push(ward_number);
+    }
+
+    sql += " ORDER BY created_at DESC";
+
+    model.customQuery(sql, params, (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.code });
+      }
       res.json(rows);
     });
   } catch (e) {
