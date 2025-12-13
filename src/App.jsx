@@ -14,6 +14,9 @@ import AdminDashboard from "./admin/AdminDashboard";
 import AdminUsers from "./admin/AdminUsers";
 import AdminSettings from "./admin/AdminSettings";
 
+import CreateAdmin from "./admin/pages/CreateAdmin";
+import AdminList from "./admin/pages/AdminList";
+
 import { NAV_ITEMS } from "./data/NavItems.js";
 import SidebarItem from "./components/SidebarItem.jsx";
 
@@ -291,7 +294,9 @@ const Layout = () => {
         return <Dashboard />;
       // pages/application
       case "व्यवसाय दर्ता दरखास्त फारम":
-        return <BusinessRegistrationApplicationForm setActiveLink={setActiveLink} />;
+        return (
+          <BusinessRegistrationApplicationForm setActiveLink={setActiveLink} />
+        );
       case "आदिवासी प्रमाणित सिफारिस":
         return (
           <TribalVerificationRecommendation setActiveLink={setActiveLink} />
@@ -990,7 +995,6 @@ const App = () => {
       <AdminAuthProvider>
         <BrowserRouter>
           <Routes>
-
             {/* ---------------- ADMIN ROUTES ---------------- */}
             <Route path="/admin/login" element={<AdminLogin />} />
 
@@ -1005,6 +1009,8 @@ const App = () => {
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="settings" element={<AdminSettings />} />
+              <Route path="create-admin" element={<CreateAdmin />} />
+              <Route path="admin-list" element={<AdminList />} />
             </Route>
 
             {/* ---------------- USER LOGIN ---------------- */}
@@ -1019,13 +1025,11 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
           </Routes>
         </BrowserRouter>
       </AdminAuthProvider>
     </AuthProvider>
   );
 };
-
 
 export default App;

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "./context/AdminAuthContext";
+import { ShieldCheck } from "lucide-react";
 
 const AdminLogin = () => {
   const { login } = useAdminAuth();
@@ -9,10 +10,11 @@ const AdminLogin = () => {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = login(form.username, form.password);
+    setError("");
 
+    const result = await login(form.username, form.password);
     if (result.success) {
       navigate("/admin");
     } else {
@@ -21,36 +23,57 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-200">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md w-96"
-      >
-        <h2 className="text-xl font-bold mb-4">Admin Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-gray-900 px-4">
+      
+      <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-10 w-full max-w-md shadow-xl">
+        
+        {/* Title */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <ShieldCheck className="w-16 h-16 text-blue-300" />
+          </div>
+          <h1 className="text-3xl font-bold text-white">Admin Portal</h1>
+          <p className="text-blue-200 mt-2">Secure Access • Municipality System</p>
+        </div>
 
-        {error && <div className="text-red-600 mb-2">{error}</div>}
+        {/* Error */}
+        {error && (
+          <div className="mb-4 text-center text-red-400 font-semibold bg-red-900/40 py-2 rounded-lg">
+            {error}
+          </div>
+        )}
 
-        <label>Username</label>
-        <input
-          type="text"
-          className="w-full p-2 border rounded mb-3"
-          onChange={(e) => setForm({ ...form, username: e.target.value })}
-        />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          
+          <div>
+            <label className="text-white text-sm">Username</label>
+            <input
+              type="text"
+              className="w-full px-4 py-2 mt-1 bg-white/10 text-white border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              onChange={(e) => setForm({ ...form, username: e.target.value })}
+              required
+            />
+          </div>
 
-        <label>Password</label>
-        <input
-          type="password"
-          className="w-full p-2 border rounded mb-3"
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-        />
+          <div>
+            <label className="text-white text-sm">Password</label>
+            <input
+              type="password"
+              className="w-full px-4 py-2 mt-1 bg-white/10 text-white border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded"
-        >
-          Login
-        </button>
-      </form>
+          <button
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+
     </div>
   );
 };

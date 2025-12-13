@@ -1,32 +1,51 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AdminAuthContext = createContext();
 
 export const AdminAuthProvider = ({ children }) => {
-  const [admin, setAdmin] = useState(() => {
-    return localStorage.getItem("admin-auth") ? true : false;
-  });
+  const [admin, setAdmin] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("admin-token") || "");
 
-  // DEFAULT ADMIN CREDENTIALS
-  const DEFAULT_USER = "admin";
-  const DEFAULT_PASS = "admin123";
+  useEffect(() => {
+    if (!token) return;
 
-  const login = (username, password) => {
-    if (username === DEFAULT_USER && password === DEFAULT_PASS) {
-      setAdmin(true);
-      localStorage.setItem("admin-auth", "true");
+    const storedAdmin = JSON.parse(localStorage.getItem("admin-info"));
+    if (storedAdmin) setAdmin(storedAdmin);
+  }, []);
+
+  const login = async (username, password) => {
+    try {
+      const res = await fetch("http://localhost:5000/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (!data.success) return { success: false, message: data.message };
+
+      // Save token + admin data
+      localStorage.setItem("admin-token", data.token);
+      localStorage.setItem("admin-info", JSON.stringify(data.admin));
+
+      setToken(data.token);
+      setAdmin(data.admin);
+
       return { success: true };
+    } catch (err) {
+      return { success: false, message: "Server error" };
     }
-    return { success: false, message: "Invalid username or password" };
   };
 
   const logout = () => {
-    setAdmin(false);
-    localStorage.removeItem("admin-auth");
+    localStorage.removeItem("admin-token");
+    localStorage.removeItem("admin-info");
+    setAdmin(null);
+    setToken("");
   };
 
   return (
-    <AdminAuthContext.Provider value={{ admin, login, logout }}>
+    <AdminAuthContext.Provider value={{ admin, token, login, logout }}>
       {children}
     </AdminAuthContext.Provider>
   );
