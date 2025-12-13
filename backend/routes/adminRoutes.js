@@ -28,7 +28,7 @@ router.post("/login", (req, res) => {
         return res.json({ success: false, message: "Wrong password" });
 
       const token = jwt.sign(
-        { id: admin.id, role: admin.role, ward: admin.ward_number },
+        { id: admin.id, role: admin.role.toUpperCase(), ward: admin.ward_number },
         JWT_SECRET,
         { expiresIn: "7d" }
       );
@@ -40,7 +40,7 @@ router.post("/login", (req, res) => {
           id: admin.id,
           name: admin.name,
           email: admin.email,
-          role: admin.role,
+          role: admin.role.toUpperCase(),
           ward: admin.ward_number,
         },
       });

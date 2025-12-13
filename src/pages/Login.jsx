@@ -11,15 +11,16 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    const success = login(username, password); // <-- calls the context
-    if (success) {
-      navigate("/dashboard"); // go to the first protected page
+    const result = await login(username, password);
+
+    if (result.success) {
+      navigate("/dashboard");
     } else {
-      setError("Invalid username or password");
+      setError(result.message || "Invalid admin credentials");
     }
   };
 
