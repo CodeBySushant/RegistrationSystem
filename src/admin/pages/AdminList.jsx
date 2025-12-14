@@ -6,27 +6,40 @@ const AdminList = () => {
   const [admins, setAdmins] = useState([]);
 
   const fetchAdmins = async () => {
-    const res = await fetch("http://localhost:5000/api/admin/all-admins");
-    const data = await res.json();
-    if (data.success) setAdmins(data.admins);
-  };
+  const res = await fetch("http://localhost:5000/api/admin/all-admins", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json();
+  if (data.success) setAdmins(data.admins);
+};
+
 
   const deleteAdmin = async (id) => {
-    if (!window.confirm("Delete this admin?")) return;
+  if (!window.confirm("Delete this admin?")) return;
 
-    const res = await fetch(`http://localhost:5000/api/admin/delete/${id}`, {
+  const res = await fetch(
+    `http://localhost:5000/api/admin/delete/${id}`,
+    {
       method: "DELETE",
-    });
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-    const data = await res.json();
-    if (data.success) fetchAdmins();
-  };
+  const data = await res.json();
+  if (data.success) fetchAdmins();
+};
+
 
   useEffect(() => {
     fetchAdmins();
   }, []);
 
-  if (admin?.role !== "superadmin") {
+  if (admin?.role !== "SUPERADMIN") {
     return <h1 className="text-red-600 text-xl">Access Denied</h1>;
   }
 

@@ -45,7 +45,7 @@ const CreateAdmin = () => {
     }
   };
 
-  if (admin?.role !== "superadmin") {
+  if (admin?.role !== "SUPERADMIN") {
     return <h1 className="text-red-600 text-xl">Access Denied</h1>;
   }
 
