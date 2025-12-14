@@ -17,7 +17,7 @@ const AdminLayout = () => {
           <Link to="/admin" className="hover:text-blue-400">Dashboard</Link>
 
           {/* Only Superadmin can see these */}
-          {admin?.role === "superadmin" && (
+          {admin?.role === "SUPERADMIN" && (
             <>
               <Link to="/admin/create-admin" className="hover:text-blue-400">Create Admin</Link>
               <Link to="/admin/admin-list" className="hover:text-blue-400">View Admins</Link>
