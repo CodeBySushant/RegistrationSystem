@@ -87,21 +87,35 @@ router.post("/create-admin", (req, res) => {
 });
 
 // -------------- GET ADMINS (superadmin only) --------------
-router.get("/all-admins", (req, res) => {
-  pool.query("SELECT id, name, email, phone, ward_number, position, username, role FROM admins", 
-    (err, results) => {
-      if (err) return res.json({ success: false, message: "DB error" });
-      res.json({ success: true, admins: results });
-    }
-  );
-});
+router.get(
+  "/all-admins",
+  adminAuth(["SUPERADMIN"]),
+  (req, res) => {
+    pool.query(
+      "SELECT id, name, email, phone, ward_number, position, username, role FROM admins",
+      (err, results) => {
+        if (err) return res.json({ success: false, message: "DB error" });
+        res.json({ success: true, admins: results });
+      }
+    );
+  }
+);
 
 // ---------------- DELETE ADMIN ----------------
-router.delete("/delete/:id", (req, res) => {
-  pool.query("DELETE FROM admins WHERE id = ?", [req.params.id], (err) => {
-    if (err) return res.json({ success: false, message: "DB error" });
-    res.json({ success: true });
-  });
-});
+router.delete(
+  "/delete/:id",
+  adminAuth(["SUPERADMIN"]),
+  (req, res) => {
+    pool.query(
+      "DELETE FROM admins WHERE id = ?",
+      [req.params.id],
+      (err) => {
+        if (err) return res.json({ success: false, message: "DB error" });
+        res.json({ success: true });
+      }
+    );
+  }
+);
+
 
 module.exports = router;
