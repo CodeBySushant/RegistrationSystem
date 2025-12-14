@@ -50,7 +50,7 @@ const CreateAdmin = () => {
   }
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 shadow rounded">
+    <div className="create-admin max-w-xl mx-auto bg-white p-6 shadow rounded">
       <h1 className="text-2xl font-bold mb-4">Create New Admin</h1>
 
       {msg && <p className="text-blue-600 mb-3">{msg}</p>}

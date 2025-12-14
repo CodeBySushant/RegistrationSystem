@@ -30,7 +30,7 @@ const Login = () => {
       style={{ backgroundImage: `url('/background.jpg')` }}
     >
       <div className="absolute inset-0 bg-blue-100 opacity-80" />
-      <div className="relative bg-white rounded-lg shadow-2xl p-8 w-full max-w-md mx-4">
+      <div className="login-card relative bg-white rounded-lg shadow-2xl p-8 w-full max-w-md mx-4">
         {/* ---- Logo & Header ---- */}
         <div className="text-center mb-6">
           <img

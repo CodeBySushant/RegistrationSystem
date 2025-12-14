@@ -67,13 +67,23 @@
   font-size: 1rem;
 }
 .meta-left p, .meta-right p { margin: 5px 0; }
-.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; font-family: inherit; font-size: 1rem; }
+.plan-agreement-container .dotted-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  outline: none;
+}
 .small-input { width: 120px; }
 
 /* --- Addressee Section --- */
 .addressee-section { margin-bottom: 20px; font-size: 1.05rem; }
 .addressee-row { margin-bottom: 5px; }
-.line-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; margin: 0 10px; padding: 2px 5px; }
+.plan-agreement-container .line-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  outline: none;
+}
 .medium-input { width: 200px; }
 
 /* --- Subject --- */
