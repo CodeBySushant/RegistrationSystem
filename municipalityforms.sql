@@ -4937,6 +4937,39 @@ CREATE TABLE `unmarried_verification_form` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- admin panel
+CREATE TABLE admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(20),
+    ward_number INT,
+    position VARCHAR(50),
+    username VARCHAR(50) UNIQUE,
+    password VARCHAR(255),
+    role ENUM('superadmin', 'admin') DEFAULT 'admin',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO admins 
+(name, email, phone, ward_number, position, username, password, role)
+VALUES 
+(
+  'Super Admin',
+  'super@admin.com',
+  '9800000000',
+  0,
+  'System Admin',
+  'superadmin',
+  '$2b$10$j17Uij3sEwDWHCqRGsin1uSwdVKaahRx7kSYpw/TInm9FC1Z8exQe',
+  'superadmin'
+);
+
+SELECT username, role FROM admins;
+
+
+
+
 
 
 INSERT INTO BusinessIndustryRegistrationForm (full_name) VALUES ("Test 1");
