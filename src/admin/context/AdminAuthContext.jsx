@@ -7,11 +7,11 @@ export const AdminAuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("admin-token") || "");
 
   useEffect(() => {
-    if (!token) return;
+  if (!token) return;
 
-    const storedAdmin = JSON.parse(localStorage.getItem("admin-info"));
-    if (storedAdmin) setAdmin(storedAdmin);
-  }, []);
+  const storedAdmin = JSON.parse(localStorage.getItem("admin-info"));
+  if (storedAdmin) setAdmin(storedAdmin);
+}, [token]);
 
   const login = async (username, password) => {
     try {
