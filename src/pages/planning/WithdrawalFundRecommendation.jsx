@@ -53,8 +53,7 @@ export default function WithdrawalFundRecommendation() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="withdrawal-fund-container">
+    <form onSubmit={handleSubmit} className="withdrawal-fund-container">
         {/* --- Top Bar --- */}
         <div className="top-bar-title">
           रकम निकासा सिफारिस ।
@@ -208,7 +207,6 @@ export default function WithdrawalFundRecommendation() {
         )}
 
         <div className="copyright-footer">© सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका</div>
-      </div>
     </form>
   );
 }

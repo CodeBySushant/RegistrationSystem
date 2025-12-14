@@ -67,8 +67,7 @@ export default function AgreementOfPlan() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="plan-agreement-container">
+    <form onSubmit={handleSubmit} className="plan-agreement-container">
         {/* --- Top Bar --- */}
         <div className="top-bar-title">
           योजना सम्झौता सिफारिस
@@ -78,7 +77,7 @@ export default function AgreementOfPlan() {
         {/* --- Header Section --- */}
         <div className="form-header-section">
           <div className="header-logo">
-            <img src="/logo.png" alt="Nepal Emblem" />
+            <img src="/nepallogo.svg" alt="Nepal Emblem" />
           </div>
           <div className="header-text">
             <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
@@ -241,7 +240,6 @@ export default function AgreementOfPlan() {
         <div className="copyright-footer">
           © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
         </div>
-      </div>
     </form>
   );
 }
