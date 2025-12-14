@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const adminAuth = require("../middleware/adminAuth");
 
 // SECRET KEY
-const JWT_SECRET = "SUPER_SECRET_KEY"; 
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // ---------------- LOGIN ----------------
 router.post("/login", (req, res) => {
