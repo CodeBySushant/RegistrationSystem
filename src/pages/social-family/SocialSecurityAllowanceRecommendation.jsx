@@ -131,7 +131,7 @@ const SocialSecurityAllowanceRecommendation = () => {
 
       {/* Header */}
       <div className="form-header-section">
-        <div className="header-logo"><img src="/logo.png" alt="Nepal Emblem" /></div>
+        <div className="header-logo"><img src="/nepallogo.svg" alt="Nepal Emblem" /></div>
         <div className="header-text">
           <h1 className="municipality-name">{form.municipality_name}</h1>
           <h2 className="ward-title">{form.ward_title}</h2>

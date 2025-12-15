@@ -80,7 +80,7 @@ export default function GharKayamNewFormat() {
 
         {/* Header */}
         <div className="form-header-section">
-          <div className="header-logo"><img src="/logo.png" alt="Nepal Emblem" /></div>
+          <div className="header-logo"><img src="/nepallogo.svg" alt="Nepal Emblem" /></div>
           <div className="header-text">
             <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
             <h2 className="ward-title">१ नं. वडा कार्यालय</h2>

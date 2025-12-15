@@ -20,7 +20,7 @@ const BusinessRegistrationCertificate = () => {
       <div className="form-header-section">
         <div className="header-logo">
           {/* Replace with your actual logo path */}
-          <img src="/logo.png" alt="Nepal Emblem" />
+          <img src="/nepallogo.svg" alt="Nepal Emblem" />
           <p className="copy-text">प्रतिलिपि □</p>
         </div>
         <div className="header-text">

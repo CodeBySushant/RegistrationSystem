@@ -84,8 +84,8 @@ export default function OrganizationRegistered() {
         <div className="orgreg-letterhead">
           <div className="orgreg-logo">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Emblem_of_Nepal.svg/240px-Emblem_of_Nepal.svg.png"
-              alt="Emblem"
+              src="/nepallogo.svg"
+              alt="Nepal Emblem"
             />
           </div>
           <div className="orgreg-head-text">

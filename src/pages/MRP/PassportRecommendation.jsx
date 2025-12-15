@@ -127,7 +127,7 @@ const PassportRecommendation = () => {
     <div className="passport-rec-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
-          <img src="/logo.png" alt="Logo" className="logo" />
+          <img src="/nepallogo.svg" alt="Logo" className="logo" />
           <h1>नागार्जुन नगरपालिका</h1>
           <h2>१ नं. वडा कार्यालय</h2>
           <h3>नागार्जुन, काठमाडौँ</h3>

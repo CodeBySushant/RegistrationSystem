@@ -118,7 +118,7 @@ const JesthaNagarikSifarisWada = () => {
       {/* --- Header Section --- */}
       <div className="form-header-section">
         <div className="header-logo">
-          <img src="/logo.png" alt="Nepal Emblem" />
+          <img src="/nepallogo.svg" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
           <h1 className="municipality-name">{form.municipality_name}</h1>
