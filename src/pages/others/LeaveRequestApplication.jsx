@@ -127,7 +127,7 @@ const LeaveRequestApplication = ({ employees = [] /* optional list */ }) => {
       </div>
 
       <div className="form-header-section">
-        <div className="header-logo"><img src="/logo.png" alt="logo" /></div>
+        <div className="header-logo"><img src="/nepallogo.svg" alt="logo" /></div>
         <div className="header-text">
           <h1 className="municipality-name red-text">नागार्जुन नगरपालिका</h1>
           <h2 className="ward-title red-text">नगर कार्यपालिकाको कार्यालय</h2>

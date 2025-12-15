@@ -88,8 +88,8 @@ export default function NewOrganizationRegistration() {
         <div className="nor-letterhead">
           <div className="nor-logo">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Emblem_of_Nepal.svg/240px-Emblem_of_Nepal.svg.png"
-              alt="Emblem"
+              src="/nepallogo.svg"
+              alt="Nepal Emblem"
             />
           </div>
 

@@ -11,4 +11,6 @@ export const MUNICIPALITY = {
   englishProvince: "Bagmati Province",
 
   wardNumber: "1",
+
+  logoSrc: "/nepallogo.svg",
 };

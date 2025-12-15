@@ -11,7 +11,7 @@ const ReqforHelpinHealth = () => {
       <div className="form-header-section">
         <div className="header-logo">
           {/* Replace with your actual logo path */}
-          <img src="/logo.png" alt="Nepal Emblem" />
+          <img src="/nepallogo.svg" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
           <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
