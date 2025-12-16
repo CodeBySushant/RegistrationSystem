@@ -7,9 +7,6 @@ import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig.js";
 
 const initialState = {
-  regNo: "",
-  regDate: "",
-  headerTo: "श्री", // prefer MUNICIPALITY Nepali tokens if available
   headerMunicipality: MUNICIPALITY?.name || "",
   headerOffice: MUNICIPALITY?.englishDistrict || "",
   businessName: "",
@@ -153,43 +150,10 @@ const BusinessRegistrationApplicationForm = () => {
           </span>
         </div>
                        {" "}
-        {/* NEW: Combined Top Section for Header and Meta fields */}       {" "}
-        <div className="top-header-section">
-                    {/* 2. Top Meta (Reg No/Date) */}         {" "}
-          <div className="meta-column">
-                       {" "}
-            <div className="form-group-inline">
-                            <label>निवेदन दर्ता नं.:</label>
-                           {" "}
-              <input
-                type="text"
-                name="regNo"
-                value={formData.regNo}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                       {" "}
-            <div className="form-group-inline">
-                            <label>दर्ता मिति:</label>
-                           {" "}
-              <input
-                type="text"
-                name="regDate"
-                value={formData.regDate}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                     {" "}
-          </div>
-                 {" "}
-        </div>
                 {/* Header (श्री... ज्यू) */}       {" "}
         <div className="form-row biz-header">
-                    <span>श्री</span>
-                   {" "}
-          <input
+                    <span>श्री</span>         {" "}
+          <input class = "header-input"
             type="text"
             name="headerTo"
             value={formData.headerTo}
@@ -217,16 +181,14 @@ const BusinessRegistrationApplicationForm = () => {
         <div className="form-section">
                     {/* 1. व्यवसायको पूरा नाम: & Pan */}         {" "}
           <div className="form-group-flex">
-                        <label>१. व्यवसायको पूरा नाम:</label>
-                       {" "}
+                        <label>१. व्यवसायको पूरा नाम:</label>           {" "}
             <input
               type="text"
               name="businessName"
               value={formData.businessName}
               onChange={handleChange}
             />
-                        <label>प्यान:</label>
-                       {" "}
+                        <label>प्यान:</label>           {" "}
             <input
               type="text"
               name="pan"
@@ -237,16 +199,14 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                     {/* Phone & Email */}         {" "}
           <div className="form-group-flex">
-                        <label>फोन नं:</label>
-                       {" "}
+                        <label>फोन नं:</label>           {" "}
             <input
               type="text"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
             />
-                        <label>इमेल:</label>
-                       {" "}
+                        <label>इमेल:</label>           {" "}
             <input
               type="text"
               name="email"
@@ -257,24 +217,21 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                     {/* 2. व्यवसायको ठेगाना: टोल: बाटो: घर नं: */}         {" "}
           <div className="form-group-flex">
-                        <label>२. व्यवसायको ठेगाना: टोल:</label>
-                       {" "}
+                        <label>२. व्यवसायको ठेगाना: टोल:</label>           {" "}
             <input
               type="text"
               name="businessTole"
               value={formData.businessTole}
               onChange={handleChange}
             />
-                        <label>बाटो:</label>
-                       {" "}
+                        <label>बाटो:</label>           {" "}
             <input
               type="text"
               name="businessRoad"
               value={formData.businessRoad}
               onChange={handleChange}
             />
-                        <label>घर नं:</label>
-                       {" "}
+                        <label>घर नं:</label>           {" "}
             <input
               type="text"
               name="businessHouseNo"
@@ -287,8 +244,8 @@ const BusinessRegistrationApplicationForm = () => {
            {" "}
           <div className="form-group-flex full-width-field">
                        {" "}
-            <label>३. व्यवसाय रहेको घरको मुख्य ब्यक्ति/घरधनीको नाम:</label>
-                       {" "}
+            <label>३. व्यवसाय रहेको घरको मुख्य ब्यक्ति/घरधनीको नाम:</label>     
+                 {" "}
             <input
               type="text"
               name="ownerName"
@@ -299,8 +256,7 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                     {/* 4. फर्म दर्ताको प्रकृति: */}         {" "}
           <div className="form-group-flex full-width-field">
-                        <label>४. फर्म दर्ताको प्रकृति:</label>
-                       {" "}
+                        <label>४. फर्म दर्ताको प्रकृति:</label>           {" "}
             <input
               type="text"
               name="regNature"
@@ -313,8 +269,7 @@ const BusinessRegistrationApplicationForm = () => {
           <div className="kinship-row">
                        {" "}
             <div className="form-group-flex">
-                            <label>५. बाबुको नाम:</label>
-                           {" "}
+                            <label>५. बाबुको नाम:</label>             {" "}
               <input
                 type="text"
                 name="fatherName"
@@ -325,8 +280,7 @@ const BusinessRegistrationApplicationForm = () => {
             </div>
                        {" "}
             <div className="form-group-flex">
-                            <label>बाजेको नाम:</label>
-                           {" "}
+                            <label>बाजेको नाम:</label>             {" "}
               <input
                 type="text"
                 name="grandfatherName"
@@ -337,8 +291,7 @@ const BusinessRegistrationApplicationForm = () => {
             </div>
                        {" "}
             <div className="form-group-flex">
-                            <label>पतिको नाम:</label>
-                           {" "}
+                            <label>पतिको नाम:</label>             {" "}
               <input
                 type="text"
                 name="husbandName"
@@ -349,8 +302,7 @@ const BusinessRegistrationApplicationForm = () => {
             </div>
                        {" "}
             <div className="form-group-flex">
-                            <label>सासुको नाम:</label>
-                           {" "}
+                            <label>सासुको नाम:</label>             {" "}
               <input
                 type="text"
                 name="motherInLawName"
@@ -361,8 +313,7 @@ const BusinessRegistrationApplicationForm = () => {
             </div>
                        {" "}
             <div className="form-group-flex">
-                            <label>ससुराको नाम:</label>
-                           {" "}
+                            <label>ससुराको नाम:</label>             {" "}
               <input
                 type="text"
                 name="fatherInLawName"
@@ -375,8 +326,8 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                     {/* 6. Nepali Citizenship Address: */}         {" "}
           <div className="form-group-flex full-width-field">
-                        <label>६. नेपाली नागरिकता अनुसार ठेगाना:</label>
-                       {" "}
+                        <label>६. नेपाली नागरिकता अनुसार ठेगाना:</label>       
+               {" "}
             <input
               type="text"
               name="citizenAddress"
@@ -387,8 +338,7 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                     {/* 7. व्यवसायको किसिम: */}         {" "}
           <div className="form-group-flex full-width-field">
-                        <label>७. व्यवसायको किसिम:</label>
-                       {" "}
+                        <label>७. व्यवसायको किसिम:</label>           {" "}
             <input
               type="text"
               name="businessType"
@@ -403,16 +353,15 @@ const BusinessRegistrationApplicationForm = () => {
           <div className="prop-family-row">
                         {/* 8. Father Name & Address */}           {" "}
             <div className="form-group-flex">
-                            <label>८. प्रोप्राइटरको बाबुको नाम:</label>
-                           {" "}
+                            <label>८. प्रोप्राइटरको बाबुको नाम:</label>         
+                 {" "}
               <input
                 type="text"
                 name="propFatherName"
                 value={formData.propFatherName}
                 onChange={handleChange}
               />
-                            <label>ठेगाना:</label>
-                           {" "}
+                            <label>ठेगाना:</label>             {" "}
               <input
                 type="text"
                 name="propFatherAddress"
@@ -423,16 +372,15 @@ const BusinessRegistrationApplicationForm = () => {
             </div>
                         {/* 9. Grandfather Name & Address */}           {" "}
             <div className="form-group-flex">
-                            <label>९. प्रोप्राइटरको बाजेको नाम:</label>
-                           {" "}
+                            <label>९. प्रोप्राइटरको बाजेको नाम:</label>         
+                 {" "}
               <input
                 type="text"
                 name="propGrandfatherName"
                 value={formData.propGrandfatherName}
                 onChange={handleChange}
               />
-                            <label>ठेगाना:</label>
-                           {" "}
+                            <label>ठेगाना:</label>             {" "}
               <input
                 type="text"
                 name="propGrandfatherAddress"
@@ -448,16 +396,15 @@ const BusinessRegistrationApplicationForm = () => {
                         {/* 10. Wife Name & Address */}           {" "}
             <div className="form-group-flex">
                            {" "}
-              <label>१०. प्रोप्राइटरको विवाहित भएमा पत्नीको नाम:</label>
-                           {" "}
+              <label>१०. प्रोप्राइटरको विवाहित भएमा पत्नीको नाम:</label>       
+                   {" "}
               <input
                 type="text"
                 name="propWifeName"
                 value={formData.propWifeName}
                 onChange={handleChange}
               />
-                            <label>ठेगाना:</label>
-                           {" "}
+                            <label>ठेगाना:</label>             {" "}
               <input
                 type="text"
                 name="propWifeAddress"
@@ -580,8 +527,7 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                    {" "}
           <div className="form-group-column signature-field">
-                        <label>निवेदकको दस्तखत:</label>
-                       {" "}
+                        <label>निवेदकको दस्तखत:</label>           {" "}
             <input
               type="text"
               name="applicantSignature"
@@ -596,8 +542,7 @@ const BusinessRegistrationApplicationForm = () => {
         <div className="signature-name-field">
                    {" "}
           <div className="form-group-flex">
-                        <label>नाम:</label>
-                       {" "}
+                        <label>नाम:</label>           {" "}
             <input
               type="text"
               name="applicantNameSignature"
@@ -747,8 +692,7 @@ const BusinessRegistrationApplicationForm = () => {
         <div className="applicant-details">
                     <h3>निवेदकको विवरण</h3>         {" "}
           <div className="form-group-flex">
-                        <label>निवेदकको नाम *</label>
-                       {" "}
+                        <label>निवेदकको नाम *</label>           {" "}
             <input
               type="text"
               name="applicantName"
@@ -760,8 +704,7 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                    {" "}
           <div className="form-group-flex">
-                        <label>निवेदकको ठेगाना *</label>
-                       {" "}
+                        <label>निवेदकको ठेगाना *</label>           {" "}
             <input
               type="text"
               name="applicantAddress"
@@ -773,8 +716,7 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                    {" "}
           <div className="form-group-flex">
-                        <label>निवेदकको नागरिकता नं *</label>
-                       {" "}
+                        <label>निवेदकको नागरिकता नं *</label>           {" "}
             <input
               type="text"
               name="applicantCitizenship"
@@ -786,8 +728,7 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                    {" "}
           <div className="form-group-flex">
-                        <label>निवेदकको फोन नं *</label>
-                       {" "}
+                        <label>निवेदकको फोन नं *</label>           {" "}
             <input
               type="text"
               name="applicantPhone"

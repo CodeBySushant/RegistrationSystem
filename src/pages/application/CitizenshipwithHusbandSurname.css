@@ -6,8 +6,11 @@
   padding: 25px;
   border: 1px solid #ddd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif; /* Using a common font for Nepali */
-  background-color: #fdfaf5; /* A slight parchment color */
+  font-family: "Arial", sans-serif; /* Using a common font for Nepali */
+  background-image: url("/papertexture1.jpg");
+  background-repeat: repeat;
+  background-size: auto;
+  background-position: top left;
   box-sizing: border-box;
 }
 
@@ -41,34 +44,34 @@
 
 /* Header "To" Section */
 .header-to-group {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 .header-to-group h3 {
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
 }
 .header-to-group input {
-    font-family: inherit;
-    font-size: 16px;
-    padding: 4px 6px;
-    margin-bottom: 8px;
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    width: 250px;
-    max-width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  padding: 4px 6px;
+  margin-bottom: 8px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  width: 250px;
+  max-width: 100%;
 }
 
 /* Date group */
 .date-group {
-    font-weight: bold;
+  font-weight: bold;
 }
 .date-group input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
 }
 
 /* Subject Line */
@@ -104,7 +107,7 @@
   min-width: 80px;
 }
 .certificate-body .short-input {
-    width: 80px;
+  width: 80px;
 }
 
 /* Left-aligned Signature Section */
@@ -158,4 +161,6 @@
   font-size: 16px;
   font-weight: bold;
 }
-.submit-btn:hover { background-color: #23272b; }
+.submit-btn:hover {
+  background-color: #23272b;
+}
