@@ -3,7 +3,10 @@
   max-width: 900px;
   margin: 20px auto;
   padding: 30px 50px;
-  background-color: #fff; /* White background as seen in the image */
+  background-image: url("/papertexture1.jpg");
+  background-repeat: repeat;
+  background-size: auto;
+  background-position: top left;
   font-family: 'Kalimati', 'Kokila', sans-serif; /* Use a Nepali font */
   color: #000;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
