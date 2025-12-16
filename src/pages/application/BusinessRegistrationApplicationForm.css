@@ -1,180 +1,293 @@
-/* Basic container styling */
+/* src/pages/application/BusinessRegistrationApplicationForm.css */
+
+/* --- Overall Container and Base Styles --- */
 .business-reg-container {
-  width: 90%;
-  max-width: 1000px;
-  margin: 20px auto;
-  padding: 25px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif; /* Nepali fonts often look better in sans-serif */
-  background-color: #fdfaf5;
-  box-sizing: border-box;
+    width: 90%;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    background-color: #ffffff; /* White background */
+    box-sizing: border-box;
+    font-size: 14px; 
+    line-height: 1.5; 
 }
 
-/* Top row for reg no/date */
-.top-meta-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+/* Print Specific Styles */
+@media print {
+    .business-reg-container {
+        border: none;
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: none;
+    }
+    .submit-area, .applicant-details {
+        display: none; 
+    }
+    input[type="text"], textarea {
+        border: none !important;
+        border-bottom: 1px dotted #000 !important;
+        padding: 0;
+        margin: 0;
+        height: auto;
+    }
+    .proprietor-table input {
+        border: none !important;
+    }
+    .thumb-area {
+        border: 1px solid #000 !important;
+    }
+    .proprietor-table .add-btn {
+        display: none;
+    }
 }
-.form-group-inline {
-    display: flex;
-    align-items: baseline;
-}
-.form-group-inline label {
-    font-weight: bold;
-    margin-right: 8px;
-}
-.form-group-inline input {
-    width: 150px;
+
+
+/* --- Input Field Styling (Dotted underline effect) --- */
+input[type="text"] {
     border: none;
     border-bottom: 1px dotted #000;
     background: transparent;
+    padding: 0 2px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 20px;
+}
+textarea {
+    border: 1px dotted #000 !important;
+    min-height: 40px;
+    padding: 5px;
+    background-color: transparent;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
 }
 
+/* General Row Layout */
+.form-row {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 10px;
+}
 
-/* Header */
+/* --- FIX: Combined Top Header Section (Logo + Reg/Date) --- */
+.top-header-section {
+    display: flex;
+    justify-content: space-between; 
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+.header-column {
+    flex-grow: 1;
+    max-width: 65%; /* Allocate space for the MunicipalityHeader */
+}
+.meta-column {
+    flex-shrink: 0;
+    width: 35%; /* Allocate space for the meta fields */
+    padding-top: 5px;
+}
+
+/* --- Top Meta (Reg No/Date) - Now uses form-group-inline --- */
+.form-group-inline {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 5px;
+    justify-content: flex-end; 
+}
+.form-group-inline label {
+    font-weight: normal;
+    margin-right: 5px;
+    white-space: nowrap;
+}
+.form-group-inline input {
+    width: 120px;
+}
+
+/* --- Header (श्री... ज्यू) --- */
 .biz-header {
     justify-content: flex-start;
     align-items: baseline;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: normal;
+    margin-top: 15px;
+    margin-bottom: 20px;
 }
 .biz-header input {
-    width: 200px;
-    margin: 0 10px;
-    border: none;
+    width: 300px;
+    margin: 0 5px;
+    font-size: 16px;
+    font-weight: bold;
     border-bottom: 1px dotted #000;
-    background: transparent;
+}
+
+
+/* --- Subject Line and Body --- */
+.subject-line {
+    text-align: center;
+    margin: 10px 0 20px;
     font-size: 16px;
     font-weight: bold;
 }
-
-/* Subject Line */
-.subject-line {
-  text-align: center;
-  margin: 25px 0;
-  font-size: 16px;
-}
-
-/* Main Certificate Body Styling */
 .certificate-body {
-  line-height: 2;
-  font-size: 16px;
-  text-align: justify;
-  margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: 14px;
+    text-align: justify;
+    margin-bottom: 15px;
+    text-indent: 40px; 
 }
 
-/* Form Section Grid */
+
+/* --- Main Form Fields (1 to 10) --- */
 .form-section {
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
+/* Flexible row for multiple fields */
+.form-group-flex {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 10px;
+    flex-wrap: wrap; 
 }
-
-/* General inputs in grid */
-.form-group-column {
-  display: flex;
-  flex-direction: column;
+.form-group-flex label {
+    font-weight: normal;
+    margin-right: 5px;
+    white-space: nowrap;
 }
-.form-group-column.full-width {
-    grid-column: 1 / -1; /* Makes element span full width */
-}
-.form-group-column label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-.form-group-column input[type="text"],
-.form-group-column textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  box-sizing: border-box;
-  font-family: inherit;
-  font-size: 14px;
-}
-.form-group-column textarea {
-    resize: vertical;
+.form-group-flex input {
+    flex-grow: 1;
+    margin-right: 15px;
+    min-width: 100px;
 }
 
-/* Proprietor Table */
+/* Specific styling for the row with 5 kinship fields (5) */
+.kinship-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.kinship-row .form-group-flex {
+    flex: 1 1 150px;
+    margin-right: 15px;
+}
+.kinship-row .form-group-flex:last-child {
+    margin-right: 0;
+}
+
+/* Full-width fields (3, 4, 6, 7) */
+.full-width-field {
+    margin-bottom: 10px;
+}
+.full-width-field input {
+    width: 100%;
+    flex-grow: 1;
+}
+
+/* Proprietor Family Details (8, 9, 10) - Grouping with address */
+.prop-family-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.prop-family-row .form-group-flex {
+    flex: 1 1 45%; 
+    margin-right: 20px;
+}
+.prop-family-row .form-group-flex:nth-child(even) {
+    margin-right: 0;
+}
+
+
+/* --- Proprietor Table --- */
 .table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  margin: 20px 0;
+    margin: 10px 0 20px;
 }
 .proprietor-table {
-  width: 100%;
-  min-width: 600px;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
 }
 .proprietor-table th,
 .proprietor-table td {
-  border: 1px solid #000;
-  padding: 8px;
-  text-align: left;
-  vertical-align: middle;
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: center;
+    vertical-align: top;
 }
 .proprietor-table th {
-  background-color: #f0f0f0;
-  font-weight: bold;
+    background-color: #fff; 
+    font-weight: bold;
 }
 .proprietor-table input {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  padding: 6px;
+    border: none;
+    border-bottom: 1px dotted #000;
+    padding: 0;
+    height: 20px;
+    min-width: 80px;
+}
+.proprietor-table td:last-child {
+    width: 40px;
 }
 .add-btn {
-  width: 30px;
-  height: 30px;
-  font-size: 20px;
-  font-weight: bold;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
+    width: 25px;
+    height: 25px;
+    font-size: 18px;
+    margin: 0 auto;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
 }
-.add-btn:hover { background-color: #0056b3; }
 
-/* Kabuliyatnama (Agreement) Section */
+/* --- Remarks (कैफियत) --- */
+.remarks-section {
+    margin-bottom: 20px;
+}
+.remarks-section label {
+    font-weight: normal;
+    display: block;
+    margin-bottom: 5px;
+}
+
+
+/* --- Kabuliyatnama (Agreement) Section --- */
 .kabuliyatnama {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    margin-top: 10px;
+    padding: 10px 15px;
+    border: 1px solid #000;
+    border-radius: 0;
 }
 .kabuliyatnama legend {
     font-weight: bold;
-    font-size: 16px;
-    padding: 0 10px;
+    font-size: 14px;
+    padding: 0 5px;
+    margin-left: 20px;
 }
 .kabuliyatnama p {
-    line-height: 1.8;
+    line-height: 1.6;
     font-size: 14px;
     margin: 0;
+    text-align: justify;
 }
 
-/* Applicant Signature and Thumbprints */
+/* --- Applicant Signature and Thumbprints --- */
 .applicant-signature-section {
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
-    gap: 20px;
-    margin-top: 30px;
+    gap: 15px;
+    margin-top: 20px;
 }
 .thumb-box {
+    margin-left: 40px; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -185,87 +298,109 @@
     margin-bottom: 5px;
 }
 .thumb-area {
-    width: 60px;
-    height: 80px;
+    width: 70px; 
+    height: 90px;
     border: 1px solid #000;
-    background: #f9f9f9;
+    background: #fff;
 }
+
 .signature-field {
-    width: 250px;
+    width: 200px; 
 }
-.signature-field input, .signature-name-field input {
-    background: transparent;
+.signature-field input {
     border: none;
-    border-radius: 0;
     border-bottom: 1px dotted #000;
 }
+
 .signature-name-field {
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 30px;
 }
-.signature-name-field .form-group-column {
-    width: 250px;
+.signature-name-field .form-group-flex {
+    width: 200px;
+    margin-right: 0;
 }
 
 
-/* Tippadi and Approver Sections */
+/* --- Tippani (टिप्पणी), Approver, and Voucher Sections --- */
 .tippadi-section, .approver-section, .voucher-section {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    margin-top: 15px;
+    padding: 10px 15px;
+    border: 1px solid #000;
+    border-radius: 0;
 }
 .tippadi-section legend, .approver-section legend, .voucher-section legend {
     font-weight: bold;
-    font-size: 16px;
-    padding: 0 10px;
+    font-size: 14px;
+    padding: 0 5px;
+    margin-left: 10px;
 }
 .tippadi-section p {
     font-style: italic;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
+
 .tippadi-grid, .approver-grid, .voucher-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 15px;
 }
-.tippadi-section input, .approver-section input, .voucher-section input {
-    background: transparent;
+.tippadi-grid .form-group-flex, .approver-grid .form-group-flex, .voucher-grid .form-group-flex {
+    flex: 1 1 150px;
+    margin-right: 0;
+}
+.tippadi-grid input, .approver-grid input, .voucher-grid input {
+    width: 100%;
     border: none;
-    border-radius: 0;
     border-bottom: 1px dotted #000;
 }
 
 
-/* Applicant Details */
+/* --- Applicant Details (For backend data submission) --- */
 .applicant-details {
-  border-top: 1px dashed #ccc;
-  margin-top: 25px;
-  padding-top: 15px;
+    border-top: 1px dashed #000; 
+    margin-top: 20px;
+    padding-top: 15px;
 }
 .applicant-details h3 { 
     margin-bottom: 15px; 
-    font-size: 18px;
+    font-size: 16px;
 }
-.applicant-details .form-group-column input {
-  width: 350px;
-  max-width: 100%;
+/* Use form-group-column layout for better structure here, but rely on flex for styling */
+.applicant-details .form-group-flex {
+    display: block; /* Stack fields vertically */
+    margin-bottom: 10px;
+    width: 50%;
+    max-width: 400px;
+}
+.applicant-details label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 3px;
+}
+.applicant-details input {
+    width: 100%;
+    border: 1px solid #ccc; /* Solid border for backend fields */
+    border-radius: 4px;
+    padding: 5px;
 }
 
-/* Submit Button */
+
+/* --- Submit Button (Only visible on screen) --- */
 .submit-area {
-  text-align: center;
-  margin-top: 30px;
+    text-align: center;
+    margin-top: 30px;
 }
 .submit-btn {
-  background-color: #343a40;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
+    background-color: #343a40;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
 }
 .submit-btn:hover { background-color: #23272b; }
