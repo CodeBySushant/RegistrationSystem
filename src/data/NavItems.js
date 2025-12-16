@@ -137,7 +137,7 @@ export const NAV_ITEMS = [
         id: 'animal-husbandry',
         label: 'पशुपालन',
         icon: Plus,
-        children: ['गाई / भैंसी सुक्खेरी पोषण भत्ता', 'पशु बिमा पाउँ']
+        children: ['गाई / भैंसी सुत्केरी पोषण भत्ता', 'पशु बिमा पाउँ']
     },
     {
         id: 'identity-card',
