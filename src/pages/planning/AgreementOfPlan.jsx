@@ -146,7 +146,7 @@ export default function AgreementOfPlan() {
             <input
               type="text"
               className="addressee-row long-box"
-              defaultValue="नगरकार्यपालिकाको कार्यालय"
+              defaultValue="नगर कार्यपालिकाको कार्यालय"
             />
           </span>
         </div>
