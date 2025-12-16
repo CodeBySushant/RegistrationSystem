@@ -823,7 +823,7 @@ const Layout = () => {
         return <LeaveRequestApplication setActiveLink={setActiveLink} />;
 
       // pages/animal-husbandry
-      case "गाई / भैंसी सुक्खेरी पोषण भत्ता":
+      case "गाई / भैंसी सुत्केरी पोषण भत्ता":
         return (
           <DomesticAnimalMaternityNutritionAllowance
             setActiveLink={setActiveLink}
