@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './DailyWorkPerformanceList.css';
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 
-const DailyWorkPerformanceList = () => {
+const DailyWorkPerformanceList = ({ setActiveLink }) => {
   const [data, setData] = useState([]);
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
@@ -111,7 +111,7 @@ const DailyWorkPerformanceList = () => {
     <div className="daily-work-container">
       <div className="top-bar-header">
         <h1>दैनिक कार्य सम्पादनका सूचीहरू ।</h1>
-        <button className="back-button" onClick={() => window.history.back()}>← Back</button>
+        <button className="back-button" onClick={() => setActiveLink("गृहपृष्ठ")}>← Back</button>
       </div>
 
       <div className="actions-bar">
