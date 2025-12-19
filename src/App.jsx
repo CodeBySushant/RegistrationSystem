@@ -962,12 +962,12 @@ const Layout = () => {
               onChange={(e) => handleSearch(e.target.value)}
               className="
       w-full
-      bg-gray-800
-      text-white
+      !bg-gray-800
       !text-white
       caret-white
       placeholder-gray-400
-      focus:placeholder-opacity-0
+      placeholder-opacity-100
+      placeholder-shown:opacity-100
       border
       border-gray-600
       rounded-lg
@@ -979,7 +979,6 @@ const Layout = () => {
       focus:border-blue-500
       focus:ring-2
       focus:ring-blue-500/30
-      transition
     "
             />
           </div>
