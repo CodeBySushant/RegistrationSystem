@@ -940,19 +940,20 @@ const Layout = () => {
       >
         <div className="p-4">
           <div className="relative w-full">
-            {/* Search Icon */}
-            <Search
-              className="
-      absolute
-      left-3
-      top-1/2
-      -translate-y-1/2
-      w-5
-      h-5
-      text-gray-400
-      pointer-events-none
-    "
-            />
+            {!searchTerm && (
+              <Search
+                className="
+        absolute
+        left-3
+        top-1/2
+        -translate-y-1/2
+        w-5
+        h-5
+        text-gray-300
+        pointer-events-none
+      "
+              />
+            )}
 
             {/* Search Input */}
             <input
