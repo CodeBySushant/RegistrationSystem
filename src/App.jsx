@@ -957,7 +957,7 @@ const Layout = () => {
             {/* Search Input */}
             <input
               type="text"
-              placeholder="मेनु खोज्नुहोस्..."
+              placeholder="      मेनु खोज्नुहोस्..."
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
               className="
@@ -969,12 +969,13 @@ const Layout = () => {
       placeholder-opacity-100
       placeholder-shown:opacity-100
       border
-      border-gray-600
+      border-white/40
       rounded-lg
       py-2
       pl-11
       pr-3
       text-sm
+      shadow-[0_0_0_1px_rgba(255,255,255,0.15)]
       focus:outline-none
       focus:border-blue-500
       focus:ring-2
