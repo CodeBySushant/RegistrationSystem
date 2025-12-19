@@ -939,14 +939,48 @@ const Layout = () => {
         } z-40 flex flex-col`}
       >
         <div className="p-4">
-          <div className="search-container">
-            <Search className="search-icon" />
+          <div className="relative w-full">
+            {/* Search Icon */}
+            <Search
+              className="
+      absolute
+      left-3
+      top-1/2
+      -translate-y-1/2
+      w-5
+      h-5
+      text-gray-400
+      pointer-events-none
+    "
+            />
+
+            {/* Search Input */}
             <input
               type="text"
               placeholder="मेनु खोज्नुहोस्..."
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
-              className="search-input hover:border-blue-500"
+              className="
+      w-full
+      bg-gray-800
+      text-white
+      !text-white
+      caret-white
+      placeholder-gray-400
+      focus:placeholder-opacity-0
+      border
+      border-gray-600
+      rounded-lg
+      py-2
+      pl-11
+      pr-3
+      text-sm
+      focus:outline-none
+      focus:border-blue-500
+      focus:ring-2
+      focus:ring-blue-500/30
+      transition
+    "
             />
           </div>
         </div>
