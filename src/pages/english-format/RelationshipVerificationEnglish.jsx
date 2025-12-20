@@ -11,6 +11,8 @@ const RelationshipVerification = () => {
     mainPersonTitle: "Mr.",
     mainPersonName: "",
     relation: "grandson",
+    grandTitle: "Mr.",
+    grandsName: "",
     fatherTitle: "Mr.",
     fatherName: "",
     motherRelation: "son",
@@ -199,7 +201,6 @@ const RelationshipVerification = () => {
             <option>granddaughter</option>
             <option>daughter-in-law</option>
             <option>granddaughter-in-law</option>
-            <option>granddaughter-in-law</option>
             <option>grandson-in-law</option>
             <option>son-in-law</option>
             <option>wife</option>
@@ -335,7 +336,10 @@ const RelationshipVerification = () => {
             value={formData.prevCountry}
             onChange={handleChange}
           />{" "}
-          ). This certificate is issued according to Section 12, , Sub-Section 2 (E) (1) of Local Government Operation Act 2074 B.S. (2017 A.D.) As per the application proceeded in this office following members are the relatives of the applicant as mentioned below.
+          ). This certificate is issued according to Section 12, , Sub-Section 2
+          (E) (1) of Local Government Operation Act 2074 B.S. (2017 A.D.) As per
+          the application proceeded in this office following members are the
+          relatives of the applicant as mentioned below.
         </p>
 
         {/* relatives table */}
@@ -421,7 +425,7 @@ const RelationshipVerification = () => {
             <option value="">Select Designation</option>
             <option value="Ward-Chairperson">Ward Chairperson</option>
             <option value="Ward-Secretary">Ward Secretary</option>
-            <option value="Ward-Secretary">Act. Ward Chairperson</option>
+            <option value="Acting-Ward-Secretary">Act. Ward Chairperson</option>
           </select>
         </div>
 
