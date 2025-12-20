@@ -18,6 +18,7 @@ const initialState = {
 
   municipality_name: MUNICIPALITY.name,
   ward_no: MUNICIPALITY.wardNumber,
+  municipality_city: MUNICIPALITY.city,
 
   // paragraph inline fields
   resident_name_in_paragraph: "",
@@ -78,6 +79,13 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
     }
   };
 
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  };
+
   return (
     <form className="insurance-claim-container" onSubmit={handleSubmit}>
       {/* --- Top Bar --- */}
@@ -93,7 +101,9 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
         </div>
         <div className="header-text">
           <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
-          <h2 className="ward-title">{MUNICIPALITY.wardNumber} नं. वडा कार्यालय</h2>
+          <h2 className="ward-title">
+            {MUNICIPALITY.wardNumber} नं. वडा कार्यालय
+          </h2>
           <p className="address-text">{MUNICIPALITY.officeLine}</p>
           <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
@@ -120,7 +130,7 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
           <p>
             मिति : <span className="bold-text">२०८२-०८-०६</span>
           </p>
-          <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
+          <p>ने.सं - 1146 पोहेलाथ्व, 1 आइतबार</p>
         </div>
       </div>
 
@@ -135,41 +145,46 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
       <div className="addressee-section">
         <div className="addressee-row">
           <span>श्री</span>
-          <input
-            name="addressee_line1"
-            type="text"
-            className="line-input medium-input"
-            required
-            value={form.addressee_line1}
-            onChange={handleChange}
-          />
+          <div className="addressee-row">
+            <div className="inline-input-wrapper">
+              <span className="input-required-star">*</span>
+              <input
+                name="applicant_name"
+                type="text"
+                className="inline-box-input medium-box"
+                value={form.applicant_name}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
         </div>
         <div className="addressee-row">
-          <input
-            name="addressee_line2"
-            type="text"
-            className="line-input medium-input"
-            required
-            value={form.addressee_line2}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="addressee_line2"
+              type="text"
+              className="inline-box-input medium-input"
+              required
+              value={form.addressee_line2}
+              onChange={handleChange}
+            />
+          </div>
           <span>,</span>
-          <input
-            name="addressee_line3"
-            type="text"
-            className="line-input medium-input"
-            required
-            value={form.addressee_line3}
-            onChange={handleChange}
-          />
-          <span>।</span>
         </div>
       </div>
 
       {/* --- Main Body --- */}
       <div className="form-body">
         <p className="body-paragraph">
-          प्रस्तुत विषयमा जिल्ला काठमाडौँ
+          प्रस्तुत विषयमा जिल्ला
+          <input
+            name="municipality_city"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.municipality_city}
+            onChange={handleChange}
+          />
           <input
             name="municipality_name"
             type="text"
@@ -185,15 +200,18 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             value={form.ward_no}
             onChange={handleChange}
           />
-          गा बसोबास गर्ने श्री
-          <input
-            name="resident_name_in_paragraph"
-            type="text"
-            className="inline-box-input long-box"
-            required
-            value={form.resident_name_in_paragraph}
-            onChange={handleChange}
-          />
+          मा बसोवास गर्ने श्री
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="resident_name_in_paragraph"
+              type="text"
+              className="inline-box-input long-box"
+              required
+              value={form.resident_name_in_paragraph}
+              onChange={handleChange}
+            />
+          </div>
           ले यस पशु सेवा शाखामा पेश गरेको निवेदन, वडा
           <select
             name="local_select_type"
@@ -205,59 +223,77 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             <option value="वडा">वडा</option>
           </select>
           तथा पशु
-          <input
-            name="animal_type"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-            value={form.animal_type}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="animal_type"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+              value={form.animal_type}
+              onChange={handleChange}
+            />
+          </div>
           श्री
-          <input
-            name="animal_inspected_by"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-            value={form.animal_inspected_by}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="animal_inspected_by"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+              value={form.animal_inspected_by}
+              onChange={handleChange}
+            />
+          </div>
           को जाँच प्रतिवेदन अनुसार बिगा लेख
-          <input
-            name="damaged_area_description"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-            value={form.damaged_area_description}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="damaged_area_description"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+              value={form.damaged_area_description}
+              onChange={handleChange}
+            />
+          </div>
           भएको ट्याग नं.
-          <input
-            name="tag_number"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-            value={form.tag_number}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="tag_number"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+              value={form.tag_number}
+              onChange={handleChange}
+            />
+          </div>
           को
-          <input
-            name="tag_subtype"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-            value={form.tag_subtype}
-            onChange={handleChange}
-          />{" "}
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="tag_subtype"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+              value={form.tag_subtype}
+              onChange={handleChange}
+            />{" "}
+          </div>
           रङको
-          <input
-            name="animal_color"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-            value={form.animal_color}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="animal_color"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+              value={form.animal_color}
+              onChange={handleChange}
+            />
+          </div>
           मिति
           <input
             name="death_date"
@@ -267,14 +303,17 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             onChange={handleChange}
           />
           गतेका दिन
-          <input
-            name="report_brief"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-            value={form.report_brief}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="report_brief"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+              value={form.report_brief}
+              onChange={handleChange}
+            />
+          </div>
           रोग लागि उपचारको क्रममा मृत्यु भएको व्यहोरा प्रमाणित साथ आवश्यक
           कारवाहिको लागि सिफारिस गरि पठाइएको व्यहोरा अनुरोध छ।
         </p>
@@ -284,14 +323,17 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
       <div className="signature-section">
         <div className="signature-block">
           <div className="signature-line"></div>
-          <input
-            name="signer_name"
-            type="text"
-            className="line-input full-width-input"
-            required
-            value={form.signer_name}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="signer_name"
+              type="text"
+              className="line-input full-width-input"
+              required
+              value={form.signer_name}
+              onChange={handleChange}
+            />
+          </div>
           <select
             name="signer_designation"
             className="designation-select"
@@ -311,7 +353,9 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
         <h3>निवेदकको विवरण</h3>
         <div className="details-grid">
           <div className="detail-group">
-            <label>निवेदकको नाम</label>
+            <label>
+              निवेदकको नाम<span className="required">*</span>
+            </label>
             <input
               name="applicant_name"
               type="text"
@@ -321,7 +365,9 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
+            <label>
+              निवेदकको ठेगाना<span className="required">*</span>
+            </label>
             <input
               name="applicant_address"
               type="text"
@@ -331,7 +377,9 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
+            <label>
+              निवेदकको नागरिकता नं.<span className="required">*</span>
+            </label>
             <input
               name="applicant_citizenship_no"
               type="text"
@@ -341,7 +389,9 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
+            <label>
+              निवेदकको फोन नं.<span className="required">*</span>
+            </label>
             <input
               name="applicant_phone"
               type="text"
@@ -355,7 +405,7 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button className="save-print-btn" type="submit" disabled={loading}>
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
           {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
