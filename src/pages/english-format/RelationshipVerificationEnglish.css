@@ -82,7 +82,8 @@ select {
 .certificate-body {
   line-height: 2.5;
   font-size: 16px;
-  text-align: justify;
+  text-align: left;
+  text-justify: inter-word;  
 }
 .certificate-body input[type="text"] {
   width: 150px; /* Default width for inline inputs */
@@ -175,4 +176,32 @@ select {
 }
 .submit-btn:hover {
   background-color: #218838;
+}
+
+/* ================= PRINT STYLES ================= */
+@media print {
+  body * {
+    visibility: hidden;   /* hide everything */
+  }
+
+  .verification-container,
+  .verification-container * {
+    visibility: visible;  /* show only form */
+  }
+
+  .verification-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: white;   /* cleaner print */
+  }
+
+  .submit-area {
+    display: none;       /* hide Save & Print button */
+  }
 }
