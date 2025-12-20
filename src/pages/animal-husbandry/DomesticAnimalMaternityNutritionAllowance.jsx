@@ -6,16 +6,31 @@ import "./DomesticAnimalMaternityNutritionAllowance.css";
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 
+const toNepaliDigits = (str) => {
+  const map = {
+    0: "०",
+    1: "१",
+    2: "२",
+    3: "३",
+    4: "४",
+    5: "५",
+    6: "६",
+    7: "७",
+    8: "८",
+    9: "९",
+  };
+  return str.replace(/[0-9]/g, (d) => map[d]);
+};
+
 const initialState = {
   chalan_no: "",
   subject: "गाई / भैंसी सुत्केरी पोषण भत्ता उपलब्ध गरिदिने बारे ।",
-  issue_date: "",
+  issue_date: "2025-01-09",
 
-  addressee_line1: "पशु सेवा शाखा",
-  addressee_line2: MUNICIPALITY.name,
-
-  district: MUNICIPALITY.district, 
-  municipality_name: MUNICIPALITY.name,
+  district: MUNICIPALITY.district,
+  municipality_name_header: MUNICIPALITY.name,
+  municipality_name_body: MUNICIPALITY.name,
+  municipality_city: MUNICIPALITY.city,
   ward_no: MUNICIPALITY.wardNumber,
 
   resident_name: "",
@@ -81,6 +96,13 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
     }
   };
 
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  };
+
   return (
     <form className="animal-allowance-container" onSubmit={handleSubmit}>
       {/* --- Top Bar --- */}
@@ -98,7 +120,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         </div>
         <div className="header-text">
           <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
-          <h2 className="ward-title">{MUNICIPALITY.wardNumber} नं. वडा कार्यालय</h2>
+          <h2 className="ward-title">
+            {MUNICIPALITY.wardNumber} नं. वडा कार्यालय
+          </h2>
           <p className="address-text">{MUNICIPALITY.officeLine}</p>
           <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
@@ -125,14 +149,12 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
           <p>
             मिति :
             <input
-              name="issue_date"
-              type="date"
+              readOnly
               className="dotted-input small-input"
-              value={form.issue_date || ""}
-              onChange={handleChange}
+              value={toNepaliDigits(form.issue_date || "")}
             />
           </p>
-          <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
+          <p>ने.सं - 1146 थिंलागा, 30 शनिबार</p>
         </div>
       </div>
 
@@ -146,22 +168,14 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
       {/* --- Addressee Section --- */}
       <div className="addressee-section">
         <div className="addressee-row">
-          <span>श्री</span>
-          <input
-            name="addressee_line1"
-            type="text"
-            className="line-input medium-input"
-            value={form.addressee_line1}
-            onChange={handleChange}
-          />
-          <span>,</span>
+          <span>श्री पशु सेवा शाखा,</span>
         </div>
         <div className="addressee-row">
           <input
-            name="addressee_line2"
+            name="municipality_name_header"
             type="text"
-            className="line-input medium-input"
-            value={form.addressee_line2}
+            className="inline-box-input medium-box"
+            value={form.municipality_name_header}
             onChange={handleChange}
           />
           <span>।</span>
@@ -175,17 +189,17 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
           भत्ता, ब्याडको बोका व्यवस्थापन र भ्याक्सिनेसन कार्यक्रम कार्यान्वयन
           विधि, २०७४" अनुसार जिल्ला
           <input
-            name="district"
+            name="municipality_city"
             type="text"
             className="inline-box-input medium-box"
-            value={form.district}
+            value={form.municipality_city}
             onChange={handleChange}
           />
           <input
-            name="municipality_name"
+            name="municipality_name_body"
             type="text"
             className="inline-box-input medium-box"
-            value={form.municipality_name}
+            value={form.municipality_name_body}
             onChange={handleChange}
           />
           वडा नं.
@@ -197,23 +211,29 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
             onChange={handleChange}
           />
           बस्ने
-          <input
-            name="resident_name"
-            type="text"
-            className="inline-box-input long-box"
-            required
-            value={form.resident_name}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="resident_name"
+              type="text"
+              className="inline-box-input long-box"
+              required
+              value={form.resident_name}
+              onChange={handleChange}
+            />
+          </div>
           को निजकै घरमा विगत
-          <input
-            name="duration_value"
-            type="text"
-            className="inline-box-input tiny-box"
-            required
-            value={form.duration_value}
-            onChange={handleChange}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="duration_value"
+              type="text"
+              className="inline-box-input tiny-box"
+              required
+              value={form.duration_value}
+              onChange={handleChange}
+            />
+          </div>
           <select
             name="duration_unit"
             className="inline-select"
@@ -267,7 +287,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         <h3>निवेदकको विवरण</h3>
         <div className="details-grid">
           <div className="detail-group">
-            <label>निवेदकको नाम</label>
+            <label>
+              निवेदकको नाम<span className="required">*</span>
+            </label>
             <input
               name="applicant_name"
               type="text"
@@ -277,7 +299,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
+            <label>
+              निवेदकको ठेगाना<span className="required">*</span>
+            </label>
             <input
               name="applicant_address"
               type="text"
@@ -287,7 +311,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
+            <label>
+              निवेदकको नागरिकता नं.<span className="required">*</span>
+            </label>
             <input
               name="applicant_citizenship_no"
               type="text"
@@ -297,7 +323,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
+            <label>
+              निवेदकको फोन नं.<span className="required">*</span>
+            </label>
             <input
               name="applicant_phone"
               type="text"
@@ -311,7 +339,7 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button className="save-print-btn" type="submit" disabled={loading}>
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
           {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
