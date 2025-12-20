@@ -16,7 +16,6 @@ const RelationshipVerification = () => {
     motherRelation: "son",
     motherTitle: "Mrs.",
     motherName: "",
-    mrsName: "",
     residencyType: "Permanent",
     municipality: MUNICIPALITY.englishMunicipality,
     wardNo1: MUNICIPALITY.wardNumber.toString(),
@@ -64,7 +63,6 @@ const RelationshipVerification = () => {
       "mainPersonName",
       "fatherName",
       "motherName",
-      "mrsName",
       "wardNo1",
       "district1",
       "designation",
@@ -216,8 +214,8 @@ const RelationshipVerification = () => {
           </select>
           of
           <select
-            name="fatherTitle"
-            value={formData.fatherTitle}
+            name="grandTitle"
+            value={formData.grandTitle}
             onChange={handleChange}
           >
             <option>Mr.</option>
@@ -227,9 +225,8 @@ const RelationshipVerification = () => {
           </select>
           <input
             type="text"
-            name="fatherName"
-            placeholder="Father's/Grandfather's Name"
-            value={formData.fatherName}
+            name="grandsName"
+            value={formData.grandsName}
             onChange={handleChange}
             required
           />
@@ -251,27 +248,21 @@ const RelationshipVerification = () => {
             <option>father-in-law</option>
             <option>mother-in-law</option>
           </select>
-          of
-          <select
-            name="fatherTitle"
-            value={formData.motherTitle}
-            onChange={handleChange}
-          >
-            <option>Mr</option>
-          </select>
+          of Mr
           <input
             type="text"
             name="fatherName"
             placeholder="Father's Name"
-            value={formData.motherName}
+            value={formData.fatherName}
             onChange={handleChange}
             required
           />
           <span className="inline-text">and Mrs.</span>
           <input
             type="text"
-            name="mrsName"
-            value={formData.mrsName}
+            name="motherName"
+            placeholder="Mother's Name"
+            value={formData.motherName}
             onChange={handleChange}
             className="inline-input"
             required
