@@ -17,7 +17,7 @@
 .header {
   text-align: center;
   margin-bottom: 20px;
-  color: #8B0000; /* Dark red, common in official docs */
+  color: #8B0000; 
 }
 .header .logo {
   width: 80px;
@@ -82,8 +82,7 @@ select {
 .certificate-body {
   line-height: 2.5;
   font-size: 16px;
-  text-align: left;
-  text-justify: inter-word;  
+  text-align: left; 
 }
 .certificate-body input[type="text"] {
   width: 150px; /* Default width for inline inputs */
