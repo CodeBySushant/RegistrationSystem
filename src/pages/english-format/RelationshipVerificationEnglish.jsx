@@ -329,8 +329,13 @@ const RelationshipVerification = () => {
             onChange={handleChange}
           >
             <option>{MUNICIPALITY.englishProvince}</option>
+            <option>Koshi Province</option>
+            <option>Madhesh Province</option>
             <option>Bagmati Province</option>
             <option>Gandaki Province</option>
+            <option>Lumbini Province</option>
+            <option>Karnali Province</option>
+            <option>Sudurpashchim Province</option>
           </select>
           District,{" "}
           <input
@@ -365,6 +370,7 @@ const RelationshipVerification = () => {
                   >
                     <option>Mr.</option>
                     <option>Mrs.</option>
+                    <option>Miss.</option>
                     <option>Ms.</option>
                   </select>
                 </td>
@@ -389,6 +395,12 @@ const RelationshipVerification = () => {
                     <option>Mother</option>
                     <option>Son</option>
                     <option>Daughter</option>
+                    <option>Uncle</option>
+                    <option>Aunt</option>
+                    <option>Sister</option>
+                    <option>Brother</option>
+                    <option>Cousin</option>
+                    <option>Niece</option>
                   </select>
                 </td>
                 <td>
@@ -418,6 +430,7 @@ const RelationshipVerification = () => {
             <option value="">Select Designation</option>
             <option value="Ward-Chairperson">Ward Chairperson</option>
             <option value="Ward-Secretary">Ward Secretary</option>
+            <option value="Ward-Secretary">Act. Ward Chairperson</option>
           </select>
         </div>
 
