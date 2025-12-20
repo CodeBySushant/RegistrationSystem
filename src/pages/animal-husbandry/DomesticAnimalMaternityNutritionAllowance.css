@@ -144,9 +144,9 @@
 
 /* --- Applicant Details Box --- */
 .applicant-details-box {
-  border: 1px solid #ddd;
+  border: 2px solid #999 !important;      
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: transparent !important;
   margin-top: 20px;
   border-radius: 4px;
 }
@@ -160,9 +160,9 @@
 }
 
 .details-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .detail-group { display: flex; flex-direction: column; }
@@ -189,3 +189,73 @@
 }
 .save-print-btn:hover { background-color: #1a252f; }
 .copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+
+/* Red star */
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+.inline-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.input-required-star {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: red;
+  font-weight: bold;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.inline-input-wrapper input {
+  padding-left: 18px; /* space for star */
+}
+
+
+/* FORCE applicant details to single column */
+.animal-allowance-container .applicant-details-box .details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+/* Control applicant input width */
+.animal-allowance-container 
+.applicant-details-box 
+.detail-input {
+  max-width: 400px;   /* adjust if needed: 480–550 */
+  width: 100%;
+}
+
+/* ================= PRINT STYLES ================= */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .animal-allowance-container,
+  .animal-allowance-container * {
+    visibility: visible;
+  }
+
+  .animal-allowance-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .form-footer {
+    display: none;
+  }
+}
