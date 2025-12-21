@@ -51,6 +51,10 @@ const initialState = {
   applicantPhone: "", // defaults
   municipality: MUNICIPALITY?.name || "",
   wardNo: MUNICIPALITY?.wardNumber || "",
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship_no: "",
+  applicant_phone: "",
 };
 
 const BusinessRegistrationApplicationForm = () => {
@@ -149,89 +153,105 @@ const BusinessRegistrationApplicationForm = () => {
             व्यापार / व्यवसाय &gt; व्यवसाय दर्ता गर्ने दरखास्त
           </span>
         </div>
-                       {" "}
-                {/* Header (श्री... ज्यू) */}       {" "}
-        <div className="form-row biz-header">
-                    <span>श्री</span>         {" "}
-          <input class = "header-input"
-            type="text"
-            name="headerTo"
-            value={formData.headerTo}
-            onChange={handleChange}
-          />
-                    <span>ज्यू,</span>       {" "}
+                                {/* Header (श्री... ज्यू) */}       {" "}
+        <div className="shree-block">
+          {/* First row */}
+          <div className="shree-row">
+            <span>श्री</span>
+            <span className="required">*</span>
+            <input type="text" className="inline-input name-input" />
+            <span>ज्यू,</span>
+          </div>
+
+          {/* Below stacked inputs */}
+          <div className="shree-stack">
+            <div className="stack-row">
+              <span className="required">*</span>
+              <input type="text" className="stack-input" />
+            </div>
+
+            <div className="stack-row">
+              <span className="required">*</span>
+              <input type="text" className="stack-input" />
+            </div>
+
+            <div className="stack-row">
+              <span className="required">*</span>
+              <input type="text" className="stack-input" />
+            </div>
+          </div>
         </div>
-               {" "}
         <div className="subject-line">
                    {" "}
           <strong>
-            विषय: <u>व्यवसाय दर्ता गरि पाउँ</u>
+            विषय: <u>व्यवसाय दर्ता गर्ने बारे।</u>
           </strong>
-                 {" "}
         </div>
-               {" "}
         <p className="certificate-body">
-                    महोदय,
-          <br />          तल लेखिए बमोजिमको व्यहोरा जनाइ म / हामी निम्न लिखित
-          फर्म/कम्पनि व्यवसाय दर्ता गरी पाउन रीतपूर्वक निवेदन पेस गरेको छु।
-          निवेदन साथ सक्कली कागजातहरु यसै साथ संलग्न छ। सो को जाँचबुझ गरी कानुन
-          बमोजिम दर्ता गरिदिनुहुन अनुरोध छ।        {" "}
+          <br />
+          महोदय,
+          <br />
+          तल लेखिए बमोजिमको व्यहोरा जनाइ म / हामी निम्न लिखित फर्म/कम्पनि
+          व्यवसाय दर्ता गरी पाउन रीतपूर्वक निवेदन पेस गरेको छु। निवेदन साथ
+          सक्कली कागजातहरु यसै साथ संलग्न छ। सो को जाँचबुझ गरी कानुन बमोजिम
+          दर्ता गरिदिनुहुन अनुरोध छ।        {" "}
         </p>
                 {/* main fields - using form-group-flex for alignment */}       {" "}
         <div className="form-section">
                     {/* 1. व्यवसायको पूरा नाम: & Pan */}         {" "}
           <div className="form-group-flex">
-                        <label>१. व्यवसायको पूरा नाम:</label>           {" "}
+                        <label>१. व्यवसायको पूरा नाम (नेपालीमा):</label>       
+               {" "}
             <input
               type="text"
               name="businessName"
               value={formData.businessName}
               onChange={handleChange}
             />
-                        <label>प्यान:</label>           {" "}
-            <input
-              type="text"
-              name="pan"
-              value={formData.pan}
-              onChange={handleChange}
-            />
-                     {" "}
           </div>
                     {/* Phone & Email */}         {" "}
           <div className="form-group-flex">
-                        <label>फोन नं:</label>           {" "}
+                       {" "}
+            <label>२. व्यवसायको पुरा नाम (अंग्रेजिको ठुलो अक्षरमा):</label>     
+                 {" "}
             <input
               type="text"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
             />
-                        <label>इमेल:</label>           {" "}
-            <input
-              type="text"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-                     {" "}
           </div>
                     {/* 2. व्यवसायको ठेगाना: टोल: बाटो: घर नं: */}         {" "}
           <div className="form-group-flex">
-                        <label>२. व्यवसायको ठेगाना: टोल:</label>           {" "}
+                        <label>३. व्यवसायको पुरा ठेगाना:</label>           {" "}
             <input
               type="text"
               name="businessTole"
               value={formData.businessTole}
               onChange={handleChange}
             />
-                        <label>बाटो:</label>           {" "}
+                        <label>जिल्ला</label>           {" "}
             <input
               type="text"
               name="businessRoad"
               value={formData.businessRoad}
               onChange={handleChange}
             />
-                        <label>घर नं:</label>           {" "}
+                        <label>वडा नं</label>           {" "}
+            <input
+              type="text"
+              name="businessRoad"
+              value={formData.businessRoad}
+              onChange={handleChange}
+            />
+                        <label>टोल</label>           {" "}
+            <input
+              type="text"
+              name="businessRoad"
+              value={formData.businessRoad}
+              onChange={handleChange}
+            />
+                        <label>फोन नं</label>           {" "}
             <input
               type="text"
               name="businessHouseNo"
@@ -242,92 +262,53 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
                     {/* 3. व्यवसाय रहेको घरको मुख्य ब्यक्ति/घरधनीको: */}       
            {" "}
-          <div className="form-group-flex full-width-field">
-                       {" "}
-            <label>३. व्यवसाय रहेको घरको मुख्य ब्यक्ति/घरधनीको नाम:</label>     
-                 {" "}
+          <div className="form-group-flex">
+                        <label>४. व्यवसायमा लगाउने पूँजी रु:</label>           {" "}
             <input
               type="text"
               name="ownerName"
               value={formData.ownerName}
               onChange={handleChange}
             />
-                     {" "}
-          </div>
-                    {/* 4. फर्म दर्ताको प्रकृति: */}         {" "}
-          <div className="form-group-flex full-width-field">
-                        <label>४. फर्म दर्ताको प्रकृति:</label>           {" "}
+            (<label> अक्षरेपी रु</label>           {" "}
             <input
               type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            )          {" "}
+          </div>
+                    {/* 4. फर्म दर्ताको प्रकृति: */}         {" "}
+          <div className="form-group-flex">
+            <label>५. व्यवसायको उद्देश्य:</label>
+
+            <select
               name="regNature"
               value={formData.regNature}
               onChange={handleChange}
-            />
-                     {" "}
+              className="biz-select"
+            >
+              <option value="">-- उद्देश्य छनोट गर्नुहोस् --</option>
+              <option value="व्यापार">स्थानीय व्यापार</option>
+              <option value="सेवा">सेवामुलक व्यवसाय</option>
+            </select>
           </div>
-                    {/* 5. Kinship Row (5 fields) */}         {" "}
           <div className="kinship-row">
-                       {" "}
             <div className="form-group-flex">
-                            <label>५. बाबुको नाम:</label>             {" "}
-              <input
-                type="text"
-                name="fatherName"
-                value={formData.fatherName}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-                            <label>बाजेको नाम:</label>             {" "}
-              <input
-                type="text"
-                name="grandfatherName"
-                value={formData.grandfatherName}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-                            <label>पतिको नाम:</label>             {" "}
-              <input
-                type="text"
-                name="husbandName"
-                value={formData.husbandName}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-                            <label>सासुको नाम:</label>             {" "}
-              <input
-                type="text"
-                name="motherInLawName"
-                value={formData.motherInLawName}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-                            <label>ससुराको नाम:</label>             {" "}
+                           {" "}
+              <label>६. व्यवसायले कारोवार गर्ने मुख्य वस्तुको विवरण:</label>
               <input
                 type="text"
                 name="fatherInLawName"
                 value={formData.fatherInLawName}
                 onChange={handleChange}
               />
-                         {" "}
             </div>
                      {" "}
           </div>
-                    {/* 6. Nepali Citizenship Address: */}         {" "}
-          <div className="form-group-flex full-width-field">
-                        <label>६. नेपाली नागरिकता अनुसार ठेगाना:</label>       
-               {" "}
+          <div className="form-group-flex">
+                        <label>७. प्रोप्राइटरको पुरा नाम:</label>           {" "}
             <input
               type="text"
               name="citizenAddress"
@@ -336,410 +317,332 @@ const BusinessRegistrationApplicationForm = () => {
             />
                      {" "}
           </div>
-                    {/* 7. व्यवसायको किसिम: */}         {" "}
-          <div className="form-group-flex full-width-field">
-                        <label>७. व्यवसायको किसिम:</label>           {" "}
+                   
+          <div className="form-group-flex">
+                        <label>स्थायी ठेगाना ,नागरिकता अनुसार:- जिल्ला</label> 
             <input
               type="text"
               name="businessType"
               value={formData.businessType}
               onChange={handleChange}
             />
-                     {" "}
+            <label> वडा नं</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            <label> टोलको नाम</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            <label> फोन नं</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            <label> नागरिकता नं</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            <label> जिल्ला</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            <label> ना.प्र. जारी मिती</label> 
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
+            <label> हालको ठेगाना</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            <label> जिल्ला</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            <label> वडा नं</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
+            <label>टोलको नाम</label> 
+            <input
+              type="text"
+              name="ownerName"
+              value={formData.ownerName}
+              onChange={handleChange}
+            />
           </div>
-                   {" "}
-          {/* 8, 9, 10. Proprietor's family details (Two columns per row) */}   
-               {" "}
-          <div className="prop-family-row">
-                        {/* 8. Father Name & Address */}           {" "}
-            <div className="form-group-flex">
-                            <label>८. प्रोप्राइटरको बाबुको नाम:</label>         
-                 {" "}
-              <input
-                type="text"
-                name="propFatherName"
-                value={formData.propFatherName}
-                onChange={handleChange}
-              />
-                            <label>ठेगाना:</label>             {" "}
-              <input
-                type="text"
-                name="propFatherAddress"
-                value={formData.propFatherAddress}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                        {/* 9. Grandfather Name & Address */}           {" "}
-            <div className="form-group-flex">
-                            <label>९. प्रोप्राइटरको बाजेको नाम:</label>         
-                 {" "}
-              <input
-                type="text"
-                name="propGrandfatherName"
-                value={formData.propGrandfatherName}
-                onChange={handleChange}
-              />
-                            <label>ठेगाना:</label>             {" "}
-              <input
-                type="text"
-                name="propGrandfatherAddress"
-                value={formData.propGrandfatherAddress}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                     {" "}
+          <div className="form-group-flex">
+                          <label>८.प्रोप्राइटरको तिन पुस्तेनाम,ठेगाना:</label> 
+                       {" "}
           </div>
-                   {" "}
-          <div className="prop-family-row">
-                        {/* 10. Wife Name & Address */}           {" "}
-            <div className="form-group-flex">
-                           {" "}
-              <label>१०. प्रोप्राइटरको विवाहित भएमा पत्नीको नाम:</label>       
-                   {" "}
-              <input
-                type="text"
-                name="propWifeName"
-                value={formData.propWifeName}
-                onChange={handleChange}
-              />
-                            <label>ठेगाना:</label>             {" "}
-              <input
-                type="text"
-                name="propWifeAddress"
-                value={formData.propWifeAddress}
-                onChange={handleChange}
-              />
-                         {" "}
-            </div>
-                        <div style={{ flex: "1 1 45%" }} /> {/* Spacer */}     
+          <div className="form-group-flex">
+                          <label>(क) प्रोप्राइटरको बाजेको नाम:</label>         
                {" "}
+            <input
+              type="text"
+              name="propGrandfatherName"
+              value={formData.propGrandfatherName}
+              onChange={handleChange}
+            />
+                          <label>ठेगाना:</label>             {" "}
+            <input
+              type="text"
+              name="propGrandfatherAddress"
+              value={formData.propGrandfatherAddress}
+              onChange={handleChange}
+            />
+                       {" "}
+          </div>
+          <div className="form-group-flex">
+                          <label>(ख) प्रोप्राइटरको बाबुको नाम:</label>         
+               {" "}
+            <input
+              type="text"
+              name="propGrandfatherName"
+              value={formData.propGrandfatherName}
+              onChange={handleChange}
+            />
+                          <label>ठेगाना:</label>             {" "}
+            <input
+              type="text"
+              name="propGrandfatherAddress"
+              value={formData.propGrandfatherAddress}
+              onChange={handleChange}
+            />
+                       {" "}
+          </div>
+          <div className="form-group-flex">
+                         {" "}
+            <label>(ग) प्रोप्राइटरको विवाहित महिला भएमा पतिको नाम:</label>     
+                   {" "}
+            <input
+              type="text"
+              name="propGrandfatherName"
+              value={formData.propGrandfatherName}
+              onChange={handleChange}
+            />
+                          <label>ठेगाना:</label>             {" "}
+            <input
+              type="text"
+              name="propGrandfatherAddress"
+              value={formData.propGrandfatherAddress}
+              onChange={handleChange}
+            />
+                       {" "}
           </div>
                  {" "}
         </div>
-                {/* proprietors table */}       {" "}
-        <div className="table-wrapper">
-                   {" "}
-          <table className="proprietor-table">
-                       {" "}
-            <thead>
-                           {" "}
-              <tr>
-                                <th>प्रोप्राइटरको नाम</th>               {" "}
-                <th>ठेगाना</th>                <th>वडा</th>               {" "}
-                <th></th>             {" "}
-              </tr>
-                         {" "}
-            </thead>
-                       {" "}
-            <tbody>
-                           {" "}
-              {proprietors.map((prop, index) => (
-                <tr key={prop.id}>
-                                   {" "}
-                  <td>
-                    <input
-                      type="text"
-                      name="name"
-                      value={prop.name}
-                      onChange={(e) => handleProprietorChange(index, e)}
-                      required
-                    />
-                  </td>
-                                   {" "}
-                  <td>
-                    <input
-                      type="text"
-                      name="address"
-                      value={prop.address}
-                      onChange={(e) => handleProprietorChange(index, e)}
-                      required
-                    />
-                  </td>
-                                   {" "}
-                  <td>
-                    <input
-                      type="text"
-                      name="ward"
-                      value={prop.ward}
-                      onChange={(e) => handleProprietorChange(index, e)}
-                      required
-                    />
-                  </td>
-                                   {" "}
-                  <td>
-                                       {" "}
-                    {index === proprietors.length - 1 && (
-                      <button
-                        type="button"
-                        onClick={addProprietor}
-                        className="add-btn"
-                      >
-                        +
-                      </button>
-                    )}
-                                     {" "}
-                  </td>
-                                 {" "}
-                </tr>
-              ))}
-                         {" "}
-            </tbody>
-                     {" "}
-          </table>
-                 {" "}
+        <div className="right-row-wrapper">
+          <div className="right-row-title">निवेदक</div>
+
+          <div className="right-row">
+            <label className="right-label">
+              प्रोप्राइटरको नाम :<span className="required-star">*</span>
+            </label>
+
+            <input
+              type="text"
+              name="proprietorName"
+              value={formData.proprietorName || ""}
+              onChange={handleChange}
+              className="right-row-input"
+            />
+          </div>
         </div>
-                {/* Remarks */}       {" "}
-        <div className="form-group-column remarks-section">
-                    <label>कैफियत:</label>         {" "}
-          <textarea
-            name="remarks"
-            rows="3"
-            value={formData.remarks}
-            onChange={handleChange}
-          ></textarea>
-                 {" "}
+        <div className="right-signature-wrapper">
+          {/* Signature row */}
+          <div className="signature-row">
+            <label>सही :</label>
+            <input
+              type="text"
+              name="signature"
+              value={formData.signature || ""}
+              onChange={handleChange}
+              className="signature-input"
+            />
+          </div>
+
+          {/* Thumb box */}
+          <div className="thumb-box-wrapper">
+            <div className="thumb-header">
+              <span>दायाँ</span>
+              <span>बायाँ</span>
+            </div>
+
+            <div className="thumb-body">
+              <div className="thumb-cell"></div>
+              <div className="thumb-cell"></div>
+            </div>
+          </div>
         </div>
-                {/* Kabuliyatnama */}       {" "}
-        <fieldset className="kabuliyatnama">
-                    <legend>कबुलियतनामा</legend>         {" "}
-          <p>
-            यसमा लेखिएको व्यहोरा सत्य साँचो छ। मैले / हामीले आफ्नो व्यवासाय
-            गर्दा यस कार्यालयबाट (फर्म/कम्पनी) दर्ता गराएको छु। मैले / हामीले
-            फर्म/कम्पनी दर्ताको प्रमाणपत्र र अन्य सबै कागजातहरु यसै साथ संलग्न
-            गरेको छु। यदि झुठो ठहरेमा कानुन बमोजिम सजाय भोग्न तयार रहनेछु भनी
-            कबुलियत गर्दछु / गर्दछौं।
+        {/* kabuliyatnama*/}
+        <div className="kabuliyat-wrapper">
+          <div className="kabuliyat-title">कबुलियतनामा</div>
+
+          {/* Paragraph */}
+          <p className="kabuliyat-text">
+            लिखितम्
+            <span className="required">*</span>
+            <input className="inline-input long" />
+            को नातो
+            <select className="inline-select">
+              <option>नाति</option>
+              <option>नातिनी</option>
+            </select>
+            <span className="required">*</span>
+            <input className="inline-input medium" />
+            को छोरा
+            <select className="inline-select">
+              <option value="">छनोट</option>
+              <option>छोरा</option>
+              <option>छोरी</option>
+            </select>
+            <span className="required">*</span>
+            <input className="inline-input medium" />
+            बसे वर्ष
+            <span className="required">*</span>
+            <input className="inline-input small" />
+            को
+            <span className="required">*</span>
+            <input className="inline-input medium" />
+            अगाडि
+            <span className="required">*</span>
+            <input className="inline-input medium" />
+            को नामले व्यवसाय दर्ता गर्न निले यस वडा कार्यालयमा दरखास्त दिएकोमा
+            उक्त व्यवसाय सम्बन्धमा प्रचलित ऐन कानुन र यस नगरपालिकाको शर्त तथा
+            नियम समेत पालना गरी काम गर्नेछु। सो पालना गर्ने कुरामा कबुलियत समेत
+            गर्ने तपाईको मंजुर छ / छैन भनी वडा कार्यालयबाट सोधनी भएकोमा मेरो
+            चित्त बुझ्यो। यसमा प्रचलित ऐन कानुन र यस नगरपालिकाको शर्त तथा नियम
+            उल्लंघन गरेको देखिएमा ऐन कानुन बमोजिम सहुँला, बुझाउँला पनि मेरो
+            मनोमानी राजी खुशी संग यो कबुलियत नामको कागज लेखी
+            <span className="required">*</span>
+            <input className="inline-input medium" />
+            वडा नं
+            <span className="required">*</span>
+            <input className="inline-input small" />
+            को कार्यालयमा चढाएँ।
           </p>
-                 {" "}
-        </fieldset>
-                {/* Applicant Signature and Thumbprints */}       {" "}
-        <div className="applicant-signature-section">
-                   {" "}
-          <div className="thumb-box">
-                        <label>बायाँ</label>
-                        <div className="thumb-area" />         {" "}
-          </div>
-                   {" "}
-          <div className="thumb-box">
-                        <label>दायाँ</label>
-                        <div className="thumb-area" />         {" "}
-          </div>
-                   {" "}
-          <div className="form-group-column signature-field">
-                        <label>निवेदकको दस्तखत:</label>           {" "}
+        </div>
+        <div className="date-center-row">
+          <span>ईतिसंवत</span>
+          <span className="required">*</span>
+          <input className="date-input small" />
+          <span>साल</span>
+          <span className="required">*</span>
+          <input className="date-input small" />
+          <span>महिना</span>
+          <span className="required">*</span>
+          <input className="date-input small" />
+          <span>गतेरोज</span>
+          <span className="required">*</span>
+          <input className="date-input small" />
+          <span>शुभम्</span>{" "}
+        </div>
+        <div className="sanakhat-title">(सनाखत सम्बन्धी कागजात)</div>
+        <div className="sanakhat-paragraph">
+          यसमा लेखिएको फारम तथा कबुलियतनामा म आफै स्वयं
+          <span className="required">*</span>
+          <input type="text" name="self_name" className="inline-input long" />
+          को
+          <span className="required">*</span>
+          <input type="text" name="ward_no" className="inline-input small" />
+          नं वडा कार्यालयमा उपस्थित भई दर्ता गरिएको हुँ । निवेदन संग संलग्न
+          नागरिकता प्रमाणपत्रको प्रतिलिपी फोटो तथा अन्य कागजातहरु मेरा आफ्नै
+          हुन् । माथि उल्लिखित सम्पूर्ण व्यहोरा समेत साँचो हो । कुनै कुरा फरक
+          परेमा कानून बमोजिम सहुँला बुझाउँला पनि सनाखत गर्ने ।
+        </div>
+        <div className="right-signature-wrapper">
+          {/* Signature row */}
+          <div className="signature-row">
+            <label>सही :</label>
             <input
               type="text"
-              name="applicantSignature"
-              value={formData.applicantSignature}
+              name="signature"
+              value={formData.signature || ""}
               onChange={handleChange}
+              className="signature-input"
             />
-                     {" "}
           </div>
-                 {" "}
+
+          {/* Thumb box */}
+          <div className="thumb-box-wrapper">
+            <div className="thumb-header">
+              <span>दायाँ</span>
+              <span>बायाँ</span>
+            </div>
+
+            <div className="thumb-body">
+              <div className="thumb-cell"></div>
+              <div className="thumb-cell"></div>
+            </div>
+          </div>
         </div>
-               {" "}
-        <div className="signature-name-field">
-                   {" "}
-          <div className="form-group-flex">
-                        <label>नाम:</label>           {" "}
-            <input
-              type="text"
-              name="applicantNameSignature"
-              value={formData.applicantNameSignature}
-              onChange={handleChange}
-            />
-                     {" "}
+        <div className="tippani-section">
+          {/* Heading */}
+          <div className="tippani-heading">
+            <h3>टिप्पणी</h3>
+            <p>(वडा कार्यालयले मात्र भर्ने)</p>
           </div>
-                 {" "}
+
+          {/* Paragraph */}
+          <div className="tippani-paragraph">
+            श्रीमान्
+            <span className="required">*</span>
+            <input className="inline-input medium" />
+            नामक व्यवसाय
+            <span className="required">*</span>
+            <input className="inline-input long" />
+            को नाममा दर्ता गरी पाउन आवश्यक सबै कागजातहरु रितपूर्वक पेश हुन आएको
+            माग बमोजिम दर्ता गरिदिन मनासिव र<span className="required">*</span>
+            अख्तेयी र<span className="required">*</span>
+            <input className="inline-input medium" />
+            राजश्व लिई निजको नाममा व्यवसाय दर्ता गरी प्रमाणपत्र दिनको निमित्त
+            निर्णयार्थ पेश गरेको छु ।
+          </div>
+
+          {/* Bottom signature row */}
+          <div className="tippani-footer">
+            <div className="tippani-sign">
+              <span className="required">*</span>
+              <input className="line-input" />
+              <label>पेश गर्ने</label>
+            </div>
+
+            <div className="tippani-sign">
+              <span className="required">*</span>
+              <input className="line-input" />
+              <label>सदर गर्ने</label>
+            </div>
+          </div>
         </div>
-                {/* Tippani Section */}       {" "}
-        <fieldset className="tippadi-section">
-                    <legend>टिप्पणी</legend>         {" "}
-          <p>(कार्यालय प्रयोगको लागि)</p>         {" "}
-          <div className="tippadi-grid">
-                       {" "}
-            <div className="form-group-flex">
-              <label>दस्तखत:</label>
-              <input
-                type="text"
-                name="tippadiSignature"
-                value={formData.tippadiSignature}
-                onChange={handleChange}
-              />
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-              <label>तह:</label>
-              <input
-                type="text"
-                name="tippadiLevel"
-                value={formData.tippadiLevel}
-                onChange={handleChange}
-              />
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-              <label>मिति:</label>
-              <input
-                type="text"
-                name="tippadiDate"
-                value={formData.tippadiDate}
-                onChange={handleChange}
-              />
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-              <label>नाम:</label>
-              <input
-                type="text"
-                name="tippadiName"
-                value={formData.tippadiName}
-                onChange={handleChange}
-              />
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-              <label>पद:</label>
-              <input
-                type="text"
-                name="tippadiPosition"
-                value={formData.tippadiPosition}
-                onChange={handleChange}
-              />
-            </div>
-                     {" "}
-          </div>
-                 {" "}
-        </fieldset>
-                {/* Approver Section */}       {" "}
-        <fieldset className="approver-section">
-                    <legend>सदर गर्नेको दस्तखत</legend>         {" "}
-          <div className="approver-grid">
-                       {" "}
-            <div className="form-group-flex">
-              <label>दस्तखत:</label>
-              <input
-                type="text"
-                name="approverSignature"
-                value={formData.approverSignature}
-                onChange={handleChange}
-              />
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-              <label>नाम:</label>
-              <input
-                type="text"
-                name="approverName"
-                value={formData.approverName}
-                onChange={handleChange}
-              />
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-              <label>पद:</label>
-              <input
-                type="text"
-                name="approverPosition"
-                value={formData.approverPosition}
-                onChange={handleChange}
-              />
-            </div>
-                     {" "}
-          </div>
-                 {" "}
-        </fieldset>
-                {/* Voucher Section */}       {" "}
-        <fieldset className="voucher-section">
-                    <legend>भौचर</legend>         {" "}
-          <div className="voucher-grid">
-                       {" "}
-            <div className="form-group-flex">
-              <label>भौचर नं:</label>
-              <input
-                type="text"
-                name="voucherNo"
-                value={formData.voucherNo}
-                onChange={handleChange}
-              />
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-              <label>मिति:</label>
-              <input
-                type="text"
-                name="voucherDate"
-                value={formData.voucherDate}
-                onChange={handleChange}
-              />
-            </div>
-                       {" "}
-            <div className="form-group-flex">
-              <label>रकम:</label>
-              <input
-                type="text"
-                name="voucherAmount"
-                value={formData.voucherAmount}
-                onChange={handleChange}
-              />
-            </div>
-                     {" "}
-          </div>
-                 {" "}
-        </fieldset>
                 {/* Applicant Details (For backend data submission) */}       {" "}
-        <div className="applicant-details">
-                    <h3>निवेदकको विवरण</h3>         {" "}
-          <div className="form-group-flex">
-                        <label>निवेदकको नाम *</label>           {" "}
-            <input
-              type="text"
-              name="applicantName"
-              value={formData.applicantName}
-              onChange={handleChange}
-              required
-            />
-                     {" "}
-          </div>
-                   {" "}
-          <div className="form-group-flex">
-                        <label>निवेदकको ठेगाना *</label>           {" "}
-            <input
-              type="text"
-              name="applicantAddress"
-              value={formData.applicantAddress}
-              onChange={handleChange}
-              required
-            />
-                     {" "}
-          </div>
-                   {" "}
-          <div className="form-group-flex">
-                        <label>निवेदकको नागरिकता नं *</label>           {" "}
-            <input
-              type="text"
-              name="applicantCitizenship"
-              value={formData.applicantCitizenship}
-              onChange={handleChange}
-              required
-            />
-                     {" "}
-          </div>
-                   {" "}
-          <div className="form-group-flex">
-                        <label>निवेदकको फोन नं *</label>           {" "}
-            <input
-              type="text"
-              name="applicantPhone"
-              value={formData.applicantPhone}
-              onChange={handleChange}
-              required
-            />
-                     {" "}
-          </div>
-                 {" "}
-        </div>
+        
                 {/* Submit Area */}       {" "}
         <div className="submit-area">
                    {" "}

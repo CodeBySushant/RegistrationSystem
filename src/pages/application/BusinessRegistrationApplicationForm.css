@@ -46,19 +46,6 @@
     }
 }
 
-
-/* --- Input Field Styling (Dotted underline effect) --- */
-input[type="text"] {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    padding: 0 2px;
-    box-sizing: border-box;
-    font-family: inherit;
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 20px;
-}
 textarea {
     border: 1px dotted #000 !important;
     min-height: 40px;
@@ -84,6 +71,7 @@ textarea {
     align-items: flex-start;
     margin-bottom: 10px;
 }
+
 .header-column {
     flex-grow: 1;
     max-width: 65%; /* Allocate space for the MunicipalityHeader */
@@ -112,20 +100,72 @@ textarea {
 
 /* --- Header (श्री... ज्यू) --- */
 .biz-header {
-    justify-content: flex-start;
-    align-items: baseline;
+    display: flex !important;                 /* ✅ REQUIRED */
+    align-items: baseline !important;
+    justify-content: flex-start !important;
+    gap: 4px;                      /* ✅ controls spacing cleanly */
     font-size: 16px;
-    font-weight: normal;
     margin-top: 15px;
     margin-bottom: 20px;
 }
-.biz-header input {
-    width: 300px;
-    margin: 0 5px;
+
+/* Input between श्री and ज्यू */
+.biz-header-input {
+    width: 250px;                  /* ✅ FIXED (not 300px) */
+    min-width: 120px;
+    border: none;
+    border-bottom: 1px dotted #000;
+    background: transparent;
+    padding: 0 2px;                /* ✅ small internal padding */
+    margin: 0;                     /* ✅ remove margin spacing */
     font-size: 16px;
     font-weight: bold;
-    border-bottom: 1px dotted #000;
+    line-height: 1.2;
 }
+
+/* Wrapper aligned to right */
+.right-row-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 20px;
+}
+
+/* Right-side title (निवेदक) */
+.right-row-title {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+/* Row layout */
+.right-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* Label */
+.right-label {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+/* Required star */
+.required-star {
+  color: red;
+  margin-left: 4px;
+}
+
+/* Input */
+.right-row-input {
+  width: 260px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  font-size: 14px;
+}
+
 
 
 /* --- Subject Line and Body --- */
@@ -280,49 +320,73 @@ textarea {
 }
 
 /* --- Applicant Signature and Thumbprints --- */
-.applicant-signature-section {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    gap: 15px;
-    margin-top: 20px;
-}
-.thumb-box {
-    margin-left: 40px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.thumb-box label {
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 5px;
-}
-.thumb-area {
-    width: 70px; 
-    height: 90px;
-    border: 1px solid #000;
-    background: #fff;
+.right-signature-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 25px;
 }
 
-.signature-field {
-    width: 200px; 
-}
-.signature-field input {
-    border: none;
-    border-bottom: 1px dotted #000;
+/* Signature row */
+.signature-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
-.signature-name-field {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 5px;
-    margin-bottom: 30px;
+.signature-row label {
+  font-size: 14px;
 }
-.signature-name-field .form-group-flex {
-    width: 200px;
-    margin-right: 0;
+
+.signature-input {
+  width: 200px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  font-size: 14px;
 }
+
+/* Thumb box wrapper */
+.thumb-box-wrapper {
+  width: 260px;
+  border: 1px solid #000;
+}
+
+/* Header row */
+.thumb-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #000;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.thumb-header span {
+  padding: 4px 0;
+  border-right: 1px solid #000;
+}
+
+.thumb-header span:last-child {
+  border-right: none;
+}
+
+/* Thumb body */
+.thumb-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 120px;
+}
+
+.thumb-cell {
+  border-right: 1px solid #000;
+}
+
+.thumb-cell:last-child {
+  border-right: none;
+}
+
 
 
 /* --- Tippani (टिप्पणी), Approver, and Voucher Sections --- */
@@ -405,3 +469,252 @@ textarea {
     font-weight: bold;
 }
 .submit-btn:hover { background-color: #23272b; }
+
+/* Wrapper */
+.kabuliyat-wrapper {
+  margin-top: 25px;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+/* Title */
+.kabuliyat-title {
+  text-align: center;
+  font-weight: bold;
+  text-decoration: underline;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+/* Paragraph */
+.kabuliyat-text {
+  text-align: justify;
+}
+
+/* Inline inputs */
+.inline-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  margin: 0 4px;
+  font-size: 14px;
+}
+
+.inline-input.small { width: 50px; }
+.inline-input.medium { width: 120px; }
+.inline-input.long { width: 200px; }
+
+/* Dropdown */
+.inline-select {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  margin: 0 4px;
+  font-size: 14px;
+}
+
+/* Required star */
+.required {
+  color: red;
+  margin: 0 3px;
+  font-weight: bold;
+}
+
+.date-center-row {
+  display: flex;
+  justify-content: center;   /* centers the row */
+  align-items: baseline;
+  gap: 6px;
+  margin: 25px 0;
+  font-size: 14px;
+}
+
+/* Inputs */
+.date-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  text-align: center;
+  font-size: 14px;
+}
+
+.date-input.small {
+  width: 60px;
+}
+
+/* Required star */
+.required {
+  color: red;
+  font-weight: bold;
+}
+
+.sanakhat-paragraph {
+  font-size: 14px;
+  line-height: 1.9;
+  text-align: justify;
+  margin-top: 20px;
+}
+
+/* Inline inputs */
+.inline-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  font-size: 14px;
+  padding: 0 4px;
+  margin: 0 4px;
+}
+
+.inline-input.small {
+  width: 50px;
+  text-align: center;
+}
+
+.inline-input.long {
+  width: 180px;
+}
+
+/* Required star */
+.required {
+  color: red;
+  font-weight: bold;
+  margin: 0 2px;
+}
+
+.sanakhat-title {
+  text-align: center;
+  font-weight: bold;
+  text-decoration: underline;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+/* Main box */
+.tippani-section {
+  margin-top: 30px;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+/* Heading */
+.tippani-heading {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.tippani-heading h3 {
+  margin: 0;
+  text-decoration: underline;
+}
+
+.tippani-heading p {
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+
+/* Paragraph */
+.tippani-paragraph {
+  text-align: justify;
+}
+
+/* Inline inputs */
+.inline-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  font-size: 14px;
+  padding: 0 4px;
+  margin: 0 4px;
+}
+
+.inline-input.medium {
+  width: 120px;
+}
+
+.inline-input.long {
+  width: 220px;
+}
+
+/* Required star */
+.required {
+  color: red;
+  font-weight: bold;
+  margin: 0 2px;
+}
+
+/* Footer (pesh/sadar) */
+.tippani-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 35px;
+}
+
+.tippani-sign {
+  width: 40%;
+}
+
+.line-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+}
+
+.tippani-sign label {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+/* Wrapper */
+.shree-block {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 20px;
+}
+
+/* First row */
+.shree-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+/* Name input */
+.name-input {
+  width: 220px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+}
+
+/* Stacked inputs */
+.shree-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stack-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stack-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  height: 30px;
+}
+
+/* Required star */
+.required {
+  color: red;
+  font-weight: bold;
+  min-width: 10px;
+}
+
