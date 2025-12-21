@@ -15,37 +15,6 @@
     line-height: 1.5; 
 }
 
-/* Print Specific Styles */
-@media print {
-    .business-reg-container {
-        border: none;
-        box-shadow: none;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        max-width: none;
-    }
-    .submit-area, .applicant-details {
-        display: none; 
-    }
-    input[type="text"], textarea {
-        border: none !important;
-        border-bottom: 1px dotted #000 !important;
-        padding: 0;
-        margin: 0;
-        height: auto;
-    }
-    .proprietor-table input {
-        border: none !important;
-    }
-    .thumb-area {
-        border: 1px solid #000 !important;
-    }
-    .proprietor-table .add-btn {
-        display: none;
-    }
-}
-
 textarea {
     border: 1px dotted #000 !important;
     min-height: 40px;
@@ -149,12 +118,6 @@ textarea {
 .right-label {
   white-space: nowrap;
   font-size: 14px;
-}
-
-/* Required star */
-.required-star {
-  color: red;
-  margin-left: 4px;
 }
 
 /* Input */
@@ -542,12 +505,6 @@ textarea {
   width: 60px;
 }
 
-/* Required star */
-.required {
-  color: red;
-  font-weight: bold;
-}
-
 .sanakhat-paragraph {
   font-size: 14px;
   line-height: 1.9;
@@ -572,13 +529,6 @@ textarea {
 
 .inline-input.long {
   width: 180px;
-}
-
-/* Required star */
-.required {
-  color: red;
-  font-weight: bold;
-  margin: 0 2px;
 }
 
 .sanakhat-title {
@@ -633,13 +583,6 @@ textarea {
 
 .inline-input.long {
   width: 220px;
-}
-
-/* Required star */
-.required {
-  color: red;
-  font-weight: bold;
-  margin: 0 2px;
 }
 
 /* Footer (pesh/sadar) */
@@ -711,14 +654,6 @@ textarea {
   height: 30px;
 }
 
-/* Required star */
-.required {
-  color: red;
-  font-weight: bold;
-  min-width: 10px;
-}
-
-
 /* --- Applicant Details Box --- */
 .applicant-details-box {
   border: 2px solid #999 !important;      
@@ -767,12 +702,12 @@ textarea {
     visibility: hidden;
   }
 
-  .animal-allowance-container,
-  .animal-allowance-container * {
+  .business-reg-container,
+  .business-reg-container * {
     visibility: visible;
   }
 
-  .animal-allowance-container {
+  .business-reg-container {
     position: absolute;
     left: 0;
     top: 0;
