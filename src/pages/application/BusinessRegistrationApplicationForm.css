@@ -718,3 +718,73 @@ textarea {
   min-width: 10px;
 }
 
+
+/* --- Applicant Details Box --- */
+.applicant-details-box {
+  border: 2px solid #999 !important;      
+  padding: 20px;
+  background-color: transparent !important;
+  margin-top: 20px;
+  border-radius: 4px;
+}
+
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.bg-gray { background-color: #eef2f5; } 
+/* FORCE applicant details to single column */
+.business-reg-container .applicant-details-box .details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+/* Control applicant input width */
+.business-reg-container 
+.applicant-details-box 
+.detail-input {
+  max-width: 400px;   /* adjust if needed: 480–550 */
+  width: 100%;
+}
+
+/* ================= PRINT STYLES ================= */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .animal-allowance-container,
+  .animal-allowance-container * {
+    visibility: visible;
+  }
+
+  .animal-allowance-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .form-footer {
+    display: none;
+  }
+}
