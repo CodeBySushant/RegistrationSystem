@@ -14,11 +14,11 @@ const CARD_GROUPS = [
     ],
   },
   {
-    label: "व्यवसाय नविकरण गर्न बाँकी",
+    label: "व्यवसाय दर्ता नविकरण वाकि सूची",
     tables: ["BusinessRegistrationRenewLeft"],
   },
   {
-    label: "व्यवसाय नविकरण भइसकेको",
+    label: "व्यवसाय दर्ता नविकरण भइसकेको सूची",
     tables: ["BusinessRegRenewCompleted"],
   },
   {
