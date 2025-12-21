@@ -25,6 +25,7 @@ const initialState = {
   citizenshipNo: "",
   citizenshipIssueDistrict: "",
   citizenshipIssueDate: "",
+  tempAddress: "",
   tempDistrict: "",
   tempWard: "",
   tempTole: "",
@@ -36,7 +37,7 @@ const initialState = {
   husbandAddress: "",
 
   applicantSignature: "", // निवेदकको सही
-  witnessSignature: "", // सनाखत गर्नेको सही
+  witnessName: "", // सनाखत गर्नेको सही
 
   applicant_name: "",
   applicant_address: "",
@@ -63,6 +64,8 @@ const BusinessRegistrationApplicationForm = () => {
     if (!formData.applicant_phone?.trim()) return "फोन नम्बर आवश्यक छ";
     return null;
   };
+
+  const Required = () => <span className="required">*</span>;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -161,7 +164,9 @@ const BusinessRegistrationApplicationForm = () => {
         {/* Main Form Fields */}
         <div className="form-section">
           <div className="form-group-flex">
-            <label>१. व्यवसायको पूरा नाम (नेपालीमा):</label>
+            <label>
+              १. व्यवसायको पूरा नाम (नेपालीमा): <Required />
+            </label>
             <input
               type="text"
               name="businessNameNp"
@@ -171,7 +176,10 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
 
           <div className="form-group-flex">
-            <label>२. व्यवसायको पूरा नाम (अंग्रेजीमा ठूलो अक्षरमा):</label>
+            <label>
+              २. व्यवसायको पूरा नाम (अंग्रेजीमा ठूलो अक्षरमा):
+              <Required />
+            </label>
             <input
               type="text"
               name="businessNameEn"
@@ -181,42 +189,60 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
 
           <div className="form-group-flex">
-            <label>३. व्यवसायको ठेगाना:</label>
+            <label>
+              ३. व्यवसायको ठेगाना:
+              <Required />
+            </label>
             <input
               type="text"
               name="businessTole"
               value={formData.businessTole}
               onChange={handleChange}
             />
-            <label>जिल्ला:</label>
+            <label>
+              जिल्ला:
+              <Required />
+            </label>
             <input
               type="text"
               name="businessDistrict"
               value={formData.businessDistrict}
               onChange={handleChange}
             />
-            <label>वडा नं:</label>
+            <label>
+              वडा नं:
+              <Required />
+            </label>
             <input
               type="text"
               name="businessWard"
               value={formData.businessWard}
               onChange={handleChange}
             />
-            <label>बाटो:</label>
+            <label>
+              बाटो:
+              <Required />
+            </label>
             <input
               type="text"
               name="businessRoad"
               value={formData.businessRoad}
               onChange={handleChange}
             />
-            <label>घर नं:</label>
+            <label>
+              घर नं:
+              <Required />
+            </label>
             <input
               type="text"
               name="businessHouseNo"
               value={formData.businessHouseNo}
               onChange={handleChange}
             />
-            <label>फोन:</label>
+            <label>
+              फोन:
+              <Required />
+            </label>
             <input
               type="text"
               name="businessPhone"
@@ -226,14 +252,20 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
 
           <div className="form-group-flex">
-            <label>४. व्यवसायमा लगानी गर्ने पूँजी रु:</label>
+            <label>
+              ४. व्यवसायमा लगानी गर्ने पूँजी रु:
+              <Required />
+            </label>
             <input
               type="text"
               name="capitalAmount"
               value={formData.capitalAmount}
               onChange={handleChange}
             />
-            <label>(अक्षरेपी):</label>
+            <label>
+              (अक्षरेपी):
+              <Required />
+            </label>
             <input
               type="text"
               name="capitalInWords"
@@ -243,7 +275,10 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
 
           <div className="form-group-flex">
-            <label>५. व्यवसायको उद्देश्य:</label>
+            <label>
+              ५. व्यवसायको उद्देश्य:
+              <Required />
+            </label>
             <select
               name="businessObjective"
               value={formData.businessObjective}
@@ -257,7 +292,10 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
 
           <div className="form-group-flex">
-            <label>६. कारोबार हुने मुख्य वस्तु/सेवाको विवरण:</label>
+            <label>
+              ६. कारोबार हुने मुख्य वस्तु/सेवाको विवरण:
+              <Required />
+            </label>
             <input
               type="text"
               name="mainGoods"
@@ -268,7 +306,10 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
 
           <div className="form-group-flex">
-            <label>७. प्रोप्राइटरको पूरा नाम:</label>
+            <label>
+              ७. प्रोप्राइटरको पूरा नाम:
+              <Required />
+            </label>
             <input
               type="text"
               name="proprietorName"
@@ -280,49 +321,70 @@ const BusinessRegistrationApplicationForm = () => {
           {/* Permanent Address */}
           <div className="form-group-flex">
             <label>स्थायी ठेगाना (नागरिकता अनुसार):</label>
-            <label>जिल्ला:</label>
+            <label>
+              जिल्ला:
+              <Required />
+            </label>
             <input
               type="text"
               name="permDistrict"
               value={formData.permDistrict}
               onChange={handleChange}
             />
-            <label>वडा:</label>
+            <label>
+              वडा:
+              <Required />
+            </label>
             <input
               type="text"
               name="permWard"
               value={formData.permWard}
               onChange={handleChange}
             />
-            <label>टोल:</label>
+            <label>
+              टोल:
+              <Required />
+            </label>
             <input
               type="text"
               name="permTole"
               value={formData.permTole}
               onChange={handleChange}
             />
-            <label>फोन:</label>
+            <label>
+              फोन:
+              <Required />
+            </label>
             <input
               type="text"
               name="permPhone"
               value={formData.permPhone}
               onChange={handleChange}
             />
-            <label>नागरिकता नं:</label>
+            <label>
+              नागरिकता नं:
+              <Required />
+            </label>
             <input
               type="text"
               name="citizenshipNo"
               value={formData.citizenshipNo}
               onChange={handleChange}
             />
-            <label>जारी जिल्ला:</label>
+            <label>
+              जारी जिल्ला:
+              <Required />
+            </label>
             <input
               type="text"
               name="citizenshipIssueDistrict"
               value={formData.citizenshipIssueDistrict}
               onChange={handleChange}
             />
-            <label>जारी मिति:</label>
+            <label>
+              जारी मिति:
+              <Required />
+            </label>
             <input
               type="date"
               name="citizenshipIssueDate"
@@ -333,22 +395,40 @@ const BusinessRegistrationApplicationForm = () => {
 
           {/* Temporary Address */}
           <div className="form-group-flex">
-            <label>हालको ठेगाना:</label>
-            <label>जिल्ला:</label>
+            <label>
+              हालको ठेगाना:
+              <Required />
+            </label>
+            <input
+              type="text"
+              name="tempAddress"
+              value={formData.tempAddress}
+              onChange={handleChange}
+            />
+            <label>
+              जिल्ला:
+              <Required />
+            </label>
             <input
               type="text"
               name="tempDistrict"
               value={formData.tempDistrict}
               onChange={handleChange}
             />
-            <label>वडा:</label>
+            <label>
+              वडा:
+              <Required />
+            </label>
             <input
               type="text"
               name="tempWard"
               value={formData.tempWard}
               onChange={handleChange}
             />
-            <label>टोल:</label>
+            <label>
+              टोल:
+              <Required />
+            </label>
             <input
               type="text"
               name="tempTole"
@@ -362,14 +442,20 @@ const BusinessRegistrationApplicationForm = () => {
             <label>८. प्रोप्राइटरको तीन पुस्ते:</label>
           </div>
           <div className="form-group-flex">
-            <label>(क) बाजेको नाम:</label>
+            <label>
+              (क) बाजेको नाम:
+              <Required />
+            </label>
             <input
               type="text"
               name="grandfatherName"
               value={formData.grandfatherName}
               onChange={handleChange}
             />
-            <label>ठेगाना:</label>
+            <label>
+              ठेगाना:
+              <Required />
+            </label>
             <input
               type="text"
               name="grandfatherAddress"
@@ -378,14 +464,20 @@ const BusinessRegistrationApplicationForm = () => {
             />
           </div>
           <div className="form-group-flex">
-            <label>(ख) बाबुको नाम:</label>
+            <label>
+              (ख) बाबुको नाम:
+              <Required />
+            </label>
             <input
               type="text"
               name="fatherName"
               value={formData.fatherName}
               onChange={handleChange}
             />
-            <label>ठेगाना:</label>
+            <label>
+              ठेगाना:
+              <Required />
+            </label>
             <input
               type="text"
               name="fatherAddress"
@@ -394,14 +486,20 @@ const BusinessRegistrationApplicationForm = () => {
             />
           </div>
           <div className="form-group-flex">
-            <label>(ग) विवाहित महिलाको हकमा पतिको नाम:</label>
+            <label>
+              (ग) विवाहित महिलाको हकमा पतिको नाम:
+              <Required />
+            </label>
             <input
               type="text"
               name="husbandName"
               value={formData.husbandName}
               onChange={handleChange}
             />
-            <label>ठेगाना:</label>
+            <label>
+              ठेगाना:
+              <Required />
+            </label>
             <input
               type="text"
               name="husbandAddress"
@@ -417,7 +515,7 @@ const BusinessRegistrationApplicationForm = () => {
           <div className="right-row-title">निवेदक</div>
           <div className="right-row">
             <label className="right-label">
-              प्रोप्राइटरको नाम :<span className="required-star">*</span>
+              प्रोप्राइटरको नाम :<Required />
             </label>
             <input
               type="text"
@@ -436,8 +534,8 @@ const BusinessRegistrationApplicationForm = () => {
             <input
               type="text"
               name="applicantSignature"
-              value={formData.applicantSignature}
-              onChange={handleChange}
+              value=""
+              readOnly
               className="signature-input"
             />
           </div>
@@ -459,14 +557,14 @@ const BusinessRegistrationApplicationForm = () => {
           {/* Paragraph */}
           <p className="kabuliyat-text">
             लिखितम्
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input long" />
             को नातो
             <select className="inline-select">
               <option>नाति</option>
               <option>नातिनी</option>
             </select>
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input medium" />
             को छोरा
             <select className="inline-select">
@@ -474,16 +572,16 @@ const BusinessRegistrationApplicationForm = () => {
               <option>छोरा</option>
               <option>छोरी</option>
             </select>
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input medium" />
             बसे वर्ष
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input small" />
             को
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input medium" />
             अगाडि
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input medium" />
             को नामले व्यवसाय दर्ता गर्न निले यस वडा कार्यालयमा दरखास्त दिएकोमा
             उक्त व्यवसाय सम्बन्धमा प्रचलित ऐन कानुन र यस नगरपालिकाको शर्त तथा
@@ -492,36 +590,36 @@ const BusinessRegistrationApplicationForm = () => {
             चित्त बुझ्यो। यसमा प्रचलित ऐन कानुन र यस नगरपालिकाको शर्त तथा नियम
             उल्लंघन गरेको देखिएमा ऐन कानुन बमोजिम सहुँला, बुझाउँला पनि मेरो
             मनोमानी राजी खुशी संग यो कबुलियत नामको कागज लेखी
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input medium" />
             वडा नं
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input small" />
             को कार्यालयमा चढाएँ।
           </p>
         </div>
         <div className="date-center-row">
           <span>ईतिसंवत</span>
-          <span className="required">*</span>
+          <Required />
           <input className="date-input small" />
           <span>साल</span>
-          <span className="required">*</span>
+          <Required />
           <input className="date-input small" />
           <span>महिना</span>
-          <span className="required">*</span>
+          <Required />
           <input className="date-input small" />
           <span>गतेरोज</span>
-          <span className="required">*</span>
+          <Required />
           <input className="date-input small" />
           <span>शुभम्</span>{" "}
         </div>
         <div className="sanakhat-title">(सनाखत सम्बन्धी कागजात)</div>
         <div className="sanakhat-paragraph">
           यसमा लेखिएको फारम तथा कबुलियतनामा म आफै स्वयं
-          <span className="required">*</span>
+          <Required />
           <input type="text" name="self_name" className="inline-input long" />
           को
-          <span className="required">*</span>
+          <Required />
           <input type="text" name="ward_no" className="inline-input small" />
           नं वडा कार्यालयमा उपस्थित भई दर्ता गरिएको हुँ । निवेदन संग संलग्न
           नागरिकता प्रमाणपत्रको प्रतिलिपी फोटो तथा अन्य कागजातहरु मेरा आफ्नै
@@ -531,14 +629,16 @@ const BusinessRegistrationApplicationForm = () => {
 
         <div className="right-signature-wrapper">
           <div className="signature-row">
-            <label>प्रोप्राइटरको सही :</label>
+            <label>
+              प्रोप्राइटरको नाम : <Required />
+            </label>
             <input
               type="text"
-              name="witnessSignature"
-              value={formData.witnessSignature}
+              name="witnessName"
+              value={formData.witnessName}
               onChange={handleChange}
               className="signature-input"
-            /> {" "}
+            />{" "}
           </div>
 
           <div className="thumb-box-wrapper">
@@ -560,27 +660,27 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
           <div className="tippani-paragraph">
             श्रीमान्
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input medium" />
             नामक व्यवसाय
-            <span className="required">*</span>
+            <Required />
             <input className="inline-input long" />
             को नाममा दर्ता गरी पाउन आवश्यक सबै कागजातहरु रितपूर्वक पेश हुन आएको
-            माग बमोजिम दर्ता गरिदिन मनासिव र<span className="required">*</span>
-            अख्तेयी र<span className="required">*</span>
+            माग बमोजिम दर्ता गरिदिन मनासिव र<Required />
+            अख्तेयी र<Required />
             <input className="inline-input medium" />
             राजश्व लिई निजको नाममा व्यवसाय दर्ता गरी प्रमाणपत्र दिनको निमित्त
             निर्णयार्थ पेश गरेको छु ।
           </div>
           <div className="tippani-footer">
             <div className="tippani-sign">
-              <span className="required">*</span>
+              <Required />
               <input className="line-input" />
               <label>पेश गर्ने</label>
             </div>
 
             <div className="tippani-sign">
-              <span className="required">*</span>
+              <Required />
               <input className="line-input" />
               <label>सदर गर्ने</label>
             </div>
@@ -592,7 +692,7 @@ const BusinessRegistrationApplicationForm = () => {
           <div className="details-grid">
             <div className="detail-group">
               <label>
-                निवेदकको नाम <span className="required">*</span>
+                निवेदकको नाम <Required />
               </label>
               <input
                 name="applicant_name"
@@ -603,7 +703,7 @@ const BusinessRegistrationApplicationForm = () => {
             </div>
             <div className="detail-group">
               <label>
-                ठेगाना <span className="required">*</span>
+                ठेगाना <Required />
               </label>
               <input
                 name="applicant_address"
@@ -614,7 +714,7 @@ const BusinessRegistrationApplicationForm = () => {
             </div>
             <div className="detail-group">
               <label>
-                नागरिकता नं. <span className="required">*</span>
+                नागरिकता नं. <Required />
               </label>
               <input
                 name="applicant_citizenship_no"
@@ -625,7 +725,7 @@ const BusinessRegistrationApplicationForm = () => {
             </div>
             <div className="detail-group">
               <label>
-                फोन नं. <span className="required">*</span>
+                फोन नं. <Required />
               </label>
               <input
                 name="applicant_phone"
