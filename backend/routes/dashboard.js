@@ -1,6 +1,7 @@
 // backend/routes/dashboard.js
 const express = require("express");
 const db = require("../config/db.js");
+const adminAuth = require("../middleware/adminAuth");
 
 const router = express.Router();
 
@@ -27,31 +28,36 @@ const CARD_GROUPS = [
   },
 ];
 
-// helper: get count(*) from one table using callback-style db
-function getCountForTable(table) {
+// 🔢 Count rows with ward isolation
+function getCountForTable(table, role, ward_number) {
   return new Promise((resolve) => {
-    db.query(`SELECT COUNT(*) AS count FROM \`${table}\``, (err, rows) => {
+    let sql = `SELECT COUNT(*) AS count FROM \`${table}\``;
+    const params = [];
+
+    if (role === "ADMIN") {
+      sql += " WHERE ward_number = ?";
+      params.push(ward_number);
+    }
+
+    db.query(sql, params, (err, rows) => {
       if (err) {
         console.error(
           `⚠️ Error counting table ${table}:`,
           err.code || err.message
         );
-        return resolve(0); // don't crash dashboard, just treat as 0
+        return resolve(0);
       }
       resolve(rows[0]?.count || 0);
     });
   });
 }
 
-/**
- * Helper – safely sum COUNT(*) from multiple tables.
- * If a table is missing or errors, we log it and continue.
- */
-async function getTotalForTables(tables) {
+// 🔢 Sum counts for a group of tables
+async function getTotalForTables(tables, role, ward_number) {
   let total = 0;
 
   for (const table of tables) {
-    const count = await getCountForTable(table);
+    const count = await getCountForTable(table, role, ward_number);
     total += count;
   }
 
@@ -61,25 +67,30 @@ async function getTotalForTables(tables) {
 /**
  * Route: GET /api/dashboard-stats
  */
-router.get("/dashboard-stats", async (req, res) => {
-  try {
-    const cards = await Promise.all(
-      CARD_GROUPS.map(async (group) => {
-        const value = await getTotalForTables(group.tables);
-        return { label: group.label, value };
-      })
-    );
+router.get(
+  "/dashboard-stats",
+  adminAuth(["ADMIN", "SUPERADMIN"]),
+  async (req, res) => {
+    try {
+      const { role, ward_number } = req.admin;
 
-    const yearlyStats = cards.map((c) => ({
-      label: c.label,
-      value: c.value,
-    }));
+      const cards = await Promise.all(
+        CARD_GROUPS.map(async (group) => {
+          const value = await getTotalForTables(
+            group.tables,
+            role,
+            ward_number
+          );
+          return { label: group.label, value };
+        })
+      );
 
-    res.json({ cards, yearlyStats });
-  } catch (error) {
-    console.error("Error loading dashboard stats:", error);
-    res.status(500).json({ message: "Database error" });
+      res.json({ cards });
+    } catch (error) {
+      console.error("Dashboard error:", error);
+      res.status(500).json({ message: "Dashboard error" });
+    }
   }
-});
+);
 
 module.exports = router;

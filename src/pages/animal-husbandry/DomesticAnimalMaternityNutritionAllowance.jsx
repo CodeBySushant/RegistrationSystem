@@ -5,6 +5,7 @@ import "./DomesticAnimalMaternityNutritionAllowance.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 
 const toNepaliDigits = (str) => {
   const map = {
@@ -31,12 +32,12 @@ const initialState = {
   municipality_name_header: MUNICIPALITY.name,
   municipality_name_body: MUNICIPALITY.name,
   municipality_city: MUNICIPALITY.city,
-  ward_no: MUNICIPALITY.wardNumber,
+  ward_no: "",
 
   resident_name: "",
   duration_value: "",
-  duration_unit: "महिना", // महिना or वर्ष
-  calving_date: "", // YYYY-MM-DD
+  duration_unit: "महिना",
+  calving_date: "",
   animal_count: 1,
 
   signer_name: "",
@@ -49,7 +50,13 @@ const initialState = {
 };
 
 const DomesticAnimalMaternityNutritionAllowance = () => {
-  const [form, setForm] = useState(initialState);
+  const { user, token } = useAuth();
+
+  const [form, setForm] = useState(() => ({
+    ...initialState,
+    ward_no: user?.ward || "",
+  }));
+
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -75,7 +82,11 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const res = await axios.post(url, payload);
+      const res = await axios.post(url, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setLoading(false);
 
       if (res.status === 201) {
@@ -120,9 +131,7 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         </div>
         <div className="header-text">
           <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
-          <h2 className="ward-title">
-            {MUNICIPALITY.wardNumber} नं. वडा कार्यालय
-          </h2>
+          <h2 className="ward-title">वडा नं. {user?.ward} वडा कार्यालय</h2>
           <p className="address-text">{MUNICIPALITY.officeLine}</p>
           <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
@@ -205,10 +214,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
           वडा नं.
           <input
             name="ward_no"
-            type="text"
-            className="inline-box-input small-input"
             value={form.ward_no}
-            onChange={handleChange}
+            readOnly
+            className="inline-box-input small-input bg-gray"
           />
           बस्ने
           <div className="inline-input-wrapper">

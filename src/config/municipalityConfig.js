@@ -10,7 +10,5 @@ export const MUNICIPALITY = {
   englishDistrict: "Kathmandu",
   englishProvince: "Bagmati Province",
 
-  wardNumber: "1",
-
   logoSrc: "/nepallogo.svg",
 };

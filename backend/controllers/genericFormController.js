@@ -21,6 +21,11 @@ exports.createRecord = (req, res) => {
 
     // Prepare payload only for this form (do not modify other modules)
     const payload = { ...req.body };
+    const { role, ward_number } = req.admin;
+    // 🔐 FORCE ward from token
+    if (role === "ADMIN") {
+      payload.ward_number = ward_number;
+    }
 
     // === Generic: stringify any arrays/objects so the DB receives a single column value ===
     // Skip Date objects (we want them to be passed as real dates if provided)
@@ -48,7 +53,12 @@ exports.createRecord = (req, res) => {
     model.insert(payload, (err, result) => {
       if (err) {
         // Prefer returning sqlMessage where available for easier debugging
-        return res.status(500).json({ error: err.code || "INSERT_ERROR", message: err.sqlMessage || err.message });
+        return res
+          .status(500)
+          .json({
+            error: err.code || "INSERT_ERROR",
+            message: err.sqlMessage || err.message,
+          });
       }
       const id = result && result.insertId ? result.insertId : null;
 
@@ -106,10 +116,24 @@ exports.getAll = (req, res) => {
 
 exports.getById = (req, res) => {
   try {
-    const model = getModelForKey(req.params.formKey);
-    model.getById(req.params.id, (err, rows) => {
+    const formKey = req.params.formKey;
+    const meta = forms[formKey];
+    if (!meta) throw new Error("Invalid form key");
+
+    const { role, ward_number } = req.admin;
+
+    let sql = `SELECT * FROM ${meta.table} WHERE id = ?`;
+    const params = [req.params.id];
+
+    if (role === "ADMIN") {
+      sql += " AND ward_number = ?";
+      params.push(ward_number);
+    }
+
+    const model = getModelForKey(formKey);
+    model.customQuery(sql, params, (err, rows) => {
       if (err) return res.status(500).json({ error: err.code });
-      if (!rows || rows.length === 0) return res.status(404).json({ error: "Not Found" });
+      if (!rows.length) return res.status(404).json({ error: "Not Found" });
       res.json(rows[0]);
     });
   } catch (e) {
@@ -119,9 +143,28 @@ exports.getById = (req, res) => {
 
 exports.update = (req, res) => {
   try {
-    const model = getModelForKey(req.params.formKey);
-    model.updateById(req.params.id, req.body, (err, result) => {
+    const formKey = req.params.formKey;
+    const meta = forms[formKey];
+    if (!meta) throw new Error("Invalid form key");
+
+    const { role, ward_number } = req.admin;
+
+    let sql = `UPDATE ${meta.table} SET ? WHERE id = ?`;
+    const params = [req.body, req.params.id];
+
+    if (role === "ADMIN") {
+      sql += " AND ward_number = ?";
+      params.push(ward_number);
+    }
+
+    const model = getModelForKey(formKey);
+    model.customQuery(sql, params, (err, result) => {
       if (err) return res.status(500).json({ error: err.code });
+
+      if (result.affectedRows === 0) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+
       res.json({ affectedRows: result.affectedRows });
     });
   } catch (e) {
@@ -131,9 +174,28 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
   try {
-    const model = getModelForKey(req.params.formKey);
-    model.deleteById(req.params.id, (err, result) => {
+    const formKey = req.params.formKey;
+    const meta = forms[formKey];
+    if (!meta) throw new Error("Invalid form key");
+
+    const { role, ward_number } = req.admin;
+
+    let sql = `DELETE FROM ${meta.table} WHERE id = ?`;
+    const params = [req.params.id];
+
+    if (role === "ADMIN") {
+      sql += " AND ward_number = ?";
+      params.push(ward_number);
+    }
+
+    const model = getModelForKey(formKey);
+    model.customQuery(sql, params, (err, result) => {
       if (err) return res.status(500).json({ error: err.code });
+
+      if (result.affectedRows === 0) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+
       res.json({ affectedRows: result.affectedRows });
     });
   } catch (e) {
