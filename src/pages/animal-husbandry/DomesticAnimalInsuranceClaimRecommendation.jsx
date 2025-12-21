@@ -1,6 +1,7 @@
 // DomesticAnimalInsuranceClaimRecommendation.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
 import "./DomesticAnimalInsuranceClaimRecommendation.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
@@ -18,8 +19,8 @@ const initialState = {
   addressee_line3: "",
 
   municipality_name: MUNICIPALITY.name,
-  ward_no: MUNICIPALITY.wardNumber,
   municipality_city: MUNICIPALITY.city,
+  ward_no: "",
 
   // paragraph inline fields
   resident_name_in_paragraph: "",
@@ -45,13 +46,9 @@ const initialState = {
 };
 
 const DomesticAnimalInsuranceClaimRecommendation = () => {
-  const [form, setForm] = useState(initialState);
+  const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,8 +56,7 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
 
     try {
       // backend URL - adjust if different
-      const url = "http://localhost:5000/api/forms/domestic-animal";
-      const res = await axios.post(url, form);
+      const res = await axios.post("/api/forms/domestic-animal", form);
       setLoading(false);
       if (res.status === 201) {
         alert("Form submitted successfully! ID: " + res.data.id);
@@ -100,11 +96,16 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
         <div className="header-logo">
           <img src="/nepallogo.svg" alt="Nepal Emblem" />
         </div>
+
         <div className="header-text">
           <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+
           <h2 className="ward-title">
-            {MUNICIPALITY.wardNumber} नं. वडा कार्यालय
+            {user?.role === "SUPERADMIN"
+              ? "सबै वडा कार्यालय"
+              : `${user?.ward || " "} नं. वडा कार्यालय`}
           </h2>
+
           <p className="address-text">{MUNICIPALITY.officeLine}</p>
           <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>

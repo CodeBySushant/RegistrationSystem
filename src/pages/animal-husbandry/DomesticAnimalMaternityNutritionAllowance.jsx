@@ -1,10 +1,10 @@
 // DomesticAnimalMaternityNutritionAllowance.jsx
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import axios from "../../utils/axiosInstance";
 import "./DomesticAnimalMaternityNutritionAllowance.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { useAuth } from "../../context/AuthContext";
 
 const toNepaliDigits = (str) => {
@@ -50,14 +50,19 @@ const initialState = {
 };
 
 const DomesticAnimalMaternityNutritionAllowance = () => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
-  const [form, setForm] = useState(() => ({
-    ...initialState,
-    ward_no: user?.ward || "",
-  }));
-
+  const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.ward && !form.ward_no) {
+      setForm((prev) => ({
+        ...prev,
+        ward_no: user.ward,
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,11 +87,11 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const res = await axios.post(url, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.post(
+        "/api/forms/animal-maternity-allowance",
+        payload
+      );
+
       setLoading(false);
 
       if (res.status === 201) {
@@ -129,9 +134,16 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         <div className="header-logo">
           <img src="/nepallogo.svg" alt="Nepal Emblem" />
         </div>
+
         <div className="header-text">
           <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
-          <h2 className="ward-title">वडा नं. {user?.ward} वडा कार्यालय</h2>
+
+          <h2 className="ward-title">
+            {user?.role === "SUPERADMIN"
+              ? "सबै वडा कार्यालय"
+              : `${user?.ward || " "} नं. वडा कार्यालय`}
+          </h2>
+
           <p className="address-text">{MUNICIPALITY.officeLine}</p>
           <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
@@ -212,12 +224,7 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
             onChange={handleChange}
           />
           वडा नं.
-          <input
-            name="ward_no"
-            value={form.ward_no}
-            readOnly
-            className="inline-box-input small-input bg-gray"
-          />
+          <input name="ward_no" value={form.ward_no} onChange={handleChange} />
           बस्ने
           <div className="inline-input-wrapper">
             <span className="input-required-star">*</span>
