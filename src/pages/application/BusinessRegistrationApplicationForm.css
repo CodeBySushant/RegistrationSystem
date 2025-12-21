@@ -26,31 +26,6 @@ textarea {
     resize: vertical;
 }
 
-/* General Row Layout */
-.form-row {
-    display: flex;
-    align-items: baseline;
-    margin-bottom: 10px;
-}
-
-/* --- FIX: Combined Top Header Section (Logo + Reg/Date) --- */
-.top-header-section {
-    display: flex;
-    justify-content: space-between; 
-    align-items: flex-start;
-    margin-bottom: 10px;
-}
-
-.header-column {
-    flex-grow: 1;
-    max-width: 65%; /* Allocate space for the MunicipalityHeader */
-}
-.meta-column {
-    flex-shrink: 0;
-    width: 35%; /* Allocate space for the meta fields */
-    padding-top: 5px;
-}
-
 /* --- Top Meta (Reg No/Date) - Now uses form-group-inline --- */
 .form-group-inline {
     display: flex;
@@ -65,31 +40,6 @@ textarea {
 }
 .form-group-inline input {
     width: 120px;
-}
-
-/* --- Header (श्री... ज्यू) --- */
-.biz-header {
-    display: flex !important;                 /* ✅ REQUIRED */
-    align-items: baseline !important;
-    justify-content: flex-start !important;
-    gap: 4px;                      /* ✅ controls spacing cleanly */
-    font-size: 16px;
-    margin-top: 15px;
-    margin-bottom: 20px;
-}
-
-/* Input between श्री and ज्यू */
-.biz-header-input {
-    width: 250px;                  /* ✅ FIXED (not 300px) */
-    min-width: 120px;
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    padding: 0 2px;                /* ✅ small internal padding */
-    margin: 0;                     /* ✅ remove margin spacing */
-    font-size: 16px;
-    font-weight: bold;
-    line-height: 1.2;
 }
 
 /* Wrapper aligned to right */
@@ -169,119 +119,6 @@ textarea {
     min-width: 100px;
 }
 
-/* Specific styling for the row with 5 kinship fields (5) */
-.kinship-row {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-}
-.kinship-row .form-group-flex {
-    flex: 1 1 150px;
-    margin-right: 15px;
-}
-.kinship-row .form-group-flex:last-child {
-    margin-right: 0;
-}
-
-/* Full-width fields (3, 4, 6, 7) */
-.full-width-field {
-    margin-bottom: 10px;
-}
-.full-width-field input {
-    width: 100%;
-    flex-grow: 1;
-}
-
-/* Proprietor Family Details (8, 9, 10) - Grouping with address */
-.prop-family-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-}
-.prop-family-row .form-group-flex {
-    flex: 1 1 45%; 
-    margin-right: 20px;
-}
-.prop-family-row .form-group-flex:nth-child(even) {
-    margin-right: 0;
-}
-
-
-/* --- Proprietor Table --- */
-.table-wrapper {
-    margin: 10px 0 20px;
-}
-.proprietor-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-.proprietor-table th,
-.proprietor-table td {
-    border: 1px solid #000;
-    padding: 5px;
-    text-align: center;
-    vertical-align: top;
-}
-.proprietor-table th {
-    background-color: #fff; 
-    font-weight: bold;
-}
-.proprietor-table input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    padding: 0;
-    height: 20px;
-    min-width: 80px;
-}
-.proprietor-table td:last-child {
-    width: 40px;
-}
-.add-btn {
-    width: 25px;
-    height: 25px;
-    font-size: 18px;
-    margin: 0 auto;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-/* --- Remarks (कैफियत) --- */
-.remarks-section {
-    margin-bottom: 20px;
-}
-.remarks-section label {
-    font-weight: normal;
-    display: block;
-    margin-bottom: 5px;
-}
-
-
-/* --- Kabuliyatnama (Agreement) Section --- */
-.kabuliyatnama {
-    margin-top: 10px;
-    padding: 10px 15px;
-    border: 1px solid #000;
-    border-radius: 0;
-}
-.kabuliyatnama legend {
-    font-weight: bold;
-    font-size: 14px;
-    padding: 0 5px;
-    margin-left: 20px;
-}
-.kabuliyatnama p {
-    line-height: 1.6;
-    font-size: 14px;
-    margin: 0;
-    text-align: justify;
-}
-
 /* --- Applicant Signature and Thumbprints --- */
 .right-signature-wrapper {
   display: flex;
@@ -349,72 +186,6 @@ textarea {
 .thumb-cell:last-child {
   border-right: none;
 }
-
-
-
-/* --- Tippani (टिप्पणी), Approver, and Voucher Sections --- */
-.tippadi-section, .approver-section, .voucher-section {
-    margin-top: 15px;
-    padding: 10px 15px;
-    border: 1px solid #000;
-    border-radius: 0;
-}
-.tippadi-section legend, .approver-section legend, .voucher-section legend {
-    font-weight: bold;
-    font-size: 14px;
-    padding: 0 5px;
-    margin-left: 10px;
-}
-.tippadi-section p {
-    font-style: italic;
-    margin-bottom: 10px;
-}
-
-.tippadi-grid, .approver-grid, .voucher-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-.tippadi-grid .form-group-flex, .approver-grid .form-group-flex, .voucher-grid .form-group-flex {
-    flex: 1 1 150px;
-    margin-right: 0;
-}
-.tippadi-grid input, .approver-grid input, .voucher-grid input {
-    width: 100%;
-    border: none;
-    border-bottom: 1px dotted #000;
-}
-
-
-/* --- Applicant Details (For backend data submission) --- */
-.applicant-details {
-    border-top: 1px dashed #000; 
-    margin-top: 20px;
-    padding-top: 15px;
-}
-.applicant-details h3 { 
-    margin-bottom: 15px; 
-    font-size: 16px;
-}
-/* Use form-group-column layout for better structure here, but rely on flex for styling */
-.applicant-details .form-group-flex {
-    display: block; /* Stack fields vertically */
-    margin-bottom: 10px;
-    width: 50%;
-    max-width: 400px;
-}
-.applicant-details label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 3px;
-}
-.applicant-details input {
-    width: 100%;
-    border: 1px solid #ccc; /* Solid border for backend fields */
-    border-radius: 4px;
-    padding: 5px;
-}
-
 
 /* --- Submit Button (Only visible on screen) --- */
 .submit-area {
@@ -512,25 +283,6 @@ textarea {
   margin-top: 20px;
 }
 
-/* Inline inputs */
-.inline-input {
-  border: none;
-  border-bottom: 1px dotted #000;
-  background: transparent;
-  font-size: 14px;
-  padding: 0 4px;
-  margin: 0 4px;
-}
-
-.inline-input.small {
-  width: 50px;
-  text-align: center;
-}
-
-.inline-input.long {
-  width: 180px;
-}
-
 .sanakhat-title {
   text-align: center;
   font-weight: bold;
@@ -565,24 +317,6 @@ textarea {
 /* Paragraph */
 .tippani-paragraph {
   text-align: justify;
-}
-
-/* Inline inputs */
-.inline-input {
-  border: none;
-  border-bottom: 1px dotted #000;
-  background: transparent;
-  font-size: 14px;
-  padding: 0 4px;
-  margin: 0 4px;
-}
-
-.inline-input.medium {
-  width: 120px;
-}
-
-.inline-input.long {
-  width: 220px;
 }
 
 /* Footer (pesh/sadar) */
