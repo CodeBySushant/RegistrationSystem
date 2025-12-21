@@ -45,16 +45,12 @@ const initialState = {
   voucherNo: "",
   voucherDate: "",
   voucherAmount: "",
-  applicantName: "",
-  applicantAddress: "",
-  applicantCitizenship: "",
-  applicantPhone: "", // defaults
-  municipality: MUNICIPALITY?.name || "",
-  wardNo: MUNICIPALITY?.wardNumber || "",
   applicant_name: "",
   applicant_address: "",
   applicant_citizenship_no: "",
   applicant_phone: "",
+  municipality: MUNICIPALITY?.name || "",
+  wardNo: MUNICIPALITY?.wardNumber || "",
 };
 
 const BusinessRegistrationApplicationForm = () => {
@@ -76,6 +72,13 @@ const BusinessRegistrationApplicationForm = () => {
       copy[index] = { ...copy[index], [name]: value };
       return copy;
     });
+  };
+
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
   };
 
   const addProprietor = () => {
@@ -642,13 +645,69 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
         </div>
                 {/* Applicant Details (For backend data submission) */}       {" "}
-        
+        <div className="applicant-details-box">
+          <h3>निवेदकको विवरण</h3>
+
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicant_name"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicant_name}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicant_address"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicant_address}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicant_citizenship_no"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicant_citizenship_no}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicant_phone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicant_phone}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+        </div>
                 {/* Submit Area */}       {" "}
         <div className="submit-area">
                    {" "}
           <button type="submit" className="submit-btn" disabled={submitting}>
                        {" "}
-            {submitting ? "पठाइँ हुँदैछ..." : "निवेदन दर्ता गर्नुहोस्"}         {" "}
+            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस"} 
           </button>
                  {" "}
         </div>
