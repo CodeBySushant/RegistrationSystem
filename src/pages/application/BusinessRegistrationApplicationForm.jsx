@@ -50,6 +50,7 @@ const initialState = {
 const BusinessRegistrationApplicationForm = () => {
   const [formData, setFormData] = useState(initialState);
   const [submitting, setSubmitting] = useState(false);
+  const [formKey, setFormKey] = useState(0);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -88,8 +89,11 @@ const BusinessRegistrationApplicationForm = () => {
 
       if (res.status === 201 || res.status === 200) {
         alert("सफलतापूर्वक सुरक्षित भयो! ID: " + (res.data?.id || ""));
-        setFormData(initialState);
-        setTimeout(() => window.print(), 300);
+        setTimeout(() => {
+          window.print();
+          setFormData(initialState);
+          setFormKey((k) => k + 1);
+        }, 300);
       }
     } catch (err) {
       const msg =
@@ -102,7 +106,7 @@ const BusinessRegistrationApplicationForm = () => {
 
   return (
     <div className="business-reg-container">
-      <form onSubmit={handleSubmit}>
+      <form key={formKey} onSubmit={handleSubmit}>
         {/* Title */}
         <div className="top-bar-title">
           व्यवसाय दर्ता गर्ने दरखास्त।
