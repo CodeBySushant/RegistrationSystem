@@ -388,6 +388,11 @@ textarea {
   height: 30px;
 }
 
+.signature-input[readonly] {
+  cursor: not-allowed;
+  background-color: transparent;
+}
+
 /* --- Applicant Details Box --- */
 .applicant-details-box {
   border: 2px solid #999 !important;      
