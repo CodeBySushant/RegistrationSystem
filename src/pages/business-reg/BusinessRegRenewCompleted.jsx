@@ -11,10 +11,27 @@ function BusinessRegRenewCompleted() {
   const fetchData = async () => {
     try {
       const res = await fetch("/api/forms/business-reg-renew-completed");
+
+      if (!res.ok) {
+        console.error("API error:", res.status);
+        setRows([]); // ✅ prevent crash
+        return;
+      }
+
       const data = await res.json();
-      setRows(data);
+
+      // ✅ Ensure rows is ALWAYS an array
+      if (Array.isArray(data)) {
+        setRows(data);
+      } else if (Array.isArray(data.data)) {
+        setRows(data.data); // common backend pattern
+      } else {
+        console.error("Unexpected response shape:", data);
+        setRows([]);
+      }
     } catch (err) {
       console.error("Fetch failed:", err);
+      setRows([]); // ✅ prevent crash
     } finally {
       setLoading(false);
     }
@@ -94,6 +111,7 @@ function BusinessRegRenewCompleted() {
                     <td colSpan="12">डेटा उपलब्ध छैन</td>
                   </tr>
                 ) : (
+                  Array.isArray(rows) &&
                   rows.map((row, idx) => (
                     <tr key={row.id}>
                       <td>{row.sn ?? idx + 1}</td>
