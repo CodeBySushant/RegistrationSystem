@@ -5,6 +5,7 @@ import "./DomesticAnimalInsuranceClaimRecommendation.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 
 const initialState = {
   // meta / header
