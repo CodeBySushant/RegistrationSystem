@@ -4,6 +4,7 @@ import "./TaxClearanceNewFormat.css";
 
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const TaxClearanceNewFormat = () => {
   const [formData, setFormData] = useState({
@@ -110,6 +111,13 @@ const TaxClearanceNewFormat = () => {
     return { ok: true };
   };
 
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const v = validate();
@@ -154,64 +162,149 @@ const TaxClearanceNewFormat = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="letterNo"
+              value={formData.letterNo}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group">
             <label>Date:</label>
-            <input type="date" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
             <label>Ref No.:</label>
-            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="refNo"
+              value={formData.refNo}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>Subject: <u>Tax Clearance Certificate</u></strong><br />
-          <strong><u>To Whom It May Concern</u></strong>
+          <strong>
+            Subject: <u>Tax Clearance Certificate</u>
+          </strong>
+          <br />
+          <strong>
+            <u>To Whom It May Concern</u>
+          </strong>
         </div>
 
         <p className="certificate-body">
           This is to certify that
-          <select name="applicantTitle" value={formData.applicantTitle} onChange={handleChange}>
+          <select
+            name="applicantTitle"
+            value={formData.applicantTitle}
+            onChange={handleChange}
+          >
             <option>Master.</option>
             <option>Mr.</option>
           </select>
-          <input type="text" name="applicantNameBody" placeholder="Name" value={formData.applicantNameBody} onChange={handleChange} required /> ,
-          <select name="relation" value={formData.relation} onChange={handleChange}>
+          <input
+            type="text"
+            name="applicantNameBody"
+            placeholder="Name"
+            value={formData.applicantNameBody}
+            onChange={handleChange}
+            required
+          />{" "}
+          ,
+          <select
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+          >
             <option>son</option>
             <option>daughter</option>
           </select>
           of
-          <select name="guardianTitle" value={formData.guardianTitle} onChange={handleChange}>
+          <select
+            name="guardianTitle"
+            value={formData.guardianTitle}
+            onChange={handleChange}
+          >
             <option>Master.</option>
             <option>Mr.</option>
           </select>
-          <input type="text" name="guardianName" placeholder="Guardian's Name" value={formData.guardianName} onChange={handleChange} required /> ,
-          resident of
-          <select name="municipality" value={formData.municipality} onChange={handleChange}>
-            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
+          <input
+            type="text"
+            name="guardianName"
+            placeholder="Guardian's Name"
+            value={formData.guardianName}
+            onChange={handleChange}
+            required
+          />{" "}
+          , resident of
+          <select
+            name="municipality"
+            value={formData.municipality}
+            onChange={handleChange}
+          >
+            <option>
+              {MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}
+            </option>
           </select>
           , Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
             <option>{MUNICIPALITY.wardNumber || "1"}</option>
           </select>
           , (Previously:
-          <input type="text" name="prevAddress" placeholder="Address" value={formData.prevAddress} onChange={handleChange} /> , Ward No.
-          <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} /> ),
-          <select name="prevProvince" value={formData.prevProvince} onChange={handleChange}>
-            <option>{MUNICIPALITY.englishProvince || "Bagmati Province"}</option>
+          <input
+            type="text"
+            name="prevAddress"
+            placeholder="Address"
+            value={formData.prevAddress}
+            onChange={handleChange}
+          />{" "}
+          , Ward No.
+          <input
+            type="text"
+            name="prevWardNo"
+            placeholder="Ward"
+            value={formData.prevWardNo}
+            onChange={handleChange}
+          />{" "}
+          ),
+          <select
+            name="prevProvince"
+            value={formData.prevProvince}
+            onChange={handleChange}
+          >
+            <option>
+              {MUNICIPALITY.englishProvince || "Bagmati Province"}
+            </option>
             <option>Koshi Province</option>
           </select>
           ,
-          <select name="prevCountry" value={formData.prevCountry} onChange={handleChange}>
+          <select
+            name="prevCountry"
+            value={formData.prevCountry}
+            onChange={handleChange}
+          >
             <option>Nepal</option>
           </select>
-          has been regularly paying all applicable government taxes up to fiscal year
-          <input type="text" name="fiscalYear" value={formData.fiscalYear} onChange={handleChange} required />.
+          has been regularly paying all applicable government taxes up to fiscal
+          year
+          <input
+            type="text"
+            name="fiscalYear"
+            value={formData.fiscalYear}
+            onChange={handleChange}
+            required
+          />
+          .
         </p>
 
         <div className="table-wrapper">
@@ -226,9 +319,15 @@ const TaxClearanceNewFormat = () => {
                 <th rowSpan="2"></th>
               </tr>
               <tr>
-                <th>FY1</th><th>FY2</th><th>FY3</th>
-                <th>FY1</th><th>FY2</th><th>FY3</th>
-                <th>FY1</th><th>FY2</th><th>FY3</th>
+                <th>FY1</th>
+                <th>FY2</th>
+                <th>FY3</th>
+                <th>FY1</th>
+                <th>FY2</th>
+                <th>FY3</th>
+                <th>FY1</th>
+                <th>FY2</th>
+                <th>FY3</th>
               </tr>
             </thead>
             <tbody>
@@ -237,33 +336,124 @@ const TaxClearanceNewFormat = () => {
                   <tr>
                     <td rowSpan="4">{idx + 1}</td>
                     <td colSpan="9">
-                      <input type="text" name="sourceName" value={s.sourceName} onChange={(e) => handleIncomeChange(idx, e)} placeholder="Source of Income" required />
+                      <input
+                        type="text"
+                        name="sourceName"
+                        value={s.sourceName}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        placeholder="Source of Income"
+                        required
+                      />
                     </td>
                     <td rowSpan="4" className="action-cell">
                       {idx === incomeSources.length - 1 && (
-                        <button type="button" onClick={addIncomeSource} className="add-btn">+</button>
+                        <button
+                          type="button"
+                          onClick={addIncomeSource}
+                          className="add-btn"
+                        >
+                          +
+                        </button>
                       )}
                     </td>
                   </tr>
                   <tr>
                     <td>Initial</td>
-                    <td><input type="text" name="initialIncomeFY1" value={s.initialIncomeFY1} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
-                    <td><input type="text" name="initialIncomeFY2" value={s.initialIncomeFY2} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
-                    <td><input type="text" name="initialIncomeFY3" value={s.initialIncomeFY3} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
+                    <td>
+                      <input
+                        type="text"
+                        name="initialIncomeFY1"
+                        value={s.initialIncomeFY1}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="initialIncomeFY2"
+                        value={s.initialIncomeFY2}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="initialIncomeFY3"
+                        value={s.initialIncomeFY3}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
                     <td>Tax</td>
-                    <td><input type="text" name="taxAmountFY1" value={s.taxAmountFY1} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
-                    <td><input type="text" name="taxAmountFY2" value={s.taxAmountFY2} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
-                    <td><input type="text" name="taxAmountFY3" value={s.taxAmountFY3} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
+                    <td>
+                      <input
+                        type="text"
+                        name="taxAmountFY1"
+                        value={s.taxAmountFY1}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="taxAmountFY2"
+                        value={s.taxAmountFY2}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="taxAmountFY3"
+                        value={s.taxAmountFY3}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
                     <td>After</td>
-                    <td><input type="text" name="incomeAfterFY1" value={s.incomeAfterFY1} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
-                    <td><input type="text" name="incomeAfterFY2" value={s.incomeAfterFY2} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
-                    <td><input type="text" name="incomeAfterFY3" value={s.incomeAfterFY3} onChange={(e) => handleIncomeChange(idx, e)} required /></td>
+                    <td>
+                      <input
+                        type="text"
+                        name="incomeAfterFY1"
+                        value={s.incomeAfterFY1}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="incomeAfterFY2"
+                        value={s.incomeAfterFY2}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="incomeAfterFY3"
+                        value={s.incomeAfterFY3}
+                        onChange={(e) => handleIncomeChange(idx, e)}
+                        required
+                      />
+                    </td>
                   </tr>
                   <tr>
                     <td colSpan="3">Status</td>
-                    <td colSpan="3" className="status-cell">Tax Cleared</td>
-                    <td colSpan="3" className="status-cell">Tax Cleared</td>
-                    <td colSpan="3" className="status-cell">Tax Cleared</td>
+                    <td colSpan="3" className="status-cell">
+                      Tax Cleared
+                    </td>
+                    <td colSpan="3" className="status-cell">
+                      Tax Cleared
+                    </td>
+                    <td colSpan="3" className="status-cell">
+                      Tax Cleared
+                    </td>
                   </tr>
                   <tr style={{ height: "6px" }}></tr>
                 </React.Fragment>
@@ -273,36 +463,96 @@ const TaxClearanceNewFormat = () => {
         </div>
 
         <div className="info-notes">
-          <p>For details about income tax exemption, you may check the website of Nepal Government Income Tax Act: <a href="http://www.lawcommission.gov.np" target="_blank" rel="noopener noreferrer">www.lawcommission.gov.np</a></p>
-          <p>*Note: According to Income Tax Act, 2058 B.S., income from agriculture is exempt from income tax.</p>
+          <p>
+            For details about income tax exemption, you may check the website of
+            Nepal Government Income Tax Act:{" "}
+            <a
+              href="http://www.lawcommission.gov.np"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              www.lawcommission.gov.np
+            </a>
+          </p>
+          <p>
+            *Note: According to Income Tax Act, 2058 B.S., income from
+            agriculture is exempt from income tax.
+          </p>
         </div>
 
         <div className="designation-section">
           <input type="text" placeholder="Signature" disabled />
-          <select name="designation" value={formData.designation} onChange={handleChange} required>
+          <select
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+            required
+          >
             <option value="">Select Designation</option>
             <option value="Ward-Chairperson">Ward Chairperson</option>
             <option value="Ward-Secretary">Ward Secretary</option>
           </select>
         </div>
 
-        <div className="applicant-details">
+        {/* Applicants details */}
+        <div className="applicant-details-box">
           <h3>Applicant Details</h3>
-          <div className="form-group-column">
-            <label>Applicant Name *</label>
-            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Address *</label>
-            <input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Citizenship Number *</label>
-            <input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Phone Number *</label>
-            <input type="text" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                Applicant Name<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Address<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Citizenship Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantCitizenship"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantCitizenship}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Phone Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 

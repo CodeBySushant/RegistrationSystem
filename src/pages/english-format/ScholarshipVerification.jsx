@@ -263,6 +263,7 @@ const ScholarshipVerification = () => {
           </select>
         </div>
 
+      {/* Applicants details */}
         <div className="applicant-details-box">
           <h3>Applicant Details</h3>
           <div className="details-grid">

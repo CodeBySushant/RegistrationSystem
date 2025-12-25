@@ -177,6 +177,7 @@ select {
   background-color: #218838;
 }
 
+/* Applicants Details Container */
 .verification-container .applicant-details-box .details-grid {
   display: flex !important;
   flex-direction: column !important;

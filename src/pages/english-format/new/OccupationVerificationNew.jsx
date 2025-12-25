@@ -4,6 +4,7 @@ import "./OccupationVerificationNew.css";
 
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const OccupationVerificationNew = () => {
   const [formData, setFormData] = useState({
@@ -30,7 +31,8 @@ const OccupationVerificationNew = () => {
     prevProvince: MUNICIPALITY.englishProvince || "",
     prevCountry: "Nepal",
 
-    description: "is a respected person as well as one of the renowned farmer ...",
+    description:
+      "is a respected person as well as one of the renowned farmer ...",
     designation: "",
     applicantName: "",
     applicantAddress: "",
@@ -63,6 +65,13 @@ const OccupationVerificationNew = () => {
       return { ok: false, missing: "applicantPhone (invalid)" };
     }
     return { ok: true };
+  };
+
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
   };
 
   const handleSubmit = async (e) => {
@@ -106,53 +115,110 @@ const OccupationVerificationNew = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="letterNo"
+              value={formData.letterNo}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group">
             <label>Date:</label>
-            <input type="date" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
             <label>Ref No.:</label>
-            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="refNo"
+              value={formData.refNo}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>Subject: <u>OCCUPATION VERIFICATION CERTIFICATE</u></strong>
+          <strong>
+            Subject: <u>OCCUPATION VERIFICATION CERTIFICATE</u>
+          </strong>
           <br />
-          <strong><u>TO WHOM IT MAY CONCERN</u></strong>
+          <strong>
+            <u>TO WHOM IT MAY CONCERN</u>
+          </strong>
         </div>
 
         <p className="certificate-body">
           This is to certify that
-          <select name="applicantTitle" value={formData.applicantTitle} onChange={handleChange}>
+          <select
+            name="applicantTitle"
+            value={formData.applicantTitle}
+            onChange={handleChange}
+          >
             <option>Master.</option>
             <option>Mr.</option>
             <option>Miss.</option>
             <option>Mrs.</option>
           </select>
-          <input type="text" name="applicantNameBody" placeholder="Name" value={formData.applicantNameBody} onChange={handleChange} required /> ,
-          <select name="relation" value={formData.relation} onChange={handleChange}>
+          <input
+            type="text"
+            name="applicantNameBody"
+            placeholder="Name"
+            value={formData.applicantNameBody}
+            onChange={handleChange}
+            required
+          />{" "}
+          ,
+          <select
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+          >
             <option>son</option>
             <option>daughter</option>
           </select>
           of
-          <select name="fatherTitle" value={formData.fatherTitle} onChange={handleChange}>
+          <select
+            name="fatherTitle"
+            value={formData.fatherTitle}
+            onChange={handleChange}
+          >
             <option>Master.</option>
             <option>Mr.</option>
           </select>
-          <input type="text" name="fatherName" placeholder="Father's Name" value={formData.fatherName} onChange={handleChange} required /> ,
-          <select name="residencyType" value={formData.residencyType} onChange={handleChange}>
+          <input
+            type="text"
+            name="fatherName"
+            placeholder="Father's Name"
+            value={formData.fatherName}
+            onChange={handleChange}
+            required
+          />{" "}
+          ,
+          <select
+            name="residencyType"
+            value={formData.residencyType}
+            onChange={handleChange}
+          >
             <option>permanent</option>
             <option>temporary</option>
           </select>
           resident of
-          <select name="municipality" value={formData.municipality} onChange={handleChange}>
-            <option>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
+          <select
+            name="municipality"
+            value={formData.municipality}
+            onChange={handleChange}
+          >
+            <option>
+              {MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}
+            </option>
           </select>
           , Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
@@ -161,49 +227,133 @@ const OccupationVerificationNew = () => {
             <option>3</option>
           </select>
           , (Previously:
-          <input type="text" name="prevAddress1" placeholder="Address" value={formData.prevAddress1} onChange={handleChange} /> Ward No.
-          <input type="text" name="prevWardNo" placeholder="Ward" value={formData.prevWardNo} onChange={handleChange} /> ),
-          <input type="text" name="prevAddress2" placeholder="Address" value={formData.prevAddress2} onChange={handleChange} /> ,
-          <select name="prevProvince" value={formData.prevProvince} onChange={handleChange}>
-            <option>{MUNICIPALITY.englishProvince || "Bagmati Province"}</option>
+          <input
+            type="text"
+            name="prevAddress1"
+            placeholder="Address"
+            value={formData.prevAddress1}
+            onChange={handleChange}
+          />{" "}
+          Ward No.
+          <input
+            type="text"
+            name="prevWardNo"
+            placeholder="Ward"
+            value={formData.prevWardNo}
+            onChange={handleChange}
+          />{" "}
+          ),
+          <input
+            type="text"
+            name="prevAddress2"
+            placeholder="Address"
+            value={formData.prevAddress2}
+            onChange={handleChange}
+          />{" "}
+          ,
+          <select
+            name="prevProvince"
+            value={formData.prevProvince}
+            onChange={handleChange}
+          >
+            <option>
+              {MUNICIPALITY.englishProvince || "Bagmati Province"}
+            </option>
             <option>Koshi Province</option>
           </select>
           ,
-          <select name="prevCountry" value={formData.prevCountry} onChange={handleChange}>
+          <select
+            name="prevCountry"
+            value={formData.prevCountry}
+            onChange={handleChange}
+          >
             <option>Nepal</option>
           </select>
         </p>
 
         <div className="certificate-body">
-          <textarea name="description" value={formData.description} onChange={handleChange} rows="3" required></textarea>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows="3"
+            required
+          ></textarea>
         </div>
 
         <div className="designation-section">
           <input type="text" placeholder="Signature" disabled />
-          <select name="designation" value={formData.designation} onChange={handleChange} required>
+          <select
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+            required
+          >
             <option value="">Select Designation</option>
             <option value="Ward-Chairperson">Ward Chairperson</option>
             <option value="Ward-Secretary">Ward Secretary</option>
           </select>
         </div>
 
-        <div className="applicant-details">
+        {/* Applicants details */}
+        <div className="applicant-details-box">
           <h3>Applicant Details</h3>
-          <div className="form-group-column">
-            <label>Applicant Name *</label>
-            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Address *</label>
-            <input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Citizenship Number *</label>
-            <input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Phone Number *</label>
-            <input type="text" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                Applicant Name<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Address<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Citizenship Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantCitizenship"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantCitizenship}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Phone Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 
