@@ -1943,36 +1943,52 @@ CREATE TABLE `property_valuation_report` (
 
 CREATE TABLE `relationship_verification` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `letterNo` VARCHAR(64) DEFAULT NULL,
-  `refNo` VARCHAR(64) DEFAULT NULL,
-  `date` DATE DEFAULT NULL,
-  `mainPersonTitle` VARCHAR(16) DEFAULT NULL,
-  `mainPersonName` VARCHAR(255) DEFAULT NULL,
-  `relation` VARCHAR(64) DEFAULT NULL,
-  `fatherTitle` VARCHAR(16) DEFAULT NULL,
-  `fatherName` VARCHAR(255) DEFAULT NULL,
-  `motherRelation` VARCHAR(32) DEFAULT NULL,
-  `motherTitle` VARCHAR(16) DEFAULT NULL,
-  `motherName` VARCHAR(255) DEFAULT NULL,
-  `mrsName` VARCHAR(255) DEFAULT NULL,
-  `residencyType` VARCHAR(64) DEFAULT NULL,
-  `municipality` VARCHAR(128) DEFAULT NULL,
-  `wardNo1` VARCHAR(32) DEFAULT NULL,
-  `district1` VARCHAR(128) DEFAULT NULL,
-  `country1` VARCHAR(128) DEFAULT NULL,
-  `prevWardNo` VARCHAR(32) DEFAULT NULL,
-  `prevDistrict` VARCHAR(128) DEFAULT NULL,
-  `prevCountry` VARCHAR(128) DEFAULT NULL,
-  `table_rows` JSON DEFAULT NULL,
-  `designation` VARCHAR(64) DEFAULT NULL,
-  `applicantName` VARCHAR(255) DEFAULT NULL,
+  -- Meta
+  `letterNo` VARCHAR(64),
+  `refNo` VARCHAR(64),
+  `date` DATE,
+  -- Main person
+  `mainPersonTitle` VARCHAR(16),
+  `mainPersonName` VARCHAR(255),
+  `relation` VARCHAR(64),
+  -- Grand parent
+  `grandTitle` VARCHAR(16),
+  `grandsName` VARCHAR(255),
+  -- Parents
+  `fatherTitle` VARCHAR(16),
+  `fatherName` VARCHAR(255),
+  `motherRelation` VARCHAR(32),
+  `motherTitle` VARCHAR(16),
+  `motherName` VARCHAR(255),
+  -- Address
+  `residencyType` VARCHAR(32),
+  `municipality` VARCHAR(128),
+  `ward_number` INT NOT NULL,
+  `district1` VARCHAR(128),
+  `country1` VARCHAR(128),
+  -- Previous address
+  `prevWardNo` VARCHAR(32),
+  `prevDistrict` VARCHAR(128),
+  `prevCountry` VARCHAR(128),
+  -- Relatives list
+  `table_rows` JSON,
+  -- Office
+  `designation` VARCHAR(64),
+  -- Applicant
+  `applicantName` VARCHAR(255),
   `applicantAddress` TEXT,
-  `applicantCitizenship` VARCHAR(128) DEFAULT NULL,
-  `applicantPhone` VARCHAR(64) DEFAULT NULL,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `applicantCitizenship` VARCHAR(128),
+  `applicantPhone` VARCHAR(64),
+  -- Audit
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_relationship_verification_ward` (`ward_number`)
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE `same_person_certificate` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

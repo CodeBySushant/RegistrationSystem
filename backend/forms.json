@@ -1902,38 +1902,47 @@
     ]
   },
 
-  "relationship-verification": {
-    "title": "Relationship Verification (English)",
-    "table": "relationship_verification",
-    "columns": [
-      "letterNo",
-      "refNo",
-      "date",
-      "mainPersonTitle",
-      "mainPersonName",
-      "relation",
-      "fatherTitle",
-      "fatherName",
-      "motherRelation",
-      "motherTitle",
-      "motherName",
-      "mrsName",
-      "residencyType",
-      "municipality",
-      "wardNo1",
-      "district1",
-      "country1",
-      "prevWardNo",
-      "prevDistrict",
-      "prevCountry",
-      "table_rows",
-      "designation",
-      "applicantName",
-      "applicantAddress",
-      "applicantCitizenship",
-      "applicantPhone"
-    ]
-  },
+ "relationship-verification": {
+  "title": "Relationship Verification (English)",
+  "table": "relationship_verification",
+  "columns": [
+    "letterNo",
+    "refNo",
+    "date",
+
+    "mainPersonTitle",
+    "mainPersonName",
+    "relation",
+
+    "grandTitle",
+    "grandsName",
+
+    "fatherTitle",
+    "fatherName",
+    "motherRelation",
+    "motherTitle",
+    "motherName",
+
+    "residencyType",
+    "municipality",
+    "ward_number",
+    "district1",
+    "country1",
+
+    "prevWardNo",
+    "prevDistrict",
+    "prevCountry",
+
+    "table_rows",
+
+    "designation",
+
+    "applicantName",
+    "applicantAddress",
+    "applicantCitizenship",
+    "applicantPhone"
+  ]
+},
 
   "same-person-certificate": {
     "title": "Same Person Certificate",
