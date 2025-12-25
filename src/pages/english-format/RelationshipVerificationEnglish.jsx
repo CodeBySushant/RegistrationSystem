@@ -433,11 +433,11 @@ const RelationshipVerification = () => {
         </div>
 
         <div className="applicant-details-box">
-          <h3>निवेदकको विवरण</h3>
+          <h3>Applicant Details</h3>
           <div className="details-grid">
             <div className="detail-group">
               <label>
-                निवेदकको नाम<span className="required">*</span>
+                Applicant Name<span className="required">*</span>
               </label>
               <input
                 name="applicantName"
@@ -451,7 +451,7 @@ const RelationshipVerification = () => {
 
             <div className="detail-group">
               <label>
-                निवेदकको ठेगाना<span className="required">*</span>
+                Applicant Address<span className="required">*</span>
               </label>
               <input
                 name="applicantAddress"
@@ -465,7 +465,7 @@ const RelationshipVerification = () => {
 
             <div className="detail-group">
               <label>
-                निवेदकको नागरिकता नं.<span className="required">*</span>
+                Applicant Citizenship Number<span className="required">*</span>
               </label>
               <input
                 name="applicantCitizenship"
@@ -479,7 +479,7 @@ const RelationshipVerification = () => {
 
             <div className="detail-group">
               <label>
-                निवेदकको फोन नं.<span className="required">*</span>
+                Applicant Phone Number<span className="required">*</span>
               </label>
               <input
                 name="applicantPhone"
