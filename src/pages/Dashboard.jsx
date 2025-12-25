@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import axiosInstance from "../utils/axiosInstance";
 import {
   Briefcase,
   FileText,
@@ -113,9 +114,9 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/dashboard-stats"); // adjust URL if needed
+        const res = await axiosInstance.get("/api/dashboard-stats");
         if (!res.ok) throw new Error("Failed to load dashboard stats");
-        const data = await res.json(); // { cards: [...], yearlyStats: [...] }
+        const data = res.data;
 
         // cards from DB: update values, keep icons/colors/linkText from META
         if (Array.isArray(data.cards)) {

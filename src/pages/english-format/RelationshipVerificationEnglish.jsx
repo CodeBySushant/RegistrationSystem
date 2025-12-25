@@ -20,9 +20,9 @@ const RelationshipVerification = () => {
     motherName: "",
     residencyType: "Permanent",
     municipality: MUNICIPALITY.englishMunicipality,
-    wardNo1: MUNICIPALITY.wardNumber.toString(),
+    wardNo: "",
     district1: MUNICIPALITY.englishDistrict,
-    country1: MUNICIPALITY.englishCountry,
+    country1: "Nepal",
     prevWardNo: "",
     prevDistrict: MUNICIPALITY.englishProvince,
     prevCountry: "Nepal",
@@ -65,7 +65,7 @@ const RelationshipVerification = () => {
       "mainPersonName",
       "fatherName",
       "motherName",
-      "wardNo1",
+      "wardNo",
       "district1",
       "designation",
       "applicantName",
@@ -286,18 +286,14 @@ const RelationshipVerification = () => {
             <option>{MUNICIPALITY.englishMunicipality}</option>
           </select>
           , Ward No.
-          <select
-            name="wardNo1"
-            value={formData.wardNo1}
+          <input
+            type="text"
+            name="wardNo"
+            value={formData.wardNo}
             onChange={handleChange}
-          >
-            <option value={MUNICIPALITY.wardNumber.toString()}>
-              {MUNICIPALITY.wardNumber ?? 1}
-            </option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-          </select>
+            placeholder="Ward No."
+            required
+          />
           ,
           <input
             type="text"
