@@ -2003,7 +2003,7 @@
       "residentOf",
       "district",
       "previouslyKnownAs",
-      "wardNo1",
+      "ward_number",
       "municipality",
       "wardNo2",
       "annualIncome",
