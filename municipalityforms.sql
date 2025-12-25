@@ -1989,7 +1989,6 @@ CREATE TABLE `relationship_verification` (
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE `same_person_certificate` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `letterNo` VARCHAR(64) DEFAULT NULL,
