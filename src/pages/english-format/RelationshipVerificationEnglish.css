@@ -177,15 +177,29 @@ select {
   background-color: #218838;
 }
 
+.verification-container .applicant-details-box .details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+/* Control applicant input width */
+.verification-container
+.applicant-details-box 
+.detail-input {
+  max-width: 400px;   /* adjust if needed: 480–550 */
+  width: 100%;
+}
+
 /* ================= PRINT STYLES ================= */
 @media print {
   body * {
-    visibility: hidden;   /* hide everything */
+    visibility: hidden;
   }
 
   .verification-container,
   .verification-container * {
-    visibility: visible;  /* show only form */
+    visibility: visible;
   }
 
   .verification-container {
@@ -197,10 +211,10 @@ select {
     border: none;
     margin: 0;
     padding: 0;
-    background: white;   /* cleaner print */
+    background: white;
   }
 
-  .submit-area {
-    display: none;       /* hide Save & Print button */
+  .form-footer {
+    display: none;
   }
 }
