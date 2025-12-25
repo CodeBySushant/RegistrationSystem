@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./RelationshipVerificationEnglish.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
+import axiosInstance from "../../utils/axiosInstance";
 
 const RelationshipVerification = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ const RelationshipVerification = () => {
     motherName: "",
     residencyType: "Permanent",
     municipality: MUNICIPALITY.englishMunicipality,
-    wardNo: "",
+    ward_number: "",
     district1: MUNICIPALITY.englishDistrict,
     country1: "Nepal",
     prevWardNo: "",
@@ -53,6 +54,13 @@ const RelationshipVerification = () => {
     });
   };
 
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  };
+
   const addRelative = () => {
     setRelatives((prev) => [
       ...prev,
@@ -65,7 +73,7 @@ const RelationshipVerification = () => {
       "mainPersonName",
       "fatherName",
       "motherName",
-      "wardNo",
+      "ward_number",
       "district1",
       "designation",
       "applicantName",
@@ -73,16 +81,19 @@ const RelationshipVerification = () => {
       "applicantCitizenship",
       "applicantPhone",
     ];
+
     for (let k of required) {
-      if (!formData[k] || formData[k].toString().trim() === "")
+      if (String(formData[k] ?? "").trim() === "") {
         return { ok: false, missing: k };
+      }
     }
-    // at least one relative name
-    const okRel = relatives.some(
-      (r) => r.name && r.name.toString().trim() !== ""
-    );
-    if (!okRel)
+
+    const okRel = relatives.some((r) => String(r?.name ?? "").trim() !== "");
+
+    if (!okRel) {
       return { ok: false, missing: "relative (at least one with name)" };
+    }
+
     return { ok: true };
   };
 
@@ -97,21 +108,17 @@ const RelationshipVerification = () => {
     setLoading(true);
     try {
       const payload = { ...formData, table_rows: relatives };
-      const res = await fetch("/api/forms/relationship-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+
+      const res = await axiosInstance.post(
+        "/api/forms/relationship-verification",
+        payload
+      );
+
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+      alert(err?.response?.data?.message || "Failed to save record");
     } finally {
       setLoading(false);
     }
@@ -288,8 +295,8 @@ const RelationshipVerification = () => {
           , Ward No.
           <input
             type="text"
-            name="wardNo"
-            value={formData.wardNo}
+            name="ward_number"
+            value={formData.ward_number}
             onChange={handleChange}
             placeholder="Ward No."
             required
@@ -425,47 +432,64 @@ const RelationshipVerification = () => {
           </select>
         </div>
 
-        <div className="applicant-details">
-          <h3>Applicant Details</h3>
-          <div className="form-group">
-            <label>Applicant Name *</label>
-            <input
-              type="text"
-              name="applicantName"
-              value={formData.applicantName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Applicant Address *</label>
-            <input
-              type="text"
-              name="applicantAddress"
-              value={formData.applicantAddress}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Applicant Citizenship Number *</label>
-            <input
-              type="text"
-              name="applicantCitizenship"
-              value={formData.applicantCitizenship}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Applicant Phone Number *</label>
-            <input
-              type="tel"
-              name="applicantPhone"
-              value={formData.applicantPhone}
-              onChange={handleChange}
-              required
-            />
+        <div className="applicant-details-box">
+          <h3>निवेदकको विवरण</h3>
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantCitizenship"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantCitizenship}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 
