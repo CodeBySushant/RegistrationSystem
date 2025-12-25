@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./CertificateofOccupation.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
+import axiosInstance from "../../utils/axiosInstance";
 
 const FORM_KEY = "certificate-of-occupation";
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -88,13 +89,18 @@ const CertificateOfOccupation = () => {
       }
     }
     // At least one occupation row must have ownerName and occupation
-    const hasValidRow = occupations.some(
-      (r) => r.ownerName && r.occupation
-    );
+    const hasValidRow = occupations.some((r) => r.ownerName && r.occupation);
     if (!hasValidRow) {
       return { ok: false, missing: "occupation row (ownerName & occupation)" };
     }
     return { ok: true };
+  };
+
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
   };
 
   const handleSubmit = async (e) => {
@@ -107,11 +113,10 @@ const CertificateOfOccupation = () => {
     setLoading(true);
     try {
       const payload = { ...formData, table_rows: occupations };
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await axiosInstance.post(
+        "/api/forms/certificate-of-occupation",
+        payload
+      );
       if (!res.ok) {
         const err = await res.json().catch(() => null);
         throw new Error(err?.message || `Server returned ${res.status}`);
@@ -261,11 +266,7 @@ const CertificateOfOccupation = () => {
             <option>{MUNICIPALITY.englishMunicipality}</option>
           </select>
           Ward No.
-          <select
-            name="wardNo"
-            value={formData.wardNo}
-            onChange={handleChange}
-          >
+          <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
             <option value={MUNICIPALITY.wardNumber.toString()}>
               {MUNICIPALITY.wardNumber}
             </option>
@@ -386,47 +387,65 @@ const CertificateOfOccupation = () => {
           </select>
         </div>
 
-        <div className="applicant-details">
+        {/* Applicants details */}
+        <div className="applicant-details-box">
           <h3>Applicant Details</h3>
-          <div className="form-group-column">
-            <label>Applicant Name *</label>
-            <input
-              type="text"
-              name="applicantName"
-              value={formData.applicantName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Address *</label>
-            <input
-              type="text"
-              name="applicantAddress"
-              value={formData.applicantAddress}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Citizenship Number *</label>
-            <input
-              type="text"
-              name="applicantCitizenship"
-              value={formData.applicantCitizenship}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Phone Number *</label>
-            <input
-              type="tel"
-              name="applicantPhone"
-              value={formData.applicantPhone}
-              onChange={handleChange}
-              required
-            />
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                Applicant Name<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Address<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Citizenship Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantCitizenship"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantCitizenship}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Phone Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 

@@ -159,33 +159,6 @@
     text-align: center;
 }
 
-/* Applicant Details */
-.applicant-details {
-  border-top: 1px dashed #ccc;
-  margin-top: 25px;
-  padding-top: 15px;
-}
-.applicant-details h3 {
-  margin-bottom: 15px;
-}
-.form-group-column {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-}
-.form-group-column label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.form-group-column input {
-  width: 350px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-}
-
 /* Submit Button */
 .submit-area {
   text-align: center;
@@ -203,4 +176,73 @@
 }
 .submit-btn:hover {
   background-color: #23272b;
+}
+
+/* Applicants Details Container */
+.marriage-certificate-container .applicant-details-box .details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+/* Control applicant input width */
+.marriage-certificate-container
+.applicant-details-box 
+.detail-input {
+  max-width: 400px;   /* adjust if needed: 480–550 */
+  width: 100%;
+}
+
+/* Red star */
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+.inline-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.input-required-star {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: red;
+  font-weight: bold;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.inline-input-wrapper input {
+  padding-left: 18px;
+}
+
+/* ================= PRINT STYLES ================= */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .marriage-certificate-container,
+  .marriage-certificate-container * {
+    visibility: visible;
+  }
+
+  .marriage-certificate-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .form-footer {
+    display: none;
+  }
 }

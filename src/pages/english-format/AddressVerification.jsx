@@ -4,6 +4,7 @@ import "./AddressVerification.css";
 // NEW imports
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import axiosInstance from "../../utils/axiosInstance";
 
 const AddressVerification = () => {
   const [formData, setFormData] = useState({
@@ -58,13 +59,19 @@ const AddressVerification = () => {
       return;
     }
 
+    const handlePrint = async () => {
+      await handleSubmit(new Event("submit"));
+      setTimeout(() => {
+        window.print();
+      }, 500);
+    };
+
     setLoading(true);
     try {
-      const res = await fetch("/api/forms/address-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await axiosInstance.post(
+        "/api/forms/address-verification",
+        payload
+      );
 
       if (!res.ok) {
         const err = await res.json().catch(() => null);
@@ -209,47 +216,65 @@ const AddressVerification = () => {
           </select>
         </div>
 
-        <div className="applicant-details">
+        {/* Applicants details */}
+        <div className="applicant-details-box">
           <h3>Applicant Details</h3>
-          <div className="form-group-column">
-            <label>Applicant Name *</label>
-            <input
-              type="text"
-              name="applicantName"
-              value={formData.applicantName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Address *</label>
-            <input
-              type="text"
-              name="applicantAddress"
-              value={formData.applicantAddress}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Citizenship Number *</label>
-            <input
-              type="text"
-              name="applicantCitizenship"
-              value={formData.applicantCitizenship}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group-column">
-            <label>Applicant Phone Number *</label>
-            <input
-              type="tel"
-              name="applicantPhone"
-              value={formData.applicantPhone}
-              onChange={handleChange}
-              required
-            />
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                Applicant Name<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Address<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Citizenship Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantCitizenship"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantCitizenship}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Phone Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 

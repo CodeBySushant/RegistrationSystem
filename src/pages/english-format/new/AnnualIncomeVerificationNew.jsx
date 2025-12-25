@@ -4,6 +4,7 @@ import "./AnnualIncomeVerificationNew.css";
 
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const AnnualIncomeVerificationNew = () => {
   const [formData, setFormData] = useState({
@@ -62,7 +63,13 @@ const AnnualIncomeVerificationNew = () => {
   const addIncomeRow = () => {
     setIncomeSources((p) => [
       ...p,
-      { id: p.length + 1, sourceName: "", fy1_amount: "", fy2_amount: "", fy3_amount: "" },
+      {
+        id: p.length + 1,
+        sourceName: "",
+        fy1_amount: "",
+        fy2_amount: "",
+        fy3_amount: "",
+      },
     ]);
   };
 
@@ -88,7 +95,8 @@ const AnnualIncomeVerificationNew = () => {
       "applicantPhone",
     ];
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || String(formData[k]).trim() === "")
+        return { ok: false, missing: k };
     }
     if (!Array.isArray(incomeSources) || incomeSources.length === 0) {
       return { ok: false, missing: "incomeSources (at least 1 row required)" };
@@ -98,6 +106,13 @@ const AnnualIncomeVerificationNew = () => {
       return { ok: false, missing: "applicantPhone (invalid)" };
     }
     return { ok: true };
+  };
+
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
   };
 
   const handleSubmit = async (e) => {
@@ -147,11 +162,21 @@ const AnnualIncomeVerificationNew = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Letter No.:</label>
-            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="letterNo"
+              value={formData.letterNo}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group">
             <label>Date:</label>
-            <input type="date" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
@@ -210,13 +235,81 @@ const AnnualIncomeVerificationNew = () => {
                   </td>
                   <td>
                     {index === incomeSources.length - 1 && (
-                      <button type="button" onClick={addIncomeRow} className="add-btn">+</button>
+                      <button
+                        type="button"
+                        onClick={addIncomeRow}
+                        className="add-btn"
+                      >
+                        +
+                      </button>
                     )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Applicants details */}
+        <div className="applicant-details-box">
+          <h3>Applicant Details</h3>
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                Applicant Name<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Address<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Citizenship Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantCitizenship"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantCitizenship}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                Applicant Phone Number<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
         </div>
 
         <div className="submit-area">
