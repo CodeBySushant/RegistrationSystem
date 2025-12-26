@@ -3,8 +3,10 @@ import "./PropertyValuationReport.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
 import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const PropertyValuationReport = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
@@ -15,13 +17,12 @@ const PropertyValuationReport = () => {
     guardianTitle: "Mr.",
     guardianName: "",
     residencyType: "permanent/temporary",
-    municipality: MUNICIPALITY.englishMunicipality || "Biratnagar Municipality",
-    wardNo1: (MUNICIPALITY.wardNumber ?? 1).toString(),
-    district1: MUNICIPALITY.englishDistrict || "Biratnagar",
-    propertyMunicipality:
-      MUNICIPALITY.englishMunicipality || "Biratnagar Municipality",
+    municipality: MUNICIPALITY.englishMunicipality || "",
+    wardNo1: user?.ward?.toString() || "",
+    district1: MUNICIPALITY.englishDistrict || "",
+    propertyMunicipality: MUNICIPALITY.englishMunicipality || "",
     wardNo2: "",
-    propertyDistrict: MUNICIPALITY.englishDistrict || "Biratnagar",
+    propertyDistrict: MUNICIPALITY.englishDistrict || "",
     valuationNRs: "",
     valuationWords: "",
     usdRate: "",
@@ -116,26 +117,21 @@ const PropertyValuationReport = () => {
     e.preventDefault();
     const v = validate();
     if (!v.ok) {
-      alert("Please fill required field: " + v.missing);
+      alert("Please fill/validate required field: " + v.missing);
       return;
     }
     setLoading(true);
     try {
-      const payload = { ...formData, table_rows: properties };
+      const payload = { ...formData };
       const res = await axiosInstance.post(
         "/api/forms/property-valuation-report",
         payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -200,6 +196,7 @@ const PropertyValuationReport = () => {
           >
             <option>Mr.</option>
             <option>Mrs.</option>
+            <option>Miss.</option>
             <option>Ms.</option>
           </select>
           <input
@@ -252,23 +249,15 @@ const PropertyValuationReport = () => {
             value={formData.municipality}
             onChange={handleChange}
           >
-            <option>
-              {MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}
-            </option>
+            <option>{MUNICIPALITY.englishMunicipality || ""}</option>
           </select>
           Ward No.
-          <select
+          <input
+            type="text"
             name="wardNo1"
             value={formData.wardNo1}
             onChange={handleChange}
-          >
-            <option value={(MUNICIPALITY.wardNumber ?? 1).toString()}>
-              {MUNICIPALITY.wardNumber ?? 1}
-            </option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-          </select>
+          ></input>
           <input
             type="text"
             name="district1"
@@ -288,9 +277,7 @@ const PropertyValuationReport = () => {
             value={formData.propertyMunicipality}
             onChange={handleChange}
           >
-            <option>
-              {MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}
-            </option>
+            <option>{MUNICIPALITY.englishMunicipality || ""}</option>
           </select>
           Ward No.
           <input
@@ -346,6 +333,7 @@ const PropertyValuationReport = () => {
                   >
                     <option>Mr.</option>
                     <option>Mrs.</option>
+                    <option>Miss.</option>
                     <option>Ms.</option>
                   </select>
                   <input
@@ -411,68 +399,71 @@ const PropertyValuationReport = () => {
           <p>4 Dam = 1 Paisa</p>
         </div>
 
-        <div className="summary-section">
-          <div className="summary-row">
-            <div className="form-group-inline">
-              <label>Properties Valuation NRs. *</label>
-              <input
-                type="text"
-                name="valuationNRs"
-                value={formData.valuationNRs}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group-inline">
-              <label>(In words: *</label>
-              <input
-                type="text"
-                name="valuationWords"
-                value={formData.valuationWords}
-                onChange={handleChange}
-                required
-                className="words-input"
-              />{" "}
-              )
-            </div>
+        <div className="valuation-section">
+          {/* Row 1 */}
+          <div className="valuation-row">
+            <label>
+              Properties Valuation NRs. <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              name="valuationNRs"
+              value={formData.valuationNRs}
+              onChange={handleChange}
+              required
+            />
+            <span className="inline-text">(In words:</span>
+            <input
+              type="text"
+              name="valuationWords"
+              value={formData.valuationWords}
+              onChange={handleChange}
+              required
+              className="words-input"
+            />
+            <span className="inline-text">)</span>
           </div>
-
-          <div className="summary-row">
-            <div className="form-group-inline">
-              <label>Today's Selling Rate USD 1 = NRs. *</label>
-              <input
-                type="text"
-                name="usdRate"
-                value={formData.usdRate}
-                onChange={handleChange}
-                required
-              />
-            </div>
+          {/* Row 2 */}
+          <div className="valuation-row">
+            <label>Today's Selling Rate</label>
+            <select className="currency-select">
+              <option>USD</option>
+            </select>
+            <span className="inline-text">1 = NRs.</span>
+            <input
+              type="text"
+              name="usdRate"
+              value={formData.usdRate}
+              onChange={handleChange}
+              required
+            />
+            <span className="required">*</span>
           </div>
-
-          <div className="summary-row">
-            <div className="form-group-inline">
-              <label>Equivalent to USD *</label>
-              <input
-                type="text"
-                name="equivalentUSD"
-                value={formData.equivalentUSD}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group-inline">
-              <label>(In words: *</label>
-              <input
-                type="text"
-                name="equivalentUSDWords"
-                value={formData.equivalentUSDWords}
-                onChange={handleChange}
-                required
-                className="words-input"
-              />{" "}
-              )
-            </div>
+          {/* Row 3 */}
+          <div className="valuation-row">
+            <label>
+              Equivalent to <u>USD</u>
+            </label>
+            <span className="inline-text">=</span>
+            <input
+              type="text"
+              name="equivalentUSD"
+              value={formData.equivalentUSD}
+              onChange={handleChange}
+              required
+            />
+            <span className="required">*</span>
+            <span className="inline-text">(In words:</span>
+            <input
+              type="text"
+              name="equivalentUSDWords"
+              value={formData.equivalentUSDWords}
+              onChange={handleChange}
+              required
+              className="words-input"
+            />
+            <span className="required">*</span>
+            <span className="inline-text">)</span>
           </div>
         </div>
 
