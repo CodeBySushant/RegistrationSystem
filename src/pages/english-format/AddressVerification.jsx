@@ -14,7 +14,7 @@ const AddressVerification = () => {
     govLocation: "",
     oldWardNo: "",
     // 🔹 Defaults now from MUNICIPALITY config
-    newWardNo: MUNICIPALITY.wardNumber || "1",
+    newWardNo: "",
     newMunicipality: MUNICIPALITY.englishMunicipality || "",
     newDistrict: MUNICIPALITY.englishDistrict || "",
     newProvince: MUNICIPALITY.englishProvince || "",
@@ -51,39 +51,36 @@ const AddressVerification = () => {
     return { ok: true };
   };
 
+  const handlePrint = async () => {
+    await handleSubmit(new Event("submit"));
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
       alert(`Please fill required field: ${v.missing}`);
       return;
     }
 
-    const handlePrint = async () => {
-      await handleSubmit(new Event("submit"));
-      setTimeout(() => {
-        window.print();
-      }, 500);
-    };
-
     setLoading(true);
     try {
+      const payload = { ...formData };
+
       const res = await axiosInstance.post(
         "/api/forms/address-verification",
         payload
       );
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
