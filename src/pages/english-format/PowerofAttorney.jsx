@@ -23,10 +23,9 @@ const PowerOfAttorney = () => {
     applicantPhone: "",
 
     // from config
-    municipality: MUNICIPALITY.englishMunicipality || "Biratnagar Municipality",
-    wardNo: (MUNICIPALITY.wardNumber ?? 1).toString(),
-    district: MUNICIPALITY.englishDistrict || "Biratnagar",
-    province: MUNICIPALITY.englishProvince || "Koshi Province",
+    municipality: MUNICIPALITY.englishMunicipality || "",
+    district: MUNICIPALITY.englishDistrict || "",
+    province: MUNICIPALITY.englishProvince || "",
   });
 
   const [relatives, setRelatives] = useState([
@@ -36,7 +35,6 @@ const PowerOfAttorney = () => {
       name: "",
       address: "",
       age: "",
-      signature: "",
       relationship: "Grandfather",
     },
   ]);
@@ -107,6 +105,7 @@ const PowerOfAttorney = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
       alert("Please fill required field: " + v.missing);
@@ -115,21 +114,27 @@ const PowerOfAttorney = () => {
 
     setLoading(true);
     try {
-      const payload = { ...formData, table_rows: relatives };
+      const payload = {
+        ...formData,
+        table_rows: relatives,
+      };
+
       const res = await axiosInstance.post(
         "/api/forms/power-of-attorney",
         payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+
+      // ✅ axios success response
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+
+      // axios error handling
+      const msg =
+        err.response?.data?.message || err.message || "Failed to save";
+
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -194,6 +199,7 @@ const PowerOfAttorney = () => {
           >
             <option>Mr.</option>
             <option>Mrs.</option>
+            <option>Miss.</option>
             <option>Ms.</option>
           </select>
           <input
@@ -295,6 +301,7 @@ const PowerOfAttorney = () => {
                   >
                     <option>Mr.</option>
                     <option>Mrs.</option>
+                    <option>Miss.</option>
                     <option>Ms.</option>
                   </select>
                 </td>
@@ -326,13 +333,7 @@ const PowerOfAttorney = () => {
                   />
                 </td>
                 <td>
-                  <input
-                    type="text"
-                    name="signature"
-                    value={r.signature}
-                    onChange={(e) => handleRelativeChange(idx, e)}
-                    placeholder="Sign/Thumb"
-                  />
+                  <input type="text" name="signature" placeholder="" readOnly />
                 </td>
                 <td>
                   <select

@@ -2035,33 +2035,45 @@ CREATE TABLE `same_person_certificate` (
 
 CREATE TABLE `scholarship_verification` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `letterNo` VARCHAR(64) DEFAULT NULL,
-  `refNo` VARCHAR(64) DEFAULT NULL,
-  `date` DATE DEFAULT NULL,
-  `applicantTitle` VARCHAR(16) DEFAULT NULL,
-  `applicantNameBody` VARCHAR(255) DEFAULT NULL,
-  `relation` VARCHAR(64) DEFAULT NULL,
-  `guardianTitle` VARCHAR(16) DEFAULT NULL,
-  `guardianName` VARCHAR(255) DEFAULT NULL,
-  `residentOf` VARCHAR(128) DEFAULT NULL,
-  `district` VARCHAR(128) DEFAULT NULL,
-  `previouslyKnownAs` VARCHAR(255) DEFAULT NULL,
-  `wardNo1` VARCHAR(32) DEFAULT NULL,
-  `municipality` VARCHAR(128) DEFAULT NULL,
-  `wardNo2` VARCHAR(32) DEFAULT NULL,
-  `annualIncome` VARCHAR(64) DEFAULT NULL,
-  `pronounHeShe` VARCHAR(8) DEFAULT NULL,
-  `pronounHimHer` VARCHAR(8) DEFAULT NULL,
-  `pronounHisHer` VARCHAR(8) DEFAULT NULL,
-  `designation` VARCHAR(64) DEFAULT NULL,
-  `applicantName` VARCHAR(255) DEFAULT NULL,
+  -- Meta
+  `letterNo` VARCHAR(64),
+  `refNo` VARCHAR(64),
+  `date` DATE,
+  -- Applicant body
+  `applicantTitle` VARCHAR(16),
+  `applicantNameBody` VARCHAR(255),
+  `relation` VARCHAR(64),
+  -- Guardian
+  `guardianTitle` VARCHAR(16),
+  `guardianName` VARCHAR(255),
+  -- Address info
+  `residentOf` VARCHAR(128),
+  `district` VARCHAR(128),
+  `previouslyKnownAs` VARCHAR(255),
+  -- Ward info (MATCHING FORM)
+  `ward_number` VARCHAR(32),   -- previously known ward
+  `municipality` VARCHAR(128),
+  `wardNo2` VARCHAR(32),       -- current ward (from form)
+  -- Income & pronouns
+  `annualIncome` VARCHAR(64),
+  `pronounHeShe` VARCHAR(8),
+  `pronounHimHer` VARCHAR(8),
+  `pronounHisHer` VARCHAR(8),
+  -- Office
+  `designation` VARCHAR(64),
+  -- Applicant details
+  `applicantName` VARCHAR(255),
   `applicantAddress` TEXT,
-  `applicantCitizenship` VARCHAR(128) DEFAULT NULL,
-  `applicantPhone` VARCHAR(64) DEFAULT NULL,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `applicantCitizenship` VARCHAR(128),
+  `applicantPhone` VARCHAR(64),
+  -- Audit
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `tax_clear_basic` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
