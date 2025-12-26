@@ -3,8 +3,10 @@ import "./UnmarriedVerificationEnglish.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
 import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const UnmarriedVerification = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     letterNo: "0000/00",
     refNo: "",
@@ -20,7 +22,7 @@ const UnmarriedVerification = () => {
     docNo: "",
     residencyType: "permanent",
     municipality: MUNICIPALITY.englishMunicipality,
-    wardNo1: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    wardNo1: user?.ward?.toString() || "",
     district1: MUNICIPALITY.englishDistrict,
     country1: "Nepal",
     prevDesignation: "",
@@ -81,6 +83,7 @@ const UnmarriedVerification = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
       alert("Please fill/validate required field: " + v.missing);
@@ -89,20 +92,18 @@ const UnmarriedVerification = () => {
 
     setLoading(true);
     try {
+      const payload = { ...formData };
+
       const res = await axiosInstance.post(
         "/api/forms/unmarried-verification",
         payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -268,6 +269,9 @@ const UnmarriedVerification = () => {
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
           </select>
           ,
           <input
