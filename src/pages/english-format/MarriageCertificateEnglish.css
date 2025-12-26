@@ -110,28 +110,39 @@
     width: 100px;
 }
 
-/* Citizenship Fields Section */
-.citizenship-fields {
-    margin: 20px 0;
-    padding-top: 15px;
-    border-top: 1px dashed #ccc;
+.marriage-certificate-section {
+  font-family: "Times New Roman", serif;
+  font-size: 15px;
 }
-.form-group-inline {
-    display: flex;
-    align-items: baseline;
-    margin-bottom: 10px;
+
+.marriage-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
 }
-.form-group-inline label {
-    font-weight: bold;
-    margin-right: 8px;
-    font-size: 16px;
-    min-width: 220px; /* Align inputs */
+
+label {
+  font-weight: bold;
+  white-space: nowrap;
 }
-.form-group-inline input {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 300px;
+
+.input-small {
+  width: 180px;
+  height: 22px;
+}
+
+.input-medium {
+  width: 260px;
+  height: 22px;
+}
+
+.currency-select {
+  height: 24px;
+}
+
+.inline-text {
+  white-space: nowrap;
 }
 
 

@@ -3,8 +3,10 @@ import "./MarriageCertificateEnglish.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
 import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const MarriageCertificate = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
@@ -17,12 +19,12 @@ const MarriageCertificate = () => {
     groomMotherTitle: "Mrs.",
     groomMotherName: "",
     residencyType: "permanent",
-    municipality: MUNICIPALITY.englishMunicipality || "Nagarjun Municipality",
-    wardNo1: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    municipality: MUNICIPALITY.englishMunicipality || "",
+    wardNo1: user?.ward?.toString() || "",
     prevDesignation: "ward no",
     prevWardNo: "",
-    prevDistrict: MUNICIPALITY.englishDistrict || "Kathmandu",
-    district: MUNICIPALITY.englishProvince || "Bagmati Province",
+    prevDistrict: MUNICIPALITY.englishDistrict || "",
+    district: MUNICIPALITY.englishProvince || "",
     brideTitle: "Miss.",
     brideName: "",
     brideRelation: "granddaughter",
@@ -74,27 +76,27 @@ const MarriageCertificate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill required field: " + v.missing);
+      alert("Please fill/validate required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
+      const payload = { ...formData };
+
       const res = await axiosInstance.post(
-        "/api/forms/marriage-certificate",
+        "/api/forms/marriage-certificate-english",
         payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -166,6 +168,7 @@ const MarriageCertificate = () => {
           >
             <option>Mr.</option>
             <option>Mrs.</option>
+            <option>Miss.</option>
             <option>Ms.</option>
           </select>
           <input
@@ -240,12 +243,10 @@ const MarriageCertificate = () => {
             value={formData.wardNo1}
             onChange={handleChange}
           >
-            <option value={(MUNICIPALITY.wardNumber ?? 1).toString()}>
-              {MUNICIPALITY.wardNumber ?? 1}
-            </option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
+            <option value="4">4</option>
           </select>
           , (Previously
           <select
@@ -352,9 +353,11 @@ const MarriageCertificate = () => {
           A.D.), according to their social custom.
         </p>
 
-        <div className="citizenship-fields">
-          <div className="form-group-inline">
-            <label>Groom's Citizenship No.: *</label>
+        <div className="marriage-certificate-section">
+          <div className="marriage-row">
+            <label>
+              Groom's Citizenship No.: <span className="required">*</span>
+            </label>
             <input
               type="text"
               name="groomCitizenship"
@@ -363,8 +366,10 @@ const MarriageCertificate = () => {
               required
             />
           </div>
-          <div className="form-group-inline">
-            <label>Bride's Citizenship No.: *</label>
+          <div className="marriage-row">
+            <label>
+              Bride's Citizenship No.: <span className="required">*</span>
+            </label>
             <input
               type="text"
               name="brideCitizenship"
