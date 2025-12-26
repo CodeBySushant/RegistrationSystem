@@ -3,8 +3,10 @@ import "./AnnualIncomeCertificate.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
 import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const AnnualIncomeCertificate = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
@@ -15,9 +17,10 @@ const AnnualIncomeCertificate = () => {
     guardianTitle: "Mr.",
     guardianName: "",
     guardianRelation: "wife",
+    guardianFamily: "",
     residencyType: "permanent resident",
     municipality: MUNICIPALITY.englishMunicipality,
-    wardNo: MUNICIPALITY.wardNumber.toString(),
+    wardNo: user?.ward?.toString() || "",
     district: MUNICIPALITY.englishDistrict,
     province: MUNICIPALITY.englishProvince,
     totalIncomeNRs: "",
@@ -110,28 +113,27 @@ const AnnualIncomeCertificate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill required field: " + v.missing);
+      alert("Please fill/validate required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
-      const payload = { ...formData, table_rows: incomes };
+      const payload = { ...formData };
+
       const res = await axiosInstance.post(
         "/api/forms/annual-income-certificate",
         payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
-      console.error(err);
-      alert("Failed to save: " + err.message);
+      console.error("Submit error:", err);
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -241,6 +243,13 @@ const AnnualIncomeCertificate = () => {
             onChange={handleChange}
           />
           of
+          <input
+            type="text"
+            name="guardianFamily"
+            placeholder=""
+            value={formData.guardianFamily}
+            onChange={handleChange}
+          />,
           <select
             name="residencyType"
             value={formData.residencyType}
