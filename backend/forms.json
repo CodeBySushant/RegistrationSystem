@@ -1777,9 +1777,9 @@
     ]
   },
 
-  "marriage-certificate": {
+  "marriage-certificate-english": {
     "title": "Marriage Certificate (English)",
-    "table": "marriage_certificate",
+    "table": "marriage_certificate_english",
     "columns": [
       "letterNo",
       "refNo",
