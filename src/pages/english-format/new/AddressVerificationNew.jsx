@@ -9,7 +9,7 @@ const AddressVerificationNew = () => {
   const [formData, setFormData] = useState({
     letterNo: "0000/00",
     refNo: "",
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
 
     // body/applicant name in sentence
     applicantNameBody: "",
