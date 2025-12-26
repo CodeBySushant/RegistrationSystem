@@ -1657,6 +1657,7 @@ CREATE TABLE `annual_income_certificate` (
   `guardianTitle` VARCHAR(16) DEFAULT NULL,
   `guardianName` VARCHAR(255) DEFAULT NULL,
   `guardianRelation` VARCHAR(64) DEFAULT NULL,
+  `guardianFamily` VARCHAR(64) DEFAULT NULL,
   `residencyType` VARCHAR(64) DEFAULT NULL,
   `municipality` VARCHAR(128) DEFAULT NULL,
   `wardNo` VARCHAR(32) DEFAULT NULL,

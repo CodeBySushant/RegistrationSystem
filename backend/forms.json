@@ -1620,6 +1620,7 @@
       "guardianTitle",
       "guardianName",
       "guardianRelation",
+      "guardianFamily",
       "residencyType",
       "municipality",
       "wardNo",
