@@ -1,13 +1,13 @@
 export const MUNICIPALITY = {
 // Nepali
-  name: "नागार्जुन नगरपालिका",
+  name: " तिलाठी कोईलाडी गाउँपालिका",
   officeLine: "नगर कार्यपालिकाको कार्यालय, काठमाडौं",
   provinceLine: "बागमती प्रदेश, नेपाल",
   city: "काठमाडौँ",
 
 // English
-  englishMunicipality: "Nagarjun Municipality",
-  englishDistrict: "Kathmandu",
+  englishMunicipality: "Tilathi Koiladi Nagarpalika",
+  englishDistrict: "Tilathi",
   englishProvince: "Bagmati Province",
 
   logoSrc: "/nepallogo.svg",
