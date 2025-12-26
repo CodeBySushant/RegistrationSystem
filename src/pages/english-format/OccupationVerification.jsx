@@ -10,7 +10,7 @@ const OccupationVerification = () => {
   const [formData, setFormData] = useState({
     letterNo: "2197/60",
     refNo: "",
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
     applicantTitle: "Mr.",
     applicantNameBody: "",
     relation: "Son",

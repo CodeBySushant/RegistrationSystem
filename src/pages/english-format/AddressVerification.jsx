@@ -10,7 +10,7 @@ const AddressVerification = () => {
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
-    date: "2025-10-31",
+    date: new Date().toISOString().slice(0, 10),
     govLocation: "",
     oldWardNo: "",
     // 🔹 Defaults now from MUNICIPALITY config

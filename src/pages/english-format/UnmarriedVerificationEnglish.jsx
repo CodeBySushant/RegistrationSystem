@@ -10,7 +10,7 @@ const UnmarriedVerification = () => {
   const [formData, setFormData] = useState({
     letterNo: "0000/00",
     refNo: "",
-    date: "", // let user pick
+    date: new Date().toISOString().slice(0, 10),
     applicantTitle: "Mr.",
     applicantNameBody: "",
     relation: "son",

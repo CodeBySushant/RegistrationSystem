@@ -10,7 +10,7 @@ const BirthdateVerification = () => {
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
     applicantTitle: "Mr.",
     applicantNameBody: "",
     relation: "son",

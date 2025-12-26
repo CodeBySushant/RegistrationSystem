@@ -10,7 +10,7 @@ const VerifyRevisedEmblem = () => {
   const [formData, setFormData] = useState({
     letterNo: "0000/00",
     refNo: "",
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
 
     billName: "",
     amendmentName: "",
