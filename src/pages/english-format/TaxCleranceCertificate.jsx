@@ -3,16 +3,18 @@ import "./TaxCleranceCertificate.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
 import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const TaxClearanceCertificate = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "2097/60",
     refNo: "",
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
     ownerTitle: "Mr.",
     ownerNameBody: "",
     municipality: MUNICIPALITY.englishMunicipality,
-    wardNo: (MUNICIPALITY.wardNumber ?? 1).toString(),
+    wardNo: user?.ward?.toString() || "",
     district: MUNICIPALITY.englishDistrict,
     designation: "",
     applicantName: "",
@@ -104,6 +106,7 @@ const TaxClearanceCertificate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
       alert("Please fill required field: " + v.missing);
@@ -113,22 +116,17 @@ const TaxClearanceCertificate = () => {
     setLoading(true);
     try {
       const payload = { ...formData, table_rows: properties };
+
       const res = await axiosInstance.post(
         "/api/forms/tax-clearance-certificate",
         payload
       );
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
