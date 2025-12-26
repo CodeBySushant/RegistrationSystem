@@ -3,11 +3,13 @@ import "./CertificateofOccupation.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
 import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const FORM_KEY = "certificate-of-occupation";
 const API_URL = `/api/forms/${FORM_KEY}`;
 
 const CertificateOfOccupation = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
@@ -23,7 +25,7 @@ const CertificateOfOccupation = () => {
 
     // 🔹 From config instead of hard-coded
     municipality: MUNICIPALITY.englishMunicipality,
-    wardNo: MUNICIPALITY.wardNumber.toString(),
+    wardNo: user?.ward?.toString() || "",
     district: MUNICIPALITY.englishDistrict,
     country: "Nepal",
 
@@ -105,28 +107,33 @@ const CertificateOfOccupation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
       alert("Please fill required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
-      const payload = { ...formData, table_rows: occupations };
+      const payload = {
+        ...formData,
+        table_rows: occupations,
+      };
+
       const res = await axiosInstance.post(
         "/api/forms/certificate-of-occupation",
         payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+
+      // ✅ Axios response
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+
+      // Proper Axios error handling
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -267,9 +274,11 @@ const CertificateOfOccupation = () => {
           </select>
           Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option value={MUNICIPALITY.wardNumber.toString()}>
-              {MUNICIPALITY.wardNumber}
-            </option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
           </select>
           ,
           <input
