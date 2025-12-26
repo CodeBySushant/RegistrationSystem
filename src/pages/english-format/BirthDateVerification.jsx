@@ -3,8 +3,10 @@ import "./BirthDateVerification.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
 import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const BirthdateVerification = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     letterNo: "2082/83",
     refNo: "",
@@ -18,7 +20,7 @@ const BirthdateVerification = () => {
     motherName: "",
     residencyType: "Permanent",
     municipality: MUNICIPALITY.englishMunicipality,
-    wardNo1: MUNICIPALITY.wardNumber.toString(),
+    wardNo1: user?.ward?.toString() || "",
     district1: MUNICIPALITY.englishDistrict,
     country1: "Nepal",
     vdc: "",
@@ -52,6 +54,7 @@ const BirthdateVerification = () => {
       "fatherName",
       "motherName",
       "vdc",
+      "wardNo1",
       "wardNo2",
       "district2",
       "issuedDistrict",
@@ -78,27 +81,27 @@ const BirthdateVerification = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
       alert("Please fill required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
+      const payload = { ...formData };
+
       const res = await axiosInstance.post(
         "/api/forms/birthdate-verification",
         payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -163,6 +166,7 @@ const BirthdateVerification = () => {
           >
             <option>Mr.</option>
             <option>Mrs.</option>
+            <option>Miss.</option>
             <option>Ms.</option>
           </select>
           <input
@@ -236,9 +240,12 @@ const BirthdateVerification = () => {
             value={formData.wardNo1}
             onChange={handleChange}
           >
-            <option value={MUNICIPALITY.wardNumber.toString()}>
-              {MUNICIPALITY.wardNumber}
-            </option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
           </select>
           ,{" "}
           <input
