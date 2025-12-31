@@ -5,10 +5,12 @@ import "./AnnualIncomeVerificationNew.css";
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useAuth } from "../../../context/AuthContext";
 
 const AnnualIncomeVerificationNew = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "1970/60",
     refNo: "",
     date: new Date().toISOString().slice(0, 10),
 
@@ -19,22 +21,18 @@ const AnnualIncomeVerificationNew = () => {
 
     // defaults from MUNICIPALITY config where appropriate
     municipality: MUNICIPALITY.englishMunicipality || "",
-    wardNo: MUNICIPALITY.wardNumber || "1",
+    wardNo: user?.ward?.toString() || "",
     prevAddress: "",
     prevWardNo: "",
     district: MUNICIPALITY.englishDistrict || "",
     province: MUNICIPALITY.englishProvince || "",
     country: "Nepal",
-
-    totalNPR_fy1: "",
-    totalNPR_fy2: "",
-    totalNPR_fy3: "",
     currency: "USD",
-    totalCurrency_fy1: "",
-    totalCurrency_fy2: "",
-    totalCurrency_fy3: "",
+    totalAnnualIncome: "",
+    totalAnnualIncomeWords: "",
+    equivalentCurrency: "",
+    equivalentCurrencyWords: "",
     usdRate: "",
-    rateDate: "",
     designation: "",
     applicantName: "",
     applicantAddress: "",
@@ -43,7 +41,16 @@ const AnnualIncomeVerificationNew = () => {
   });
 
   const [incomeSources, setIncomeSources] = useState([
-    { id: 1, sourceName: "", fy1_amount: "", fy2_amount: "", fy3_amount: "" },
+    {
+      id: 1,
+      ownerTitle: "Mr.",
+      ownerName: "",
+      relation: "",
+      incomeSource: "",
+      incomeDetails: "",
+      annualIncome: "",
+      remarks: "",
+    },
   ]);
 
   const [loading, setLoading] = useState(false);
@@ -55,9 +62,11 @@ const AnnualIncomeVerificationNew = () => {
 
   const handleIncomeChange = (index, e) => {
     const { name, value } = e.target;
-    const arr = [...incomeSources];
-    arr[index] = { ...arr[index], [name]: value };
-    setIncomeSources(arr);
+    setIncomeSources((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [name]: value };
+      return updated;
+    });
   };
 
   const addIncomeRow = () => {
@@ -65,10 +74,13 @@ const AnnualIncomeVerificationNew = () => {
       ...p,
       {
         id: p.length + 1,
-        sourceName: "",
-        fy1_amount: "",
-        fy2_amount: "",
-        fy3_amount: "",
+        ownerTitle: "Mr.",
+        ownerName: "",
+        relation: "",
+        incomeSource: "",
+        incomeDetails: "",
+        annualIncome: "",
+        remarks: "",
       },
     ]);
   };
@@ -82,12 +94,12 @@ const AnnualIncomeVerificationNew = () => {
       "district",
       "province",
       "country",
-      "totalNPR_fy1",
-      "totalNPR_fy2",
-      "totalNPR_fy3",
+      "totalAnnualIncome",
+      "totalAnnualIncomeWords",
+      "equivalentCurrency",
+      "equivalentCurrencyWords",
       "currency",
       "usdRate",
-      "rateDate",
       "designation",
       "applicantName",
       "applicantAddress",
@@ -101,8 +113,8 @@ const AnnualIncomeVerificationNew = () => {
     if (!Array.isArray(incomeSources) || incomeSources.length === 0) {
       return { ok: false, missing: "incomeSources (at least 1 row required)" };
     }
-    // simple phone check
-    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
+    const phone = String(formData.applicantPhone).trim();
+    if (!/^[0-9+\-\s]{6,20}$/.test(phone)) {
       return { ok: false, missing: "applicantPhone (invalid)" };
     }
     return { ok: true };
@@ -117,9 +129,10 @@ const AnnualIncomeVerificationNew = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
+      alert("Please fill required field: " + v.missing);
       return;
     }
 
@@ -130,22 +143,16 @@ const AnnualIncomeVerificationNew = () => {
         table_rows: incomeSources,
       };
 
-      const res = await fetch("/api/forms/annual-income-verification-new", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await axiosInstance.post(
+        "/api/forms/annual-income-verification-new",
+        payload
+      );
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
-      setTimeout(() => window.print(), 100);
+      alert("Saved successfully (id: " + res.data.id + ")");
+      window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + (err.message || "unknown error"));
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -180,65 +187,182 @@ const AnnualIncomeVerificationNew = () => {
           </div>
         </div>
 
-        {/* incomes table */}
+        {/* Ref No */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Ref No.:</label>
+            <input
+              type="text"
+              name="refNo"
+              value={formData.refNo}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        {/* Subject */}
+        <div className="subject-line">
+          <strong>
+            Subject: <u>Annual Income Certificate</u>
+          </strong>
+          <br />
+          <strong>
+            <u>To Whom It May Concern</u>
+          </strong>
+        </div>
+
+        {/* Certificate Body */}
+        <p className="certificate-body">
+          This is to certify that
+          <select
+            name="guardianTitle"
+            value={formData.guardianTitle}
+            onChange={handleChange}
+          >
+            <option>Mr.</option>
+            <option>Mrs.</option>
+          </select>
+          <input
+            type="text"
+            name="applicantNameBody"
+            value={formData.applicantNameBody}
+            onChange={handleChange}
+            required
+          />
+          ,
+          <select
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+          >
+            <option>son</option>
+            <option>daughter</option>
+          </select>
+          of
+          <input
+            type="text"
+            name="guardianName"
+            value={formData.guardianName}
+            onChange={handleChange}
+            required
+          />
+          and
+          <select>
+            <option>wife</option>
+          </select>
+          of
+          <input type="text" placeholder="Husband's Name" />,
+          <span className="text-red"> permanent resident </span>
+          of
+          <strong> {formData.municipality} </strong>
+          Ward No.
+          <strong> {formData.wardNo} </strong>,
+          <strong> {formData.district} </strong> District,
+          <strong> {formData.province} </strong>, Nepal, his family has
+          following sources of income from the following sources. The details
+          have been verified according to the evidence and records that are
+          provided to office.
+        </p>
+
+        {/* ===== INCOME SOURCES TABLE ===== */}
         <div className="table-wrapper">
           <table className="income-table">
             <thead>
               <tr>
                 <th>S.N.</th>
-                <th>Owner/Sources of Income</th>
-                <th>Fiscal Year 1</th>
-                <th>Fiscal Year 2</th>
-                <th>Fiscal Year 3</th>
-                <th></th>
+                <th>Owner's Name</th>
+                <th>Relation</th>
+                <th>Sources on Income</th>
+                <th>Annual Income</th>
+                <th>Remarks</th>
               </tr>
             </thead>
             <tbody>
-              {incomeSources.map((source, index) => (
-                <tr key={source.id}>
+              {incomeSources.map((row, index) => (
+                <tr key={row.id}>
+                  {/* S.N. */}
                   <td>{index + 1}</td>
+
+                  {/* Owner Name */}
                   <td>
+                    <select
+                      name="ownerTitle"
+                      value={row.ownerTitle}
+                      onChange={(e) => handleIncomeChange(index, e)}
+                    >
+                      <option>Mr.</option>
+                      <option>Mrs.</option>
+                      <option>Ms.</option>
+                    </select>
+                    <br />
                     <input
                       type="text"
-                      name="sourceName"
-                      value={source.sourceName}
+                      name="ownerName"
+                      value={row.ownerName}
                       onChange={(e) => handleIncomeChange(index, e)}
                       required
                     />
                   </td>
+
+                  {/* Relation */}
                   <td>
                     <input
                       type="text"
-                      name="fy1_amount"
-                      value={source.fy1_amount}
+                      name="relation"
+                      value={row.relation}
                       onChange={(e) => handleIncomeChange(index, e)}
                       required
                     />
                   </td>
+
+                  {/* Source of Income */}
+                  <td>
+                    Income from
+                    <input
+                      type="text"
+                      name="incomeSource"
+                      value={row.incomeSource}
+                      onChange={(e) => handleIncomeChange(index, e)}
+                      required
+                    />
+                    <br />
+                    (
+                    <input
+                      type="text"
+                      name="incomeDetails"
+                      value={row.incomeDetails}
+                      onChange={(e) => handleIncomeChange(index, e)}
+                    />
+                    )
+                  </td>
+
+                  {/* Annual Income */}
                   <td>
                     <input
                       type="text"
-                      name="fy2_amount"
-                      value={source.fy2_amount}
+                      name="annualIncome"
+                      value={row.annualIncome}
                       onChange={(e) => handleIncomeChange(index, e)}
                       required
                     />
                   </td>
+
+                  {/* Remarks */}
                   <td>
                     <input
                       type="text"
-                      name="fy3_amount"
-                      value={source.fy3_amount}
+                      name="remarks"
+                      value={row.remarks}
                       onChange={(e) => handleIncomeChange(index, e)}
-                      required
                     />
                   </td>
+
                   <td>
                     {index === incomeSources.length - 1 && (
                       <button
                         type="button"
-                        onClick={addIncomeRow}
                         className="add-btn"
+                        onClick={addIncomeRow}
                       >
                         +
                       </button>
@@ -248,6 +372,90 @@ const AnnualIncomeVerificationNew = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* ===== TOTAL & EXCHANGE SECTION ===== */}
+        <div className="note-body">
+          <p>
+            <strong>Total Annual Income in NRs.</strong>
+            <input
+              type="text"
+              name="totalAnnualIncome"
+              value={formData.totalAnnualIncome}
+              onChange={handleChange}
+              required
+            />
+            (In words:
+            <input
+              type="text"
+              name="totalAnnualIncomeWords"
+              value={formData.totalAnnualIncomeWords}
+              onChange={handleChange}
+              required
+            />
+            )
+          </p>
+
+          <p>
+            <strong>Today's Buying Rate</strong>
+            <select
+              name="currency"
+              value={formData.currency}
+              onChange={handleChange}
+              className="inline-select"
+            >
+              <option value="USD">USD</option>
+              <option value="AUD">AUD</option>
+              <option value="GBP">GBP</option>
+              <option value="EUR">EUR</option>
+              <option value="JPY">JPY</option>
+              <option value="KRW">KRW</option>
+              <option value="CAD">CAD</option>
+              <option value="NZD">NZD</option>
+            </select>
+            1 = NRs.
+            <input
+              type="text"
+              name="usdRate"
+              value={formData.usdRate}
+              onChange={handleChange}
+              required
+            />
+          </p>
+
+          <p>
+            <strong>Equivalent to currency =</strong>
+            <input
+              type="text"
+              name="equivalentCurrency"
+              value={formData.equivalentCurrency}
+              onChange={handleChange}
+              required
+            />
+            (In words:
+            <input
+              type="text"
+              name="equivalentCurrencyWords"
+              value={formData.equivalentCurrencyWords}
+              onChange={handleChange}
+              required
+            />
+            )
+          </p>
+        </div>
+
+        <div className="designation-section">
+          <input type="text" placeholder="Signature" disabled />
+          <select
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Designation</option>
+            <option value="Ward-Chairperson">Ward Chairperson</option>
+            <option value="Ward-Secretary">Ward Secretary</option>
+          </select>
         </div>
 
         {/* Applicants details */}
