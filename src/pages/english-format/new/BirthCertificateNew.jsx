@@ -5,10 +5,12 @@ import "./BirthCertificateNew.css";
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useAuth } from "../../../context/AuthContext";
 
 const BirthCertificateNew = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "1970/60",
     refNo: "",
     date: new Date().toISOString().slice(0, 10),
 
@@ -23,7 +25,7 @@ const BirthCertificateNew = () => {
 
     // defaults from MUNICIPALITY config
     municipality: MUNICIPALITY.englishMunicipality || "",
-    wardNo: MUNICIPALITY.wardNumber || "1",
+    wardNo: user?.ward?.toString() || "",
 
     prevAddress1: "",
     prevWardNo: "",
@@ -90,32 +92,29 @@ const BirthCertificateNew = () => {
     }, 500);
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
+      alert("Please fill required field: " + v.missing);
       return;
     }
 
     setLoading(true);
     try {
       const payload = { ...formData };
-      const res = await fetch("/api/forms/birth-certificate-new", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
-      setTimeout(() => window.print(), 200);
+
+      const res = await axiosInstance.post(
+        "/api/forms/birth-certificate-new",
+        payload
+      );
+
+      alert("Saved successfully (id: " + res.data.id + ")");
+      window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + (err.message || "unknown error"));
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -246,9 +245,13 @@ const BirthCertificateNew = () => {
           </select>
           , Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option>{MUNICIPALITY.wardNumber || "1"}</option>
+            <option>1</option>
             <option>2</option>
             <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
           </select>{" "}
           (Previously:
           <input
@@ -281,7 +284,7 @@ const BirthCertificateNew = () => {
             onChange={handleChange}
           >
             <option>
-              {MUNICIPALITY.englishProvince || "Bagmati Province"}
+              {MUNICIPALITY.englishProvince || ""}
             </option>
             <option>Koshi Province</option>
           </select>{" "}
@@ -316,7 +319,7 @@ const BirthCertificateNew = () => {
             onChange={handleChange}
           >
             <option>
-              {MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}
+              {MUNICIPALITY.englishMunicipality || ""}
             </option>
           </select>
           , Ward No.
@@ -325,9 +328,13 @@ const BirthCertificateNew = () => {
             value={formData.birthWardNo}
             onChange={handleChange}
           >
-            <option>{MUNICIPALITY.wardNumber || "1"}</option>
+            <option>1</option>
             <option>2</option>
             <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
           </select>{" "}
           (Previously:
           <input
@@ -360,7 +367,7 @@ const BirthCertificateNew = () => {
             onChange={handleChange}
           >
             <option>
-              {MUNICIPALITY.englishProvince || "Bagmati Province"}
+              {MUNICIPALITY.englishProvince || ""}
             </option>
             <option>Koshi Province</option>
           </select>{" "}
