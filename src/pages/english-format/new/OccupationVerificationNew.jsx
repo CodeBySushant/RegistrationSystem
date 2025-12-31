@@ -25,7 +25,7 @@ const OccupationVerificationNew = () => {
 
     // defaults from MUNICIPALITY
     municipality: MUNICIPALITY.englishMunicipality || "",
-    wardNo: MUNICIPALITY.wardNumber || "",
+    wardNo: user?.ward?.toString() || "",
 
     prevAddress1: "",
     prevWardNo: "",
@@ -84,7 +84,7 @@ const OccupationVerificationNew = () => {
 
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate required field: " + v.missing);
+      alert("Please fill required field: " + v.missing);
       return;
     }
 
@@ -220,14 +220,19 @@ const OccupationVerificationNew = () => {
             onChange={handleChange}
           >
             <option>
-              {MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}
+              {MUNICIPALITY.englishMunicipality || ""}
             </option>
           </select>
           , Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option>{MUNICIPALITY.wardNumber || "1"}</option>
+            <option>select</option>
+            <option>1</option>
             <option>2</option>
             <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
           </select>
           , (Previously:
           <input

@@ -5,10 +5,12 @@ import "./SurnameVerificationAfterMarriage.css";
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useAuth } from "../../../context/AuthContext";
 
 const SurnameVerificationAfterMarriage = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "1970/60",
     refNo: "",
     date: new Date().toISOString().slice(0, 10),
 
@@ -16,7 +18,7 @@ const SurnameVerificationAfterMarriage = () => {
 
     residencyType1: "permanent resident",
     municipality1: MUNICIPALITY.englishMunicipality || "",
-    wardNo1: MUNICIPALITY.wardNumber || "",
+    wardNo1: user?.ward?.toString() || "",
     district1: MUNICIPALITY.englishDistrict || "",
     province1: MUNICIPALITY.englishProvince || "",
     country1: "Nepal",
@@ -28,7 +30,7 @@ const SurnameVerificationAfterMarriage = () => {
 
     residencyType2: "permanent/temporary resident",
     municipality2: MUNICIPALITY.englishMunicipality || "",
-    wardNo2: MUNICIPALITY.wardNumber || "",
+    wardNo2: "",
     district2: MUNICIPALITY.englishDistrict || "",
     province2: MUNICIPALITY.englishProvince || "",
     country2: "Nepal",
@@ -79,33 +81,27 @@ const SurnameVerificationAfterMarriage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
+      alert("Please fill required field: " + v.missing);
       return;
     }
 
     setLoading(true);
     try {
       const payload = { ...formData };
-      const res = await fetch(
+
+      const res = await axiosInstance.post(
         "/api/forms/surname-verification-after-marriage",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
+        payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
-      setTimeout(() => window.print(), 200);
+
+      alert("Saved successfully (id: " + res.data.id + ")");
+      window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + (err.message || "unknown error"));
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -188,7 +184,7 @@ const SurnameVerificationAfterMarriage = () => {
             onChange={handleChange}
           >
             <option>
-              {MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}
+              {MUNICIPALITY.englishMunicipality || ""}
             </option>
           </select>
           Ward No.
@@ -197,7 +193,7 @@ const SurnameVerificationAfterMarriage = () => {
             value={formData.wardNo1}
             onChange={handleChange}
           >
-            <option>{MUNICIPALITY.wardNumber || "1"}</option>
+            <option>1</option>
             <option>2</option>
             <option>3</option>
           </select>
@@ -284,7 +280,7 @@ const SurnameVerificationAfterMarriage = () => {
             value={formData.wardNo2}
             onChange={handleChange}
           >
-            <option>{MUNICIPALITY.wardNumber || "1"}</option>
+            <option>1</option>
             <option>2</option>
             <option>3</option>
           </select>
