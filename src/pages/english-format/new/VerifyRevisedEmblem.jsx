@@ -5,25 +5,26 @@ import "./VerifyRevisedEmblem.css";
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useAuth } from "../../../context/AuthContext";
 
 const VerifyRevisedEmblem = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "1970/60",
     refNo: "",
     date: new Date().toISOString().slice(0, 10),
 
     billName: "",
     amendmentName: "",
     mapLocation: "",
-    stampLocation: "Stamp of our Ward Office",
 
     villageName: "",
     stampMunicipality: MUNICIPALITY.englishMunicipality || "",
-    stampWardNo: MUNICIPALITY.wardNumber || "",
+    stampWardNo: "",
 
     provinceNameLetterhead: "",
     provinceNameStamp: MUNICIPALITY.englishProvince || "",
-    stampWardNo2: MUNICIPALITY.wardNumber || "",
+    stampWardNo2: "",
 
     wardOfficeName1: "",
     wardOfficeName2: "",
@@ -47,13 +48,11 @@ const VerifyRevisedEmblem = () => {
       "billName",
       "amendmentName",
       "mapLocation",
-      "stampLocation",
       "villageName",
       "stampMunicipality",
       "stampWardNo",
       "provinceNameLetterhead",
       "provinceNameStamp",
-      "wardOfficeName1",
       "designation",
       "applicantName",
       "applicantAddress",
@@ -79,29 +78,27 @@ const VerifyRevisedEmblem = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
+      alert("Please fill required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
       const payload = { ...formData };
-      const res = await fetch("/api/forms/verify-revised-emblem", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
-      setTimeout(() => window.print(), 200);
+
+      const res = await axiosInstance.post(
+        "/api/forms/verify-revised-emblem",
+        payload
+      );
+
+      alert("Saved successfully (id: " + res.data.id + ")");
+      window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + (err.message || "unknown error"));
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -189,15 +186,9 @@ const VerifyRevisedEmblem = () => {
           <br />
           Although we have already changed the emblem of Nepal on the
           letterhead, due to inconvenience we are not yet able to change the
-          emblem imprinted on the
-          <input
-            type="text"
-            name="stampLocation"
-            value={formData.stampLocation}
-            onChange={handleChange}
-            required
-          />
-          . We apologize and will revise it when possible.
+          emblem imprinted on the Stamp of our Ward Office. We are sorry for the
+          inconvenience and will revice the imprinted emblem of Nepal on Stamp
+          of our Ward Office as we get favorable condition.
           <br />
           Furthermore, the village name "
           <input
@@ -252,8 +243,9 @@ const VerifyRevisedEmblem = () => {
           />
           ). Both refer to the same province.
           <br />
-          We ratify and apologize for the inconvenience. For further information
-          please contact us.
+          We would to ratify and apologize for the inconvenience caused by this
+          matter, please feel free to contact us for further information
+          required in this regard.
         </p>
 
         <div className="designation-section">
