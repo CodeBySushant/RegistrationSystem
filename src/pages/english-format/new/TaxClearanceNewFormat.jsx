@@ -5,10 +5,12 @@ import "./TaxClearanceNewFormat.css";
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useAuth } from "../../../context/AuthContext";
 
 const TaxClearanceNewFormat = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "2097/60",
     refNo: "",
     date: new Date().toISOString().slice(0, 10),
 
@@ -20,7 +22,7 @@ const TaxClearanceNewFormat = () => {
 
     // defaults from MUNICIPALITY
     municipality: MUNICIPALITY.englishMunicipality || "",
-    wardNo: MUNICIPALITY.wardNumber || "",
+    wardNo: user?.ward?.toString() || "",
     prevAddress: "",
     prevWardNo: "",
     prevProvince: MUNICIPALITY.englishProvince || "",
@@ -120,32 +122,27 @@ const TaxClearanceNewFormat = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
+      alert("Please fill required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
-      const payload = {
-        ...formData,
-        table_rows: incomeSources, // backend/controller expects table_rows
-      };
-      const res = await fetch("/api/forms/tax-clearance-new-format", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
-      setTimeout(() => window.print(), 200);
+      const payload = { ...formData };
+
+      const res = await axiosInstance.post(
+        "/api/forms/tax-clearance-new-format",
+        payload
+      );
+
+      alert("Saved successfully (id: " + res.data.id + ")");
+      window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + (err.message || "unknown error"));
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -258,7 +255,13 @@ const TaxClearanceNewFormat = () => {
           </select>
           , Ward No.
           <select name="wardNo" value={formData.wardNo} onChange={handleChange}>
-            <option>{MUNICIPALITY.wardNumber || "1"}</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
           </select>
           , (Previously:
           <input
@@ -305,6 +308,8 @@ const TaxClearanceNewFormat = () => {
             required
           />
           .
+          <br></br>
+          We have issued this Tax Clearance Certificate after related verification and investigation from the records division of our office. We would also like to inform you that Government Tax is exemption for agricultural income according to income Tax Act. 2058 B.S. (2002 A.D.), Chapter 4 Section 11 Clause 1 & 2.
         </p>
 
         <div className="table-wrapper">
