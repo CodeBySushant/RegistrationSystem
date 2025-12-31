@@ -10,8 +10,8 @@ const emptyRow = () => ({ district: "", local_unit: "", ward_no: "", residence: 
 export default function CitizenshipMujulka() {
   const [form, setForm] = useState({
     municipality: "नागार्जुन नगरपालिका",
-    district: "काठमाडौँ",
-    ward_no: "1",
+    district: "",
+    ward_no: "",
     written_date: "",
     permanent_place: "",
     previous_local_unit: "",

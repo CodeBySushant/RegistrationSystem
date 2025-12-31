@@ -7,7 +7,7 @@ import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const initialState = {
-  date: "२०८२.०७.१५",
+  date: new Date().toISOString().slice(0, 10),
   headerTo: "श्री प्रमुख प्रशासकीय अधिकृत ज्यु",
   headerMunicipality: MUNICIPALITY?.name || "नागार्जुन नगरपालिका",
   headerOffice: "को कार्यालय",

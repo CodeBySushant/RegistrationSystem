@@ -26,7 +26,7 @@ const toNepaliDigits = (str) => {
 const initialState = {
   chalan_no: "",
   subject: "गाई / भैंसी सुत्केरी पोषण भत्ता उपलब्ध गरिदिने बारे ।",
-  issue_date: "2025-01-09",
+  issue_date: new Date().toISOString().slice(0, 10),
 
   district: MUNICIPALITY.district,
   municipality_name_header: MUNICIPALITY.name,

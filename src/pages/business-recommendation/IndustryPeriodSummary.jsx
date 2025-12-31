@@ -22,7 +22,7 @@ function IndustryPeriodSummary() {
 
   const [form, setForm] = useState({
     // matches the existing visible fields
-    date: "२०८२.०७.१५",
+    date: new Date().toISOString().slice(0, 10),
     industryName: "",
     address: "",
     periodFrom: "",

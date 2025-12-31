@@ -7,7 +7,7 @@ import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const initialState = {
-  date: "२०८२.०७.१५",
+  date: new Date().toISOString().slice(0, 10),
   patraSankhya: "", // पत्र संख्या
   chalanNo: "", // चलानी नं.
   toName: "", // श्री ... (office name)

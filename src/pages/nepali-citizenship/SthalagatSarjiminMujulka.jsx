@@ -7,7 +7,7 @@ const API_URL = `/api/forms/${FORM_KEY}`;
 
 export default function SthalagatSarjiminMujulka() {
   const [form, setForm] = useState({
-    letter_date: "2025-01-11", // yyyy-mm-dd
+    letter_date: new Date().toISOString().slice(0, 10), // yyyy-mm-dd
     district: "काठमाडौँ",
     office: "जिल्ला प्रशासन कार्यालय",
     municipality: "नागार्जुन नगरपालिका",

@@ -13,7 +13,7 @@ const initialOfficials = [
 ];
 
 const initialState = {
-  date: "२०८२.०७.१५",
+  date: new Date().toISOString().slice(0, 10),
   patraSankhya: "",
   chalanNo: "",
   toName: "",

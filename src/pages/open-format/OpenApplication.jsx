@@ -10,7 +10,7 @@ const OpenApplication = () => {
   const [form, setForm] = useState({
     letter_no: "2082/83",
     ref_no: "",
-    date: "",               // ISO date yyyy-mm-dd -> required for DB DATE column
+    date: new Date().toISOString().slice(0, 10),               // ISO date yyyy-mm-dd -> required for DB DATE column
     subject: "",
     addressee_name: "",
     addressee_line2: "",

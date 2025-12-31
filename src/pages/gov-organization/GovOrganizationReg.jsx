@@ -3,7 +3,7 @@ import "./GovOrganizationReg.css";
 
 const GovOrganizationReg = () => {
   const [formData, setFormData] = useState({
-    date: "2078-05-05", // Nepali BS sample; backend expects string (you can use AD if you prefer)
+    date: new Date().toISOString().slice(0, 10), // Nepali BS sample; backend expects string (you can use AD if you prefer)
     letterNo: "2082/83",
     refNo: "",
     proposalName: "",

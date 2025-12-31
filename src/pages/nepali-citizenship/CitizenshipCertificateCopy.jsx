@@ -9,7 +9,7 @@ export default function CitizenshipCertificateCopy() {
   const [form, setForm] = useState({
     letter_no: "२०८२/८३",
     reference_no: "",
-    date: "", // yyyy-mm-dd
+    date: new Date().toISOString().slice(0, 10), // yyyy-mm-dd
     recipient_name: "",
     recipient_address: "",
     recipient_district: "काठमाडौँ",

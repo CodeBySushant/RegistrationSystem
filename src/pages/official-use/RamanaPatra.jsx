@@ -9,7 +9,7 @@ export default function RamanaPatra() {
   const [form, setForm] = useState({
     letter_no: "२०८२/८३",
     reference_no: "",
-    date: "", // YYYY-MM-DD
+    date: new Date().toISOString().slice(0, 10), // YYYY-MM-DD
 
     addressee_name: "",
     addressee_line2: "",

@@ -31,7 +31,7 @@ const NoSecondMarriageRecommendation = () => {
   const [form, setForm] = useState({
     reference_no: '२०८२/८३',
     chalani_no: '',
-    date: '२०८२-०८-०६',
+    date: new Date().toISOString().slice(0, 10),
     subject: 'दोश्रो विवाह नगरेको सिफारिस',
     district: 'काठमाडौँ',
     municipality: 'नागार्जुन',

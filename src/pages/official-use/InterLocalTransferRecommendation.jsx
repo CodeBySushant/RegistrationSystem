@@ -9,7 +9,7 @@ export default function InterLocalTransferRecommendation() {
   const [form, setForm] = useState({
     letter_no: "२०८२/८३",
     reference_no: "",
-    date: "", // yyyy-mm-dd
+    date: new Date().toISOString().slice(0, 10), // yyyy-mm-dd
     subject: "अन्तर स्थानीय सरुवा सहमति दिईएको सम्बन्धमा",
 
     requested_person_name: "",

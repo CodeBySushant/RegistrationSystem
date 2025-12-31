@@ -8,7 +8,7 @@ const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 const OpenFormatTippani = () => {
 
   const [form, setForm] = useState({
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
     addressee: "",
     subject: "",
     body_text: "",

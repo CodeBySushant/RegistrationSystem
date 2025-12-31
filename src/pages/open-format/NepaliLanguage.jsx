@@ -16,8 +16,8 @@ function devanagariToAscii(s = "") {
 const NepaliLanguage = () => {
   const [form, setForm] = useState({
     applicant_full_name: "",
-    issued_date_nepali: "२०८२-०८-०६", // sample
-    issued_date_ad: "", // ISO date yyyy-mm-dd — required for DB
+    issued_date_nepali: "", // sample
+    issued_date_ad: new Date().toISOString().slice(0, 10), // ISO date yyyy-mm-dd — required for DB
     issue_district: "",
     full_name_en: "",
     sex: "पुरुष",

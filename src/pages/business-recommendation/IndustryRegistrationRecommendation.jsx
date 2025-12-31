@@ -6,7 +6,7 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 export default function IndustryRegistrationRecommendation() {
   const [form, setForm] = useState({
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
     refLetterNo: "",
     chalaniNo: "",
     to_line1: "",

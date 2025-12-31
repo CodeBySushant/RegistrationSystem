@@ -9,7 +9,7 @@ const ActingWardOfficerAssigned = () => {
   const [form, setForm] = useState({
     letter_no: "२०८२/८३",
     reference_no: "",
-    date: "2082-08-11",
+    date: new Date().toISOString().slice(0, 10),
     subject: "कार्यवाहक तोकिएको सम्बन्धमा",
 
     assigned_member_name: "",

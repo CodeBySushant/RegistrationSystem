@@ -41,13 +41,13 @@ const initialState = {
   // Applicant Signature
   applicantSigName: "",
   applicantSigAddress: "",
-  applicantSigDate: "२०८२/०७/१५",
+  applicantSigDate: "",
   applicantSigPhone: "",
 
   // Recommender
   recName: "",
   recPosition: "पद छनोट गर्नुहोस्",
-  recDate: "२०८२/०७/१५",
+  recDate: "",
   recOfficeStamp: "",
 
   // Footer applicant details

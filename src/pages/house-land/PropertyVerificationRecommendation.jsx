@@ -7,12 +7,12 @@ const emptyTapashilRow = () => ({ local_body: "", ward_no: "", plot_no: "", area
 const initialState = {
   letter_no: "२०८२/८३",
   chalani_no: "",
-  date_nep: "२०८२-०८-०६",
+  date_nep: new Date().toISOString().slice(0, 10),
 
   prev_district: "",
   prev_type: "",
   prev_ward_no: "",
-  resident_local: "नागार्जुन",
+  resident_local: "",
   resident_ward_no: "1",
 
   applicant_relation_prefix: "",

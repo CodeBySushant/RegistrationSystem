@@ -7,7 +7,7 @@ import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const initialState = {
-  date: "२०८२.०७.१५",
+  date: new Date().toISOString().slice(0, 10),
   headerDistrict: MUNICIPALITY?.englishDistrict || "काठमाडौँ",
   mainDistrict: MUNICIPALITY?.englishDistrict || "काठमाडौँ",
   palikaName: MUNICIPALITY?.name || "",

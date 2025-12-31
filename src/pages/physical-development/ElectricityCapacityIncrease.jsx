@@ -7,7 +7,7 @@ const ElectricityCapacityIncrease = () => {
     letter_no: '२०८२/८३',
     reference_no: '',
     date_bs: '२०८२-०८-०६',      // Nepali BS date (string). Backend must accept strings.
-    date_ad: '',                // optional AD date if you convert on frontend
+    date_ad: new Date().toISOString().slice(0, 10),                // optional AD date if you convert on frontend
     recipient_name: '',
     recipient_address: '',
     municipality: 'नागार्जुन नगरपालिका',

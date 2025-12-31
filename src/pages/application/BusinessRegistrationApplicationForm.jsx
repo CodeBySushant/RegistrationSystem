@@ -44,7 +44,7 @@ const initialState = {
   applicant_citizenship_no: "",
   applicant_phone: "",
   municipality: MUNICIPALITY?.name || "",
-  wardNo: MUNICIPALITY?.wardNumber || "",
+  wardNo: "",
 };
 
 const BusinessRegistrationApplicationForm = () => {

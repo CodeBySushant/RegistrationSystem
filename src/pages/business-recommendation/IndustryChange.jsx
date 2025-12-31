@@ -6,7 +6,7 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 function IndustryChange() {
   const [form, setForm] = useState({
-    date: "२०८२.०७.१५",
+    date: new Date().toISOString().slice(0, 10),
     to_line1: MUNICIPALITY.officeLine, // e.g. "नगर कार्यपालिकाको कार्यालय, काठमाडौं"
     to_line2: MUNICIPALITY.name,
     province: MUNICIPALITY.provinceLine, // e.g. "बागमती प्रदेश, नेपाल"

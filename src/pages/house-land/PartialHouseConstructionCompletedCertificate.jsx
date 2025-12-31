@@ -5,7 +5,7 @@ import "./PartialHouseConstructionCompletedCertificate.css";
 const initialState = {
   letter_no: "२०८२/८३",
   chalani_no: "",
-  date_nep: "२०८२-०८-०६",
+  date_nep: new Date().toISOString().slice(0, 10),
 
   municipality_text: "नागार्जुन नगरपालिका",
   ward_no: "1",

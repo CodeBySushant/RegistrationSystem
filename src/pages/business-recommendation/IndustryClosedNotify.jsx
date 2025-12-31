@@ -6,7 +6,7 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 export default function IndustryClosedNotify() {
   const [form, setForm] = useState({
-    date: "२०८२.०७.१५",
+    date: new Date().toISOString().slice(0, 10),
     to_line1: MUNICIPALITY.officeLine || "", // e.g. "नगर कार्यपालिकाको कार्यालय, ..."
     to_line2: MUNICIPALITY.name || "", // e.g. "नागार्जुन नगरपालिका"
     place_text: `${MUNICIPALITY.name}, ${MUNICIPALITY.city || ""}`, // e.g. "नागार्जुन, काठमाडौं"

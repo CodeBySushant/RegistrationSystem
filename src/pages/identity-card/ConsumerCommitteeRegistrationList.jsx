@@ -8,7 +8,7 @@ const initialData = [
     sn: "१",
     reg_no: "१/२०८१/८२",
     committee_name: "bsgbs",
-    reg_date: "2081-09-24", // use ISO-ish for easier date comparisons
+    reg_date: new Date().toISOString().slice(0, 10), // use ISO-ish for easier date comparisons
     owner_name: "asdf",
     address: "dgnd",
     phone: "dfgb",

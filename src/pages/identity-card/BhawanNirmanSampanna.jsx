@@ -7,7 +7,7 @@ const emptyTransferRow = () => ({ date: "", name: "", recommender: "", approver:
 
 export default function BhawanNirmanSampanna() {
   const [form, setForm] = useState({
-    date_nep: "२०८२-०८-०६",
+    date_nep: new Date().toISOString().slice(0, 10),
     owner_name: "",
     municipality: "नागार्जुन",
     ward_no: "",

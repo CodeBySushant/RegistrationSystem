@@ -20,7 +20,7 @@ const initialState = {
   applicantAddress: "",
   applicantCitizenship: "",
   applicantPhone: "",
-  date: "२०८२.०७.१५",
+  date: new Date().toISOString().slice(0, 10),
 };
 
 export default function OrganizationRegistered() {

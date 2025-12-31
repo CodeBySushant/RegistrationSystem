@@ -8,7 +8,7 @@ const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 
 const emptyState = {
   chalan_no: "",
-  date_nepali: "",
+  date_nepali: new Date().toISOString().slice(0, 10),
   subject_number: "",
   subject_text: "फिट बाटो कायम सिफारिस।",
   addressee: "श्री मालपोत कार्यालय",
