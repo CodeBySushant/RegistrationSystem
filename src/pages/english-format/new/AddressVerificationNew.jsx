@@ -4,10 +4,12 @@ import "./AddressVerificationNew.css";
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useAuth } from "../../../context/AuthContext";
 
 const AddressVerificationNew = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "1970/60",
     refNo: "",
     date: new Date().toISOString().slice(0, 10),
 
@@ -15,13 +17,13 @@ const AddressVerificationNew = () => {
     applicantNameBody: "",
 
     // old (pre-change)
-    oldWardNo: MUNICIPALITY.wardNumber || "1",
+    oldWardNo: "",
     oldMunicipality: MUNICIPALITY.englishMunicipality || "",
     oldProvince: MUNICIPALITY.englishProvince || "",
 
     // new (post-change) — default to municipality config where sensible
     newMunicipality: MUNICIPALITY.englishMunicipality || "",
-    newWardNo: MUNICIPALITY.wardNumber || "",
+    newWardNo: "",
     newProvince: MUNICIPALITY.englishProvince || "",
     newCountry: "Nepal",
 
@@ -31,9 +33,9 @@ const AddressVerificationNew = () => {
 
     // final addresses (use municipality config)
     finalAddress1: "",
-    finalAddress2: MUNICIPALITY.englishMunicipality || "Nagarjun Municipality",
-    finalWardNo: MUNICIPALITY.wardNumber || "1",
-    finalProvince: MUNICIPALITY.englishProvince || "Bagmati Province",
+    finalAddress2: MUNICIPALITY.englishMunicipality || "",
+    finalWardNo: "",
+    finalProvince: MUNICIPALITY.englishProvince || "",
     finalCountry: "Nepal",
 
     designation: "",
@@ -94,28 +96,27 @@ const AddressVerificationNew = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
+      alert("Please fill required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
-      const res = await fetch("/api/forms/address-verification-new", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
+      const payload = { ...formData };
+
+      const res = await axiosInstance.post(
+        "/api/forms/address-verification-new",
+        payload
+      );
+
+      alert("Saved successfully (id: " + res.data.id + ")");
       window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + err.message);
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
