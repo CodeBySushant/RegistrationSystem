@@ -6,7 +6,7 @@
   padding: 25px;
   border: 1px solid #ddd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   background-image: url("/papertexture1.jpg");
   background-repeat: repeat;
   background-size: auto;
@@ -18,12 +18,24 @@
 .header {
   text-align: center;
   margin-bottom: 20px;
-  color: #8B0000;
+  color: #8b0000;
 }
-.header .logo { width: 80px; margin-bottom: 10px; }
-.header h1 { margin: 0; font-size: 24px; }
-.header h2 { margin: 5px 0; font-size: 20px; }
-.header h3 { margin: 0; font-size: 18px; }
+.header .logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+.header h2 {
+  margin: 5px 0;
+  font-size: 20px;
+}
+.header h3 {
+  margin: 0;
+  font-size: 18px;
+}
 
 /* General Form Layout - RESPONSIVE FIX */
 .form-row {
@@ -60,7 +72,7 @@
 
 /* Main Certificate Body Styling - RESPONSIVE FIX */
 .certificate-body {
-  line-height: 2.8;
+  line-height: 2.2;
   font-size: 16px;
   text-align: justify;
   margin-bottom: 10px;
@@ -98,15 +110,17 @@
 .certificate-body textarea {
   width: 100%;
   box-sizing: border-box;
-  padding: 8px;
-  font-family: 'Times New Roman', Times, serif;
+  padding: 8px 10px;
+  font-family: "Times New Roman", Times, serif;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-top: 5px;
-  line-height: 1.6;
+  margin-top: 8px;
+  line-height: 1.5;
+  max-height: 120px;
+  resize: vertical;
+  overflow-y: auto;
 }
-
 
 /* Designation Section - RESPONSIVE FIX */
 .designation-section {
@@ -151,7 +165,9 @@
   font-size: 16px;
   font-weight: bold;
 }
-.submit-btn:hover { background-color: #23272b; }
+.submit-btn:hover {
+  background-color: #23272b;
+}
 
 /* Applicants Details Container */
 .occupation-verification-new-container .applicant-details-box .details-grid {
@@ -161,10 +177,8 @@
 }
 
 /* Control applicant input width */
-.occupation-verification-new-container
-.applicant-details-box 
-.detail-input {
-  max-width: 400px;   /* adjust if needed: 480–550 */
+.occupation-verification-new-container .applicant-details-box .detail-input {
+  max-width: 400px; /* adjust if needed: 480–550 */
   width: 100%;
 }
 
@@ -192,6 +206,31 @@
 
 .inline-input-wrapper input {
   padding-left: 18px;
+}
+
+/* ===== TEXTAREA OVERFLOW FIX ===== */
+.textarea-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding-right: 1px;
+}
+
+.textarea-wrapper textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  padding: 10px 12px;
+  font-size: 16px;
+  line-height: 1.5;
+
+  border: 1px solid black;
+  border-radius: 4px;
+
+  background-color: rgba(255, 255, 255, 0.85);
+  resize: vertical;
 }
 
 /* ================= PRINT STYLES ================= */
