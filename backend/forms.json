@@ -1903,47 +1903,47 @@
     ]
   },
 
- "relationship-verification": {
-  "title": "Relationship Verification (English)",
-  "table": "relationship_verification",
-  "columns": [
-    "letterNo",
-    "refNo",
-    "date",
+  "relationship-verification": {
+    "title": "Relationship Verification (English)",
+    "table": "relationship_verification",
+    "columns": [
+      "letterNo",
+      "refNo",
+      "date",
 
-    "mainPersonTitle",
-    "mainPersonName",
-    "relation",
+      "mainPersonTitle",
+      "mainPersonName",
+      "relation",
 
-    "grandTitle",
-    "grandsName",
+      "grandTitle",
+      "grandsName",
 
-    "fatherTitle",
-    "fatherName",
-    "motherRelation",
-    "motherTitle",
-    "motherName",
+      "fatherTitle",
+      "fatherName",
+      "motherRelation",
+      "motherTitle",
+      "motherName",
 
-    "residencyType",
-    "municipality",
-    "ward_number",
-    "district1",
-    "country1",
+      "residencyType",
+      "municipality",
+      "ward_number",
+      "district1",
+      "country1",
 
-    "prevWardNo",
-    "prevDistrict",
-    "prevCountry",
+      "prevWardNo",
+      "prevDistrict",
+      "prevCountry",
 
-    "table_rows",
+      "table_rows",
 
-    "designation",
+      "designation",
 
-    "applicantName",
-    "applicantAddress",
-    "applicantCitizenship",
-    "applicantPhone"
-  ]
-},
+      "applicantName",
+      "applicantAddress",
+      "applicantCitizenship",
+      "applicantPhone"
+    ]
+  },
 
   "same-person-certificate": {
     "title": "Same Person Certificate",
@@ -2133,10 +2133,12 @@
       "letterNo",
       "refNo",
       "date",
+
       "applicantNameBody",
       "relation",
       "guardianTitle",
       "guardianName",
+
       "municipality",
       "wardNo",
       "prevAddress",
@@ -2144,24 +2146,24 @@
       "district",
       "province",
       "country",
-      "totalNPR_fy1",
-      "totalNPR_fy2",
-      "totalNPR_fy3",
+
+      "totalAnnualIncome",
+      "totalAnnualIncomeWords",
+
       "currency",
-      "totalCurrency_fy1",
-      "totalCurrency_fy2",
-      "totalCurrency_fy3",
       "usdRate",
-      "rateDate",
+      "equivalentCurrency",
+      "equivalentCurrencyWords",
+
       "designation",
       "applicantName",
       "applicantAddress",
       "applicantCitizenship",
       "applicantPhone",
+
       "table_rows"
     ]
   },
-
   "birth-certificate-new": {
     "table": "birth_certificate_new",
     "columns": [
