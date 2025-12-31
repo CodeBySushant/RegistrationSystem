@@ -6,7 +6,7 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 export default function IndustryTransferAcceptanceLetter() {
   const [form, setForm] = useState({
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
     to_line1: "",
     to_line2: "",
     original_reg_date: "",

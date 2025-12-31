@@ -5,7 +5,7 @@ import "./HouseDestroyedRecommendation.css";
 const initialState = {
   letter_no: "२०८२/८३",
   chalani_no: "",
-  date_nep: "२०८२-०८-०६",
+  date_nep: new Date().toISOString().slice(0, 10),
   addressee_name: "",
   addressee_line2: "",
   municipality: "नागार्जुन",

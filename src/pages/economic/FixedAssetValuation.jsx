@@ -103,7 +103,7 @@ export default function FixedAssetValuationForm() {
       setForm({
         letter_no: "",
         chalani_no: "",
-        date: "",
+        date: new Date().toISOString().slice(0, 10),
         former_area: "",
         former_vdc_mun: "",
         former_ward: "",

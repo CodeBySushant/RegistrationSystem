@@ -9,7 +9,7 @@ export default function CitizenshipRecommendation() {
   const [form, setForm] = useState({
     letter_no: "२०८२/८३",
     reference_no: "",
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
     recipient_office: "जिल्ला प्रशासन कार्यालय",
     recipient_district: "काठमाडौँ",
     husband_name: "",

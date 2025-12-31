@@ -8,7 +8,7 @@ const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 
 const initial = {
   chalan_no: "२०८२/८३",
-  date_nepali: "२०८२-०८-०६",
+  date_nepali: new Date().toISOString().slice(0, 10),
   addressee_prefix: "श्री",
   addressee_name: "",
   addressee_place: "",

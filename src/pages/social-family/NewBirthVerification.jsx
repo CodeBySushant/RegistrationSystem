@@ -35,7 +35,7 @@ const NewBirthVerification = () => {
   const [form, setForm] = useState({
     ref_no: '',
     letter_no: '2082/83',
-    date_bs: '२०८२-०८-०६',
+    date_bs: new Date().toISOString().slice(0, 10),
     applicant_prefix: 'Mr.',
     applicant_name: '',
     subject_person_prefix: 'Mr.',

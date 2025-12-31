@@ -8,7 +8,7 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const initialState = {
   fiscalYear: "2082/83",
-  date: "२०८२.०७.१५",
+  date: new Date().toISOString().slice(0, 10),
   regNo: "",
   regDate: "",
   organizationName: "",

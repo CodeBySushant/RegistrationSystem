@@ -8,7 +8,7 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 function OrganizationRenewal() {
   const [form, setForm] = useState({
-    date: "२०८२.०७.१५",
+    date: new Date().toISOString().slice(0, 10),
     refLetterNo: "",
     chalaniNo: "",
     toOffice: MUNICIPALITY.officeLine, 

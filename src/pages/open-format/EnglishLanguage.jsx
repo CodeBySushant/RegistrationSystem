@@ -9,7 +9,7 @@ const EnglishLanguage = () => {
   const [form, setForm] = useState({
     letter_no: "२०८२/८३",
     reference_no: "",
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
     subject: "",
     addressee_name: "",
     addressee_line2: "",

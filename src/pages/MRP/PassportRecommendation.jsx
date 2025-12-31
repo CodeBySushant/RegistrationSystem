@@ -9,7 +9,7 @@ const PassportRecommendation = () => {
   const [formData, setFormData] = useState({
     letterNo: "२०८२/८३",
     refNo: "",
-    dateOfLetter: "",          // use YYYY-MM-DD ideally
+    dateOfLetter: new Date().toISOString().slice(0, 10),          // use YYYY-MM-DD ideally
     dayText: "",
     headerTo: "श्री ईलाका प्रशासन कार्यालय,",
     headerDistrict: "काठमाडौँ",

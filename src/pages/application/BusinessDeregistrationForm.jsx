@@ -11,7 +11,7 @@ const initialState = {
   // prefer MUNICIPALITY Nepali tokens if available
   headerMunicipality: MUNICIPALITY?.name || "",
   headerOffice: MUNICIPALITY?.englishDistrict || "",
-  date: "२०८२.०७.१५",
+  date: new Date().toISOString().slice(0, 10),
   municipality: MUNICIPALITY?.name || "",
   firmType: "प्राइभेट फर्म",
   firmRegNo: "",

@@ -6,7 +6,7 @@ const DClassConstructionBusinessLicense = () => {
   const [form, setForm] = useState({
     license_no: "७/२०८२/८३",
     fiscal_year: "२०८२/८३",
-    issue_date: "2082-08-06", // ISO-like yyyy-mm-dd
+    issue_date: new Date().toISOString().slice(0, 10), // ISO-like yyyy-mm-dd
     business_name: "",
     office_address: "",
     firm_or_company: "",

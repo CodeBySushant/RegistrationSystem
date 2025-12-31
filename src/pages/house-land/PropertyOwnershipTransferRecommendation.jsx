@@ -8,7 +8,7 @@ const emptyPropertyRow = () => ({ local_body: "", ward_no: "", area: "", plot_no
 const initial = {
   letter_no: "२०८२/८३",
   chalani_no: "",
-  date_nep: "२०८२-०८-०६",
+  date_nep: new Date().toISOString().slice(0, 10),
 
   // main subject fields
   previous_type: "",

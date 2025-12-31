@@ -6,7 +6,7 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 export default function IndustryFormCancellation() {
   const [form, setForm] = useState({
-    date: "", // or "२०८२.०७.१५" if you want a default like other forms
+    date: new Date().toISOString().slice(0, 10), // or "२०८२.०७.१५" if you want a default like other forms
     to_line1: MUNICIPALITY.officeLine || "", // e.g. "नगर कार्यपालिकाको कार्यालय"
     to_line2: MUNICIPALITY.name || "", // e.g. "नागार्जुन नगरपालिका"
     reg_certificate_date: "",

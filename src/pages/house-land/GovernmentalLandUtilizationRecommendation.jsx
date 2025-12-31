@@ -4,7 +4,7 @@ import "./GovernmentalLandUtilizationRecommendation.css";
 const initialState = {
   letter_no: "२०८२/८३",
   chalani_no: "",
-  date_nep: "२०८२-०८-०६",
+  date_nep: new Date().toISOString().slice(0, 10),
   addressee_type: "जिल्ला प्रशासन कार्यालय",
   addressee_line1: "",
   addressee_line2: "",

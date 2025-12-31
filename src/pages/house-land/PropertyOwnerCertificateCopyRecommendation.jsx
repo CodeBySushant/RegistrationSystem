@@ -5,7 +5,7 @@ import "./PropertyOwnerCertificateCopyRecommendation.css";
 const emptyCertificate = () => ({
   applicant_name: "",
   na_pr_no: "",
-  issue_date: "२०८२-०८-०६",
+  issue_date: new Date().toISOString().slice(0, 10),
   father_name: "",
   grandfather_name: ""
 });
