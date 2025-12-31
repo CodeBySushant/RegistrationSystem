@@ -5,27 +5,29 @@ import "./SurnameVerificationCertificateNew.css";
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useAuth } from "../../../context/AuthContext";
 
 const SurnameVerificationCertificateNew = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "1970/60",
     refNo: "",
     date: new Date().toISOString().slice(0, 10),
 
     applicantTitle: "Mr.",
-    applicantNameBody: "Manjit Thapa Magar",
-    surname1: "Thapa Magar",
-    applicantNameAgain: "Mr. Manjit Thapa Magar",
-    surname2: "Thapa",
-    surnameContext: "cl",
-    fatherName: "Late Min Bahadur Thapa",
-    surname3: "Thapa Magar",
-    surname4: "Thapa",
+    applicantNameBody: "",
+    surname1: "",
+    applicantNameAgain: "",
+    surname2: "",
+    surnameContext: "",
+    fatherName: "",
+    surname3: "",
+    surname4: "",
     relationship: "son",
 
     // defaults from MUNICIPALITY (kept if you later want to show or use them)
     municipality: MUNICIPALITY.englishMunicipality || "",
-    wardNo: MUNICIPALITY.wardNumber || "",
+    wardNo: user?.ward?.toString() || "",
     district: MUNICIPALITY.englishDistrict || "",
     province: MUNICIPALITY.englishProvince || "",
     country: "Nepal",
@@ -78,32 +80,27 @@ const SurnameVerificationCertificateNew = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
+      alert("Please fill required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
       const payload = { ...formData };
-      const res = await fetch(
+
+      const res = await axiosInstance.post(
         "/api/forms/surname-verification-certificate-new",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
+        payload
       );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
-      setTimeout(() => window.print(), 250);
+
+      alert("Saved successfully (id: " + res.data.id + ")");
+      window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + (err.message || "unknown error"));
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
