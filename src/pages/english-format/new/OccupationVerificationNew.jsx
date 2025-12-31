@@ -5,10 +5,12 @@ import "./OccupationVerificationNew.css";
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useAuth } from "../../../context/AuthContext";
 
 const OccupationVerificationNew = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    letterNo: "0000/00",
+    letterNo: "1970/60",
     refNo: "",
     date: new Date().toISOString().slice(0, 10),
 
@@ -31,8 +33,7 @@ const OccupationVerificationNew = () => {
     prevProvince: MUNICIPALITY.englishProvince || "",
     prevCountry: "Nepal",
 
-    description:
-      "is a respected person as well as one of the renowned farmer ...",
+    description: "",
     designation: "",
     applicantName: "",
     applicantAddress: "",
@@ -57,11 +58,15 @@ const OccupationVerificationNew = () => {
       "applicantPhone",
       "designation",
     ];
+    // Required field check (trim-safe)
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === "")
+      if (!formData[k] || String(formData[k]).trim() === "") {
         return { ok: false, missing: k };
+      }
     }
-    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
+    // Phone validation (Nepal mobile numbers)
+    const phone = String(formData.applicantPhone).trim();
+    if (!/^(\+977)?9[678]\d{8}$/.test(phone)) {
       return { ok: false, missing: "applicantPhone (invalid)" };
     }
     return { ok: true };
@@ -76,29 +81,27 @@ const OccupationVerificationNew = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
+      alert("Please fill/validate required field: " + v.missing);
       return;
     }
+
     setLoading(true);
     try {
       const payload = { ...formData };
-      const res = await fetch("/api/forms/occupation-verification-new", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
-      }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
-      setTimeout(() => window.print(), 200);
+
+      const res = await axiosInstance.post(
+        "/api/forms/occupation-verification-new",
+        payload
+      );
+
+      alert("Saved successfully (id: " + res.data.id + ")");
+      window.print();
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to save: " + (err.message || "unknown error"));
+      alert(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -272,13 +275,16 @@ const OccupationVerificationNew = () => {
         </p>
 
         <div className="certificate-body">
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows="3"
-            required
-          ></textarea>
+          <div className="textarea-wrapper">
+            <textarea
+              name="description"
+              placeholder="is a respected person as well as one of the renowned farmer ..."
+              value={formData.description}
+              onChange={handleChange}
+              rows="3"
+              required
+            />
+          </div>
         </div>
 
         <div className="designation-section">

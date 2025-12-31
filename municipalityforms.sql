@@ -1816,7 +1816,7 @@ CREATE TABLE `economic_status` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `marriage_certificate` (
+CREATE TABLE `marriage_certificate_english` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `letterNo` VARCHAR(64) DEFAULT NULL,
   `refNo` VARCHAR(64) DEFAULT NULL,
