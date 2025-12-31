@@ -2186,13 +2186,16 @@ CREATE TABLE `address_verification_new` (
 
 CREATE TABLE IF NOT EXISTS `annual_income_verification_new` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  /* --- Header / Reference --- */
   `letterNo` VARCHAR(100) NULL,
   `refNo` VARCHAR(100) NULL,
   `date` DATE NULL,
+  /* --- Applicant & Guardian --- */
   `applicantNameBody` VARCHAR(255) NULL,
   `relation` VARCHAR(50) NULL,
   `guardianTitle` VARCHAR(50) NULL,
   `guardianName` VARCHAR(255) NULL,
+  /* --- Address --- */
   `municipality` VARCHAR(255) NULL,
   `wardNo` VARCHAR(20) NULL,
   `prevAddress` VARCHAR(255) NULL,
@@ -2200,24 +2203,29 @@ CREATE TABLE IF NOT EXISTS `annual_income_verification_new` (
   `district` VARCHAR(100) NULL,
   `province` VARCHAR(100) NULL,
   `country` VARCHAR(100) NULL,
-  `totalNPR_fy1` DECIMAL(18,2) NULL,
-  `totalNPR_fy2` DECIMAL(18,2) NULL,
-  `totalNPR_fy3` DECIMAL(18,2) NULL,
+  /* --- Total Income --- */
+  `totalAnnualIncome` DECIMAL(18,2) NULL,
+  `totalAnnualIncomeWords` VARCHAR(255) NULL,
+  /* --- Currency Conversion --- */
   `currency` VARCHAR(10) NULL,
-  `totalCurrency_fy1` DECIMAL(18,2) NULL,
-  `totalCurrency_fy2` DECIMAL(18,2) NULL,
-  `totalCurrency_fy3` DECIMAL(18,2) NULL,
   `usdRate` DECIMAL(12,6) NULL,
-  `rateDate` DATE NULL,
+  `equivalentCurrency` DECIMAL(18,2) NULL,
+  `equivalentCurrencyWords` VARCHAR(255) NULL,
+  /* --- Income Sources Table (JSON) --- */
+  `table_rows` JSON NULL,
+  /* --- Applicant Details --- */
   `designation` VARCHAR(150) NULL,
   `applicantName` VARCHAR(255) NULL,
   `applicantAddress` VARCHAR(255) NULL,
   `applicantCitizenship` VARCHAR(150) NULL,
   `applicantPhone` VARCHAR(50) NULL,
-  `table_rows` TEXT NULL,
+  /* --- Meta --- */
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `birth_certificate_new` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
