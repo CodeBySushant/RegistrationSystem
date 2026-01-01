@@ -17,10 +17,10 @@ const initialState = {
   currentDistrict: MUNICIPALITY?.englishDistrict || "जिल्ला",
   currentPalikaType: "गा.पा.",
   currentPalikaName: MUNICIPALITY?.name || "",
-  sigName: "",
-  sigAddress: "",
-  sigMobile: "",
-  sigSignature: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
 };
 
 const CitizenshipwithoutHusbandSurname = () => {
@@ -33,7 +33,8 @@ const CitizenshipwithoutHusbandSurname = () => {
   };
 
   const validate = (d) => {
-    if (!d.preMarriageDistrict?.trim()) return "preMarriageDistrict is required";
+    if (!d.preMarriageDistrict?.trim())
+      return "preMarriageDistrict is required";
     if (!d.certificateInfo?.trim()) return "certificateInfo is required";
     if (!d.currentHusbandName?.trim()) return "currentHusbandName is required";
     if (!d.currentPalikaName?.trim()) return "currentPalikaName is required";
@@ -107,13 +108,22 @@ const CitizenshipwithoutHusbandSurname = () => {
           </div>
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input type="text" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="text"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="subject-line">
           <strong>
-            विषय: <u>पूर्व पतिको नामथर हटाई हालको पतिको नाम थर वतन कायम गरी नागरिकताको प्रतिलिपि पाउँ ।</u>
+            विषय:{" "}
+            <u>
+              पूर्व पतिको नामथर हटाई हालको पतिको नाम थर वतन कायम गरी नागरिकताको
+              प्रतिलिपि पाउँ ।
+            </u>
           </strong>
         </div>
 
@@ -136,7 +146,11 @@ const CitizenshipwithoutHusbandSurname = () => {
             required
           />
           जिल्लाबाट नेपाली नागरिकताको प्रमाणपत्र प्राप्त गरेकोमा मेरो श्रीमानसँग
-          <select name="relationshipStatus" value={formData.relationshipStatus} onChange={handleChange}>
+          <select
+            name="relationshipStatus"
+            value={formData.relationshipStatus}
+            onChange={handleChange}
+          >
             <option>सम्बन्धविच्छेद</option>
             <option>अन्य</option>
           </select>
@@ -159,9 +173,19 @@ const CitizenshipwithoutHusbandSurname = () => {
             onChange={handleChange}
             required
           />
-          <input type="text" name="currentDistrict" value={formData.currentDistrict} onChange={handleChange} required />
+          <input
+            type="text"
+            name="currentDistrict"
+            value={formData.currentDistrict}
+            onChange={handleChange}
+            required
+          />
           जिल्ला
-          <select name="currentPalikaType" value={formData.currentPalikaType} onChange={handleChange}>
+          <select
+            name="currentPalikaType"
+            value={formData.currentPalikaType}
+            onChange={handleChange}
+          >
             <option>गा.पा.</option>
             <option>न.पा.</option>
           </select>
@@ -176,23 +200,65 @@ const CitizenshipwithoutHusbandSurname = () => {
           बस्ने
         </p>
 
-        <div className="signature-section-left">
-          <h4>निवेदक</h4>
-          <div className="form-group-column">
-            <label>नामथर: *</label>
-            <input type="text" name="sigName" value={formData.sigName} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>ठेगाना: *</label>
-            <input type="text" name="sigAddress" value={formData.sigAddress} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>मोबाइल नं: *</label>
-            <input type="text" name="sigMobile" value={formData.sigMobile} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>हस्ताक्षर:</label>
-            <input type="text" name="sigSignature" value={formData.sigSignature} onChange={handleChange} />
+        {/* Applicants details */}
+        <div className="applicant-details-box">
+          <h3>निवेदकको विवरण</h3>
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantNagarikta"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantNagarikta}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 

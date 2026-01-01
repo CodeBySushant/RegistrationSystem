@@ -281,3 +281,42 @@
 .submit-btn:hover {
   background-color: #23272b;
 }
+
+/* Applicants Details Container */
+.business-dereg-container .applicant-details-box .details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+/* Control applicant input width */
+.business-dereg-container .applicant-details-box .detail-input {
+  max-width: 400px; /* adjust if needed: 480–550 */
+  width: 100%;
+}
+
+/* Red star */
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+.inline-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.input-required-star {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: red;
+  font-weight: bold;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.inline-input-wrapper input {
+  padding-left: 18px;
+}

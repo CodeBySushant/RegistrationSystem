@@ -17,10 +17,10 @@ const initialState = {
   guardianName: "",
   doc1Detail: "",
   doc2Detail: "",
-  sigName: "",
-  sigAddress: "",
-  sigMobile: "",
-  sigSignature: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
 };
 
 const phoneRegex = /^[0-9+\-\s]{6,20}$/;
@@ -136,23 +136,65 @@ const RequestforCertificationMotherFather = () => {
           भई फरक परे पनि हामीहरु बाबु, आमा र छोरा भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा कार्यालयको सिफारिस र कागजात संलग्न राखी यो निवेदन पेश गरेको छु ।
         </p>
 
-        <div className="signature-section-left">
-          <h4>निवेदक</h4>
-          <div className="form-group-column">
-            <label>नामथर: *</label>
-            <input type="text" name="sigName" value={formData.sigName} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>ठेगाना: *</label>
-            <input type="text" name="sigAddress" value={formData.sigAddress} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>मोबाइल नं: *</label>
-            <input type="text" name="sigMobile" value={formData.sigMobile} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>हस्ताक्षर:</label>
-            <input type="text" name="sigSignature" value={formData.sigSignature} onChange={handleChange} />
+        {/* Applicants details */}
+        <div className="applicant-details-box">
+          <h3>निवेदकको विवरण</h3>
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantNagarikta"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantNagarikta}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 

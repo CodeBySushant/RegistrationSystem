@@ -14,10 +14,10 @@ const initialState = {
   currentMunicipality: MUNICIPALITY?.name || "",
   currentWard: MUNICIPALITY?.wardNumber || "",
   husbandName: "",
-  sigName: "",
-  sigAddress: "",
-  sigMobile: "",
-  sigSignature: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
 };
 
 const CitizenshipwithHusbandSurname = () => {
@@ -30,8 +30,10 @@ const CitizenshipwithHusbandSurname = () => {
   };
 
   const validate = (data) => {
-    if (!data.preMarriageDistrict?.trim()) return "preMarriageDistrict is required";
-    if (!data.currentMunicipality?.trim()) return "currentMunicipality is required";
+    if (!data.preMarriageDistrict?.trim())
+      return "preMarriageDistrict is required";
+    if (!data.currentMunicipality?.trim())
+      return "currentMunicipality is required";
     if (!data.currentWard?.trim()) return "currentWard is required";
     if (!data.husbandName?.trim()) return "husbandName is required";
     if (!data.sigName?.trim()) return "sigName is required";
@@ -102,45 +104,131 @@ const CitizenshipwithHusbandSurname = () => {
           </div>
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input type="text" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="text"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>विषय: <u>पतिको नाम, थर, वतन कायम गरी नागरिकताको प्रतिलिपि पाउँ ।</u></strong>
+          <strong>
+            विषय: <u>पतिको नाम, थर, वतन कायम गरी नागरिकताको प्रतिलिपि पाउँ ।</u>
+          </strong>
         </div>
 
         <p className="certificate-body">
           प्रस्तुत विषयमा मेरो विवाह नहुँदै मिति
-          <input type="text" name="preMarriageDate" value={formData.preMarriageDate} onChange={handleChange} required />
+          <input
+            type="text"
+            name="preMarriageDate"
+            value={formData.preMarriageDate}
+            onChange={handleChange}
+            required
+          />
           मा
-          <input type="text" name="preMarriageDistrict" placeholder="जिल्ला" value={formData.preMarriageDistrict} onChange={handleChange} required />
+          <input
+            type="text"
+            name="preMarriageDistrict"
+            placeholder="जिल्ला"
+            value={formData.preMarriageDistrict}
+            onChange={handleChange}
+            required
+          />
           जिल्लाबाट नेपाली नागरिकताको प्रमाणपत्र प्राप्त गरेकोमा हाल यस जिल्लाको
-          <input type="text" name="currentMunicipality" placeholder="गा.पा. / न.पा." value={formData.currentMunicipality} onChange={handleChange} required />
+          <input
+            type="text"
+            name="currentMunicipality"
+            placeholder="गा.पा. / न.पा."
+            value={formData.currentMunicipality}
+            onChange={handleChange}
+            required
+          />
           गा.पा. / न.पा. वडा नं
-          <input type="text" name="currentWard" placeholder="वडा" value={formData.currentWard} onChange={handleChange} required className="short-input" />
+          <input
+            type="text"
+            name="currentWard"
+            placeholder="वडा"
+            value={formData.currentWard}
+            onChange={handleChange}
+            required
+            className="short-input"
+          />
           बस्ने
-          <input type="text" name="husbandName" placeholder="पतिको नाम" value={formData.husbandName} onChange={handleChange} required />
-          सँग वैवाहिक सम्बन्ध कायम भएकोले पतिको नाम, थर र वतन कायम गरी नागरिकताको प्रतिलिपि पाउँ भनी आवश्यक कागजातहरु संलग्न राखी यो निवेदन पेश गर्दछु ।
+          <input
+            type="text"
+            name="husbandName"
+            placeholder="पतिको नाम"
+            value={formData.husbandName}
+            onChange={handleChange}
+            required
+          />
+          सँग वैवाहिक सम्बन्ध कायम भएकोले पतिको नाम, थर र वतन कायम गरी
+          नागरिकताको प्रतिलिपि पाउँ भनी आवश्यक कागजातहरु संलग्न राखी यो निवेदन
+          पेश गर्दछु ।
         </p>
 
-        <div className="signature-section-left">
-          <h4>निवेदक</h4>
-          <div className="form-group-column">
-            <label>नामथर: *</label>
-            <input type="text" name="sigName" value={formData.sigName} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>ठेगाना: *</label>
-            <input type="text" name="sigAddress" value={formData.sigAddress} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>मोबाइल नं: *</label>
-            <input type="text" name="sigMobile" value={formData.sigMobile} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>हस्ताक्षर:</label>
-            <input type="text" name="sigSignature" value={formData.sigSignature} onChange={handleChange} />
+        {/* Applicants details */}
+        <div className="applicant-details-box">
+          <h3>निवेदकको विवरण</h3>
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantNagarikta"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantNagarikta}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 

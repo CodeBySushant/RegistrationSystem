@@ -250,23 +250,65 @@ const BusinessDeregistrationForm = () => {
           </div>
         </div>
 
-        <div className="applicant-details">
+        {/* Applicants details */}
+        <div className="applicant-details-box">
           <h3>निवेदकको विवरण</h3>
-          <div className="form-group-column">
-            <label>निवेदकको नाम *</label>
-            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>निवेदकको ठेगाना *</label>
-            <input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>निवेदकको फोन नं. *</label>
-            <input type="text" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} required />
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantNagarikta"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantNagarikta}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 

@@ -90,7 +90,9 @@ const AllowanceForm = () => {
       }
     } catch (err) {
       console.error(err);
-      alert("Submission failed: " + (err.response?.data?.message || err.message));
+      alert(
+        "Submission failed: " + (err.response?.data?.message || err.message)
+      );
     } finally {
       setSubmitting(false);
     }
@@ -126,12 +128,13 @@ const AllowanceForm = () => {
         <h3 className="subject">विषय: नाम दर्ता सम्बन्धमा</h3>
 
         <p className="paragraph">
-          महोदय,<br />
+          महोदय,
+          <br />
           उपरोक्त विषयमा सामाजिक सुरक्षा भत्ता पाउनका लागि नयाँ नाम दर्ता
           गरिदिनुहुन देहायका विवरण सहित यो दरखास्त पेश गरेको छु। मैले राज्य
           कोषबाट मासिक पारिश्रमिक, पेन्सन वा यस्तै प्रकारका कुनै अन्य सुविधा
-          पाएको छैन। व्यहोरा ठीक साँचो हो, झुठो ठहरे प्रचलित कानुन बमोजिम
-          सहुँला बुझाउँला।
+          पाएको छैन। व्यहोरा ठीक साँचो हो, झुठो ठहरे प्रचलित कानुन बमोजिम सहुँला
+          बुझाउँला।
         </p>
 
         {/* --- Applicant Section --- */}
@@ -321,44 +324,65 @@ const AllowanceForm = () => {
           </div>
         </div>
 
-        {/* --- Applicant Details --- */}
-        <div className="bordered-box">
-          <h4>निवेदकको विवरण</h4>
-          <div className="form-group box">
-            <label>निवेदकको नाम:</label>
-            <input
-              type="text"
-              name="applicantName"
-              value={formData.applicantName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group box">
-            <label>निवेदकको ठेगाना:</label>
-            <input
-              type="text"
-              name="applicantAddress"
-              value={formData.applicantAddress}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group box">
-            <label>निवेदकको नागरिकता नं.:</label>
-            <input
-              type="text"
-              name="applicantNagarikta"
-              value={formData.applicantNagarikta}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group box">
-            <label>निवेदकको फोन नं.:</label>
-            <input
-              type="text"
-              name="applicantPhone"
-              value={formData.applicantPhone}
-              onChange={handleChange}
-            />
+        {/* Applicants details */}
+        <div className="applicant-details-box">
+          <h3>निवेदकको विवरण</h3>
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantNagarikta"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantNagarikta}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 
