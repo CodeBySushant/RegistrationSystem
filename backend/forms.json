@@ -1097,7 +1097,7 @@
       "citizenship_issue_date",
       "citizenship_issue_district",
       "municipality",
-      "ward",
+      "ward_no",
       "tole",
       "residence_district",
       "father_name",

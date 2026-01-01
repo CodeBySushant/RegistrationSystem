@@ -25,31 +25,40 @@ const BusinessIndustryRegistrationForm = () => {
   };
 
   const handlePrint = async () => {
-    await handleSubmit(); // save first
-    window.print(); // then print
+    const success = await handleSubmit();
+    if (success) {
+      window.print();
+    }
   };
 
   const handleSubmit = async () => {
     try {
       const payload = {
-        applicantName: formData.applicantName,
-        applicantAddress: formData.applicantAddress,
-        applicantCitizenship: formData.applicantCitizenship,
-        applicantPhone: formData.applicantPhone,
-        ward: user?.ward,
+        applicant_name: formData.applicantName,
+        applicant_address: formData.applicantAddress,
+        applicant_citizenship: formData.applicantCitizenship,
+        applicant_phone: formData.applicantPhone,
+        ward_no: user?.ward,
         municipality: MUNICIPALITY.name,
       };
 
-      const response = await axiosInstance.post(
-        "/business-registration",
+      const res = await axiosInstance.post(
+        "/api/forms/business-industry-registration-form",
         payload
       );
 
-      console.log("Saved successfully:", response.data);
-      alert("रेकर्ड सफलतापूर्वक सेभ भयो");
-    } catch (error) {
-      console.error("Save failed:", error);
+      console.log("API RESPONSE:", res.data);
+
+      if (res.status === 200) {
+        alert("रेकर्ड सफलतापूर्वक सेभ भयो");
+        return true;
+      }
+
+      throw new Error("Insert failed");
+    } catch (err) {
+      console.error("Save failed:", err);
       alert("सेभ गर्दा समस्या आयो");
+      return false;
     }
   };
 
@@ -95,7 +104,7 @@ const BusinessIndustryRegistrationForm = () => {
         </div>
         <div className="right-info">
           <p>
-            मिति : <span className="bold-text">२०८२-०८-०६</span>
+            मिति : <span className="bold-text">{new Date().toISOString().slice(0, 10)}</span>
           </p>
         </div>
       </div>
@@ -320,6 +329,7 @@ const BusinessIndustryRegistrationForm = () => {
         </div>
 
         <div className="declaration-section">
+          <p>................................................</p>
           <p className="bold-text underline-text">व्यवसायीको छाप</p>
           <p>
             माथि मैले भरेको विवरण ठीक साँचो हो झुट्टा ठहरे कानुन बमोजिम सहुँला
@@ -331,37 +341,19 @@ const BusinessIndustryRegistrationForm = () => {
         </div>
       </div>
 
-      {/* --- Signature Section (Right Aligned) --- */}
-      <div className="signature-list-section">
-        <p className="bold-text">इजाजतपत्र दिनेको :</p>
-        <div className="sig-row">
-          <label>दस्तखत :</label>
-          <input type="text" className="dotted-input medium-input" />
-        </div>
-        <div className="sig-row">
-          <label>
-            नाम : <span className="red">*</span>
-          </label>
-          <input type="text" className="dotted-input medium-input" />
-        </div>
-        <div className="sig-row">
-          <label>
-            पद : <span className="red">*</span>
-          </label>
-          <input type="text" className="dotted-input medium-input" />
-        </div>
-        <div className="sig-row">
-          <label>छाप:</label>
-          <input type="text" className="dotted-input medium-input" />
-        </div>
-        <div className="sig-row">
-          <label>मिति :</label>
-          <input
-            type="text"
-            className="dotted-input medium-input"
-            defaultValue="२०८२-०८-०६"
-          />
-        </div>
+      <div className="designation-section">
+        <input type="text" disabled />
+        <select
+          name="designation"
+          value={formData.designation}
+          onChange={handleChange}
+          required
+        >
+          <option value="">पद छनौट गर्नुहोस्</option>
+          <option value="Secretary">सचिव</option>
+          <option value="Chairperson">अध्यक्ष</option>
+          <option value="Acting Chairperson">का.वा अध्यक्ष</option>
+        </select>
       </div>
 
       {/* Applicants details */}
