@@ -17,10 +17,10 @@ const initialState = {
   relation: "छोरा",
   guardianName: "",
   tribeName: "",
-  sigName: "",
-  sigAddress: "",
-  sigMobile: "",
-  sigSignature: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantNagarikta: "",
+  applicantPhone: "",
 };
 
 const ApplicationforIndigenousNationalityCertification = () => {
@@ -41,9 +41,10 @@ const ApplicationforIndigenousNationalityCertification = () => {
       "residentName",
       "guardianName",
       "tribeName",
-      "sigName",
-      "sigAddress",
-      "sigMobile",
+      "applicantName",
+      "applicantAddress",
+      "applicantNagarikta",
+      "applicantPhone",
     ];
     for (let f of required) {
       if (!data[f] || (typeof data[f] === "string" && data[f].trim() === "")) {
@@ -130,7 +131,9 @@ const ApplicationforIndigenousNationalityCertification = () => {
         </div>
 
         <div className="subject-line">
-          <strong>विषय: <u>जनजाति प्रमाणित गरि पाउँ ।</u></strong>
+          <strong>
+            विषय: <u>जनजाति प्रमाणित गरि पाउँ ।</u>
+          </strong>
         </div>
 
         <p className="certificate-body">
@@ -170,7 +173,11 @@ const ApplicationforIndigenousNationalityCertification = () => {
             required
           />
           को
-          <select name="relation" value={formData.relation} onChange={handleChange}>
+          <select
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+          >
             <option value="छोरा">छोरा</option>
             <option value="छोरी">छोरी</option>
             <option value="पति">पति</option>
@@ -194,26 +201,70 @@ const ApplicationforIndigenousNationalityCertification = () => {
             onChange={handleChange}
             required
           />
-          जातिमा पर्ने भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा कार्यालयको सिफारिस, नागरिकता प्रमाणपत्रको फोटोकपी सहित रु १०।- को टिकट टाँसी यो निवेदन पेश गरेको छु ।
+          जातिमा पर्ने भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा कार्यालयको
+          सिफारिस, नागरिकता प्रमाणपत्रको फोटोकपी सहित रु १०।- को टिकट टाँसी यो
+          निवेदन पेश गरेको छु ।
         </p>
 
-        <div className="signature-section-left">
-          <h4>निवेदक</h4>
-          <div className="form-group-column">
-            <label>नामथर: *</label>
-            <input type="text" name="sigName" value={formData.sigName} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>ठेगाना: *</label>
-            <input type="text" name="sigAddress" value={formData.sigAddress} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>मोबाइल नं: *</label>
-            <input type="text" name="sigMobile" value={formData.sigMobile} onChange={handleChange} required />
-          </div>
-          <div className="form-group-column">
-            <label>हस्ताक्षर:</label>
-            <input type="text" name="sigSignature" value={formData.sigSignature} onChange={handleChange} />
+        {/* Applicants details */}
+        <div className="applicant-details-box">
+          <h3>निवेदकको विवरण</h3>
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantNagarikta"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantNagarikta}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 

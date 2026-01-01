@@ -30,14 +30,10 @@ const initialState = {
   feeAmount: "",
   feeAmountWords: "",
   sigApplicantType: "निवेदक",
-  sigName: "",
-  sigAddress: MUNICIPALITY?.name || "नागार्जुन नगरपालिका",
-  sigWard: MUNICIPALITY?.wardNumber || "१",
-  sigPhone: "",
-  detailApplicantName: "",
-  detailApplicantAddress: "",
-  detailApplicantCitizenship: "",
-  detailApplicantPhone: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
 };
 
 const LandBoundaryVerificationForm = () => {
@@ -70,7 +66,8 @@ const LandBoundaryVerificationForm = () => {
     if (!fd.detailApplicantAddress?.trim()) return "निवेदक ठेगाना भर्नुहोस्";
     if (!fd.detailApplicantCitizenship?.trim()) return "नागरिकता नं. भर्नुहोस्";
     if (!fd.detailApplicantPhone?.trim()) return "निवेदक फोन नं. भर्नुहोस्";
-    if (!phoneRegex.test(String(fd.detailApplicantPhone))) return "निवेदक फोन नं. अमान्य छ";
+    if (!phoneRegex.test(String(fd.detailApplicantPhone)))
+      return "निवेदक फोन नं. अमान्य छ";
     return null;
   };
 
@@ -103,7 +100,8 @@ const LandBoundaryVerificationForm = () => {
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message || error.message || "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
@@ -121,27 +119,55 @@ const LandBoundaryVerificationForm = () => {
         {/* preserve manual header fields for overrides */}
         <div className="form-row">
           <div className="header-to-group">
-            <input type="text" name="headerTo" value={formData.headerTo} onChange={handleChange} />
-            <select name="headerMunicipality" value={formData.headerMunicipality} onChange={handleChange}>
+            <input
+              type="text"
+              name="headerTo"
+              value={formData.headerTo}
+              onChange={handleChange}
+            />
+            <select
+              name="headerMunicipality"
+              value={formData.headerMunicipality}
+              onChange={handleChange}
+            >
               <option>{MUNICIPALITY?.name || "नागार्जुन नगरपालिका"}</option>
             </select>
-            <input type="text" name="headerOffice" value={formData.headerOffice} onChange={handleChange} />
-            <input type="text" name="headerDistrict" value={formData.headerDistrict} onChange={handleChange} required />
+            <input
+              type="text"
+              name="headerOffice"
+              value={formData.headerOffice}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="headerDistrict"
+              value={formData.headerDistrict}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input type="text" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="text"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>विषय: <u>जग्गाको साँध सिमाङ्कन गर्न अधिन खटाई पाउँ बारे।</u></strong>
+          <strong>
+            विषय: <u>जग्गाको साँध सिमाङ्कन गर्न अधिन खटाई पाउँ बारे।</u>
+          </strong>
         </div>
 
         <p className="certificate-body">
           {/* keep your original paragraph; inputs are bound to state */}
-          यस सम्बन्धमा म/हामीले तल उल्लेखित जग्गाको सीमा सिमाङ्कन गराउन अनुरोध गर्दछौं। आवश्यक नक्सा, कित्ता विवरण र अन्य कागजात संलग्न गरिएको छ। 
+          यस सम्बन्धमा म/हामीले तल उल्लेखित जग्गाको सीमा सिमाङ्कन गराउन अनुरोध
+          गर्दछौं। आवश्यक नक्सा, कित्ता विवरण र अन्य कागजात संलग्न गरिएको छ।
           {/* (You can expand this paragraph to the original long text; kept concise here.) */}
         </p>
 
@@ -149,22 +175,41 @@ const LandBoundaryVerificationForm = () => {
         <div className="form-grid">
           <div className="form-group">
             <label>मुख्य जिल्ला</label>
-            <input type="text" name="mainDistrict" value={formData.mainDistrict} onChange={handleChange} />
+            <input
+              type="text"
+              name="mainDistrict"
+              value={formData.mainDistrict}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>पालिका</label>
-            <input type="text" name="mainMunicipality" value={formData.mainMunicipality} onChange={handleChange} />
+            <input
+              type="text"
+              name="mainMunicipality"
+              value={formData.mainMunicipality}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>वडा नं.</label>
-            <input type="text" name="mainWardNo1" value={formData.mainWardNo1} onChange={handleChange} />
+            <input
+              type="text"
+              name="mainWardNo1"
+              value={formData.mainWardNo1}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>पूर्व स्थान प्रकार</label>
-            <select name="prevLocationType" value={formData.prevLocationType} onChange={handleChange}>
+            <select
+              name="prevLocationType"
+              value={formData.prevLocationType}
+              onChange={handleChange}
+            >
               <option>साबिक</option>
               <option>यहाँ</option>
             </select>
@@ -172,52 +217,102 @@ const LandBoundaryVerificationForm = () => {
 
           <div className="form-group">
             <label>पूर्व वडा नं.</label>
-            <input type="text" name="prevWardNo" value={formData.prevWardNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="prevWardNo"
+              value={formData.prevWardNo}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>टोल</label>
-            <input type="text" name="tole" value={formData.tole} onChange={handleChange} />
+            <input
+              type="text"
+              name="tole"
+              value={formData.tole}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>निवेदकको नाम</label>
-            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} />
+            <input
+              type="text"
+              name="applicantName"
+              value={formData.applicantName}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>उमेर</label>
-            <input type="text" name="applicantAge" value={formData.applicantAge} onChange={handleChange} />
+            <input
+              type="text"
+              name="applicantAge"
+              value={formData.applicantAge}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>अभिभावक/पति</label>
-            <input type="text" name="guardianName" value={formData.guardianName} onChange={handleChange} />
+            <input
+              type="text"
+              name="guardianName"
+              value={formData.guardianName}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>कित्ता नं.</label>
-            <input type="text" name="kittaNo" value={formData.kittaNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="kittaNo"
+              value={formData.kittaNo}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>जग्गाको नाम</label>
-            <input type="text" name="landName" value={formData.landName} onChange={handleChange} />
+            <input
+              type="text"
+              name="landName"
+              value={formData.landName}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>क्षेत्रफल</label>
-            <input type="text" name="landArea" value={formData.landArea} onChange={handleChange} />
+            <input
+              type="text"
+              name="landArea"
+              value={formData.landArea}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>दर्ता दस्तुर (रु.)</label>
-            <input type="text" name="feeAmount" value={formData.feeAmount} onChange={handleChange} />
+            <input
+              type="text"
+              name="feeAmount"
+              value={formData.feeAmount}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group full-width">
             <label>रकम (अक्षरुपी)</label>
-            <input type="text" name="feeAmountWords" value={formData.feeAmountWords} onChange={handleChange} />
+            <input
+              type="text"
+              name="feeAmountWords"
+              value={formData.feeAmountWords}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
@@ -225,7 +320,11 @@ const LandBoundaryVerificationForm = () => {
         <div className="designation-section">
           <div className="signature-fields">
             <div className="form-group-inline">
-              <select name="sigApplicantType" value={formData.sigApplicantType} onChange={handleChange}>
+              <select
+                name="sigApplicantType"
+                value={formData.sigApplicantType}
+                onChange={handleChange}
+              >
                 <option>निवेदक</option>
                 <option>निवेदिका</option>
               </select>
@@ -233,44 +332,107 @@ const LandBoundaryVerificationForm = () => {
 
             <div className="form-group-inline">
               <label>नाम : *</label>
-              <input type="text" name="sigName" value={formData.sigName} onChange={handleChange} required />
+              <input
+                type="text"
+                name="sigName"
+                value={formData.sigName}
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="form-group-inline">
               <label>ठेगाना :</label>
-              <input type="text" name="sigAddress" value={formData.sigAddress} onChange={handleChange} />
+              <input
+                type="text"
+                name="sigAddress"
+                value={formData.sigAddress}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form-group-inline">
               <label>वडा नं. :</label>
-              <input type="text" name="sigWard" value={formData.sigWard} onChange={handleChange} />
+              <input
+                type="text"
+                name="sigWard"
+                value={formData.sigWard}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form-group-inline">
               <label>सम्पर्क नं. : *</label>
-              <input type="text" name="sigPhone" value={formData.sigPhone} onChange={handleChange} required />
+              <input
+                type="text"
+                name="sigPhone"
+                value={formData.sigPhone}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
         </div>
 
-        {/* applicant details */}
-        <div className="applicant-details">
+        {/* Applicants details */}
+        <div className="applicant-details-box">
           <h3>निवेदकको विवरण</h3>
-          <div>
-            <label>नाम *</label>
-            <input type="text" name="detailApplicantName" value={formData.detailApplicantName} onChange={handleChange} required />
-          </div>
-          <div>
-            <label>ठेगाना *</label>
-            <input type="text" name="detailApplicantAddress" value={formData.detailApplicantAddress} onChange={handleChange} required />
-          </div>
-          <div>
-            <label>नागरिकता नं *</label>
-            <input type="text" name="detailApplicantCitizenship" value={formData.detailApplicantCitizenship} onChange={handleChange} required />
-          </div>
-          <div>
-            <label>फोन नं *</label>
-            <input type="text" name="detailApplicantPhone" value={formData.detailApplicantPhone} onChange={handleChange} required />
+          <div className="details-grid">
+            <div className="detail-group">
+              <label>
+                निवेदकको नाम<span className="required">*</span>
+              </label>
+              <input
+                name="applicantName"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको ठेगाना<span className="required">*</span>
+              </label>
+              <input
+                name="applicantAddress"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantAddress}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको नागरिकता नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantNagarikta"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantNagarikta}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="detail-group">
+              <label>
+                निवेदकको फोन नं.<span className="required">*</span>
+              </label>
+              <input
+                name="applicantPhone"
+                type="text"
+                className="detail-input bg-gray"
+                value={formData.applicantPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
         </div>
 
