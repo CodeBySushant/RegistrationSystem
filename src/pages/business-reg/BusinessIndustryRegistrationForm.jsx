@@ -1,11 +1,58 @@
 // 1
-import React from "react";
+import React, { useState } from "react";
 import "./BusinessIndustryRegistrationForm.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const BusinessIndustryRegistrationForm = () => {
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handlePrint = async () => {
+    await handleSubmit(); // save first
+    window.print(); // then print
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        applicantName: formData.applicantName,
+        applicantAddress: formData.applicantAddress,
+        applicantCitizenship: formData.applicantCitizenship,
+        applicantPhone: formData.applicantPhone,
+        ward: user?.ward,
+        municipality: MUNICIPALITY.name,
+      };
+
+      const response = await axiosInstance.post(
+        "/business-registration",
+        payload
+      );
+
+      console.log("Saved successfully:", response.data);
+      alert("रेकर्ड सफलतापूर्वक सेभ भयो");
+    } catch (error) {
+      console.error("Save failed:", error);
+      alert("सेभ गर्दा समस्या आयो");
+    }
+  };
+
   return (
     <div className="business-registration-container">
       {/* --- Top Bar --- */}
@@ -21,12 +68,12 @@ const BusinessIndustryRegistrationForm = () => {
         <div className="header-logo">
           {/* Replace with your actual logo path */}
           <img src="/nepallogo.svg" alt="Nepal Emblem" />
-          <p className="red-text tiny-text center-text">प्रतिलिपि □</p>
+          <p className="red-text tiny-text center-text">प्रतिलिपि </p>
         </div>
         <div className="header-text">
           <h1 className="municipality-name red-text">{MUNICIPALITY.name}</h1>
           <h2 className="ward-title red-text">
-            वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
+            वडा नं. {user?.ward?.toString()} वडा कार्यालय
           </h2>
           <p className="address-text red-text">{MUNICIPALITY.officeLine}</p>
           <p className="province-text red-text">{MUNICIPALITY.provinceLine}</p>
@@ -317,32 +364,71 @@ const BusinessIndustryRegistrationForm = () => {
         </div>
       </div>
 
-      {/* --- Applicant Details Box --- */}
+      {/* Applicants details */}
       <div className="applicant-details-box">
         <h3>निवेदकको विवरण</h3>
         <div className="details-grid">
           <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको नाम<span className="required">*</span>
+            </label>
+            <input
+              name="applicantName"
+              type="text"
+              className="detail-input bg-gray"
+              value={formData.applicantName}
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको ठेगाना<span className="required">*</span>
+            </label>
+            <input
+              name="applicantAddress"
+              type="text"
+              className="detail-input bg-gray"
+              value={formData.applicantAddress}
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको नागरिकता नं.<span className="required">*</span>
+            </label>
+            <input
+              name="applicantCitizenship"
+              type="text"
+              className="detail-input bg-gray"
+              value={formData.applicantCitizenship}
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको फोन नं.<span className="required">*</span>
+            </label>
+            <input
+              name="applicantPhone"
+              type="text"
+              className="detail-input bg-gray"
+              value={formData.applicantPhone}
+              onChange={handleChange}
+              required
+            />
           </div>
         </div>
       </div>
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button className="save-print-btn">
+        <button type="button" className="save-print-btn" onClick={handlePrint}>
           रेकर्ड सेभ र प्रिन्ट गर्नुहोस्
         </button>
       </div>
