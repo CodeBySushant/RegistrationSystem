@@ -10,10 +10,71 @@ import { useAuth } from "../../context/AuthContext";
 const BusinessIndustryRegistrationForm = () => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
-    applicantName: "",
-    applicantAddress: "",
-    applicantCitizenship: "",
-    applicantPhone: "",
+    // header
+    registration_no: "",
+    certificate_date: new Date().toISOString().slice(0, 10),
+    copy_flag: "प्रतिलिपि",
+
+    // proprietor
+    full_name: "",
+    citizenship_no: "",
+    citizenship_issue_date: "",
+    citizenship_issue_district: "",
+
+    // residence
+    municipality: MUNICIPALITY.name,
+    ward_no: user?.ward || "",
+    tole: "",
+    residence_district: MUNICIPALITY.city,
+
+    // family
+    father_name: "",
+    spouse_name: "",
+
+    // business
+    business_name: "",
+    business_kind: "",
+    business_nature: "",
+    business_road: "",
+
+    // business address
+    business_address_line: "",
+    business_address_district: "",
+    business_address_municipality: "",
+    business_address_ward: "",
+    business_address_tole: "",
+
+    // contact
+    phone: "",
+    mobile: "",
+    email: "",
+
+    // tax
+    pan_vat: "",
+    website: "",
+
+    // objective
+    objective: "",
+    other_registration_no: "",
+    other_registration_office: "",
+
+    // capital
+    total_capital: "",
+
+    // remarks
+    kaifiyat: "",
+    declaration_text: "",
+
+    // issuing authority
+    issuing_name: "",
+    issuing_post: "",
+    issuing_date: new Date().toISOString().slice(0, 10),
+
+    // applicant box
+    applicant_name: "",
+    applicant_address: "",
+    applicant_citizenship: "",
+    applicant_phone: "",
   });
 
   const handleChange = (e) => {
@@ -34,10 +95,7 @@ const BusinessIndustryRegistrationForm = () => {
   const handleSubmit = async () => {
     try {
       const payload = {
-        applicant_name: formData.applicantName,
-        applicant_address: formData.applicantAddress,
-        applicant_citizenship: formData.applicantCitizenship,
-        applicant_phone: formData.applicantPhone,
+        ...formData,
         ward_no: user?.ward,
         municipality: MUNICIPALITY.name,
       };
@@ -100,11 +158,20 @@ const BusinessIndustryRegistrationForm = () => {
       <div className="reg-info-row">
         <div className="left-info">
           <label>दर्ता नं :</label>
-          <input type="text" className="dotted-input small-input" />
+          <input
+            type="text"
+            name="registration_no"
+            value={formData.registration_no}
+            onChange={handleChange}
+            className="dotted-input small-input"
+          />
         </div>
         <div className="right-info">
           <p>
-            मिति : <span className="bold-text">{new Date().toISOString().slice(0, 10)}</span>
+            मिति :{" "}
+            <span className="bold-text">
+              {new Date().toISOString().slice(0, 10)}
+            </span>
           </p>
         </div>
       </div>
@@ -117,12 +184,23 @@ const BusinessIndustryRegistrationForm = () => {
           <label>
             १. पूरा नाम, थर : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            type="text"
+            name="full_name"
+            value={formData.full_name}
+            onChange={handleChange}
+            className="dotted-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>२.नागरिकता नं :</label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            type="text"
+            name="citizenship_no"
+            value={formData.citizenship_no}
+            onChange={handleChange}
+          />
           <label>जारी मिति : २०८२-०८-०६</label>
           <label style={{ marginLeft: "20px" }}>जिल्ला : काठमाडौँ</label>
         </div>
@@ -141,7 +219,12 @@ const BusinessIndustryRegistrationForm = () => {
 
         <div className="form-group-row">
           <label>४. बाबुको नाम, थर :</label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            type="text"
+            name="father_name"
+            value={formData.father_name}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="form-group-row">
@@ -156,11 +239,21 @@ const BusinessIndustryRegistrationForm = () => {
           <label>
             ६. व्यवसायको नाम : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            type="text"
+            name="business_name"
+            value={formData.business_name}
+            onChange={handleChange}
+          />
           <label>
             व्यवसायको किसिम : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            type="text"
+            name="business_kind"
+            value={formData.business_kind}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="form-group-row">
@@ -344,8 +437,8 @@ const BusinessIndustryRegistrationForm = () => {
       <div className="designation-section">
         <input type="text" disabled />
         <select
-          name="designation"
-          value={formData.designation}
+          name="issuing_post"
+          value={formData.issuing_post}
           onChange={handleChange}
           required
         >
@@ -365,10 +458,10 @@ const BusinessIndustryRegistrationForm = () => {
               निवेदकको नाम<span className="required">*</span>
             </label>
             <input
-              name="applicantName"
+              name="applicant_name"
               type="text"
               className="detail-input bg-gray"
-              value={formData.applicantName}
+              value={formData.applicant_name}
               onChange={handleChange}
               required
             />
@@ -379,10 +472,10 @@ const BusinessIndustryRegistrationForm = () => {
               निवेदकको ठेगाना<span className="required">*</span>
             </label>
             <input
-              name="applicantAddress"
+              name="applicant_address"
               type="text"
               className="detail-input bg-gray"
-              value={formData.applicantAddress}
+              value={formData.applicant_address}
               onChange={handleChange}
               required
             />
@@ -393,10 +486,10 @@ const BusinessIndustryRegistrationForm = () => {
               निवेदकको नागरिकता नं.<span className="required">*</span>
             </label>
             <input
-              name="applicantCitizenship"
+              name="applicant_citizenship"
               type="text"
               className="detail-input bg-gray"
-              value={formData.applicantCitizenship}
+              value={formData.applicant_citizenship}
               onChange={handleChange}
               required
             />
@@ -407,10 +500,10 @@ const BusinessIndustryRegistrationForm = () => {
               निवेदकको फोन नं.<span className="required">*</span>
             </label>
             <input
-              name="applicantPhone"
+              name="applicant_phone"
               type="text"
               className="detail-input bg-gray"
-              value={formData.applicantPhone}
+              value={formData.applicant_phone}
               onChange={handleChange}
               required
             />
