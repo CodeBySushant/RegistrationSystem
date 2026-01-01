@@ -147,28 +147,34 @@
 .declaration-section { margin-top: 20px; }
 .declaration-section p { margin-bottom: 10px; }
 
-/* --- Signature Section (Right Aligned List) --- */
-.signature-list-section {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-top: 20px;
-    margin-bottom: 40px;
-    padding-right: 20px;
+/* Designation Section - RESPONSIVE FIX */
+.designation-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 40px;
+  margin-right: 20px;
 }
-.sig-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-    width: 350px; /* Fixed width container */
-    justify-content: space-between;
+.designation-section input {
+  width: 220px;
+  max-width: 100%;
+  border: none;
+  border-bottom: 1px solid #000;
+  margin-bottom: 5px;
+  text-align: center;
+  background: transparent;
+  box-sizing: border-box;
 }
-.sig-row label {
-    text-align: right;
-    width: 100px;
-    margin-right: 10px;
+.designation-section select {
+  width: 220px;
+  max-width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  box-sizing: border-box;
 }
-.dotted-input { width: 200px; }
+
 
 /* Applicants Details Container */
 .business-registration-container .applicant-details-box .details-grid {
