@@ -1086,16 +1086,16 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationForm` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   -- header / meta
   `registration_no` VARCHAR(255) DEFAULT NULL,
-  `certificate_date` VARCHAR(64) DEFAULT NULL,      -- the top-right date shown
-  `copy_flag` VARCHAR(32) DEFAULT NULL,             -- "प्रतिलिपि □" if you want to store
+  `certificate_date` VARCHAR(64) DEFAULT NULL,
+  `copy_flag` VARCHAR(32) DEFAULT NULL,
   -- applicant / proprietor
   `full_name` VARCHAR(255) DEFAULT NULL,
   `citizenship_no` VARCHAR(128) DEFAULT NULL,
   `citizenship_issue_date` VARCHAR(64) DEFAULT NULL,
   `citizenship_issue_district` VARCHAR(128) DEFAULT NULL,
   -- residence
-  `municipality` VARCHAR(255) DEFAULT 'नागार्जुन नगरपालिका',
-  `ward` VARCHAR(64) DEFAULT NULL,
+  `municipality` VARCHAR(255) DEFAULT NULL,
+  `ward_no` VARCHAR(10) DEFAULT NULL,
   `tole` VARCHAR(255) DEFAULT NULL,
   `residence_district` VARCHAR(128) DEFAULT NULL,
   -- family
@@ -1103,24 +1103,24 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationForm` (
   `spouse_name` VARCHAR(255) DEFAULT NULL,
   -- business
   `business_name` VARCHAR(500) DEFAULT NULL,
-  `business_kind` VARCHAR(255) DEFAULT NULL,        -- व्यवसायको किसिम
-  `business_nature` VARCHAR(500) DEFAULT NULL,      -- ख व्यवसायको किसिम/प्रकृति
+  `business_kind` VARCHAR(255) DEFAULT NULL,
+  `business_nature` VARCHAR(500) DEFAULT NULL,
   `business_road` VARCHAR(500) DEFAULT NULL,
-  -- business address pieces
+  -- business address
   `business_address_line` VARCHAR(500) DEFAULT NULL,
   `business_address_district` VARCHAR(128) DEFAULT NULL,
   `business_address_municipality` VARCHAR(255) DEFAULT NULL,
-  `business_address_ward` VARCHAR(64) DEFAULT NULL,
+  `business_address_ward` VARCHAR(10) DEFAULT NULL,
   `business_address_tole` VARCHAR(255) DEFAULT NULL,
   -- contact
-  `phone` VARCHAR(64) DEFAULT NULL,
-  `mobile` VARCHAR(64) DEFAULT NULL,
+  `phone` VARCHAR(20) DEFAULT NULL,
+  `mobile` VARCHAR(20) DEFAULT NULL,
   `email` VARCHAR(255) DEFAULT NULL,
   -- tax / online
   `pan_vat` VARCHAR(255) DEFAULT NULL,
   `website` VARCHAR(255) DEFAULT NULL,
   -- purpose and other registration
-  `objective` VARCHAR(1000) DEFAULT NULL,
+  `objective` TEXT DEFAULT NULL,
   `other_registration_no` VARCHAR(255) DEFAULT NULL,
   `other_registration_office` VARCHAR(255) DEFAULT NULL,
   -- landlord (if leased)
@@ -1131,33 +1131,40 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationForm` (
   `landlord_address` VARCHAR(500) DEFAULT NULL,
   `landlord_district` VARCHAR(128) DEFAULT NULL,
   `landlord_municipality` VARCHAR(255) DEFAULT NULL,
-  `landlord_ward` VARCHAR(64) DEFAULT NULL,
+  `landlord_ward` VARCHAR(10) DEFAULT NULL,
   `landlord_tole` VARCHAR(255) DEFAULT NULL,
-  `landlord_phone` VARCHAR(64) DEFAULT NULL,
-  -- capital fields (company)
-  `authorized_capital` VARCHAR(128) DEFAULT NULL,
-  `current_capital` VARCHAR(128) DEFAULT NULL,
-  `issued_capital` VARCHAR(128) DEFAULT NULL,
-  `fixed_capital` VARCHAR(128) DEFAULT NULL,
-  `paidup_capital` VARCHAR(128) DEFAULT NULL,
-  `total_capital` VARCHAR(128) DEFAULT NULL,
+  `landlord_phone` VARCHAR(20) DEFAULT NULL,
+  -- capital (numeric & safe)
+  `authorized_capital` DECIMAL(15,2) DEFAULT NULL,
+  `current_capital` DECIMAL(15,2) DEFAULT NULL,
+  `issued_capital` DECIMAL(15,2) DEFAULT NULL,
+  `fixed_capital` DECIMAL(15,2) DEFAULT NULL,
+  `paidup_capital` DECIMAL(15,2) DEFAULT NULL,
+  `total_capital` DECIMAL(15,2) DEFAULT NULL,
   -- remarks / declaration
   `kaifiyat` TEXT DEFAULT NULL,
   `declaration_text` TEXT DEFAULT NULL,
-  -- signature/authorization block
+  -- issuing authority
   `issuing_signature` VARCHAR(255) DEFAULT NULL,
   `issuing_name` VARCHAR(255) DEFAULT NULL,
   `issuing_post` VARCHAR(255) DEFAULT NULL,
   `issuing_seal` VARCHAR(255) DEFAULT NULL,
   `issuing_date` VARCHAR(64) DEFAULT NULL,
-  -- applicant detail box (bottom)
+  -- applicant detail box (used by JSX)
   `applicant_name` VARCHAR(255) DEFAULT NULL,
   `applicant_address` VARCHAR(1000) DEFAULT NULL,
   `applicant_citizenship` VARCHAR(128) DEFAULT NULL,
-  `applicant_phone` VARCHAR(64) DEFAULT NULL,
+  `applicant_phone` VARCHAR(20) DEFAULT NULL,
+  -- timestamps
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  -- indexing for dashboard & ward filtering
+  INDEX (`ward_no`),
+  INDEX (`municipality`)
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationNewList` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
