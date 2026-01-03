@@ -1109,7 +1109,6 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationForm` (
   -- business address
   `business_address_line` VARCHAR(500) DEFAULT NULL,
   `business_address_district` VARCHAR(128) DEFAULT NULL,
-  `business_address_municipality` VARCHAR(255) DEFAULT NULL,
   `business_address_ward` VARCHAR(10) DEFAULT NULL,
   `business_address_tole` VARCHAR(255) DEFAULT NULL,
   -- contact
