@@ -135,22 +135,24 @@ const BusinessIndustryRegistrationForm = () => {
         municipality: MUNICIPALITY.name,
       };
 
-      const res = await axiosInstance.post(
+      const response = await axiosInstance.post(
         "/api/forms/business-industry-registration-form",
         payload
       );
 
-      console.log("API RESPONSE:", res.data);
+      console.log("API RESPONSE:", response.data);
+      alert("रेकर्ड सफलतापूर्वक सेभ भयो");
+      return true;
+    } catch (err) {
+      console.error("🔥 AXIOS ERROR:", err);
 
-      if (res.status === 200) {
-        alert("रेकर्ड सफलतापूर्वक सेभ भयो");
-        return true;
+      if (err.response) {
+        console.error("🔥 BACKEND ERROR:", err.response.data);
+        alert(err.response.data?.message || "सेभ गर्दा समस्या आयो");
+      } else {
+        alert("सर्भरमा जडान हुन सकेन");
       }
 
-      throw new Error("Insert failed");
-    } catch (err) {
-      console.error("Save failed:", err);
-      alert("सेभ गर्दा समस्या आयो");
       return false;
     }
   };
