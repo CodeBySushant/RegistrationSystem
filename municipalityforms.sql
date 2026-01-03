@@ -1096,21 +1096,21 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationForm` (
   -- residence
   `municipality` VARCHAR(255) DEFAULT NULL,
   `ward_no` VARCHAR(10) DEFAULT NULL,
-  `tole` VARCHAR(255) DEFAULT NULL,
+  `tole` TEXT DEFAULT NULL,
   `residence_district` VARCHAR(128) DEFAULT NULL,
   -- family
   `father_name` VARCHAR(255) DEFAULT NULL,
   `spouse_name` VARCHAR(255) DEFAULT NULL,
   -- business
-  `business_name` VARCHAR(500) DEFAULT NULL,
+  `business_name` TEXT DEFAULT NULL,
   `business_kind` VARCHAR(255) DEFAULT NULL,
-  `business_nature` VARCHAR(500) DEFAULT NULL,
-  `business_road` VARCHAR(500) DEFAULT NULL,
+  `business_nature` TEXT DEFAULT NULL,
+  `business_road` TEXT DEFAULT NULL,
   -- business address
-  `business_address_line` VARCHAR(500) DEFAULT NULL,
+  `business_address_line` TEXT DEFAULT NULL,
   `business_address_district` VARCHAR(128) DEFAULT NULL,
   `business_address_ward` VARCHAR(10) DEFAULT NULL,
-  `business_address_tole` VARCHAR(255) DEFAULT NULL,
+  `business_address_tole` TEXT DEFAULT NULL,
   -- contact
   `phone` VARCHAR(20) DEFAULT NULL,
   `mobile` VARCHAR(20) DEFAULT NULL,
@@ -1121,17 +1121,17 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationForm` (
   -- purpose and other registration
   `objective` TEXT DEFAULT NULL,
   `other_registration_no` VARCHAR(255) DEFAULT NULL,
-  `other_registration_office` VARCHAR(255) DEFAULT NULL,
+  `other_registration_office` TEXT DEFAULT NULL,
   -- landlord (if leased)
   `landlord_name` VARCHAR(255) DEFAULT NULL,
   `landlord_cit_no` VARCHAR(128) DEFAULT NULL,
   `landlord_issue_date` VARCHAR(64) DEFAULT NULL,
   `landlord_issue_district` VARCHAR(128) DEFAULT NULL,
-  `landlord_address` VARCHAR(500) DEFAULT NULL,
+  `landlord_address` TEXT DEFAULT NULL,
   `landlord_district` VARCHAR(128) DEFAULT NULL,
   `landlord_municipality` VARCHAR(255) DEFAULT NULL,
   `landlord_ward` VARCHAR(10) DEFAULT NULL,
-  `landlord_tole` VARCHAR(255) DEFAULT NULL,
+  `landlord_tole` TEXT DEFAULT NULL,
   `landlord_phone` VARCHAR(20) DEFAULT NULL,
   -- capital (numeric & safe)
   `authorized_capital` DECIMAL(15,2) DEFAULT NULL,
@@ -1149,9 +1149,9 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationForm` (
   `issuing_post` VARCHAR(255) DEFAULT NULL,
   `issuing_seal` VARCHAR(255) DEFAULT NULL,
   `issuing_date` VARCHAR(64) DEFAULT NULL,
-  -- applicant detail box (used by JSX)
+  -- applicant detail box
   `applicant_name` VARCHAR(255) DEFAULT NULL,
-  `applicant_address` VARCHAR(1000) DEFAULT NULL,
+  `applicant_address` TEXT DEFAULT NULL,
   `applicant_citizenship` VARCHAR(128) DEFAULT NULL,
   `applicant_phone` VARCHAR(20) DEFAULT NULL,
   -- timestamps
@@ -1160,7 +1160,8 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationForm` (
   -- indexing for dashboard & ward filtering
   INDEX (`ward_no`),
   INDEX (`municipality`)
-) ENGINE=InnoDB
+)
+ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
