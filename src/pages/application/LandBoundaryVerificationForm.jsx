@@ -30,7 +30,7 @@ const initialState = {
   feeAmount: "",
   feeAmountWords: "",
   sigApplicantType: "निवेदक",
-  applicantName: "",
+  coapplicantName: "",
   applicantAddress: "",
   applicantCitizenship: "",
   applicantPhone: "",
@@ -383,10 +383,10 @@ const LandBoundaryVerificationForm = () => {
                 निवेदकको नाम<span className="required">*</span>
               </label>
               <input
-                name="applicantName"
+                name="coapplicantName"
                 type="text"
                 className="detail-input bg-gray"
-                value={formData.applicantName}
+                value={formData.coapplicantName}
                 onChange={handleChange}
                 required
               />

@@ -339,7 +339,7 @@ const RelationshipVerification = () => {
             value={formData.prevCountry}
             onChange={handleChange}
           />{" "}
-          ). This certificate is issued according to Section 12, , Sub-Section 2
+          ). This certificate is issued according to Section 12, Sub-Section 2
           (E) (1) of Local Government Operation Act 2074 B.S. (2017 A.D.) As per
           the application proceeded in this office following members are the
           relatives of the applicant as mentioned below.

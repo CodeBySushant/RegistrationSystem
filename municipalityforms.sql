@@ -5028,4 +5028,4 @@ INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 4");
 
 SELECT * FROM DomesticAnimalInsuranceClaimRecommendation where id=4;
 SELECT * FROM DomesticAnimalMaternityNutritionAllowance where id=1;
-SELECT * FROM BusinessClosed;
+SELECT * from relationship_verification;
