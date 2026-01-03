@@ -1,11 +1,127 @@
 // 2
-import React from "react";
+import React, { useState } from "react";
 import "./BusinessRegistrationCertificate.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import axiosInstance from "../../utils/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const BusinessRegistrationCertificate = () => {
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    registration_no: "",
+    fiscal_year: "",
+    certificate_date: new Date().toISOString().slice(0, 10),
+
+    full_name: "",
+    citizenship_no: "",
+    citizenship_issue_date: "",
+    citizenship_issue_district: "",
+
+    municipality: MUNICIPALITY.name,
+    ward_no: "",
+    residence_tole: "",
+    residence_district: "",
+
+    father_name: "",
+    spouse_name: "",
+
+    business_name: "",
+    business_type: "",
+    business_nature: "",
+    business_road: "",
+
+    business_address_line: "",
+    business_district: "",
+    business_ward: "",
+    business_tole: "",
+
+    phone: "",
+    mobile: "",
+    email: "",
+
+    pan_vat: "",
+    website: "",
+
+    objective: "",
+    other_registration_no: "",
+    other_registration_office: "",
+
+    authorized_capital: "",
+    current_capital: "",
+    issued_capital: "",
+    fixed_capital: "",
+    paidup_capital: "",
+    total_capital: "",
+
+    kaifiyat: "",
+
+    applicant_name: "",
+    applicant_address: "",
+    applicant_citizenship: "",
+    applicant_phone: "",
+
+    close_business: false,
+  });
+
+  React.useEffect(() => {
+    if (user?.ward) {
+      setFormData((prev) => ({
+        ...prev,
+        ward_no: user.ward,
+      }));
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        ...formData,
+        authorized_capital: Number(formData.authorized_capital) || null,
+        current_capital: Number(formData.current_capital) || null,
+        issued_capital: Number(formData.issued_capital) || null,
+        fixed_capital: Number(formData.fixed_capital) || null,
+        paidup_capital: Number(formData.paidup_capital) || null,
+        total_capital: Number(formData.total_capital) || null,
+      };
+
+      const res = await axiosInstance.post(
+        "/api/forms/business-registration-certificate",
+        payload
+      );
+
+      if (res.status === 200) {
+        alert("रेकर्ड सफलतापूर्वक सेभ भयो");
+        return true;
+      }
+
+      throw new Error("Insert failed");
+    } catch (err) {
+      console.error("🔥 BACKEND ERROR:", {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message,
+      });
+      alert("सेभ गर्दा समस्या आयो");
+      return false;
+    }
+  };
+
+  const handlePrint = async () => {
+    const success = await handleSubmit();
+    if (success) {
+      window.print();
+    }
+  };
+
   return (
     <div className="business-certificate-container">
       {/* --- Top Bar --- */}
@@ -25,9 +141,7 @@ const BusinessRegistrationCertificate = () => {
         </div>
         <div className="header-text">
           <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
-          <h2 className="ward-title">
-            वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
-          </h2>
+          <h2 className="ward-title">वडा नं. {user?.ward} वडा कार्यालय</h2>
           <p className="address-text">{MUNICIPALITY.officeLine}</p>
           <p className="province-text">{MUNICIPALITY.provinceLine}</p>
           <h3 className="certificate-title red-text">
@@ -43,16 +157,37 @@ const BusinessRegistrationCertificate = () => {
       <div className="reg-info-row">
         <div className="left-info">
           <label>दर्ता नं :</label>
-          <span className="red-text bold-text">७/२०८०/८१</span>
+          <span className="red-text bold-text">
+            <input
+              type="text"
+              name="registration_no"
+              value={formData.registration_no}
+              onChange={handleChange}
+              className="inline-input bold-text"
+            />
+          </span>
           <div className="line-break"></div>
-          <label>आ.व :</label>
-          <select className="inline-select bold-text">
-            <option>2082/83</option>
+          <select
+            name="fiscal_year"
+            value={formData.fiscal_year}
+            onChange={handleChange}
+            className="inline-select bold-text"
+          >
+            <option value="">आ.व छान्नुहोस्</option>
+            <option value="2081/82">2081/82</option>
+            <option value="2082/83">2082/83</option>
           </select>
         </div>
         <div className="right-info">
           <p>
-            मिति : <span className="bold-text">२०८२-०८-०६</span>
+            मिति :{" "}
+            <input
+              type="date"
+              name="certificate_date"
+              value={formData.certificate_date}
+              onChange={handleChange}
+              className="bold-text"
+            />
           </p>
         </div>
       </div>
@@ -65,55 +200,99 @@ const BusinessRegistrationCertificate = () => {
           <label>
             १.पूरा नाम, थर: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            type="text"
+            name="full_name"
+            value={formData.full_name}
+            onChange={handleChange}
+            className="dotted-input long-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             २.नागरिकता नं : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="citizenship_no"
+            value={formData.citizenship_no}
+            onChange={handleChange}
+          />
           <label>
             जारी मिति : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="citizenship_issue_date"
+            value={formData.citizenship_issue_date}
+            onChange={handleChange}
+          />
           <label>
             जिल्ला : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="citizenship_issue_district"
+            value={formData.citizenship_issue_district}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             ३.गाउँपालिका/नगरपालिका: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <span className="dotted-input medium-input bold-text">
+            {formData.municipality}
+          </span>
           <label>
             वडा नं : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input tiny-input" />
+          <span className="dotted-input tiny-input bold-text">
+            {formData.ward_no}
+          </span>
           <label>
             टोल: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="residence_tole"
+            value={formData.residence_tole}
+            onChange={handleChange}
+            className="dotted-input tiny-input"
+          />
           <label>
             जिल्ला: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="residence_district"
+            value={formData.residence_district}
+            onChange={handleChange}
+            className="dotted-input tiny-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             ४.बाबुको नाम, थर: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            type="text"
+            name="father_name"
+            value={formData.father_name}
+            onChange={handleChange}
+            className="dotted-input long-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             ५.पति/पत्नीको नाम, थर: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            type="text"
+            name="spouse_name"
+            value={formData.spouse_name}
+            onChange={handleChange}
+            className="dotted-input long-input"
+          />
           <span className="small-text">बाबुको नाम उल्लेख नभएको भए मात्र</span>
         </div>
 
@@ -121,82 +300,148 @@ const BusinessRegistrationCertificate = () => {
           <label>
             ६.व्यवसायको नाम: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="business_name"
+            value={formData.business_name}
+            onChange={handleChange}
+          />
           <label>
             व्यवसायको किसिम: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="business_type"
+            value={formData.business_type}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             ख.व्यवसायको विवरण/प्रकृति : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            name="business_nature"
+            value={formData.business_nature}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             ग. व्यवसाय रहेको बाटोको नाम <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            name="business_road"
+            value={formData.business_road}
+            onChange={handleChange}
+          />
         </div>
 
         <p className="section-title">१.व्यवसायको ठेगाना</p>
         <div className="form-group-row">
-          <input type="text" className="dotted-input medium-input" />{" "}
+          <input
+            name="business_address_line"
+            value={formData.business_address_line}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />{" "}
           <span className="red">*</span>
           <label>जिल्ला,</label>
-          <input type="text" className="dotted-input medium-input" />{" "}
+          <input
+            name="business_district"
+            value={formData.business_district}
+            onChange={handleChange}
+          />{" "}
           <span className="red">*</span>
           <label>गाउँपालिका/नगरपालिका</label>
           <label>वडा नं</label>{" "}
-          <input type="text" className="dotted-input tiny-input" />{" "}
+          <input
+            name="business_ward"
+            value={formData.business_ward}
+            onChange={handleChange}
+            className="dotted-input tiny-input"
+          />{" "}
           <span className="red">*</span>
           <label>टोल:</label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="business_tole"
+            value={formData.business_tole}
+            onChange={handleChange}
+          />
         </div>
         <div className="form-group-row">
           <label>फोन नं.:</label>{" "}
-          <input type="text" className="dotted-input medium-input" />{" "}
+          <input name="phone" value={formData.phone} onChange={handleChange} />{" "}
           <span className="red">*</span>
           <label>
             मोबाइल नं. <span className="red">*</span>
           </label>{" "}
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="mobile"
+            value={formData.mobile}
+            onChange={handleChange}
+          />
           <label>
             इमेल: <span className="red">*</span>
           </label>{" "}
-          <input type="text" className="dotted-input medium-input" />
+          <input name="email" value={formData.email} onChange={handleChange} />
         </div>
 
         <div className="form-group-row">
           <label>
             पान/ भ्याट नं. : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            type="text"
+            name="pan_vat"
+            value={formData.pan_vat}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             वेबसाईट : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            type="text"
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             २.उद्देश्य : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            type="text"
+            name="objective"
+            value={formData.objective}
+            onChange={handleChange}
+            className="dotted-input long-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             अन्यत्र दर्ता भएको भए: दर्ता नं : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="other_registration_no"
+            value={formData.other_registration_no}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             कार्यालय : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="other_registration_office"
+            value={formData.other_registration_office}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
 
         <p className="section-title">ग.बहालमा बसेको भए</p>
@@ -253,43 +498,72 @@ const BusinessRegistrationCertificate = () => {
             <label>
               अधिकृत पूँजी: <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="authorized_capital"
+              value={formData.authorized_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               चालु पूँजी: <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="current_capital"
+              value={formData.current_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               जारी पूँजी: <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="issued_capital"
+              value={formData.issued_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               स्थिर पूँजी: <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="fixed_capital"
+              value={formData.fixed_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               चुक्ता पूँजी: <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="paidup_capital"
+              value={formData.paidup_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               कुल पूँजी <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="total_capital"
+              value={formData.total_capital}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="kaifiyat-section">
           <label>कैफियत</label>
-          <textarea className="kaifiyat-box" rows="3"></textarea>
+          <textarea
+            name="kaifiyat"
+            value={formData.kaifiyat}
+            onChange={handleChange}
+            className="kaifiyat-box"
+          />
         </div>
 
         <div className="declaration-section">
@@ -312,7 +586,13 @@ const BusinessRegistrationCertificate = () => {
           <span>No file chosen</span>
         </div>
         <div className="checkbox-wrapper">
-          <input type="checkbox" id="closeIndustry" />
+          <input
+            type="checkbox"
+            id="closeIndustry"
+            name="close_business"
+            checked={formData.close_business}
+            onChange={handleChange}
+          />
           <label htmlFor="closeIndustry" className="red-text">
             व्यवसाय बन्द
           </label>
@@ -325,32 +605,78 @@ const BusinessRegistrationCertificate = () => {
         {/* Signature inputs usually go here, but image is cut off or blank here */}
       </div>
 
-      {/* --- Applicant Details Box --- */}
+      {/* Applicants details */}
       <div className="applicant-details-box">
         <h3>निवेदकको विवरण</h3>
         <div className="details-grid">
           <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको नाम<span className="required">*</span>
+            </label>
+            <input
+              name="applicant_name"
+              type="text"
+              className="detail-input bg-gray"
+              value={formData.applicant_name}
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको ठेगाना<span className="required">*</span>
+            </label>
+            <input
+              name="applicant_address"
+              type="text"
+              className="detail-input bg-gray"
+              value={formData.applicant_address}
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको नागरिकता नं.<span className="required">*</span>
+            </label>
+            <input
+              name="applicant_citizenship"
+              type="text"
+              className="detail-input bg-gray"
+              value={formData.applicant_citizenship}
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको फोन नं.<span className="required">*</span>
+            </label>
+            <input
+              name="applicant_phone"
+              type="text"
+              className="detail-input bg-gray"
+              value={formData.applicant_phone}
+              onChange={handleChange}
+              required
+            />
           </div>
         </div>
       </div>
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button className="save-print-btn">
+        <button
+          type="button"
+          className="save-print-btn"
+          onClick={async () => {
+            const ok = await handleSubmit();
+            if (ok) window.print();
+          }}
+        >
           रेकर्ड सेभ र प्रिन्ट गर्नुहोस्
         </button>
       </div>
