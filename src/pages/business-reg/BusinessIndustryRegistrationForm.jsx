@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import "./BusinessIndustryRegistrationForm.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAuth } from "../../context/AuthContext";
