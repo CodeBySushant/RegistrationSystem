@@ -1,5 +1,5 @@
 // 1
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./BusinessIndustryRegistrationForm.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
@@ -23,7 +23,7 @@ const BusinessIndustryRegistrationForm = () => {
 
     // residence
     municipality: MUNICIPALITY.name,
-    ward_no: user?.ward || "",
+    ward_no: "",
     tole: "",
     residence_district: MUNICIPALITY.city,
 
@@ -40,9 +40,13 @@ const BusinessIndustryRegistrationForm = () => {
     // business address
     business_address_line: "",
     business_address_district: "",
-    business_address_municipality: "",
     business_address_ward: "",
     business_address_tole: "",
+
+    // missing but required by SQL
+    declaration_text: "",
+    issuing_signature: "",
+    issuing_seal: "",
 
     // contact
     phone: "",
@@ -58,24 +62,49 @@ const BusinessIndustryRegistrationForm = () => {
     other_registration_no: "",
     other_registration_office: "",
 
+    // landlord (if leased)
+    landlord_name: "",
+    landlord_cit_no: "",
+    landlord_issue_date: "",
+    landlord_issue_district: "",
+    landlord_address: "",
+    landlord_district: "",
+    landlord_municipality: "",
+    landlord_ward: "",
+    landlord_tole: "",
+    landlord_phone: "",
+
     // capital
+    authorized_capital: "",
+    current_capital: "",
+    issued_capital: "",
+    fixed_capital: "",
+    paidup_capital: "",
     total_capital: "",
 
     // remarks
     kaifiyat: "",
-    declaration_text: "",
 
     // issuing authority
     issuing_name: "",
     issuing_post: "",
     issuing_date: new Date().toISOString().slice(0, 10),
 
-    // applicant box
+    // applicant
     applicant_name: "",
     applicant_address: "",
     applicant_citizenship: "",
     applicant_phone: "",
   });
+
+  useEffect(() => {
+    if (user?.ward) {
+      setFormData((prev) => ({
+        ...prev,
+        ward_no: user.ward,
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -96,6 +125,12 @@ const BusinessIndustryRegistrationForm = () => {
     try {
       const payload = {
         ...formData,
+        authorized_capital: Number(formData.authorized_capital) || null,
+        current_capital: Number(formData.current_capital) || null,
+        issued_capital: Number(formData.issued_capital) || null,
+        fixed_capital: Number(formData.fixed_capital) || null,
+        paidup_capital: Number(formData.paidup_capital) || null,
+        total_capital: Number(formData.total_capital) || null,
         ward_no: user?.ward,
         municipality: MUNICIPALITY.name,
       };
@@ -201,17 +236,40 @@ const BusinessIndustryRegistrationForm = () => {
             value={formData.citizenship_no}
             onChange={handleChange}
           />
-          <label>जारी मिति : २०८२-०८-०६</label>
-          <label style={{ marginLeft: "20px" }}>जिल्ला : काठमाडौँ</label>
+          <label>जारी मिति :</label>
+          <input
+            type="text"
+            name="citizenship_issue_date"
+            value={formData.citizenship_issue_date}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
+
+          <label>जिल्ला :</label>
+          <input
+            type="text"
+            name="citizenship_issue_district"
+            value={formData.citizenship_issue_district}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>३. गाउँपालिका/नगरपालिका : {MUNICIPALITY.name}</label>
-          <label style={{ marginLeft: "20px" }}>वडा नं : १</label>
+          <label style={{ marginLeft: "20px" }}>
+            वडा नं : {user?.ward?.toString() || ""}
+          </label>
           <label style={{ marginLeft: "20px" }}>
             टोल : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            type="text"
+            name="tole"
+            value={formData.tole}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label style={{ marginLeft: "20px" }}>
             जिल्ला : {MUNICIPALITY.city}
           </label>
@@ -231,7 +289,13 @@ const BusinessIndustryRegistrationForm = () => {
           <label>
             ५. पति/पत्नीको नाम ,थर : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            type="text"
+            name="spouse_name"
+            value={formData.spouse_name}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <span className="small-text">(बाबुको नाम उल्लेख नभएको भए मात्र)</span>
         </div>
 
@@ -260,72 +324,144 @@ const BusinessIndustryRegistrationForm = () => {
           <label>
             ख. व्यवसायको किसिम/प्रकृति : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            type="text"
+            name="business_nature"
+            value={formData.business_nature}
+            onChange={handleChange}
+            className="dotted-input long-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             ग. व्यवसाय रहेको बाटोको नाम <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            type="text"
+            name="business_road"
+            value={formData.business_road}
+            onChange={handleChange}
+            className="dotted-input long-input"
+          />
         </div>
 
         <p>१. व्यवसायको ठेगाना</p>
         <div className="form-group-row">
-          <input type="text" className="dotted-input medium-input" />{" "}
+          <input
+            name="business_address_line"
+            value={formData.business_address_line}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />{" "}
           <span className="red">*</span>
           <label>जिल्ला,</label>
-          <input type="text" className="dotted-input medium-input" />{" "}
+          <input
+            name="business_address_district"
+            value={formData.business_address_district}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />{" "}
           <span className="red">*</span>
           <label>गाउँपालिका/नगरपालिका</label>
           <label>वडा नं</label>{" "}
-          <input type="text" className="dotted-input tiny-input" />{" "}
+          <input
+            name="business_address_ward"
+            value={formData.business_address_ward}
+            onChange={handleChange}
+            className="dotted-input tiny-input"
+          />{" "}
           <span className="red">*</span>
           <label>टोल:</label>
-          <input type="text" className="dotted-input medium-input" />{" "}
+          <input
+            name="business_address_tole"
+            value={formData.business_address_tole}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />{" "}
           <span className="red">*</span>
         </div>
         <div className="form-group-row">
           <label>फोन नं.:</label>{" "}
-          <input type="text" className="dotted-input medium-input" />{" "}
+          <input
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />{" "}
           <span className="red">*</span>
           <label>
             मोबाइल नं. <span className="red">*</span>
           </label>{" "}
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="mobile"
+            value={formData.mobile}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             इमेल: <span className="red">*</span>
           </label>{" "}
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             पान/ भ्याट नं. : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="pan_vat"
+            value={formData.pan_vat}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             वेबसाईट : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             २. उद्देश्य : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input long-input" />
+          <input
+            name="objective"
+            value={formData.objective}
+            onChange={handleChange}
+            className="dotted-input long-input"
+          />
         </div>
 
         <div className="form-group-row">
           <label>
             अन्यत्र दर्ता भएको भए: दर्ता नं : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="other_registration_no"
+            value={formData.other_registration_no}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             कार्यालय : <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="other_registration_office"
+            value={formData.other_registration_office}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
 
         <p>ग. बहालमा बसेको भए</p>
@@ -333,15 +469,30 @@ const BusinessIndustryRegistrationForm = () => {
           <label>
             १. घरधनीको नाम, थर: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_name"
+            value={formData.landlord_name}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             ना.प्र.नं <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_cit_no"
+            value={formData.landlord_cit_no}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             जारी मिति: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_issue_date"
+            value={formData.landlord_issue_date}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>जारी जिल्ला:</label>
         </div>
         <div className="form-group-row">
@@ -349,30 +500,61 @@ const BusinessIndustryRegistrationForm = () => {
             <span className="red">*</span> ठेगाना:{" "}
             <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_issue_district"
+            value={formData.landlord_issue_district}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             जिल्ला: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+
+          <input
+            name="landlord_district"
+            value={formData.landlord_district}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             नगरपालिका: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_municipality"
+            value={formData.landlord_municipality}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <span className="red">*</span>
         </div>
         <div className="form-group-row">
           <label>
             वडा नं.: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input tiny-input" />
+          <input
+            name="landlord_ward"
+            value={formData.landlord_ward}
+            onChange={handleChange}
+            className="dotted-input tiny-input"
+          />
           <label>
             टोल: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_tole"
+            value={formData.landlord_tole}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             फोन नं.: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_phone"
+            value={formData.landlord_phone}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
 
         <p>२. पूँजी:</p>
@@ -382,43 +564,73 @@ const BusinessIndustryRegistrationForm = () => {
             <label>
               अधिकृत पूँजी : <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="authorized_capital"
+              value={formData.authorized_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               चालू पूँजी : <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="current_capital"
+              value={formData.current_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               जारी पूँजी : <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="issued_capital"
+              value={formData.issued_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               स्थिर पूँजी : <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="fixed_capital"
+              value={formData.fixed_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               चुक्ता पूँजी : <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="paidup_capital"
+              value={formData.paidup_capital}
+              onChange={handleChange}
+            />
           </div>
           <div className="capital-row">
             <label>
               कुल पूँजी : <span className="red">*</span>
             </label>
-            <input type="text" className="dotted-input medium-input" />
+            <input
+              name="total_capital"
+              value={formData.total_capital}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="kaifiyat-section">
           <label>कैफियत</label>
-          <textarea className="kaifiyat-box" rows="3"></textarea>
+          <textarea
+            name="kaifiyat"
+            value={formData.kaifiyat}
+            onChange={handleChange}
+            className="kaifiyat-box"
+            rows="3"
+          />
         </div>
 
         <div className="declaration-section">
