@@ -5,6 +5,15 @@ const adminAuth = require("../middleware/adminAuth");
 
 const router = express.Router();
 
+const WARD_COLUMN_MAP = {
+  BusinessIndustryRegistrationForm: "ward_no",
+  BusinessIndustryRegistrationNewList: "ward_no",
+  BusinessRegistrationCertificate: "ward_no",
+  BusinessRegistrationRenewLeft: "ward_no",
+  BusinessRegRenewCompleted: "ward_no",
+  DailyWorkPerformanceList: null, 
+};
+
 const CARD_GROUPS = [
   {
     label: "व्यवसाय दर्ता",
@@ -34,8 +43,10 @@ function getCountForTable(table, role, ward_number) {
     let sql = `SELECT COUNT(*) AS count FROM \`${table}\``;
     const params = [];
 
-    if (role === "ADMIN") {
-      sql += " WHERE ward_number = ?";
+    const wardColumn = WARD_COLUMN_MAP[table];
+
+    if (role === "ADMIN" && wardColumn) {
+      sql += ` WHERE ${wardColumn} = ?`;
       params.push(ward_number);
     }
 

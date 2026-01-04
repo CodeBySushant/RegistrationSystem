@@ -19,7 +19,7 @@ const BusinessRegistrationCertificate = () => {
     citizenship_issue_district: "",
 
     municipality: MUNICIPALITY.name,
-    ward_no: user?.ward ? String(user.ward) : "",
+    ward_no: user?.ward ? String(user.ward) : null,
     residence_tole: "",
     residence_district: "",
 
@@ -93,68 +93,82 @@ const BusinessRegistrationCertificate = () => {
 
   const handleSubmit = async () => {
     try {
+      const safe = (v) => (v === undefined || v === "" ? null : v);
       const payload = {
-        registrationNo: formData.registration_no,
-        fiscalYear: formData.fiscal_year,
-        certificateDate: formData.certificate_date,
-        fullName: formData.full_name,
-        citizenshipNo: formData.citizenship_no,
-        issuedDate: formData.citizenship_issue_date,
-        issuedDistrict: formData.citizenship_issue_district,
+        registrationNo: safe(formData.registration_no),
+        fiscalYear: safe(formData.fiscal_year),
+        certificateDate: safe(formData.certificate_date),
 
-        municipality: formData.municipality,
-        wardNo: formData.ward_no,
-        tole: formData.residence_tole,
-        district: formData.residence_district,
+        fullName: safe(formData.full_name),
+        citizenshipNo: safe(formData.citizenship_no),
+        issuedDate: safe(formData.citizenship_issue_date),
+        issuedDistrict: safe(formData.citizenship_issue_district),
 
-        fatherName: formData.father_name,
-        spouseName: formData.spouse_name,
+        municipality: safe(formData.municipality),
+        wardNo: safe(formData.ward_no),
+        tole: safe(formData.residence_tole),
+        district: safe(formData.residence_district),
 
-        businessName: formData.business_name,
-        businessType: formData.business_type,
-        businessNature: formData.business_nature,
-        roadName: formData.business_road,
+        fatherName: safe(formData.father_name),
+        spouseName: safe(formData.spouse_name),
 
-        businessAddress: formData.business_address_line,
-        businessDistrict: formData.business_district,
-        businessMunicipality: formData.municipality,
-        businessWard: formData.business_ward,
-        businessTole: formData.business_tole,
+        businessName: safe(formData.business_name),
+        businessType: safe(formData.business_type),
+        businessNature: safe(formData.business_nature),
+        roadName: safe(formData.business_road),
 
-        landlordName: formData.landlord_name || null,
-        landlordCitizenship: formData.landlord_citizenship || null,
-        landlordIssueDate: formData.landlord_issue_date || null,
-        landlordMunicipality: formData.landlord_municipality || null,
-        landlordDistrict: formData.landlord_district || null,
-        landlordAddress: formData.landlord_address || null,
-        landlordWard: formData.landlord_ward || null,
-        landlordTole: formData.landlord_tole || null,
-        landlordPhone: formData.landlord_phone || null,
+        businessAddress: safe(formData.business_address_line),
+        businessDistrict: safe(formData.business_district),
+        businessMunicipality: safe(formData.municipality),
+        businessWard: safe(formData.business_ward),
+        businessTole: safe(formData.business_tole),
 
-        phone: formData.phone,
-        mobile: formData.mobile,
-        email: formData.email,
+        landlordName: safe(formData.landlord_name),
+        landlordCitizenship: safe(formData.landlord_citizenship),
+        landlordIssueDate: safe(formData.landlord_issue_date),
+        landlordMunicipality: safe(formData.landlord_municipality),
+        landlordDistrict: safe(formData.landlord_district),
+        landlordAddress: safe(formData.landlord_address),
+        landlordWard: safe(formData.landlord_ward),
+        landlordTole: safe(formData.landlord_tole),
+        landlordPhone: safe(formData.landlord_phone),
 
-        panVatNo: formData.pan_vat,
-        website: formData.website,
+        phone: safe(formData.phone),
+        mobile: safe(formData.mobile),
+        email: safe(formData.email),
 
-        objective: formData.objective,
-        otherRegNo: formData.other_registration_no,
-        otherOffice: formData.other_registration_office,
+        panVatNo: safe(formData.pan_vat),
+        website: safe(formData.website),
 
-        authorizedCapital: formData.authorized_capital,
-        currentCapital: formData.current_capital,
-        issuedCapital: formData.issued_capital,
-        fixedCapital: formData.fixed_capital,
-        paidCapital: formData.paidup_capital,
-        totalCapital: formData.total_capital,
+        objective: safe(formData.objective),
+        otherRegNo: safe(formData.other_registration_no),
+        otherOffice: safe(formData.other_registration_office),
 
-        remarks: formData.kaifiyat,
+        authorizedCapital: formData.authorized_capital
+          ? Number(formData.authorized_capital)
+          : null,
+        currentCapital: formData.current_capital
+          ? Number(formData.current_capital)
+          : null,
+        issuedCapital: formData.issued_capital
+          ? Number(formData.issued_capital)
+          : null,
+        fixedCapital: formData.fixed_capital
+          ? Number(formData.fixed_capital)
+          : null,
+        paidCapital: formData.paidup_capital
+          ? Number(formData.paidup_capital)
+          : null,
+        totalCapital: formData.total_capital
+          ? Number(formData.total_capital)
+          : null,
 
-        applicantName: formData.applicant_name,
-        applicantAddress: formData.applicant_address,
-        applicantCitizenship: formData.applicant_citizenship,
-        applicantPhone: formData.applicant_phone,
+        remarks: safe(formData.kaifiyat),
+
+        applicantName: safe(formData.applicant_name),
+        applicantAddress: safe(formData.applicant_address),
+        applicantCitizenship: safe(formData.applicant_citizenship),
+        applicantPhone: safe(formData.applicant_phone),
 
         isClosed: formData.close_business ? 1 : 0,
         closeReason: null,
@@ -177,6 +191,7 @@ const BusinessRegistrationCertificate = () => {
         data: err.response?.data,
         message: err.message,
       });
+
       alert("सेभ गर्दा समस्या आयो");
       return false;
     }

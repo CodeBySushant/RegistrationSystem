@@ -115,7 +115,9 @@ const Dashboard = () => {
       try {
         setLoading(true);
         const res = await axiosInstance.get("/api/dashboard-stats");
-        if (!res.ok) throw new Error("Failed to load dashboard stats");
+        if (res.status !== 200) {
+          throw new Error("Failed to load dashboard stats");
+        }
         const data = res.data;
 
         // cards from DB: update values, keep icons/colors/linkText from META
