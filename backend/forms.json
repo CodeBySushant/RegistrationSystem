@@ -1181,6 +1181,10 @@
   "business-registration-certificate": {
     "table": "BusinessRegistrationCertificate",
     "columns": [
+      "registrationNo",
+      "fiscalYear",
+      "certificateDate",
+
       "fullName",
       "citizenshipNo",
       "issuedDate",
@@ -1189,8 +1193,10 @@
       "wardNo",
       "tole",
       "district",
+
       "fatherName",
       "spouseName",
+
       "businessName",
       "businessType",
       "businessNature",
@@ -1200,33 +1206,41 @@
       "businessMunicipality",
       "businessWard",
       "businessTole",
+
       "phone",
       "mobile",
       "email",
       "panVatNo",
       "website",
+
       "objective",
       "otherRegNo",
       "otherOffice",
+
       "landlordName",
       "landlordCitizenship",
       "landlordIssueDate",
+      "landlordMunicipality",
       "landlordDistrict",
       "landlordAddress",
       "landlordWard",
       "landlordTole",
       "landlordPhone",
+
       "authorizedCapital",
       "currentCapital",
       "issuedCapital",
       "fixedCapital",
       "paidCapital",
       "totalCapital",
+
       "remarks",
+
       "applicantName",
       "applicantAddress",
       "applicantCitizenship",
       "applicantPhone",
+
       "isClosed",
       "closeReason"
     ]

@@ -19,7 +19,7 @@ const BusinessRegistrationCertificate = () => {
     citizenship_issue_district: "",
 
     municipality: MUNICIPALITY.name,
-    ward_no: "",
+    ward_no: user?.ward ? String(user.ward) : "",
     residence_tole: "",
     residence_district: "",
 
@@ -35,6 +35,16 @@ const BusinessRegistrationCertificate = () => {
     business_district: "",
     business_ward: "",
     business_tole: "",
+
+    landlord_name: "",
+    landlord_citizenship: "",
+    landlord_issue_date: "",
+    landlord_municipality: "",
+    landlord_district: "",
+    landlord_address: "",
+    landlord_ward: "",
+    landlord_tole: "",
+    landlord_phone: "",
 
     phone: "",
     mobile: "",
@@ -65,10 +75,10 @@ const BusinessRegistrationCertificate = () => {
   });
 
   React.useEffect(() => {
-    if (user?.ward) {
+    if (user?.ward !== undefined && user?.ward !== null) {
       setFormData((prev) => ({
         ...prev,
-        ward_no: user.ward,
+        ward_no: String(user.ward),
       }));
     }
   }, [user]);
@@ -84,13 +94,70 @@ const BusinessRegistrationCertificate = () => {
   const handleSubmit = async () => {
     try {
       const payload = {
-        ...formData,
-        authorized_capital: Number(formData.authorized_capital) || null,
-        current_capital: Number(formData.current_capital) || null,
-        issued_capital: Number(formData.issued_capital) || null,
-        fixed_capital: Number(formData.fixed_capital) || null,
-        paidup_capital: Number(formData.paidup_capital) || null,
-        total_capital: Number(formData.total_capital) || null,
+        registrationNo: formData.registration_no,
+        fiscalYear: formData.fiscal_year,
+        certificateDate: formData.certificate_date,
+        fullName: formData.full_name,
+        citizenshipNo: formData.citizenship_no,
+        issuedDate: formData.citizenship_issue_date,
+        issuedDistrict: formData.citizenship_issue_district,
+
+        municipality: formData.municipality,
+        wardNo: formData.ward_no,
+        tole: formData.residence_tole,
+        district: formData.residence_district,
+
+        fatherName: formData.father_name,
+        spouseName: formData.spouse_name,
+
+        businessName: formData.business_name,
+        businessType: formData.business_type,
+        businessNature: formData.business_nature,
+        roadName: formData.business_road,
+
+        businessAddress: formData.business_address_line,
+        businessDistrict: formData.business_district,
+        businessMunicipality: formData.municipality,
+        businessWard: formData.business_ward,
+        businessTole: formData.business_tole,
+
+        landlordName: formData.landlord_name || null,
+        landlordCitizenship: formData.landlord_citizenship || null,
+        landlordIssueDate: formData.landlord_issue_date || null,
+        landlordMunicipality: formData.landlord_municipality || null,
+        landlordDistrict: formData.landlord_district || null,
+        landlordAddress: formData.landlord_address || null,
+        landlordWard: formData.landlord_ward || null,
+        landlordTole: formData.landlord_tole || null,
+        landlordPhone: formData.landlord_phone || null,
+
+        phone: formData.phone,
+        mobile: formData.mobile,
+        email: formData.email,
+
+        panVatNo: formData.pan_vat,
+        website: formData.website,
+
+        objective: formData.objective,
+        otherRegNo: formData.other_registration_no,
+        otherOffice: formData.other_registration_office,
+
+        authorizedCapital: formData.authorized_capital,
+        currentCapital: formData.current_capital,
+        issuedCapital: formData.issued_capital,
+        fixedCapital: formData.fixed_capital,
+        paidCapital: formData.paidup_capital,
+        totalCapital: formData.total_capital,
+
+        remarks: formData.kaifiyat,
+
+        applicantName: formData.applicant_name,
+        applicantAddress: formData.applicant_address,
+        applicantCitizenship: formData.applicant_citizenship,
+        applicantPhone: formData.applicant_phone,
+
+        isClosed: formData.close_business ? 1 : 0,
+        closeReason: null,
       };
 
       const res = await axiosInstance.post(
@@ -98,7 +165,7 @@ const BusinessRegistrationCertificate = () => {
         payload
       );
 
-      if (res.status === 200) {
+      if (res.status >= 200 && res.status < 300) {
         alert("रेकर्ड सफलतापूर्वक सेभ भयो");
         return true;
       }
@@ -449,15 +516,30 @@ const BusinessRegistrationCertificate = () => {
           <label>
             १.घरधनीको नाम, थर: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_name"
+            value={formData.landlord_name}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             ना.प्र.नं. <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_citizenship"
+            value={formData.landlord_citizenship}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             जारी मिति <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_issue_date"
+            value={formData.landlord_issue_date}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>जारी जिल्ला:</label>
         </div>
         <div className="form-group-row">
@@ -465,30 +547,59 @@ const BusinessRegistrationCertificate = () => {
             <span className="red">*</span> ठेगाना:{" "}
             <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_address"
+            value={formData.landlord_address}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             जिल्ला: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_district"
+            value={formData.landlord_district}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             नगरपालिका: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
-          <span className="red">*</span>
+          <input
+            name="landlord_municipality"
+            value={formData.landlord_municipality}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
         <div className="form-group-row">
           <label>
             वडा नं.: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input tiny-input" />
+          <input
+            name="landlord_ward"
+            value={formData.landlord_ward}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             टोल: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_tole"
+            value={formData.landlord_tole}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
           <label>
             फोन नं.: <span className="red">*</span>
           </label>
-          <input type="text" className="dotted-input medium-input" />
+          <input
+            name="landlord_phone"
+            value={formData.landlord_phone}
+            onChange={handleChange}
+            className="dotted-input medium-input"
+          />
         </div>
 
         <p className="section-title">२. पूँजी:</p>
