@@ -1185,9 +1185,12 @@ CREATE TABLE IF NOT EXISTS `BusinessIndustryRegistrationNewList` (
 
 CREATE TABLE IF NOT EXISTS `BusinessRegistrationCertificate` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `registrationNo` VARCHAR(100),
+  `fiscalYear` VARCHAR(20),
+  `certificateDate` DATE,
   `fullName` VARCHAR(255),
   `citizenshipNo` VARCHAR(200),
-  `issuedDate` VARCHAR(200),
+  `issuedDate` DATE,
   `issuedDistrict` VARCHAR(200),
   `municipality` VARCHAR(255),
   `wardNo` VARCHAR(50),
@@ -1214,18 +1217,19 @@ CREATE TABLE IF NOT EXISTS `BusinessRegistrationCertificate` (
   `otherOffice` VARCHAR(255),
   `landlordName` VARCHAR(255),
   `landlordCitizenship` VARCHAR(255),
-  `landlordIssueDate` VARCHAR(255),
+  `landlordIssueDate` DATE,
+  `landlordMunicipality` VARCHAR(255),
   `landlordDistrict` VARCHAR(255),
   `landlordAddress` VARCHAR(255),
   `landlordWard` VARCHAR(50),
   `landlordTole` VARCHAR(255),
   `landlordPhone` VARCHAR(255),
-  `authorizedCapital` VARCHAR(255),
-  `currentCapital` VARCHAR(255),
-  `issuedCapital` VARCHAR(255),
-  `fixedCapital` VARCHAR(255),
-  `paidCapital` VARCHAR(255),
-  `totalCapital` VARCHAR(255),
+  `authorizedCapital` DECIMAL(15,2),
+  `currentCapital` DECIMAL(15,2),
+  `issuedCapital` DECIMAL(15,2),
+  `fixedCapital` DECIMAL(15,2),
+  `paidCapital` DECIMAL(15,2),
+  `totalCapital` DECIMAL(15,2),
   `remarks` TEXT,
   `applicantName` VARCHAR(255),
   `applicantAddress` VARCHAR(255),
@@ -1236,6 +1240,7 @@ CREATE TABLE IF NOT EXISTS `BusinessRegistrationCertificate` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 );
+
 
 CREATE TABLE IF NOT EXISTS `BusinessRegistrationRenewLeft` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
