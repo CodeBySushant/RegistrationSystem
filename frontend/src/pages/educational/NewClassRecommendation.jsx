@@ -1,10 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
 import "./NewClassRecommendation.css";
 // 4
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+const initialState = {
+  // applicant details
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship_no: "",
+  applicant_phone: "",
+};
 
 const NewClassRecommendation = () => {
+  const { form, setForm, handleChange } = useWardForm(initialState);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // backend URL - adjust if different
+      const res = await axios.post("/api/forms/domestic-animal", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState); // reset form on success
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      await axios.post("/api/forms/scholarship", form);
+      setLoading(false);
+      setTimeout(() => window.print(), 500);
+    } catch (err) {
+      setLoading(false);
+      alert("Submission failed");
+    }
+  };
   return (
     <div className="class-recommendation-container">
       {/* --- Top Bar --- */}
@@ -121,28 +171,60 @@ const NewClassRecommendation = () => {
         <h3>निवेदकको विवरण</h3>
         <div className="details-grid">
           <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको नाम<span className="required">*</span>
+            </label>
+            <input
+              name="applicant_name"
+              type="text"
+              className="detail-input bg-gray"
+              value={form.applicant_name}
+              onChange={handleChange}
+            />
           </div>
           <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको ठेगाना<span className="required">*</span>
+            </label>
+            <input
+              name="applicant_address"
+              type="text"
+              className="detail-input bg-gray"
+              value={form.applicant_address}
+              onChange={handleChange}
+            />
           </div>
           <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको नागरिकता नं.<span className="required">*</span>
+            </label>
+            <input
+              name="applicant_citizenship_no"
+              type="text"
+              className="detail-input bg-gray"
+              value={form.applicant_citizenship_no}
+              onChange={handleChange}
+            />
           </div>
           <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input type="text" className="detail-input bg-gray" />
+            <label>
+              निवेदकको फोन नं.<span className="required">*</span>
+            </label>
+            <input
+              name="applicant_phone"
+              type="text"
+              className="detail-input bg-gray"
+              value={form.applicant_phone}
+              onChange={handleChange}
+            />
           </div>
         </div>
       </div>
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button className="save-print-btn">
-          रेकर्ड सेभ र प्रिन्ट गर्नुहोस्
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
 
