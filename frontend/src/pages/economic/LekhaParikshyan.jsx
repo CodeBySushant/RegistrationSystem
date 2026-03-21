@@ -39,6 +39,14 @@ export default function LekhaParikshyan() {
     applicant_phone: "",
   });
 
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+  setForm((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
 
