@@ -1,8 +1,19 @@
 import React, { useState } from "react";
+import axios from "../../utils/axiosInstance";
 import "./LekhaParikshyan.css";
+import { useAuth } from "../../context/AuthContext";
+
+import { useWardForm } from "../../hooks/useWardForm";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+
+const initialState = {
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship_no: "",
+  applicant_phone: "",
+};
 
 export default function LekhaParikshyan() {
   const [form, setForm] = useState({
@@ -289,48 +300,56 @@ export default function LekhaParikshyan() {
         </div>
       </div>
 
-      {/* Applicant */}
+      {/* --- Applicant Details Box --- */}
       <div className="applicant-details-box">
         <h3>निवेदकको विवरण</h3>
-
         <div className="details-grid">
           <div className="detail-group">
-            <label>निवेदकको नाम</label>
+            <label>
+              निवेदकको नाम<span className="required">*</span>
+            </label>
             <input
+              name="applicant_name"
               type="text"
               className="detail-input bg-gray"
               value={form.applicant_name}
-              onChange={(e) => update("applicant_name", e.target.value)}
+              onChange={handleChange}
             />
           </div>
-
           <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
+            <label>
+              निवेदकको ठेगाना<span className="required">*</span>
+            </label>
             <input
+              name="applicant_address"
               type="text"
               className="detail-input bg-gray"
               value={form.applicant_address}
-              onChange={(e) => update("applicant_address", e.target.value)}
+              onChange={handleChange}
             />
           </div>
-
           <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
+            <label>
+              निवेदकको नागरिकता नं.<span className="required">*</span>
+            </label>
             <input
+              name="applicant_citizenship_no"
               type="text"
               className="detail-input bg-gray"
-              value={form.applicant_citizenship}
-              onChange={(e) => update("applicant_citizenship", e.target.value)}
+              value={form.applicant_citizenship_no}
+              onChange={handleChange}
             />
           </div>
-
           <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
+            <label>
+              निवेदकको फोन नं.<span className="required">*</span>
+            </label>
             <input
+              name="applicant_phone"
               type="text"
               className="detail-input bg-gray"
               value={form.applicant_phone}
-              onChange={(e) => update("applicant_phone", e.target.value)}
+              onChange={handleChange}
             />
           </div>
         </div>
