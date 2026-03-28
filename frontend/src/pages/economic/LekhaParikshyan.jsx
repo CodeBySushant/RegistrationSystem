@@ -9,54 +9,43 @@ import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 
 const initialState = {
+  chalani_no: "",
+  subject_to: "",
+  subject_org: "",
+  office_name: "",
+  ward_no: "",
+  organization_name: "",
+  organization_extra: "",
+  fiscal_year: "",
+  auditor_name: "",
+  auditor_certificate_no: "",
+  organization_reg_no: "",
+  auditor_org_name: "",
+  auditor_org_extra: "",
+  auditor_extra_role: "",
+  bodartha: "",
+
+  signer_name: "",
+  signer_designation: "",
+
   applicant_name: "",
   applicant_address: "",
   applicant_citizenship_no: "",
   applicant_phone: "",
 };
 
-export default function LekhaParikshyan() {
-  const [form, setForm] = useState({
-    chalani_no: "",
-    subject_to: "",
-    subject_org: "",
-    office_name: "",
-    ward_no: "",
-    organization_name: "",
-    organization_extra: "",
-    fiscal_year: "",
-    auditor_name: "",
-    auditor_certificate_no: "",
-    organization_reg_no: "",
-    auditor_org_name: "",
-    auditor_org_extra: "",
-    bodartha: "",
-    signature_name: "",
-    designation: "",
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizenship: "",
-    applicant_phone: "",
-  });
-
-  const handleChange = (e) => {
-  const { name, value } = e.target;
-  setForm((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
-
+const LekhaParikshyan = () => {
+  const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null);
+  const { user } = useAuth();
 
-  const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));
+  const [msg, setMsg] = useState(null);
 
   const validate = () => {
     if (!form.subject_to) return "प्राप्तकर्ता (श्री …) अनिवार्य छ";
     if (!form.organization_name) return "संस्थाको नाम आवश्यक छ";
     if (!form.auditor_name) return "लेखा परीक्षकको नाम आवश्यक छ";
-    if (!form.signature_name) return "दस्तखत गर्ने नाम आवश्यक छ";
+    if (!form.signer_name) return "दस्तखत गर्ने नाम आवश्यक छ";
     return null;
   };
 
@@ -83,28 +72,7 @@ export default function LekhaParikshyan() {
       setMsg({ type: "success", text: "रेकर्ड सेभ भयो! ID: " + data.id });
 
       // Reset form
-      setForm({
-        chalani_no: "",
-        subject_to: "",
-        subject_org: "",
-        office_name: "",
-        ward_no: "",
-        organization_name: "",
-        organization_extra: "",
-        fiscal_year: "",
-        auditor_name: "",
-        auditor_certificate_no: "",
-        organization_reg_no: "",
-        auditor_org_name: "",
-        auditor_org_extra: "",
-        bodartha: "",
-        signature_name: "",
-        designation: "",
-        applicant_name: "",
-        applicant_address: "",
-        applicant_citizenship: "",
-        applicant_phone: "",
-      });
+      setForm(initialState);
     } catch (e) {
       setMsg({ type: "error", text: e.message });
     }
@@ -125,7 +93,7 @@ export default function LekhaParikshyan() {
       {/* Header */}
       <div className="form-header-section">
         <div className="header-logo">
-          <img src="/logo.png" alt="Nepal Emblem" />
+          <img src="/nepallogo.svg" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
           <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
@@ -146,10 +114,9 @@ export default function LekhaParikshyan() {
           <p>
             चलानी नं.:{" "}
             <input
-              type="text"
-              className="dotted-input small-input"
+              name="chalani_no"
               value={form.chalani_no}
-              onChange={(e) => update("chalani_no", e.target.value)}
+              onChange={handleChange}
             />
           </p>
         </div>
@@ -166,18 +133,18 @@ export default function LekhaParikshyan() {
         <div className="addressee-row">
           <span>श्री</span>
           <input
-            type="text"
+            name="subject_to"
             className="line-input medium-input"
             value={form.subject_to}
-            onChange={(e) => update("subject_to", e.target.value)}
+            onChange={handleChange}
           />
         </div>
         <div className="addressee-row">
           <input
-            type="text"
+            name="subject_org"
             className="line-input medium-input"
             value={form.subject_org}
-            onChange={(e) => update("subject_org", e.target.value)}
+            onChange={handleChange}
           />
         </div>
       </div>
@@ -194,78 +161,77 @@ export default function LekhaParikshyan() {
         <p className="body-paragraph">
           प्रस्तुत बिषयमा यस{" "}
           <input
-            type="text"
-            className="inline-box-input medium-box"
+            name="office_name"
             value={form.office_name}
-            onChange={(e) => update("office_name", e.target.value)}
+            onChange={handleChange}
           />{" "}
           वडा नं.{" "}
-          <input
-            type="text"
-            className="inline-box-input tiny-box"
-            value={form.ward_no}
-            onChange={(e) => update("ward_no", e.target.value)}
-          />{" "}
+          <input name="ward_no" value={form.ward_no} onChange={handleChange} />{" "}
           मा रहेको श्री{" "}
           <input
-            type="text"
-            className="inline-box-input long-box"
+            name="organization_name"
             value={form.organization_name}
-            onChange={(e) => update("organization_name", e.target.value)}
+            onChange={handleChange}
           />{" "}
           <input
-            type="text"
+            name="organization_extra"
             className="inline-box-input medium-box"
             value={form.organization_extra}
-            onChange={(e) => update("organization_extra", e.target.value)}
+            onChange={handleChange}
           />{" "}
           को आ.व.{" "}
           <input
-            type="text"
+            name="fiscal_year"
             className="inline-box-input small-box"
             value={form.fiscal_year}
-            onChange={(e) => update("fiscal_year", e.target.value)}
+            onChange={handleChange}
           />{" "}
           को लेखा परिक्षण गर्न… लेखा परिक्षक श्री{" "}
           <input
             type="text"
+            name="auditor_name"
             className="inline-box-input long-box"
             value={form.auditor_name}
-            onChange={(e) => update("auditor_name", e.target.value)}
+            onChange={handleChange}
           />{" "}
           प्रमाण पत्र नं.{" "}
           <input
             type="text"
+            name="auditor_certificate_no"
             className="inline-box-input medium-box"
             value={form.auditor_certificate_no}
-            onChange={(e) => update("auditor_certificate_no", e.target.value)}
+            onChange={handleChange}
           />{" "}
           संस्था दर्ता नम्बर{" "}
           <input
             type="text"
+            name="organization_reg_no"
             className="inline-box-input medium-box"
             value={form.organization_reg_no}
-            onChange={(e) => update("organization_reg_no", e.target.value)}
+            onChange={handleChange}
           />{" "}
           भएको{" "}
           <input
             type="text"
+            name="auditor_org_name"
             className="inline-box-input long-box"
             value={form.auditor_org_name}
-            onChange={(e) => update("auditor_org_name", e.target.value)}
+            onChange={handleChange}
           />{" "}
           <input
             type="text"
+            name="auditor_org_extra"
             className="inline-box-input medium-box"
             value={form.auditor_org_extra}
-            onChange={(e) => update("auditor_org_extra", e.target.value)}
+            onChange={handleChange}
           />{" "}
           का{" "}
           <input
             type="text"
+            name="auditor_extra_role"
             className="inline-box-input medium-box"
             value={form.auditor_extra_role}
-            onChange={(e) => update("auditor_extra_role", e.target.value)}
+            onChange={handleChange}
           />{" "}
           लाई लेखा परिक्षणको अनुमति…
         </p>
@@ -277,9 +243,10 @@ export default function LekhaParikshyan() {
         <div className="bodartha-input-container">
           <input
             type="text"
+            name="bodartha"
             className="line-input full-width-input"
             value={form.bodartha}
-            onChange={(e) => update("bodartha", e.target.value)}
+            onChange={handleChange}
           />
         </div>
       </div>
@@ -288,22 +255,27 @@ export default function LekhaParikshyan() {
       <div className="signature-section">
         <div className="signature-block">
           <div className="signature-line"></div>
-          <input
-            type="text"
-            className="line-input full-width-input"
-            placeholder="दस्तखत गर्ने नाम"
-            value={form.signature_name}
-            onChange={(e) => update("signature_name", e.target.value)}
-          />
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="signer_name"
+              type="text"
+              className="line-input full-width-input"
+              required
+              value={form.signer_name}
+              onChange={handleChange}
+            />
+          </div>
           <select
+            name="signer_designation"
             className="designation-select"
-            value={form.designation}
-            onChange={(e) => update("designation", e.target.value)}
+            value={form.signer_designation}
+            onChange={handleChange}
           >
             <option value="">पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
-            <option>कार्यवाहक वडा अध्यक्ष</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>
@@ -366,6 +338,7 @@ export default function LekhaParikshyan() {
       {/* Submit */}
       <div className="form-footer">
         <button
+          type="button"
           className="save-print-btn"
           onClick={handleSubmit}
           disabled={loading}
@@ -392,4 +365,6 @@ export default function LekhaParikshyan() {
       </div>
     </div>
   );
-}
+};
+
+export default LekhaParikshyan;

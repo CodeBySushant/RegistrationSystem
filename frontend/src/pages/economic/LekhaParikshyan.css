@@ -145,6 +145,12 @@
     pointer-events: none;
 }
 
+.audit-container input,
+.audit-container textarea {
+  direction: ltr;
+  text-align: left;
+}
+
 /* --- Signature Section --- */
 .signature-section {
   display: flex;

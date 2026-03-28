@@ -1,0 +1,9 @@
+Validate Function:
+
+  const validate = () => {
+    if (!form.subject_to) return "प्राप्तकर्ता (श्री …) अनिवार्य छ";
+    if (!form.organization_name) return "संस्थाको नाम आवश्यक छ";
+    if (!form.auditor_name) return "लेखा परीक्षकको नाम आवश्यक छ";
+    if (!form.signature_name) return "दस्तखत गर्ने नाम आवश्यक छ";
+    return null;
+  };
