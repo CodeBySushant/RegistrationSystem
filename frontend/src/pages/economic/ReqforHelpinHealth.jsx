@@ -8,10 +8,28 @@ import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 // 1
 const initialState = {
+  // Applicant details
   applicant_name: "",
   applicant_address: "",
   applicant_citizenship_no: "",
   applicant_phone: "",
+
+  // Addressee
+  addressee_name: "",
+  addressee_address: "",
+
+  // Form body fields
+  title: "श्री",
+  ward_old: "",
+  ward_new: "",
+  person_name: "",
+  annual_income: "",
+  disease: "",
+  hospital: "",
+
+  // Signature
+  signer_name: "",
+  signer_designation: "",
 };
 
 const ReqforHelpinHealth = () => {
@@ -25,7 +43,7 @@ const ReqforHelpinHealth = () => {
 
     try {
       // backend URL - adjust if different
-      const res = await axios.post("/api/forms/domestic-animal", form);
+      const res = await axios.post("/api/forms/health-aid", form);
       setLoading(false);
       if (res.status === 201) {
         alert("Form submitted successfully! ID: " + res.data.id);
@@ -99,32 +117,85 @@ const ReqforHelpinHealth = () => {
       <div className="form-body">
         <div className="addressee-row">
           <span>श्री</span>
-          <input type="text" className="line-input large-input" />
+          <input
+            name="addressee_name"
+            type="text"
+            className="line-input large-input"
+            value={form.addressee_name}
+            onChange={handleChange}
+          />
         </div>
         <div className="addressee-row">
-          <input type="text" className="line-input full-width-input" />
+          <input
+            name="addressee_address"
+            type="text"
+            className="line-input full-width-input"
+            value={form.addressee_address}
+            onChange={handleChange}
+          />
           <span>।</span>
         </div>
 
         <p className="body-paragraph">
           उपरोक्त विषयमा <span className="bold-text">{MUNICIPALITY.name}</span>
-          <span className="bold-text">{MUNICIPALITY.name}</span>
           वडा नं. १ (साविक{" "}
-          <input type="text" className="inline-box-input" placeholder="" /> ,
-          वडा नं. <input type="text" className="inline-box-input small-box" /> )
-          बस्ने श्री
-          <select className="inline-select">
+          <input
+            name="ward_old"
+            type="text"
+            className="inline-box-input"
+            value={form.ward_old}
+            onChange={handleChange}
+          />{" "}
+          , वडा नं.{" "}
+          <input
+            name="ward_new"
+            type="text"
+            className="inline-box-input small-box"
+            value={form.ward_new}
+            onChange={handleChange}
+          />{" "}
+          ) बस्ने श्री
+          <select
+            name="title"
+            className="inline-select"
+            value={form.title}
+            onChange={handleChange}
+          >
             <option>श्री</option>
             <option>सुश्री</option>
             <option>श्रीमती</option>
           </select>
-          <input type="text" className="inline-box-input medium-box" />
+          <input
+            name="person_name"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.person_name}
+            onChange={handleChange}
+          />
           को वार्षिक आम्दानी रु.
-          <input type="text" className="inline-box-input medium-box" />
+          <input
+            name="annual_income"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.annual_income}
+            onChange={handleChange}
+          />
           । भन्दा कम भएको र निज
-          <input type="text" className="inline-box-input medium-box" />
+          <input
+            name="disease"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.disease}
+            onChange={handleChange}
+          />
           बाट पीडित भई
-          <input type="text" className="inline-box-input medium-box" />
+          <input
+            name="hospital"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.hospital}
+            onChange={handleChange}
+          />
           अस्पतालमा उपचार गराउँदै आइरहेको र हाल थप उपचारको लागि लाग्ने लागत
           जुटाउन मेरो आर्थिक अवस्था कमजोर भएको कारणले निःशुल्क उपचार गर्न
           सिफारिस पाऊँ, भनी निवेदन दिनु भएको हुँदा निज निवेदक विपन्न परिवार
@@ -136,12 +207,28 @@ const ReqforHelpinHealth = () => {
       {/* --- Signature Section --- */}
       <div className="signature-section">
         <div className="signature-block">
-          <input type="text" className="line-input medium-input" />
-          <select className="designation-select">
-            <option>पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>कार्यवाहक वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
+          <div className="signature-line"></div>
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="signer_name"
+              type="text"
+              className="line-input full-width-input"
+              required
+              value={form.signer_name}
+              onChange={handleChange}
+            />
+          </div>
+          <select
+            name="signer_designation"
+            className="designation-select"
+            value={form.signer_designation}
+            onChange={handleChange}
+          >
+            <option value="">पद छनौट गर्नुहोस्</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>

@@ -8,10 +8,28 @@ import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 // 6
 const initialState = {
+  // Applicant
   applicant_name: "",
   applicant_address: "",
   applicant_citizenship_no: "",
   applicant_phone: "",
+
+  // Addressee
+  addressee_office: "",
+  addressee_address: "",
+  addressee_ward: "",
+  dispatch_no: "",
+
+  // Body fields
+  old_ward: "",
+  fiscal_year: "2082/83",
+  allowance_type: "",
+  citizenship_no: "",
+  beneficiary_name: "",
+
+  // Signature
+  signer_name: "",
+  signer_designation: "",
 };
 
 const NewBeneficiaryAccount = () => {
@@ -25,7 +43,7 @@ const NewBeneficiaryAccount = () => {
 
     try {
       // backend URL - adjust if different
-      const res = await axios.post("/api/forms/domestic-animal", form);
+      const res = await axios.post("/api/forms/new-beneficiary-account", form);
       setLoading(false);
       if (res.status === 201) {
         alert("Form submitted successfully! ID: " + res.data.id);
@@ -46,10 +64,8 @@ const NewBeneficiaryAccount = () => {
   };
 
   const handlePrint = async () => {
-    await handleSubmit(new Event("submit"));
-    setTimeout(() => {
-      window.print();
-    }, 500);
+    await handleSubmit({ preventDefault: () => {} });
+    setTimeout(() => window.print(), 500);
   };
   return (
     <div className="new-beneficiary-container">
@@ -85,7 +101,13 @@ const NewBeneficiaryAccount = () => {
           </p>
           <p>
             चलानी नं. :{" "}
-            <input type="text" className="dotted-input small-input" />
+            <input
+              name="dispatch_no"
+              type="text"
+              className="dotted-input small-input"
+              value={form.dispatch_no}
+              onChange={handleChange}
+            />
           </p>
         </div>
         <div className="meta-right">
@@ -110,14 +132,34 @@ const NewBeneficiaryAccount = () => {
       <div className="addressee-section">
         <div className="addressee-row">
           <span>श्री</span>
-          <input type="text" className="line-input medium-input" required />
+          <input
+            name="addressee_office"
+            type="text"
+            className="line-input medium-input"
+            value={form.addressee_office}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="addressee-row">
-          <input type="text" className="line-input medium-input" required />
+          <input
+            name="addressee_address"
+            type="text"
+            className="line-input medium-input"
+            value={form.addressee_address}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="addressee-row">
           <span>नागार्जुन</span>
-          <input type="text" className="line-input medium-input" />
+          <input
+            name="addressee_ward"
+            type="text"
+            className="line-input medium-input"
+            value={form.addressee_ward}
+            onChange={handleChange}
+          />
           <span>काठमाडौँ</span>
         </div>
       </div>
@@ -132,18 +174,51 @@ const NewBeneficiaryAccount = () => {
             {MUNICIPALITY.wardNumber}
           </span>
           (साविक{" "}
-          <input type="text" className="dotted-input medium-input" required /> )
-          बाट आ.व.
-          <select className="inline-select">
-            <option>2082/83</option>
-            <option>2083/84</option>
+          <input
+            name="old_ward"
+            type="text"
+            className="dotted-input medium-input"
+            value={form.old_ward}
+            onChange={handleChange}
+            required
+          />{" "}
+          ) बाट आ.व.
+          <select
+            name="fiscal_year"
+            className="inline-select"
+            value={form.fiscal_year}
+            onChange={handleChange}
+          >
+            <option value="2082/83">2082/83</option>
+            <option value="2083/84">2083/84</option>
           </select>
           को{" "}
-          <input type="text" className="dotted-input medium-input" required />{" "}
+          <input
+            name="allowance_type"
+            type="text"
+            className="dotted-input medium-input"
+            value={form.allowance_type}
+            onChange={handleChange}
+            required
+          />{" "}
           बापतको सामाजिक सुरक्षा भत्ता पाउन योग्य लाभग्राही ना.प्र.नं.{" "}
-          <input type="text" className="dotted-input medium-input" required />{" "}
+          <input
+            name="citizenship_no"
+            type="text"
+            className="dotted-input medium-input"
+            value={form.citizenship_no}
+            onChange={handleChange}
+            required
+          />{" "}
           जारी मिति <span className="bold-text">२०८२-०८-०६</span> भएको श्री{" "}
-          <input type="text" className="dotted-input medium-input" required />{" "}
+          <input
+            name="beneficiary_name"
+            type="text"
+            className="dotted-input medium-input"
+            value={form.beneficiary_name}
+            onChange={handleChange}
+            required
+          />{" "}
           को सामाजिक सुरक्षा भत्ता प्रयोजनको लागि खाता खोलिदिन हुन अनुरोध छ ।
         </p>
       </div>
@@ -152,12 +227,27 @@ const NewBeneficiaryAccount = () => {
       <div className="signature-section">
         <div className="signature-block">
           <div className="signature-line"></div>
-          <input type="text" className="line-input full-width-input" required />
-          <select className="designation-select">
-            <option>पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
-            <option>कार्यवाहक वडा अध्यक्ष</option>
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="signer_name"
+              type="text"
+              className="line-input full-width-input"
+              required
+              value={form.signer_name}
+              onChange={handleChange}
+            />
+          </div>
+          <select
+            name="signer_designation"
+            className="designation-select"
+            value={form.signer_designation}
+            onChange={handleChange}
+          >
+            <option value="">पद छनौट गर्नुहोस्</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>

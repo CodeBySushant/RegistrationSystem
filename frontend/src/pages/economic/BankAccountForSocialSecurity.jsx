@@ -7,6 +7,27 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 // 5
 const initialState = {
+  // Meta
+  chalani_no: "",
+
+  // Addressee
+  addressee_name: "",
+  addressee_address: "",
+
+  // Body
+  old_place: "",
+  old_place_type: "", // vdc / municipality
+  old_ward_no: "",
+  person_name: "",
+  relation: "",
+  relative_name: "",
+  allowance_type: "",
+
+  // Signature
+  signer_name: "",
+  signer_designation: "",
+
+  // Applicant
   applicant_name: "",
   applicant_address: "",
   applicant_citizenship_no: "",
@@ -24,7 +45,10 @@ const BankAccountForSocialSecurity = () => {
 
     try {
       // backend URL - adjust if different
-      const res = await axios.post("/api/forms/domestic-animal", form);
+      const res = await axios.post(
+        "/api/forms/bank-account-social-security",
+        form,
+      );
       setLoading(false);
       if (res.status === 201) {
         alert("Form submitted successfully! ID: " + res.data.id);
@@ -45,10 +69,8 @@ const BankAccountForSocialSecurity = () => {
   };
 
   const handlePrint = async () => {
-    await handleSubmit(new Event("submit"));
-    setTimeout(() => {
-      window.print();
-    }, 500);
+    await handleSubmit({ preventDefault: () => {} });
+    setTimeout(() => window.print(), 500);
   };
   return (
     <div className="social-security-container">
@@ -84,7 +106,13 @@ const BankAccountForSocialSecurity = () => {
           </p>
           <p>
             चलानी नं. :{" "}
-            <input type="text" className="dotted-input small-input" />
+            <input
+              name="chalani_no"
+              type="text"
+              className="dotted-input small-input"
+              value={form.chalani_no}
+              onChange={handleChange}
+            />
           </p>
         </div>
         <div className="meta-right">
@@ -109,10 +137,24 @@ const BankAccountForSocialSecurity = () => {
       <div className="addressee-section">
         <div className="addressee-row">
           <span>श्री</span>
-          <input type="text" className="line-input medium-input" required />
+          <input
+            name="addressee_name"
+            type="text"
+            className="line-input medium-input"
+            value={form.addressee_name}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="addressee-row">
-          <input type="text" className="line-input medium-input" required />
+          <input
+            name="addressee_address"
+            type="text"
+            className="line-input medium-input"
+            value={form.addressee_address}
+            onChange={handleChange}
+            required
+          />
           <span>।</span>
         </div>
       </div>
@@ -121,14 +163,32 @@ const BankAccountForSocialSecurity = () => {
       <div className="form-body">
         <p className="body-paragraph">
           प्रस्तुत बिषयमा साविक
-          <input type="text" className="inline-box-input medium-box" />
-          <select className="inline-select">
+          <input
+            name="old_place"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.old_place}
+            onChange={handleChange}
+          />
+          <select
+            name="old_place_type"
+            className="inline-select"
+            value={form.old_place_type}
+            onChange={handleChange}
+          >
             <option value=""></option>
             <option value="vdc">गा.वि.स.</option>
             <option value="mun">नगरपालिका</option>
           </select>
           वडा नं{" "}
-          <input type="text" className="inline-box-input tiny-box" required />
+          <input
+            name="old_ward_no"
+            type="text"
+            className="inline-box-input tiny-box"
+            value={form.old_ward_no}
+            onChange={handleChange}
+            required
+          />
           भई हाल{" "}
           <span className="bold-text underline-text">{MUNICIPALITY.name}</span>
           वडा नं वडा नं{" "}
@@ -136,23 +196,49 @@ const BankAccountForSocialSecurity = () => {
             {MUNICIPALITY.wardNumber}
           </span>
           बस्ने
-          <input type="text" className="inline-box-input medium-box" required />
+          <input
+            name="person_name"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.person_name}
+            onChange={handleChange}
+            required
+          />
           को
-          <select className="inline-select">
-            <option>श्रीमान</option>
-            <option>श्रीमती</option>
-            <option>बुबा</option>
-            <option>आमा</option>
-            <option>छोरा</option>
-            <option>छोरी</option>
+          <select
+            name="relation"
+            className="inline-select"
+            value={form.relation}
+            onChange={handleChange}
+          >
+            <option value="">छान्नुहोस्</option>
+            <option value="श्रीमान">श्रीमान</option>
+            <option value="श्रीमती">श्रीमती</option>
+            <option value="बुबा">बुबा</option>
+            <option value="आमा">आमा</option>
+            <option value="छोरा">छोरा</option>
+            <option value="छोरी">छोरी</option>
           </select>
-          <input type="text" className="inline-box-input medium-box" required />
+          <input
+            name="relative_name"
+            type="text"
+            className="inline-box-input medium-box"
+            value={form.relative_name}
+            onChange={handleChange}
+            required
+          />
           ले नेपाल सरकारबाट प्राप्त हुने सामाजिक सुरक्षा
-          <select className="inline-select">
-            <option>ज्येष्ठ नागरिक</option>
-            <option>एकल महिला</option>
-            <option>अपाङ्गता</option>
-            <option>बाल पोषण</option>
+          <select
+            name="allowance_type"
+            className="inline-select"
+            value={form.allowance_type}
+            onChange={handleChange}
+          >
+            <option value="">छान्नुहोस्</option>
+            <option value="ज्येष्ठ नागरिक">ज्येष्ठ नागरिक</option>
+            <option value="एकल महिला">एकल महिला</option>
+            <option value="अपाङ्गता">अपाङ्गता</option>
+            <option value="बाल पोषण">बाल पोषण</option>
           </select>
           भत्ता बैंक बाट पाउनका लागी ताहाँको बैंकमा बैंक खाता खोल्नु पर्ने
           भएकाले निजलाई बैंक खाता खोली दिनु हुन सिफारीशका साथ अनुरोध गरिन्छ ।
@@ -163,12 +249,27 @@ const BankAccountForSocialSecurity = () => {
       <div className="signature-section">
         <div className="signature-block">
           <div className="signature-line"></div>
-          <input type="text" className="line-input full-width-input" required />
-          <select className="designation-select">
-            <option>पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
-            <option>कार्यवाहक वडा अध्यक्ष</option>
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="signer_name"
+              type="text"
+              className="line-input full-width-input"
+              required
+              value={form.signer_name}
+              onChange={handleChange}
+            />
+          </div>
+          <select
+            name="signer_designation"
+            className="designation-select"
+            value={form.signer_designation}
+            onChange={handleChange}
+          >
+            <option value="">पद छनौट गर्नुहोस्</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>
