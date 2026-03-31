@@ -5,6 +5,7 @@ import "./TribalVerificationRecommendation.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   date: new Date().toISOString().slice(0, 10),
@@ -48,7 +49,8 @@ const TribalVerificationRecommendation = () => {
     if (!fd.applicantAddress?.trim()) return "निवेदकको ठेगाना भर्नुहोस्";
     if (!fd.applicantCitizenship?.trim()) return "नागरिकता नं. भर्नुहोस्";
     if (!fd.applicantPhone?.trim()) return "सम्पर्क नं. भर्नुहोस्";
-    if (!phoneRegex.test(String(fd.applicantPhone))) return "सम्पर्क नं. अमान्य छ";
+    if (!phoneRegex.test(String(fd.applicantPhone)))
+      return "सम्पर्क नं. अमान्य छ";
     return null;
   };
 
@@ -82,7 +84,8 @@ const TribalVerificationRecommendation = () => {
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message || error.message || "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
@@ -98,62 +101,151 @@ const TribalVerificationRecommendation = () => {
 
         <div className="form-row">
           <div className="form-group header-to">
-            <input type="text" name="headerTo" value={formData.headerTo} onChange={handleChange} className="header-input" />
-            <select name="municipality1" value={formData.municipality1} onChange={handleChange} className="header-select">
+            <input
+              type="text"
+              name="headerTo"
+              value={formData.headerTo}
+              onChange={handleChange}
+              className="header-input"
+            />
+            <select
+              name="municipality1"
+              value={formData.municipality1}
+              onChange={handleChange}
+              className="header-select"
+            >
               <option>{formData.municipality1}</option>
             </select>
-            <select name="wardNo1" value={formData.wardNo1} onChange={handleChange} className="header-select short">
-              <option>१</option><option>२</option><option>३</option>
+            <select
+              name="wardNo1"
+              value={formData.wardNo1}
+              onChange={handleChange}
+              className="header-select short"
+            >
+              <option>१</option>
+              <option>२</option>
+              <option>३</option>
             </select>
-            <input type="text" name="officeName" value={formData.officeName} onChange={handleChange} className="header-input" />
-            <input type="text" name="address1" value={formData.address1} onChange={handleChange} className="header-input" />
+            <input
+              type="text"
+              name="officeName"
+              value={formData.officeName}
+              onChange={handleChange}
+              className="header-input"
+            />
+            <input
+              type="text"
+              name="address1"
+              value={formData.address1}
+              onChange={handleChange}
+              className="header-input"
+            />
           </div>
 
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input type="text" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="text"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>विषय: <u>आदिवासी जनजाती - प्रमाणित सिफारिस पाउँ।</u></strong>
+          <strong>
+            विषय: <u>आदिवासी जनजाती - प्रमाणित सिफारिस पाउँ।</u>
+          </strong>
         </div>
 
         <p className="certificate-body">
           प्रस्तुत विषयमा यस
-          <select name="municipality2" value={formData.municipality2} onChange={handleChange}>
+          <select
+            name="municipality2"
+            value={formData.municipality2}
+            onChange={handleChange}
+          >
             <option>{formData.municipality2}</option>
           </select>
           वडा नं
-          <select name="wardNo2" value={formData.wardNo2} onChange={handleChange}>
-            <option>१</option><option>२</option><option>३</option>
+          <select
+            name="wardNo2"
+            value={formData.wardNo2}
+            onChange={handleChange}
+          >
+            <option>१</option>
+            <option>२</option>
+            <option>३</option>
           </select>
           निवासी
-          <select name="residentTitle" value={formData.residentTitle} onChange={handleChange}>
-            <option>श्री</option><option>सुश्री</option><option>श्रीमती</option>
+          <select
+            name="residentTitle"
+            value={formData.residentTitle}
+            onChange={handleChange}
+          >
+            <option>श्री</option>
+            <option>सुश्री</option>
+            <option>श्रीमती</option>
           </select>
-          (
-            को
-            <select name="relation" value={formData.relation} onChange={handleChange}>
-              <option>बाबु</option><option>आमा</option><option>पति</option>
-            </select>
-            <select name="guardianTitle" value={formData.guardianTitle} onChange={handleChange}>
-              <option>श्री</option><option>सुश्री</option><option>श्रीमती</option>
-            </select>
+          ( को
+          <select
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+          >
+            <option>बाबु</option>
+            <option>आमा</option>
+            <option>पति</option>
+          </select>
+          <select
+            name="guardianTitle"
+            value={formData.guardianTitle}
+            onChange={handleChange}
+          >
+            <option>श्री</option>
+            <option>सुश्री</option>
+            <option>श्रीमती</option>
+          </select>
           )
-          <input type="text" name="guardianName" placeholder="नाम" value={formData.guardianName} onChange={handleChange} required />
-          <select name="tribeCategory" value={formData.tribeCategory} onChange={handleChange}>
+          <input
+            type="text"
+            name="guardianName"
+            placeholder="नाम"
+            value={formData.guardianName}
+            onChange={handleChange}
+            required
+          />
+          <select
+            name="tribeCategory"
+            value={formData.tribeCategory}
+            onChange={handleChange}
+          >
             <option>आदिवासी जनजाती</option>
           </select>
           जाती अन्तर्गत
-          <input type="text" name="tribeName" placeholder="जातीको नाम" value={formData.tribeName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="tribeName"
+            placeholder="जातीको नाम"
+            value={formData.tribeName}
+            onChange={handleChange}
+            required
+          />
           जाती भएको व्यहोरा सिफारिस उपलब्ध गराई पाउन यो निवेदन पेश गरेको छु ।
         </p>
 
         <div className="form-group-column rich-text-area">
           <label>निवेदन व्यहोरा:</label>
-          <div className="editor-toolbar-placeholder">[BIU S A ... Styles Format]</div>
-          <textarea name="mainContent" value={formData.mainContent} onChange={handleChange} rows="6" />
+          <div className="editor-toolbar-placeholder">
+            [BIU S A ... Styles Format]
+          </div>
+          <textarea
+            name="mainContent"
+            value={formData.mainContent}
+            onChange={handleChange}
+            rows="6"
+          />
         </div>
 
         <div className="designation-section">
@@ -161,76 +253,29 @@ const TribalVerificationRecommendation = () => {
           <div className="signature-fields">
             <div className="form-group-inline">
               <label>नाम, थर : *</label>
-              <input type="text" name="applicantNameSignature" value={formData.applicantNameSignature} onChange={handleChange} required />
+              <input
+                type="text"
+                name="applicantNameSignature"
+                value={formData.applicantNameSignature}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="form-group-inline">
               <label>ठेगाना : *</label>
-              <input type="text" name="applicantAddressSignature" value={formData.applicantAddressSignature} onChange={handleChange} required />
+              <input
+                type="text"
+                name="applicantAddressSignature"
+                value={formData.applicantAddressSignature}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
         </div>
 
         {/* Applicants details */}
-        <div className="applicant-details-box">
-          <h3>निवेदकको विवरण</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>
-                निवेदकको नाम<span className="required">*</span>
-              </label>
-              <input
-                name="applicantName"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको ठेगाना<span className="required">*</span>
-              </label>
-              <input
-                name="applicantAddress"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantAddress}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको नागरिकता नं.<span className="required">*</span>
-              </label>
-              <input
-                name="applicantNagarikta"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantNagarikta}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको फोन नं.<span className="required">*</span>
-              </label>
-              <input
-                name="applicantPhone"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantPhone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={submitting}>

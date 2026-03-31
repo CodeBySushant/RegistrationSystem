@@ -5,6 +5,7 @@ import "./ImpoverishedCitizenApplicationandRecommendation.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   headerTo: "श्रीमान् अध्यक्षज्यु",
@@ -79,7 +80,10 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
   };
 
   const addLandRow = () => {
-    setLandDetails((prev) => [...prev, { id: prev.length + 1, description: "", location: "" }]);
+    setLandDetails((prev) => [
+      ...prev,
+      { id: prev.length + 1, description: "", location: "" },
+    ]);
   };
 
   const validate = (fd, lands) => {
@@ -90,7 +94,10 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
 
     // phone checks (basic)
     const phoneRegex = /^[0-9+\-\s]{6,20}$/;
-    if (fd.applicantSigPhone && !phoneRegex.test(String(fd.applicantSigPhone))) {
+    if (
+      fd.applicantSigPhone &&
+      !phoneRegex.test(String(fd.applicantSigPhone))
+    ) {
       return "applicantSigPhone (invalid)";
     }
     if (fd.applicantPhone && !phoneRegex.test(String(fd.applicantPhone))) {
@@ -142,7 +149,8 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message || error.message || "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
@@ -160,8 +168,18 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
         {/* keep header inputs for manual override if needed */}
         <div className="top-meta-row">
           <div className="form-group-inline header-inputs">
-            <input type="text" name="headerTo" value={formData.headerTo} onChange={handleChange} />
-            <input type="text" name="headerOffice" value={formData.headerOffice} onChange={handleChange} />
+            <input
+              type="text"
+              name="headerTo"
+              value={formData.headerTo}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="headerOffice"
+              value={formData.headerOffice}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
@@ -175,15 +193,30 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
           <div className="form-grid">
             <div className="form-group">
               <label>नाम:</label>
-              <input type="text" name="patientName" value={formData.patientName} onChange={handleChange} required />
+              <input
+                type="text"
+                name="patientName"
+                value={formData.patientName}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="form-group">
               <label>उमेर:</label>
-              <input type="text" name="age" value={formData.age} onChange={handleChange} />
+              <input
+                type="text"
+                name="age"
+                value={formData.age}
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
               <label>लिङ्ग:</label>
-              <select name="gender" value={formData.gender} onChange={handleChange}>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+              >
                 <option>पुरुष</option>
                 <option>महिला</option>
                 <option>अन्य</option>
@@ -192,37 +225,77 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
 
             <div className="form-group">
               <label>स्थायी जिल्ला:</label>
-              <input type="text" name="permJilla" value={formData.permJilla} onChange={handleChange} />
+              <input
+                type="text"
+                name="permJilla"
+                value={formData.permJilla}
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
               <label>स्थायी पालिका:</label>
-              <input type="text" name="permPalika" value={formData.permPalika} onChange={handleChange} />
+              <input
+                type="text"
+                name="permPalika"
+                value={formData.permPalika}
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
               <label>स्थायी वडा:</label>
-              <input type="text" name="permWarda" value={formData.permWarda} onChange={handleChange} />
+              <input
+                type="text"
+                name="permWarda"
+                value={formData.permWarda}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form-group">
               <label>अस्थायी जिल्ला:</label>
-              <input type="text" name="tempJilla" value={formData.tempJilla} onChange={handleChange} />
+              <input
+                type="text"
+                name="tempJilla"
+                value={formData.tempJilla}
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
               <label>अस्थायी पालिका:</label>
-              <input type="text" name="tempPalika" value={formData.tempPalika} onChange={handleChange} />
+              <input
+                type="text"
+                name="tempPalika"
+                value={formData.tempPalika}
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
               <label>अस्थायी वडा:</label>
-              <input type="text" name="tempWarda" value={formData.tempWarda} onChange={handleChange} />
+              <input
+                type="text"
+                name="tempWarda"
+                value={formData.tempWarda}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form-group">
               <label>जात:</label>
-              <input type="text" name="ethnicity" value={formData.ethnicity} onChange={handleChange} />
+              <input
+                type="text"
+                name="ethnicity"
+                value={formData.ethnicity}
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
               <label>परिवार संख्या:</label>
-              <input type="text" name="familySize" value={formData.familySize} onChange={handleChange} />
+              <input
+                type="text"
+                name="familySize"
+                value={formData.familySize}
+                onChange={handleChange}
+              />
             </div>
           </div>
         </fieldset>
@@ -262,7 +335,13 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
                     </td>
                     <td className="action-cell">
                       {index === landDetails.length - 1 && (
-                        <button type="button" onClick={addLandRow} className="add-btn">+</button>
+                        <button
+                          type="button"
+                          onClick={addLandRow}
+                          className="add-btn"
+                        >
+                          +
+                        </button>
                       )}
                     </td>
                   </tr>
@@ -277,15 +356,30 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
           <legend>बैंक विवरण</legend>
           <div className="form-group">
             <label>बैंकको नाम:</label>
-            <input type="text" name="bankName" value={formData.bankName} onChange={handleChange} />
+            <input
+              type="text"
+              name="bankName"
+              value={formData.bankName}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group">
             <label>शाखा:</label>
-            <input type="text" name="bankBranch" value={formData.bankBranch} onChange={handleChange} />
+            <input
+              type="text"
+              name="bankBranch"
+              value={formData.bankBranch}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group">
             <label>खाता नं.:</label>
-            <input type="text" name="accountNo" value={formData.accountNo} onChange={handleChange} />
+            <input
+              type="text"
+              name="accountNo"
+              value={formData.accountNo}
+              onChange={handleChange}
+            />
           </div>
         </fieldset>
 
@@ -293,83 +387,44 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
           <legend>निवेदक हस्ताक्षर</legend>
           <div className="form-group-column">
             <label>नाम:</label>
-            <input type="text" name="applicantSigName" value={formData.applicantSigName} onChange={handleChange} />
+            <input
+              type="text"
+              name="applicantSigName"
+              value={formData.applicantSigName}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group-column">
             <label>ठेगाना:</label>
-            <input type="text" name="applicantSigAddress" value={formData.applicantSigAddress} onChange={handleChange} />
+            <input
+              type="text"
+              name="applicantSigAddress"
+              value={formData.applicantSigAddress}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group-column">
             <label>मिति:</label>
-            <input type="text" name="applicantSigDate" value={formData.applicantSigDate} onChange={handleChange} />
+            <input
+              type="text"
+              name="applicantSigDate"
+              value={formData.applicantSigDate}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group-column">
             <label>फोन:</label>
-            <input type="text" name="applicantSigPhone" value={formData.applicantSigPhone} onChange={handleChange} />
+            <input
+              type="text"
+              name="applicantSigPhone"
+              value={formData.applicantSigPhone}
+              onChange={handleChange}
+            />
           </div>
         </fieldset>
 
-         {/* Applicants details */}
-        <div className="applicant-details-box">
-          <h3>निवेदकको विवरण</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>
-                निवेदकको नाम<span className="required">*</span>
-              </label>
-              <input
-                name="applicantName"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको ठेगाना<span className="required">*</span>
-              </label>
-              <input
-                name="applicantAddress"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantAddress}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको नागरिकता नं.<span className="required">*</span>
-              </label>
-              <input
-                name="applicantNagarikta"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantNagarikta}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको फोन नं.<span className="required">*</span>
-              </label>
-              <input
-                name="applicantPhone"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantPhone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-        </div>
+        {/* Applicants details */}
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={submitting}>
