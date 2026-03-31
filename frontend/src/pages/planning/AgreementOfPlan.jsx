@@ -1,6 +1,7 @@
 // src/components/AgreementOfPlan.jsx
 import React, { useState } from "react";
 import "./AgreementOfPlan.css";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const FORM_KEY = "agreement-of-plan";
 const API_BASE = import.meta.env.VITE_API_BASE || ""; // Vite safe; replace if using CRA
@@ -9,6 +10,36 @@ const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 export default function AgreementOfPlan() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
+
+  const [form, setForm] = useState({
+    project_code_or_id: "",
+    implement_unit: "",
+    district: "",
+    fiscal_year: "२०८२/८३",
+    project_title: "",
+    agreement_amount: "",
+    allocated_amount: "",
+    allocated_amount_in_words: "",
+    party_a: "",
+    party_b: "",
+    signatory_name: "",
+    signatory_designation: "",
+
+    // Applicant fields
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
+  });
+
+  // ✅ HANDLE CHANGE
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   // collect values from page without changing layout or visuals
   const handleSubmit = async (e) => {
@@ -68,6 +99,11 @@ export default function AgreementOfPlan() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePrint = async () => {
+    await handleSubmit({ preventDefault: () => {} });
+    window.print();
   };
 
   return (
@@ -376,48 +412,16 @@ export default function AgreementOfPlan() {
         </div>
       </div>
 
-      {/* --- Applicant Details Box --- */}
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input
-              name="applicant_name"
-              type="text"
-              className="detail-input bg-gray"
-            />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input
-              name="applicant_address"
-              type="text"
-              className="detail-input bg-gray"
-            />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input
-              name="applicant_citizenship_no"
-              type="text"
-              className="detail-input bg-gray"
-            />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input
-              name="applicant_phone"
-              type="text"
-              className="detail-input bg-gray"
-            />
-          </div>
-        </div>
-      </div>
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button type="submit" className="save-print-btn" disabled={loading}>
+        <button
+          type="button"
+          className="save-print-btn"
+          onClick={handlePrint}
+          disabled={loading}
+        >
           {loading ? "सेभ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
