@@ -5,6 +5,7 @@ import "./RequestforCertificationMotherFather.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   date: new Date().toISOString().slice(0, 10),
@@ -77,7 +78,8 @@ const RequestforCertificationMotherFather = () => {
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message || error.message || "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
@@ -104,99 +106,102 @@ const RequestforCertificationMotherFather = () => {
           </div>
           <div className="form-group date-group">
             <label>मिति :</label>
-            <input type="text" name="date" value={formData.date} onChange={handleChange} />
+            <input
+              type="text"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="subject-line">
-          <strong>विषय: <u>प्रमाणित गरि पाउँ ।</u></strong>
+          <strong>
+            विषय: <u>प्रमाणित गरि पाउँ ।</u>
+          </strong>
         </div>
 
         <p className="certificate-body">
-          <input type="text" name="mainDistrict" value={formData.mainDistrict} onChange={handleChange} required />
+          <input
+            type="text"
+            name="mainDistrict"
+            value={formData.mainDistrict}
+            onChange={handleChange}
+            required
+          />
           जिल्ला
-          <input type="text" name="palikaName" placeholder="गाउँपालिका/नगरपालिका" value={formData.palikaName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="palikaName"
+            placeholder="गाउँपालिका/नगरपालिका"
+            value={formData.palikaName}
+            onChange={handleChange}
+            required
+          />
           वडा नं.
-          <input type="text" name="wardNo" placeholder="वडा" value={formData.wardNo} onChange={handleChange} required className="short-input" />
+          <input
+            type="text"
+            name="wardNo"
+            placeholder="वडा"
+            value={formData.wardNo}
+            onChange={handleChange}
+            required
+            className="short-input"
+          />
           निवासी
-          <input type="text" name="residentName" placeholder="निवासीको नाम" value={formData.residentName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="residentName"
+            placeholder="निवासीको नाम"
+            value={formData.residentName}
+            onChange={handleChange}
+            required
+          />
           को
-          <select name="relation" value={formData.relation} onChange={handleChange}>
+          <select
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+          >
             <option>छोरा</option>
             <option>छोरी</option>
             <option>पति</option>
             <option>पत्नी</option>
           </select>
           म
-          <input type="text" name="guardianName" placeholder="वुवा/आमाको नाम" value={formData.guardianName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="guardianName"
+            placeholder="वुवा/आमाको नाम"
+            value={formData.guardianName}
+            onChange={handleChange}
+            required
+          />
           को नागरिकता प्रमाणपत्रमा
-          <input type="text" name="doc1Detail" placeholder="निवेदकको नागरिकता विवरण" value={formData.doc1Detail} onChange={handleChange} required />
+          <input
+            type="text"
+            name="doc1Detail"
+            placeholder="निवेदकको नागरिकता विवरण"
+            value={formData.doc1Detail}
+            onChange={handleChange}
+            required
+          />
           भएको र वुवा/आमाको नागरिकतामा
-          <input type="text" name="doc2Detail" placeholder="वुवा/आमाको नागरिकता विवरण" value={formData.doc2Detail} onChange={handleChange} required />
-          भई फरक परे पनि हामीहरु बाबु, आमा र छोरा भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा कार्यालयको सिफारिस र कागजात संलग्न राखी यो निवेदन पेश गरेको छु ।
+          <input
+            type="text"
+            name="doc2Detail"
+            placeholder="वुवा/आमाको नागरिकता विवरण"
+            value={formData.doc2Detail}
+            onChange={handleChange}
+            required
+          />
+          भई फरक परे पनि हामीहरु बाबु, आमा र छोरा भएकोले सोही व्यहोरा प्रमाणित
+          गरि पाउन, वडा कार्यालयको सिफारिस र कागजात संलग्न राखी यो निवेदन पेश
+          गरेको छु ।
         </p>
 
         {/* Applicants details */}
-        <div className="applicant-details-box">
-          <h3>निवेदकको विवरण</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>
-                निवेदकको नाम<span className="required">*</span>
-              </label>
-              <input
-                name="applicantName"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको ठेगाना<span className="required">*</span>
-              </label>
-              <input
-                name="applicantAddress"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantAddress}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको नागरिकता नं.<span className="required">*</span>
-              </label>
-              <input
-                name="applicantNagarikta"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantNagarikta}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको फोन नं.<span className="required">*</span>
-              </label>
-              <input
-                name="applicantPhone"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantPhone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={submitting}>

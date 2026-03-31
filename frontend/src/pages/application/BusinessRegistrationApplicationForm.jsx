@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./BusinessRegistrationApplicationForm.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig.js";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   businessNameNp: "",
@@ -39,10 +40,10 @@ const initialState = {
   applicantSignature: "", // निवेदकको सही
   witnessName: "", // सनाखत गर्नेको सही
 
-  applicant_name: "",
-  applicant_address: "",
-  applicant_citizenship_no: "",
-  applicant_phone: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
   municipality: MUNICIPALITY?.name || "",
   wardNo: "",
 };
@@ -82,7 +83,7 @@ const BusinessRegistrationApplicationForm = () => {
     try {
       const payload = { ...formData };
       Object.keys(payload).forEach(
-        (k) => payload[k] === "" && (payload[k] = null)
+        (k) => payload[k] === "" && (payload[k] = null),
       );
 
       const res = await axios.post("/api/forms/business-registration", payload);
@@ -691,55 +692,7 @@ const BusinessRegistrationApplicationForm = () => {
           </div>
         </div>
 
-        <div className="applicant-details-box">
-          <h3>निवेदकको विवरण</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>
-                निवेदकको नाम <Required />
-              </label>
-              <input
-                name="applicant_name"
-                className="detail-input bg-gray"
-                value={formData.applicant_name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="detail-group">
-              <label>
-                ठेगाना <Required />
-              </label>
-              <input
-                name="applicant_address"
-                className="detail-input bg-gray"
-                value={formData.applicant_address}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="detail-group">
-              <label>
-                नागरिकता नं. <Required />
-              </label>
-              <input
-                name="applicant_citizenship_no"
-                className="detail-input bg-gray"
-                value={formData.applicant_citizenship_no}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="detail-group">
-              <label>
-                फोन नं. <Required />
-              </label>
-              <input
-                name="applicant_phone"
-                className="detail-input bg-gray"
-                value={formData.applicant_phone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={submitting}>

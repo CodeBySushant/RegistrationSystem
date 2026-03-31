@@ -5,6 +5,7 @@ import "./CitizenshipwithHusbandSurname.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   date: new Date().toISOString().slice(0, 10),
@@ -171,66 +172,7 @@ const CitizenshipwithHusbandSurname = () => {
         </p>
 
         {/* Applicants details */}
-        <div className="applicant-details-box">
-          <h3>निवेदकको विवरण</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>
-                निवेदकको नाम<span className="required">*</span>
-              </label>
-              <input
-                name="applicantName"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको ठेगाना<span className="required">*</span>
-              </label>
-              <input
-                name="applicantAddress"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantAddress}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको नागरिकता नं.<span className="required">*</span>
-              </label>
-              <input
-                name="applicantNagarikta"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantNagarikta}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                निवेदकको फोन नं.<span className="required">*</span>
-              </label>
-              <input
-                name="applicantPhone"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantPhone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={submitting}>
