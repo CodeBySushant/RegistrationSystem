@@ -10,6 +10,23 @@ export default function WithdrawalFundRecommendation() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
 
+  const [form, setForm] = useState({
+    signer_name: "",
+    signer_designation: "",
+    applicant_name: "",
+    applicant_address: "",
+    applicant_citizenship_no: "",
+    applicant_phone: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg(null);
@@ -287,18 +304,27 @@ export default function WithdrawalFundRecommendation() {
       <div className="signature-section">
         <div className="signature-block">
           <div className="signature-line"></div>
-          <span className="red-mark">*</span>
-          <input
-            name="signatory_name"
-            type="text"
-            className="line-input full-width-input"
-            required
-          />
-          <select name="signatory_designation" className="designation-select">
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="signer_name"
+              type="text"
+              className="line-input full-width-input"
+              required
+              value={form.signer_name}
+              onChange={handleChange}
+            />
+          </div>
+          <select
+            name="signer_designation"
+            className="designation-select"
+            value={form.signer_designation}
+            onChange={handleChange}
+          >
             <option value="">पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
-            <option>कार्यवाहक वडा अध्यक्ष</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>
@@ -308,35 +334,51 @@ export default function WithdrawalFundRecommendation() {
         <h3>निवेदकको विवरण</h3>
         <div className="details-grid">
           <div className="detail-group">
-            <label>निवेदकको नाम</label>
+            <label>
+              निवेदकको नाम<span className="required">*</span>
+            </label>
             <input
               name="applicant_name"
               type="text"
               className="detail-input bg-gray"
+              value={form.applicant_name}
+              onChange={handleChange}
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
+            <label>
+              निवेदकको ठेगाना<span className="required">*</span>
+            </label>
             <input
               name="applicant_address"
               type="text"
               className="detail-input bg-gray"
+              value={form.applicant_address}
+              onChange={handleChange}
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
+            <label>
+              निवेदकको नागरिकता नं.<span className="required">*</span>
+            </label>
             <input
               name="applicant_citizenship_no"
               type="text"
               className="detail-input bg-gray"
+              value={form.applicant_citizenship_no}
+              onChange={handleChange}
             />
           </div>
           <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
+            <label>
+              निवेदकको फोन नं.<span className="required">*</span>
+            </label>
             <input
               name="applicant_phone"
               type="text"
               className="detail-input bg-gray"
+              value={form.applicant_phone}
+              onChange={handleChange}
             />
           </div>
         </div>

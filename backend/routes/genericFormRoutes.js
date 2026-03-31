@@ -4,7 +4,7 @@ const router = express.Router();
 const adminAuth = require("../middleware/adminAuth");
 const controller = require("../controllers/genericFormController");
 
-router.use(adminAuth(["ADMIN", "SUPERADMIN"]));
+// router.use(adminAuth(["ADMIN", "SUPERADMIN"]));
 
 // CREATE
 router.post("/:formKey", controller.createRecord);
