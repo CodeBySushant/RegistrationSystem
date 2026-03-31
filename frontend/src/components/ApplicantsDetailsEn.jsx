@@ -1,4 +1,4 @@
-const ApplicantDetails = ({ formData, handleChange }) => {
+const ApplicantDetailsEn = ({ formData, handleChange }) => {
   return (
     <div className="applicant-details-box">
       <h3>Applicant Details</h3>
@@ -64,4 +64,4 @@ const ApplicantDetails = ({ formData, handleChange }) => {
   );
 };
 
-export default ApplicantDetails;
+export default ApplicantDetailsEn;
