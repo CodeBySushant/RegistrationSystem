@@ -5,7 +5,7 @@ import "./AddressVerification.css";
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import axiosInstance from "../../utils/axiosInstance";
-import ApplicantDetails from "../../../src/components/ApplicantsDetailsEn.jsx";
+import ApplicantDetailsEn from "../../components/ApplicantDetailsEn.jsx";
 
 const AddressVerification = () => {
   const [formData, setFormData] = useState({
@@ -214,7 +214,7 @@ const AddressVerification = () => {
           </select>
         </div>
 
-        <ApplicantDetails formData={formData} handleChange={handleChange} />
+        <ApplicantDetailsEn formData={formData} handleChange={handleChange} />
 
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={loading}>

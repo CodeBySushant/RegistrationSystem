@@ -5,6 +5,7 @@ import "./BusinessIndustryRegistrationForm.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const BusinessIndustryRegistrationForm = () => {
   const { user } = useAuth();
@@ -90,10 +91,10 @@ const BusinessIndustryRegistrationForm = () => {
     issuing_date: new Date().toISOString().slice(0, 10),
 
     // applicant
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizenship: "",
-    applicant_phone: "",
+    applicantName: "",
+    applicantAddress: "",
+    applicantCitizenship: "",
+    applicantPhone: "",
   });
 
   useEffect(() => {
@@ -662,67 +663,7 @@ const BusinessIndustryRegistrationForm = () => {
         </select>
       </div>
 
-      {/* Applicants details */}
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>
-              निवेदकको नाम<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_name"
-              type="text"
-              className="detail-input bg-gray"
-              value={formData.applicant_name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="detail-group">
-            <label>
-              निवेदकको ठेगाना<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_address"
-              type="text"
-              className="detail-input bg-gray"
-              value={formData.applicant_address}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="detail-group">
-            <label>
-              निवेदकको नागरिकता नं.<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_citizenship"
-              type="text"
-              className="detail-input bg-gray"
-              value={formData.applicant_citizenship}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="detail-group">
-            <label>
-              निवेदकको फोन नं.<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_phone"
-              type="text"
-              className="detail-input bg-gray"
-              value={formData.applicant_phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
-      </div>
+      <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
       {/* --- Footer Action --- */}
       <div className="form-footer">

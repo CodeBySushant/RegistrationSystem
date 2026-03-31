@@ -9,10 +9,10 @@ const ApplicantDetailsNp = ({ formData, handleChange }) => {
             निवेदकको नाम<span className="required">*</span>
           </label>
           <input
-            name="applicant_name"
+            name="applicantName"
             type="text"
             className="detail-input bg-gray"
-            value={formData.applicant_name}
+            value={formData.applicantName}
             onChange={handleChange}
             required
           />
@@ -23,10 +23,10 @@ const ApplicantDetailsNp = ({ formData, handleChange }) => {
             निवेदकको ठेगाना<span className="required">*</span>
           </label>
           <input
-            name="applicant_address"
+            name="applicantAddress"
             type="text"
             className="detail-input bg-gray"
-            value={formData.applicant_address}
+            value={formData.applicantAddress}
             onChange={handleChange}
             required
           />
@@ -37,10 +37,10 @@ const ApplicantDetailsNp = ({ formData, handleChange }) => {
             निवेदकको नागरिकता नं.<span className="required">*</span>
           </label>
           <input
-            name="applicant_citizenship_no"
+            name="applicantCitizenship"
             type="text"
             className="detail-input bg-gray"
-            value={formData.applicant_citizenship_no}
+            value={formData.applicantCitizenship}
             onChange={handleChange}
             required
           />
@@ -51,10 +51,10 @@ const ApplicantDetailsNp = ({ formData, handleChange }) => {
             निवेदकको फोन नं.<span className="required">*</span>
           </label>
           <input
-            name="applicant_phone"
+            name="applicantPhone"
             type="text"
             className="detail-input bg-gray"
-            value={formData.applicant_phone}
+            value={formData.applicantPhone}
             onChange={handleChange}
             required
           />
