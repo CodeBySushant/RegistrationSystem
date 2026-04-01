@@ -16,7 +16,8 @@ router.post("/login", (req, res) => {
      FROM admins WHERE username = ?`,
     [username],
     async (err, results) => {
-      if (err) return res.status(500).json({ success: false, message: "DB error" });
+      if (err)
+        return res.status(500).json({ success: false, message: "DB error" });
       if (!results.length)
         return res.status(401).json({ success: false, message: "Invalid username" });
 
@@ -32,7 +33,7 @@ router.post("/login", (req, res) => {
           ward_number: admin.ward_number,
         },
         JWT_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: "7d" },
       );
 
       res.json({
@@ -46,78 +47,57 @@ router.post("/login", (req, res) => {
           ward: admin.ward_number,
         },
       });
-    }
+    },
   );
 });
 
 // ---------------- CREATE ADMIN (SUPERADMIN ONLY) ----------------
-router.post(
-  "/create-admin",
-  adminAuth(["SUPERADMIN"]),
-  (req, res) => {
-    const {
-      name,
-      email,
-      phone,
-      ward_number,
-      position,
-      username,
-      password,
-      role,
-    } = req.body;
+router.post("/create-admin", adminAuth(["SUPERADMIN"]), (req, res) => {
+  const { name, email, phone, ward_number, position, username, password, role } = req.body;
 
-    const finalRole = (role || "ADMIN").toUpperCase();
-    const finalWard = finalRole === "SUPERADMIN" ? null : ward_number;
+  const finalRole = (role || "ADMIN").toUpperCase();
+  const finalWard = finalRole === "SUPERADMIN" ? null : ward_number;
 
-    const hashedPassword = bcrypt.hashSync(password, 10);
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
-    const sql = `
-      INSERT INTO admins
-      (name, email, phone, ward_number, position, username, password, role)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+  const sql = `
+    INSERT INTO admins
+    (name, email, phone, ward_number, position, username, password, role)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
 
-    pool.query(
-      sql,
-      [
-        name,
-        email,
-        phone,
-        finalWard,
-        position,
-        username,
-        hashedPassword,
-        finalRole,
-      ],
-      (err) => {
-        if (err) {
-          return res.status(400).json({
-            success: false,
-            message: "Username or Email already exists",
-          });
-        }
-
-        res.json({ success: true, message: "Admin created successfully" });
+  pool.query(
+    sql,
+    [name, email, phone, finalWard, position, username, hashedPassword, finalRole],
+    (err) => {
+      if (err) {
+        return res.status(400).json({
+          success: false,
+          message: "Username or Email already exists",
+        });
       }
-    );
-  }
-);
+      res.json({ success: true, message: "Admin created successfully" });
+    },
+  );
+});
 
-// -------------- GET ADMINS (SUPERADMIN ONLY) --------------
+// ---------------- GET ALL ADMINS (SUPERADMIN ONLY) ----------------
 router.get("/all-admins", adminAuth(["SUPERADMIN"]), (req, res) => {
   pool.query(
     "SELECT id, name, email, phone, ward_number, position, username, role FROM admins",
     (err, results) => {
-      if (err) return res.status(500).json({ success: false, message: "DB error" });
+      if (err)
+        return res.status(500).json({ success: false, message: "DB error" });
       res.json({ success: true, admins: results });
-    }
+    },
   );
 });
 
-// ---------------- DELETE ADMIN ----------------
+// ---------------- DELETE ADMIN (SUPERADMIN ONLY) ----------------
 router.delete("/delete/:id", adminAuth(["SUPERADMIN"]), (req, res) => {
   pool.query("DELETE FROM admins WHERE id = ?", [req.params.id], (err) => {
-    if (err) return res.status(500).json({ success: false, message: "DB error" });
+    if (err)
+      return res.status(500).json({ success: false, message: "DB error" });
     res.json({ success: true });
   });
 });
