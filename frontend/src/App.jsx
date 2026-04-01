@@ -1026,7 +1026,6 @@ const Layout = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <AdminAuthProvider>
         <BrowserRouter>
           <Routes>
             {/* ---------------- ADMIN ROUTES ---------------- */}
@@ -1061,7 +1060,6 @@ const App = () => {
             />
           </Routes>
         </BrowserRouter>
-      </AdminAuthProvider>
     </AuthProvider>
   );
 };
