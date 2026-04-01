@@ -11,7 +11,7 @@ const CreateAdmin = () => {
     position: "",
     username: "",
     password: "",
-    role: "admin",
+    role: "ADMIN",
   });
 
   const [msg, setMsg] = useState("");
@@ -40,7 +40,7 @@ const CreateAdmin = () => {
         position: "",
         username: "",
         password: "",
-        role: "admin",
+        role: "ADMIN",
       });
     }
   };
@@ -59,7 +59,7 @@ const CreateAdmin = () => {
         {["name", "email", "phone", "position", "username", "password"].map((field) => (
           <input
             key={field}
-            type="text"
+            type={field === "password" ? "password" : "text"}
             placeholder={field}
             value={form[field]}
             onChange={(e) => setForm({ ...form, [field]: e.target.value })}
@@ -82,8 +82,8 @@ const CreateAdmin = () => {
           onChange={(e) => setForm({ ...form, role: e.target.value })}
           className="w-full p-2 border rounded"
         >
-          <option value="admin">Ward Admin</option>
-          <option value="superadmin">Superadmin</option>
+          <option value="ADMIN">Ward Admin</option>
+          <option value="SUPERADMIN">Superadmin</option>
         </select>
 
         <button className="bg-blue-600 text-white p-2 rounded w-full">
