@@ -5,6 +5,7 @@ import "./NonProfitOrgRegCertificate.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   fiscalYear: "2082/83",
@@ -95,10 +96,7 @@ export default function NonProfitOrgRegCertificate() {
       <div className="nprc-paper">
         <div className="nprc-letterhead">
           <div className="nprc-logo">
-            <img
-              src="/nepallogo.svg"
-              alt="Nepal Emblem"
-            />
+            <img src="/nepallogo.svg" alt="Nepal Emblem" />
           </div>
 
           <div className="nprc-head-text">
@@ -360,45 +358,7 @@ export default function NonProfitOrgRegCertificate() {
             </select>
           </div>
 
-          <h3 className="nprc-section-title">निवेदकको विवरण</h3>
-          <div className="nprc-applicant-box">
-            <div className="nprc-field">
-              <label>निवेदकको नाम *</label>
-              <input
-                type="text"
-                name="applicantName"
-                value={form.applicantName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="nprc-field">
-              <label>निवेदकको ठेगाना *</label>
-              <input
-                type="text"
-                name="applicantAddress"
-                value={form.applicantAddress}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="nprc-field">
-              <label>निवेदकको नागरिकता नं. *</label>
-              <input
-                type="text"
-                name="applicantCitizenship"
-                value={form.applicantCitizenship}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="nprc-field">
-              <label>निवेदकको फोन नं. *</label>
-              <input
-                type="text"
-                name="applicantPhone"
-                value={form.applicantPhone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
           <div className="nprc-submit-row">
             <button
@@ -415,7 +375,9 @@ export default function NonProfitOrgRegCertificate() {
       </div>
 
       <footer className="nprc-footer">
-        <footer className="nprc-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+        <footer className="nprc-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </footer>
       </footer>
     </div>
   );

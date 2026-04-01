@@ -5,6 +5,7 @@ import "./OldNonProfitOrgRegCertificate.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   fiscalYear: "2082/83",
@@ -332,45 +333,7 @@ export default function OldNonProfitOrgCertificate() {
             </select>
           </div>
 
-          <h3 className="onp-section-title">निवेदकको विवरण</h3>
-          <div className="onp-applicant-box">
-            <div className="onp-field">
-              <label>निवेदकको नाम *</label>
-              <input
-                type="text"
-                name="applicantName"
-                value={form.applicantName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="onp-field">
-              <label>निवेदकको ठेगाना *</label>
-              <input
-                type="text"
-                name="applicantAddress"
-                value={form.applicantAddress}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="onp-field">
-              <label>निवेदकको नागरिकता नं. *</label>
-              <input
-                type="text"
-                name="applicantCitizenship"
-                value={form.applicantCitizenship}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="onp-field">
-              <label>निवेदकको फोन नं. *</label>
-              <input
-                type="text"
-                name="applicantPhone"
-                value={form.applicantPhone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
           <div className="onp-submit-row">
             <button

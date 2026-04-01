@@ -5,6 +5,7 @@ import "./BulkLoanRecommendation.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   date: new Date().toISOString().slice(0, 10),
@@ -27,12 +28,19 @@ const initialState = {
 };
 
 export default function BulkLoanRecommendation() {
-  const [form, setForm] = useState(initialState);
+  const [formData, setFormData] = useState(initialState);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((p) => ({ ...p, [name]: value }));
+    setFormData((p) => ({ ...p, [name]: value }));
+  };
+
+  const handlePrint = async () => {
+    const success = await handleSubmit({ preventDefault: () => {} });
+    if (success !== false) {
+      window.print();
+    }
   };
 
   const validate = (f) => {
@@ -43,34 +51,37 @@ export default function BulkLoanRecommendation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submitting) return;
-    const err = validate(form);
+    if (submitting) return false;
+
+    const err = validate(formData);
     if (err) {
       alert(err);
-      return;
+      return false;
     }
+
     setSubmitting(true);
     try {
-      // normalize empty strings -> null
-      const payload = { ...form };
+      const payload = { ...formData };
       Object.keys(payload).forEach((k) => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "/api/forms/bulk-loan-recommendation";
-      const res = await axios.post(url, payload);
+      const res = await axios.post(
+        "/api/forms/bulk-loan-recommendation",
+        payload,
+      );
 
       if (res.status === 201 || res.status === 200) {
         alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
-        setForm(initialState);
+        setFormData(initialState);
+        return true; // ✅ important
       } else {
-        alert("Unexpected response: " + JSON.stringify(res.data));
+        alert("Unexpected response");
+        return false;
       }
     } catch (error) {
-      console.error("Submit error:", error);
-      const msg =
-        error.response?.data?.message || error.message || "Submission failed";
-      alert("त्रुटि: " + msg);
+      alert("त्रुटि");
+      return false;
     } finally {
       setSubmitting(false);
     }
@@ -86,10 +97,7 @@ export default function BulkLoanRecommendation() {
       <div className="blr-paper">
         <div className="blr-letterhead">
           <div className="blr-logo">
-            <img
-              src="/nepallogo.svg"
-              alt="Nepal Emblem"
-            />
+            <img src="/nepallogo.svg" alt="Nepal Emblem" />
           </div>
 
           <div className="blr-head-text">
@@ -109,7 +117,7 @@ export default function BulkLoanRecommendation() {
               <input
                 type="text"
                 name="date"
-                value={form.date}
+                value={formData.date}
                 onChange={handleChange}
                 className="blr-small-input"
               />
@@ -125,7 +133,7 @@ export default function BulkLoanRecommendation() {
               <input
                 type="text"
                 name="patraSankhya"
-                value={form.patraSankhya}
+                value={formData.patraSankhya}
                 onChange={handleChange}
               />
             </div>
@@ -134,7 +142,7 @@ export default function BulkLoanRecommendation() {
               <input
                 type="text"
                 name="chalanNo"
-                value={form.chalanNo}
+                value={formData.chalanNo}
                 onChange={handleChange}
               />
             </div>
@@ -146,7 +154,7 @@ export default function BulkLoanRecommendation() {
               type="text"
               name="toName"
               className="blr-long-input"
-              value={form.toName}
+              value={formData.toName}
               onChange={handleChange}
             />
             <span>ज्यु,</span>
@@ -155,7 +163,7 @@ export default function BulkLoanRecommendation() {
               type="text"
               name="toSecondLine"
               className="blr-long-input blr-to-second"
-              value={form.toSecondLine}
+              value={formData.toSecondLine}
               onChange={handleChange}
             />
           </div>
@@ -174,7 +182,7 @@ export default function BulkLoanRecommendation() {
               type="text"
               name="wardNo"
               className="blr-tiny-input"
-              value={form.wardNo}
+              value={formData.wardNo}
               onChange={handleChange}
             />{" "}
             (साबिक{" "}
@@ -182,7 +190,7 @@ export default function BulkLoanRecommendation() {
               type="text"
               name="prevLocationType"
               className="blr-small-inline"
-              value={form.prevLocationType}
+              value={formData.prevLocationType}
               onChange={handleChange}
             />{" "}
             वडा नं.{" "}
@@ -190,7 +198,7 @@ export default function BulkLoanRecommendation() {
               type="text"
               name="prevLocationWardNo"
               className="blr-tiny-input"
-              value={form.prevLocationWardNo}
+              value={formData.prevLocationWardNo}
               onChange={handleChange}
             />
             ) मा कार्यलय स्थापना गरी आफ्नो क्षेत्रवासीहरुले सहकारी मार्फत ऋण
@@ -199,7 +207,7 @@ export default function BulkLoanRecommendation() {
               type="text"
               name="cooperativeName"
               className="blr-medium-input"
-              value={form.cooperativeName}
+              value={formData.cooperativeName}
               onChange={handleChange}
             />{" "}
             सहकारी संस्थाले यस वडा कार्यालयमा निवेदन पेश गरेको हुँदा यस
@@ -209,7 +217,7 @@ export default function BulkLoanRecommendation() {
               type="text"
               name="governmentAgency"
               className="blr-medium-input"
-              value={form.governmentAgency}
+              value={formData.governmentAgency}
               onChange={handleChange}
             />{" "}
             बाट थोक कर्जा प्राप्त गर्नसकिने व्यवस्था मिलाइदिनुहुन सिफारिससाथ
@@ -224,13 +232,13 @@ export default function BulkLoanRecommendation() {
               className="blr-sign-name"
               name="signerName"
               placeholder="नाम, थर"
-              value={form.signerName}
+              value={formData.signerName}
               onChange={handleChange}
             />
             <select
               className="blr-post-select"
               name="signerDesignation"
-              value={form.signerDesignation}
+              value={formData.signerDesignation}
               onChange={handleChange}
             >
               <option value="">पद छनौट गर्नुहोस्</option>
@@ -240,50 +248,13 @@ export default function BulkLoanRecommendation() {
             </select>
           </div>
 
-          <h3 className="blr-section-title">निवेदकको विवरण</h3>
-          <div className="blr-applicant-box">
-            <div className="blr-field">
-              <label>निवेदकको नाम *</label>
-              <input
-                type="text"
-                name="applicantName"
-                value={form.applicantName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="blr-field">
-              <label>निवेदकको ठेगाना *</label>
-              <input
-                type="text"
-                name="applicantAddress"
-                value={form.applicantAddress}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="blr-field">
-              <label>निवेदकको नागरिकता नं. *</label>
-              <input
-                type="text"
-                name="applicantCitizenship"
-                value={form.applicantCitizenship}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="blr-field">
-              <label>निवेदकको फोन नं. *</label>
-              <input
-                type="text"
-                name="applicantPhone"
-                value={form.applicantPhone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
           <div className="blr-submit-row">
             <button
               className="blr-submit-btn"
-              type="submit"
+              type="button"
+              onClick={handlePrint}
               disabled={submitting}
             >
               {submitting
@@ -294,7 +265,9 @@ export default function BulkLoanRecommendation() {
         </form>
       </div>
 
-      <footer className="blr-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+      <footer className="blr-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </footer>
     </div>
   );
 }
