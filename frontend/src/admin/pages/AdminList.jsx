@@ -134,6 +134,8 @@ const AdminList = () => {
                   )}
                 </td>
                 <td className="p-3 text-right space-x-2">
+
+                  {/* Change Password — always visible */}
                   <button
                     onClick={() => setSelectedAdmin(a)}
                     className="px-3 py-1 text-xs border border-gray-400 rounded hover:bg-gray-100"
@@ -141,39 +143,51 @@ const AdminList = () => {
                     Change Password
                   </button>
 
-                  {a.role === "ADMIN" ? (
+                  {/* Promote/Demote — hidden for self */}
+                  {a.id !== user.id && (
+                    <>
+                      {a.role === "ADMIN" ? (
+                        <button
+                          onClick={() => promote(a.id)}
+                          className="px-3 py-1 text-xs border border-blue-400 text-blue-600 rounded hover:bg-blue-50"
+                        >
+                          Promote
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => demote(a.id)}
+                          className="px-3 py-1 text-xs border border-yellow-400 text-yellow-600 rounded hover:bg-yellow-50"
+                        >
+                          Demote
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                  {/* Freeze — hidden for SUPERADMIN */}
+                  {a.role !== "SUPERADMIN" && (
                     <button
-                      onClick={() => promote(a.id)}
-                      className="px-3 py-1 text-xs border border-blue-400 text-blue-600 rounded hover:bg-blue-50"
+                      onClick={() => toggleStatus(a.id, a.is_active)}
+                      className={`px-3 py-1 text-xs rounded ${
+                        a.is_active
+                          ? "bg-red-100 text-red-600 hover:bg-red-200"
+                          : "bg-green-100 text-green-600 hover:bg-green-200"
+                      }`}
                     >
-                      Promote
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => demote(a.id)}
-                      className="px-3 py-1 text-xs border border-yellow-400 text-yellow-600 rounded hover:bg-yellow-50"
-                    >
-                      Demote
+                      {a.is_active ? "Freeze" : "Activate"}
                     </button>
                   )}
 
-                  <button
-                    onClick={() => toggleStatus(a.id, a.is_active)}
-                    className={`px-3 py-1 text-xs rounded ${
-                      a.is_active
-                        ? "bg-red-100 text-red-600 hover:bg-red-200"
-                        : "bg-green-100 text-green-600 hover:bg-green-200"
-                    }`}
-                  >
-                    {a.is_active ? "Freeze" : "Activate"}
-                  </button>
+                  {/* Delete — hidden for self */}
+                  {a.id !== user.id && (
+                    <button
+                      onClick={() => deleteAdmin(a.id)}
+                      className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  )}
 
-                  <button
-                    onClick={() => deleteAdmin(a.id)}
-                    className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
                 </td>
               </tr>
             ))}
