@@ -84,7 +84,7 @@ router.post("/create-admin", adminAuth(["SUPERADMIN"]), (req, res) => {
 // ---------------- GET ALL ADMINS (SUPERADMIN ONLY) ----------------
 router.get("/all-admins", adminAuth(["SUPERADMIN"]), (req, res) => {
   pool.query(
-    "SELECT id, name, email, phone, ward_number, position, username, role FROM admins",
+    "SELECT id, name, email, phone, ward_number, position, username, role, is_active FROM admins",
     (err, results) => {
       if (err)
         return res.status(500).json({ success: false, message: "DB error" });
