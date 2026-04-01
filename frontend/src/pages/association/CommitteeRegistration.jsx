@@ -5,6 +5,7 @@ import "./CommitteeRegistration.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   date: new Date().toISOString().slice(0, 10),
@@ -250,45 +251,7 @@ export default function ComitteeRegistration() {
             </select>
           </div>
 
-          <h3 className="cr-section-title">निवेदकको विवरण</h3>
-          <div className="cr-applicant-box">
-            <div className="cr-field">
-              <label>निवेदकको नाम *</label>
-              <input
-                type="text"
-                name="applicantName"
-                value={form.applicantName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="cr-field">
-              <label>निवेदकको ठेगाना *</label>
-              <input
-                type="text"
-                name="applicantAddress"
-                value={form.applicantAddress}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="cr-field">
-              <label>निवेदकको नागरिकता नं. *</label>
-              <input
-                type="text"
-                name="applicantCitizenship"
-                value={form.applicantCitizenship}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="cr-field">
-              <label>निवेदकको फोन नं. *</label>
-              <input
-                type="text"
-                name="applicantPhone"
-                value={form.applicantPhone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
           <div className="cr-submit-row">
             <button

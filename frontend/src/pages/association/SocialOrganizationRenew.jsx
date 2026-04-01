@@ -5,6 +5,7 @@ import "./SocialOrganizationRenew.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 function SocialOrganizationRenew() {
   const [form, setForm] = useState({
@@ -52,7 +53,7 @@ function SocialOrganizationRenew() {
 
       const res = await axios.post(
         "/api/forms/social-organization-renew",
-        payload
+        payload,
       );
       if (res.status === 200 || res.status === 201) {
         alert("Saved successfully. ID: " + (res.data?.id ?? "OK"));
@@ -155,7 +156,8 @@ function SocialOrganizationRenew() {
         </div>
 
         <p className="sor-body">
-          उपर्युक्त सम्बन्धमा <span className="sor-bold">{MUNICIPALITY.name}</span> वडा नं.
+          उपर्युक्त सम्बन्धमा{" "}
+          <span className="sor-bold">{MUNICIPALITY.name}</span> वडा नं.
           <input
             name="wardNo"
             className="sor-tiny-input"
@@ -215,41 +217,7 @@ function SocialOrganizationRenew() {
           </select>
         </div>
 
-        <h3 className="sor-section-title">निवेदकको विवरण</h3>
-        <div className="sor-applicant-box">
-          <div className="sor-field">
-            <label>निवेदकको नाम *</label>
-            <input
-              name="applicantName"
-              value={form.applicantName}
-              onChange={onChange}
-            />
-          </div>
-          <div className="sor-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input
-              name="applicantAddress"
-              value={form.applicantAddress}
-              onChange={onChange}
-            />
-          </div>
-          <div className="sor-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input
-              name="applicantCitizenship"
-              value={form.applicantCitizenship}
-              onChange={onChange}
-            />
-          </div>
-          <div className="sor-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input
-              name="applicantPhone"
-              value={form.applicantPhone}
-              onChange={onChange}
-            />
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
         <div className="sor-submit-row">
           <button
@@ -263,7 +231,9 @@ function SocialOrganizationRenew() {
       </form>
 
       <footer className="sor-footer">
-        <footer className="sor-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+        <footer className="sor-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </footer>
       </footer>
     </div>
   );

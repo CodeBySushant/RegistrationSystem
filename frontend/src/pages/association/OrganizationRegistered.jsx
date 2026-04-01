@@ -5,6 +5,7 @@ import "./OrganizationRegistered.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   localityType: "गाउँपालिका",
@@ -83,10 +84,7 @@ export default function OrganizationRegistered() {
       <div className="orgreg-paper">
         <div className="orgreg-letterhead">
           <div className="orgreg-logo">
-            <img
-              src="/nepallogo.svg"
-              alt="Nepal Emblem"
-            />
+            <img src="/nepallogo.svg" alt="Nepal Emblem" />
           </div>
           <div className="orgreg-head-text">
             <div className="orgreg-head-main">{MUNICIPALITY.name}</div>
@@ -232,45 +230,7 @@ export default function OrganizationRegistered() {
             </select>
           </div>
 
-          <h3 className="orgreg-section-title">निवेदकको विवरण</h3>
-          <div className="orgreg-applicant-box">
-            <div className="orgreg-field">
-              <label>निवेदकको नाम *</label>
-              <input
-                type="text"
-                name="applicantName"
-                value={form.applicantName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="orgreg-field">
-              <label>निवेदकको ठेगाना *</label>
-              <input
-                type="text"
-                name="applicantAddress"
-                value={form.applicantAddress}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="orgreg-field">
-              <label>निवेदकको नागरिकता नं. *</label>
-              <input
-                type="text"
-                name="applicantCitizenship"
-                value={form.applicantCitizenship}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="orgreg-field">
-              <label>निवेदकको फोन नं. *</label>
-              <input
-                type="text"
-                name="applicantPhone"
-                value={form.applicantPhone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
           <div className="orgreg-submit-row">
             <button
@@ -286,7 +246,9 @@ export default function OrganizationRegistered() {
         </form>
       </div>
 
-      <footer className="orgreg-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+      <footer className="orgreg-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </footer>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import "./NewOrganizationRegistration.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   date: new Date().toISOString().slice(0, 10),
@@ -220,45 +221,7 @@ export default function NewOrganizationRegistration() {
             </select>
           </div>
 
-          <h3 className="nor-section-title">निवेदकको विवरण</h3>
-          <div className="nor-applicant-box">
-            <div className="nor-field">
-              <label>निवेदकको नाम *</label>
-              <input
-                type="text"
-                name="applicantName"
-                value={form.applicantName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="nor-field">
-              <label>निवेदकको ठेगाना *</label>
-              <input
-                type="text"
-                name="applicantAddress"
-                value={form.applicantAddress}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="nor-field">
-              <label>निवेदकको नागरिकता नं. *</label>
-              <input
-                type="text"
-                name="applicantCitizenship"
-                value={form.applicantCitizenship}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="nor-field">
-              <label>निवेदकको फोन नं. *</label>
-              <input
-                type="text"
-                name="applicantPhone"
-                value={form.applicantPhone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
           <div className="nor-submit-row">
             <button
