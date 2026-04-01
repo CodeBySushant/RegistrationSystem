@@ -5014,12 +5014,12 @@ VALUES
   'superadmin'
 );
 
+-- Fix Admin Login Issue
+ALTER TABLE admins MODIFY COLUMN role ENUM('SUPERADMIN', 'ADMIN') DEFAULT 'ADMIN';
+UPDATE admins SET role = 'SUPERADMIN' WHERE role = 'superadmin';
+UPDATE admins SET role = 'ADMIN' WHERE role = 'admin';
+
 SELECT username, role FROM admins;
-
-
-
-
-
 
 INSERT INTO BusinessIndustryRegistrationForm (full_name) VALUES ("Test 1");
 INSERT INTO BusinessIndustryRegistrationNewList (businessName) VALUES ("Biz 1");
