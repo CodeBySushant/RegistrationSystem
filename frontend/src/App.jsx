@@ -4,7 +4,6 @@ import { Search, Menu, User } from "lucide-react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { MUNICIPALITY } from "./config/municipalityConfig";
 
-import { AdminAuthProvider } from "./admin/context/AdminAuthContext";
 import AdminProtectedRoute from "./admin/components/AdminProtectedRoute";
 
 import AdminLayout from "./admin/AdminLayout";

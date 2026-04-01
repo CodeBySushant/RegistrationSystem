@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAdminAuth } from "./context/AdminAuthContext";
+import { useAuth } from "../context/AuthContext";
 import { ShieldCheck } from "lucide-react";
 
 const AdminLogin = () => {
-  const { login } = useAdminAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ username: "", password: "" });

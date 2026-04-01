@@ -1,8 +1,8 @@
 import { Navigate } from "react-router-dom";
-import { useAdminAuth } from "../context/AdminAuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminProtectedRoute = ({ children }) => {
-  const { token, admin } = useAdminAuth();
+  const { token, admin } = useAuth();
 
   // Not logged in as admin
   if (!token || !admin) {

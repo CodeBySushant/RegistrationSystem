@@ -1,16 +1,17 @@
+// context/AuthContext.js
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
-const API_BASE = "http://localhost:5000"; // adjust if needed
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
-  // 🔁 Restore session on refresh
+  // Restore session on refresh
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
@@ -22,24 +23,19 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ REAL LOGIN (BACKEND VERIFIED)
   const login = async (username, password) => {
     try {
       const res = await fetch(`${API_BASE}/api/admin/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || "Login failed");
-      }
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
-      // 🔐 Allow ONLY ADMIN & SUPERADMIN
+      // Allow ONLY ADMIN & SUPERADMIN
       if (!["ADMIN", "SUPERADMIN"].includes(data.admin.role)) {
         throw new Error("Unauthorized role");
       }
@@ -61,16 +57,13 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
     setIsAuthenticated(false);
     setUser(null);
     setToken(null);
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, user, token, login, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
