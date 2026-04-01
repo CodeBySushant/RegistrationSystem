@@ -2,8 +2,8 @@ import { useState } from "react";
 import ChangeAdminPasswordModal from "./ChangeAdminPasswordModal";
 
 const admins = [
-  { _id: "1", name: "Ram", username: "ram", ward: 1, role: "admin", isActive: true },
-  { _id: "2", name: "Shyam", username: "shyam", ward: 2, role: "super_admin", isActive: true },
+  { _id: "1", name: "Ram", username: "ram", ward: 1, role: "ADMIN", isActive: true },
+  { _id: "2", name: "Shyam", username: "shyam", ward: 2, role: "SUPERADMIN", isActive: true },
 ];
 
 const AdminTable = () => {
