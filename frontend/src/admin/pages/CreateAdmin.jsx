@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useAdminAuth } from "../context/AdminAuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const CreateAdmin = () => {
-  const { token, admin } = useAdminAuth();
+  const { token, admin } = useAuth();
   const [form, setForm] = useState({
     name: "",
     email: "",

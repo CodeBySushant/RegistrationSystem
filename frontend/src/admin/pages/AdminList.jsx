@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useAdminAuth } from "../context/AdminAuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminList = () => {
-  const { token, admin } = useAdminAuth();
+  const { token, admin } = useAuth();
   const [admins, setAdmins] = useState([]);
 
   const fetchAdmins = async () => {

@@ -1,8 +1,8 @@
 import { Link, Outlet } from "react-router-dom";
-import { useAdminAuth } from "./context/AdminAuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const AdminLayout = () => {
-  const { admin, logout } = useAdminAuth();
+  const { user: admin, logout } = useAuth(); 
 
   return (
     <div className="min-h-screen flex">
