@@ -102,4 +102,41 @@ router.delete("/delete/:id", adminAuth(["SUPERADMIN"]), (req, res) => {
   });
 });
 
+// ---------------- CHANGE PASSWORD ----------------
+router.post("/change-password/:id", adminAuth(["SUPERADMIN"]), async (req, res) => {
+  const { password } = req.body;
+  if (!password) return res.status(400).json({ success: false, message: "Password required" });
+
+  const hashed = await bcrypt.hash(password, 10);
+  pool.query("UPDATE admins SET password = ? WHERE id = ?", [hashed, req.params.id], (err) => {
+    if (err) return res.status(500).json({ success: false, message: "DB error" });
+    res.json({ success: true, message: "Password updated" });
+  });
+});
+
+// ---------------- PROMOTE (ADMIN → SUPERADMIN) ----------------
+router.patch("/promote/:id", adminAuth(["SUPERADMIN"]), (req, res) => {
+  pool.query("UPDATE admins SET role = 'SUPERADMIN' WHERE id = ?", [req.params.id], (err) => {
+    if (err) return res.status(500).json({ success: false, message: "DB error" });
+    res.json({ success: true, message: "Admin promoted to SUPERADMIN" });
+  });
+});
+
+// ---------------- DEMOTE (SUPERADMIN → ADMIN) ----------------
+router.patch("/demote/:id", adminAuth(["SUPERADMIN"]), (req, res) => {
+  pool.query("UPDATE admins SET role = 'ADMIN' WHERE id = ?", [req.params.id], (err) => {
+    if (err) return res.status(500).json({ success: false, message: "DB error" });
+    res.json({ success: true, message: "SUPERADMIN demoted to Admin" });
+  });
+});
+
+// ---------------- FREEZE / ACTIVATE ----------------
+router.patch("/status/:id", adminAuth(["SUPERADMIN"]), (req, res) => {
+  const { isActive } = req.body;
+  pool.query("UPDATE admins SET is_active = ? WHERE id = ?", [isActive, req.params.id], (err) => {
+    if (err) return res.status(500).json({ success: false, message: "DB error" });
+    res.json({ success: true });
+  });
+});
+
 module.exports = router;
