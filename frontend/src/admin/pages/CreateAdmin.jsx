@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
 const CreateAdmin = () => {
-  const { token, admin } = useAuth();
+  const { token, user } = useAuth();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -45,7 +45,7 @@ const CreateAdmin = () => {
     }
   };
 
-  if (admin?.role !== "SUPERADMIN") {
+  if (user?.role !== "SUPERADMIN") {
     return <h1 className="text-red-600 text-xl">Access Denied</h1>;
   }
 

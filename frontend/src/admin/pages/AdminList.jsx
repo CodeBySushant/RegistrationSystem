@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
 const AdminList = () => {
-  const { token, admin } = useAuth();
+  const { token, user } = useAuth();
   const [admins, setAdmins] = useState([]);
 
   const fetchAdmins = async () => {
@@ -39,7 +39,7 @@ const AdminList = () => {
     fetchAdmins();
   }, []);
 
-  if (admin?.role !== "SUPERADMIN") {
+  if (user?.role !== "SUPERADMIN") {
     return <h1 className="text-red-600 text-xl">Access Denied</h1>;
   }
 
