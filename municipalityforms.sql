@@ -5019,6 +5019,9 @@ ALTER TABLE admins MODIFY COLUMN role ENUM('SUPERADMIN', 'ADMIN') DEFAULT 'ADMIN
 UPDATE admins SET role = 'SUPERADMIN' WHERE role = 'superadmin';
 UPDATE admins SET role = 'ADMIN' WHERE role = 'admin';
 
+ALTER TABLE admins ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+UPDATE admins SET is_active = TRUE;
+
 SELECT username, role FROM admins;
 
 
