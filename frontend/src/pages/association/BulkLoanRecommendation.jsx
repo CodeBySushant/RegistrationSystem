@@ -67,7 +67,7 @@ export default function BulkLoanRecommendation() {
       });
 
       const res = await axios.post(
-        "/api/forms/bulk-loan-recommendation",
+        "http://localhost:5000/api/forms/bulk-loan-recommendation",
         payload,
       );
 
@@ -80,7 +80,8 @@ export default function BulkLoanRecommendation() {
         return false;
       }
     } catch (error) {
-      alert("त्रुटि");
+      console.error(error); // VERY IMPORTANT
+      alert(error.response?.data?.message || "त्रुटि");
       return false;
     } finally {
       setSubmitting(false);
