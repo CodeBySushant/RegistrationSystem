@@ -43,14 +43,18 @@ export default function BulkLoanRecommendation() {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    submitForm();
+  };
+
   const validate = (f) => {
     if (!f.applicantName?.trim()) return "निवेदकको नाम आवश्यक छ";
     if (!f.signerName?.trim()) return "साइनेरको नाम आवश्यक छ";
     return null;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const submitForm = async () => {
     if (submitting) return false;
 
     const err = validate(formData);
@@ -71,16 +75,14 @@ export default function BulkLoanRecommendation() {
         payload,
       );
 
-      if (res.status === 201 || res.status === 200) {
+      if (res.status === 200 || res.status === 201) {
         alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
         setFormData(initialState);
-        return true; // ✅ important
-      } else {
-        alert("Unexpected response");
-        return false;
+        return true;
       }
+      return false;
     } catch (error) {
-      console.error(error); // VERY IMPORTANT
+      console.error(error);
       alert(error.response?.data?.message || "त्रुटि");
       return false;
     } finally {

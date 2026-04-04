@@ -108,7 +108,7 @@ import PropertyVerificationRecommendation from "./pages/house-land/PropertyVerif
 // pages/association
 import BulkLoanRecommendation from "./pages/association/BulkLoanRecommendation.jsx";
 import ClubRegistration from "./pages/association/ClubRegistration.jsx";
-import ComitteeRegistration from "./pages/association/CommitteeRegistration.jsx";
+import CommitteeRegistration from "./pages/association/CommitteeRegistration.jsx";
 import NewBankAccountRecommendation from "./pages/association/NewBankAccountRecommendation.jsx";
 import NewOrganizationRegistration from "./pages/association/NewOrganizationRegistration.jsx";
 import NonProfitOrgRegCertificate from "./pages/association/NonProfitOrgRegCertificate.jsx";

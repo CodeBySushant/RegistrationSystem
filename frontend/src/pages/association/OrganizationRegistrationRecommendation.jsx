@@ -41,7 +41,7 @@ function OrganizationRegistrationRecommendation() {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const onChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((p) => ({ ...p, [name]: value }));
   };
@@ -58,7 +58,7 @@ function OrganizationRegistrationRecommendation() {
       });
 
       const res = await axios.post(
-        "/api/forms/organization-registration-recommendation",
+        "http://localhost:5000/api/forms/organization-registration-recommendation",
         payload,
       );
       if (res.status === 200 || res.status === 201) {
@@ -94,7 +94,7 @@ function OrganizationRegistrationRecommendation() {
                 type="text"
                 name="date"
                 value={form.date}
-                onChange={onChange}
+                onChange={handleChange}
                 className="orr-small-input"
               />
             </div>
@@ -108,7 +108,7 @@ function OrganizationRegistrationRecommendation() {
             <input
               name="refLetterNo"
               value={form.refLetterNo}
-              onChange={onChange}
+              onChange={handleChange}
             />
           </div>
           <div className="orr-ref-block">
@@ -116,7 +116,7 @@ function OrganizationRegistrationRecommendation() {
             <input
               name="chalaniNo"
               value={form.chalaniNo}
-              onChange={onChange}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -127,7 +127,7 @@ function OrganizationRegistrationRecommendation() {
             name="toOffice"
             className="orr-long-input"
             value={form.toOffice}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>ज्यु,</span>
           <br />
@@ -136,7 +136,7 @@ function OrganizationRegistrationRecommendation() {
             className="orr-long-input orr-to-second"
             placeholder="उद्योग शाखा,"
             value={form.toOfficeLine2}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <br />
           <input
@@ -144,7 +144,7 @@ function OrganizationRegistrationRecommendation() {
             className="orr-long-input orr-to-second"
             placeholder="नागार्जुन नगरपालिका, काठमाडौं"
             value={form.toOfficeLine3}
-            onChange={onChange}
+            onChange={handleChange}
           />
         </div>
 
@@ -154,55 +154,55 @@ function OrganizationRegistrationRecommendation() {
         </div>
 
         <p className="orr-body">
-          उपर्युक्त सम्बन्धमा जिल्ला {Municipality.district}{" "}
+          उपर्युक्त सम्बन्धमा जिल्ला {MUNICIPALITY.englishDistrict}{" "}
           <span className="orr-bold">{MUNICIPALITY.name}</span> वडा नं.
           <input
             className="orr-tiny-input"
             name="wardNo"
             value={form.wardNo}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           साबिक
           <input
             className="orr-small-inline"
             name="sabikWardNo"
             value={form.sabikWardNo}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           वडा नं.
           <input
             className="orr-tiny-input"
             name="sabikWardNo2"
             value={form.sabikWardNo2}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           मा बस्ने
           <input
             className="orr-medium-input"
-            name="applicantName"
+            name="applicant_name"
             value={form.applicant_name}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           ले हाल
           <input
             className="orr-medium-input"
             name="industryName"
             value={form.industryName}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           वडा नं.
           <input
             className="orr-tiny-input"
             name="locationWard"
             value={form.locationWard}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           मा बसेर
           <input
             className="orr-medium-input"
             name="industryAddress"
             value={form.industryAddress}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           नामक उद्योग / व्यवसाय स्थापना गर्न चाहेकोले ...
         </p>
@@ -214,21 +214,21 @@ function OrganizationRegistrationRecommendation() {
             className="orr-small-inline"
             name="locationMunicipality"
             value={form.locationMunicipality}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>वडा नं. :</span>
           <input
             className="orr-tiny-input"
             name="locationWard"
             value={form.locationWard}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>टोल/स्थान :</span>
           <input
             className="orr-medium-input"
             name="locationTole"
             value={form.locationTole}
-            onChange={onChange}
+            onChange={handleChange}
           />
         </div>
 
@@ -238,28 +238,28 @@ function OrganizationRegistrationRecommendation() {
             className="orr-small-inline"
             name="kittaNo"
             value={form.kittaNo}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>क्षेत्रफल :</span>
           <input
             className="orr-small-inline"
             name="area"
             value={form.area}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>सीमा पूर्व :</span>
           <input
             className="orr-medium-input"
             name="boundaryEast"
             value={form.boundaryEast}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>पश्चिम :</span>
           <input
             className="orr-medium-input"
             name="boundaryWest"
             value={form.boundaryWest}
-            onChange={onChange}
+            onChange={handleChange}
           />
         </div>
 
@@ -269,14 +269,14 @@ function OrganizationRegistrationRecommendation() {
             className="orr-medium-input"
             name="boundarySouth"
             value={form.boundarySouth}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>उत्तर :</span>
           <input
             className="orr-medium-input"
             name="boundaryNorth"
             value={form.boundaryNorth}
-            onChange={onChange}
+            onChange={handleChange}
           />
         </div>
 
@@ -287,14 +287,14 @@ function OrganizationRegistrationRecommendation() {
             className="orr-sign-name"
             name="signerName"
             value={form.signerName}
-            onChange={onChange}
+            onChange={handleChange}
             placeholder="नाम, थर"
           />
           <select
             className="orr-post-select"
             name="signerDesignation"
             value={form.signerDesignation}
-            onChange={onChange}
+            onChange={handleChange}
           >
             <option>पद छनौट गर्नुहोस्</option>
             <option>अध्यक्ष</option>
@@ -303,7 +303,7 @@ function OrganizationRegistrationRecommendation() {
           </select>
         </div>
 
-        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
         <div className="orr-submit-row">
           <button
@@ -316,8 +316,8 @@ function OrganizationRegistrationRecommendation() {
         </div>
       </form>
 
-      <footer className="orr-footer">
-        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}:
+      <footer className="nprc-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

@@ -84,7 +84,7 @@ export default function OrganizationRegistrationPunishment() {
       // attach rows as JSON string
       payload.persons = JSON.stringify(rows);
 
-      const url = "/api/forms/organization-registration-punishment";
+      const url = "http://localhost:5000/api/forms/organization-registration-punishment";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
@@ -116,10 +116,7 @@ export default function OrganizationRegistrationPunishment() {
       <div className="orp-paper">
         <div className="orp-letterhead">
           <div className="orp-logo">
-            <img
-              src="./nepallogo.svg"
-              alt="Emblem"
-            />
+            <img src="./nepallogo.svg" alt="Emblem" />
           </div>
 
           <div className="orp-head-text">
@@ -309,7 +306,7 @@ export default function OrganizationRegistrationPunishment() {
             </select>
           </div>
 
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="orp-submit-row">
             <button
@@ -325,8 +322,8 @@ export default function OrganizationRegistrationPunishment() {
         </form>
       </div>
 
-      <footer className="orp-footer">
-        <footer className="orp-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+      <footer className="nprc-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

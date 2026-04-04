@@ -29,7 +29,7 @@ function SocialOrganizationRenew() {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const onChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((p) => ({ ...p, [name]: value }));
   };
@@ -52,14 +52,14 @@ function SocialOrganizationRenew() {
       });
 
       const res = await axios.post(
-        "/api/forms/social-organization-renew",
+        "http://localhost:5000/api/forms/social-organization-renew",
         payload,
       );
       if (res.status === 200 || res.status === 201) {
         alert("Saved successfully. ID: " + (res.data?.id ?? "OK"));
         // reset (optional)
         setForm({
-          date: "२०८२.०७.१५",
+          date: new Date().toISOString().slice(0, 10),
           refLetterNo: "",
           chalaniNo: "",
           toOffice: "",
@@ -105,7 +105,7 @@ function SocialOrganizationRenew() {
               <input
                 name="date"
                 value={form.date}
-                onChange={onChange}
+                onChange={handleChange}
                 className="sor-small-input"
               />
             </div>
@@ -119,7 +119,7 @@ function SocialOrganizationRenew() {
             <input
               name="refLetterNo"
               value={form.refLetterNo}
-              onChange={onChange}
+              onChange={handleChange}
             />
           </div>
           <div className="sor-ref-block">
@@ -127,7 +127,7 @@ function SocialOrganizationRenew() {
             <input
               name="chalaniNo"
               value={form.chalaniNo}
-              onChange={onChange}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -138,7 +138,7 @@ function SocialOrganizationRenew() {
             name="toOffice"
             className="sor-long-input"
             value={form.toOffice}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>जिल्ला प्रशासन कार्यालय,</span>
           <br />
@@ -146,7 +146,7 @@ function SocialOrganizationRenew() {
             name="toOfficeCity"
             className="sor-long-input sor-to-second"
             value={form.toOfficeCity}
-            onChange={onChange}
+            onChange={handleChange}
           />
         </div>
 
@@ -162,20 +162,20 @@ function SocialOrganizationRenew() {
             name="wardNo"
             className="sor-tiny-input"
             value={form.wardNo}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           (साबिक
           <input
             name="sabikWardNo"
             className="sor-small-inline"
             value={form.sabikWardNo}
-            onChange={onChange}
+            onChange={handleChange}
           />
           )
           <select
             name="palikaType"
             value={form.palikaType}
-            onChange={onChange}
+            onChange={handleChange}
             className="sor-select"
           >
             <option>गाउँपालिका</option>
@@ -186,7 +186,7 @@ function SocialOrganizationRenew() {
             className="sor-medium-input"
             placeholder="संस्थाको नाम"
             value={form.orgName}
-            onChange={onChange}
+            onChange={handleChange}
             required
           />
           नामक सामाजिक संस्था नवीकरणको सिफारिसको लागि यस कार्यलयमा प्राप्त
@@ -202,13 +202,13 @@ function SocialOrganizationRenew() {
             className="sor-sign-name"
             placeholder="नाम, थर"
             value={form.signerName}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <select
             name="signerDesignation"
             className="sor-post-select"
             value={form.signerDesignation}
-            onChange={onChange}
+            onChange={handleChange}
           >
             <option value="">पद छनौट गर्नुहोस्</option>
             <option>अध्यक्ष</option>
@@ -217,7 +217,7 @@ function SocialOrganizationRenew() {
           </select>
         </div>
 
-        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
         <div className="sor-submit-row">
           <button
@@ -230,10 +230,8 @@ function SocialOrganizationRenew() {
         </div>
       </form>
 
-      <footer className="sor-footer">
-        <footer className="sor-footer">
-          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
-        </footer>
+      <footer className="nprc-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

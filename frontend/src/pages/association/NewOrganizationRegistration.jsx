@@ -59,7 +59,7 @@ export default function NewOrganizationRegistration() {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "/api/forms/new-organization-registration";
+      const url = "http://localhost:5000/api/forms/new-organization-registration";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
@@ -88,10 +88,7 @@ export default function NewOrganizationRegistration() {
       <div className="nor-paper">
         <div className="nor-letterhead">
           <div className="nor-logo">
-            <img
-              src="/nepallogo.svg"
-              alt="Nepal Emblem"
-            />
+            <img src="/nepallogo.svg" alt="Nepal Emblem" />
           </div>
 
           <div className="nor-head-text">
@@ -221,7 +218,7 @@ export default function NewOrganizationRegistration() {
             </select>
           </div>
 
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="nor-submit-row">
             <button
@@ -238,7 +235,7 @@ export default function NewOrganizationRegistration() {
       </div>
 
       <footer className="nor-footer">
-        <footer className="nor-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

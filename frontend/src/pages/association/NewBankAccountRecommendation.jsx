@@ -80,7 +80,7 @@ export default function NewBankAccountRecommendation() {
       // send officials as JSON string (backend can parse JSON)
       payload.officials = JSON.stringify(payload.officials);
 
-      const url = "/api/forms/new-bank-account-recommendation";
+      const url = "http://localhost:5000/api/forms/new-bank-account-recommendation";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
@@ -109,10 +109,7 @@ export default function NewBankAccountRecommendation() {
       <div className="nbcr-paper">
         <div className="nbcr-letterhead">
           <div className="nbcr-logo">
-            <img
-              src="/nepallogo.svg"
-              alt="Nepal Emblem"
-            />
+            <img src="/nepallogo.svg" alt="Nepal Emblem" />
           </div>
 
           <div className="nbcr-head-text">
@@ -311,7 +308,7 @@ export default function NewBankAccountRecommendation() {
             </select>
           </div>
 
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="nbcr-submit-row">
             <button
@@ -328,7 +325,7 @@ export default function NewBankAccountRecommendation() {
       </div>
 
       <footer className="nbcr-footer">
-        <footer className="nbcr-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

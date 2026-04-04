@@ -29,7 +29,7 @@ function OrganizationRenewal() {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const onChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((p) => ({ ...p, [name]: value }));
   };
@@ -44,7 +44,7 @@ function OrganizationRenewal() {
         if (payload[k] === "") payload[k] = null;
       });
       const res = await axios.post(
-        "/api/forms/organization-renew-recommendation",
+        "http://localhost:5000/api/forms/organization-renew-recommendation",
         payload,
       );
       if (res.status === 200 || res.status === 201) {
@@ -80,7 +80,7 @@ function OrganizationRenewal() {
                 type="text"
                 name="date"
                 value={form.date}
-                onChange={onChange}
+                onChange={handleChange}
                 className="org-small-input"
               />
             </div>
@@ -94,7 +94,7 @@ function OrganizationRenewal() {
             <input
               name="refLetterNo"
               value={form.refLetterNo}
-              onChange={onChange}
+              onChange={handleChange}
             />
           </div>
           <div className="org-ref-block">
@@ -102,7 +102,7 @@ function OrganizationRenewal() {
             <input
               name="chalaniNo"
               value={form.chalaniNo}
-              onChange={onChange}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -113,7 +113,7 @@ function OrganizationRenewal() {
             name="toOffice"
             className="org-long-input"
             value={form.toOffice}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <span>ज्यु</span>
           <br />
@@ -121,7 +121,7 @@ function OrganizationRenewal() {
             name="toOfficeLine2"
             className="org-long-input org-to-second"
             value={form.toOfficeLine2}
-            onChange={onChange}
+            onChange={handleChange}
           />
         </div>
 
@@ -138,7 +138,7 @@ function OrganizationRenewal() {
             className="org-tiny-input"
             name="wardNo"
             value={form.wardNo}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           (साबिक
           <input
@@ -146,7 +146,7 @@ function OrganizationRenewal() {
             className="org-small-inline"
             name="sabikWardNo"
             value={form.sabikWardNo}
-            onChange={onChange}
+            onChange={handleChange}
           />
           ) वडा नं.
           <input
@@ -154,7 +154,7 @@ function OrganizationRenewal() {
             className="org-tiny-input"
             name="sabikWardNo2"
             value={form.sabikWardNo2}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           मा बस्ने श्री
           <input
@@ -162,7 +162,7 @@ function OrganizationRenewal() {
             className="org-medium-input"
             name="personName"
             value={form.personName}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           को नाममा रहेको
           <input
@@ -170,7 +170,7 @@ function OrganizationRenewal() {
             className="org-medium-input"
             name="orgName"
             value={form.orgName}
-            onChange={onChange}
+            onChange={handleChange}
           />{" "}
           नामक संस्था नवीकरण गर्नुपर्ने भएकोले ...
         </p>
@@ -184,13 +184,13 @@ function OrganizationRenewal() {
             name="signerName"
             placeholder="नाम, थर"
             value={form.signerName}
-            onChange={onChange}
+            onChange={handleChange}
           />
           <select
             className="org-post-select"
             name="signerDesignation"
             value={form.signerDesignation}
-            onChange={onChange}
+            onChange={handleChange}
           >
             <option value="">पद छनौट गर्नुहोस्</option>
             <option>अध्यक्ष</option>
@@ -199,7 +199,7 @@ function OrganizationRenewal() {
           </select>
         </div>
 
-        <ApplicantDetailsNp formData={formData} handleChange={handleChange} /> 
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
         <div className="org-submit-row">
           <button
@@ -212,7 +212,7 @@ function OrganizationRenewal() {
         </div>
       </form>
 
-      <footer className="org-footer">
+      <footer className="nprc-footer">
         © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>

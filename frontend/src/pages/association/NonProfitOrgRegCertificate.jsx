@@ -65,7 +65,7 @@ export default function NonProfitOrgRegCertificate() {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "/api/forms/non-profit-org-registration-certificate";
+      const url = "http://localhost:5000/api/forms/non-profit-org-registration-certificate";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
@@ -358,7 +358,7 @@ export default function NonProfitOrgRegCertificate() {
             </select>
           </div>
 
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="nprc-submit-row">
             <button
@@ -375,9 +375,7 @@ export default function NonProfitOrgRegCertificate() {
       </div>
 
       <footer className="nprc-footer">
-        <footer className="nprc-footer">
-          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
-        </footer>
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );
