@@ -62,7 +62,7 @@ export default function OldNonProfitOrgCertificate() {
       Object.keys(payload).forEach((k) => {
         if (payload[k] === "") payload[k] = null;
       });
-      const url = "/api/forms/old-non-profit-org-certificate";
+      const url = "http://localhost:5000/api/forms/old-non-profit-org-certificate";
       const res = await axios.post(url, payload);
       if (res.status === 201 || res.status === 200) {
         alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
@@ -92,10 +92,7 @@ export default function OldNonProfitOrgCertificate() {
       <div className="onp-paper">
         <div className="onp-letterhead">
           <div className="onp-logo">
-            <img
-              src="/nepallogo.svg"
-              alt="Nepal Emblem"
-            />
+            <img src="/nepallogo.svg" alt="Nepal Emblem" />
           </div>
 
           <div className="onp-head-text">
@@ -333,7 +330,7 @@ export default function OldNonProfitOrgCertificate() {
             </select>
           </div>
 
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="onp-submit-row">
             <button
@@ -349,8 +346,8 @@ export default function OldNonProfitOrgCertificate() {
         </form>
       </div>
 
-      <footer className="onp-footer">
-        <footer className="onp-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+      <footer className="nprc-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

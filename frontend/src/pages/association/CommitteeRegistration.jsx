@@ -15,6 +15,7 @@ const initialState = {
   toPlace: MUNICIPALITY.officeLine, // e.g. "नगर कार्यपालिकाको कार्यालय, काठमाडौं"
   district: MUNICIPALITY.englishDistrict, // use englishDistrict; add a Nepali district to config if you prefer
   municipalityType: "नगरपालिका", // keep as default or change if dynamic
+  prevWardNoSecondary: "",
   municipalityWardNo: MUNICIPALITY.wardNumber,
   prevWardNo: MUNICIPALITY.wardNumber, // optional: set to same default; user can edit
   // साबिक वडा नं.
@@ -27,7 +28,7 @@ const initialState = {
   applicantPhone: "",
 };
 
-export default function ComitteeRegistration() {
+export default function CommitteeRegistration() {
   const [form, setForm] = useState(initialState);
   const [submitting, setSubmitting] = useState(false);
 
@@ -61,7 +62,7 @@ export default function ComitteeRegistration() {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "/api/forms/committee-registration";
+      const url = "http://localhost:5000/api/forms/committee-registration";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
@@ -90,10 +91,7 @@ export default function ComitteeRegistration() {
       <div className="cr-paper">
         <div className="cr-letterhead">
           <div className="cr-logo">
-            <img
-              src="/nepallogo.svg"
-              alt="Emblem"
-            />
+            <img src="/nepallogo.svg" alt="Emblem" />
           </div>
 
           <div className="cr-head-text">
@@ -187,7 +185,13 @@ export default function ComitteeRegistration() {
               onChange={handleChange}
             />{" "}
             वडा नं.{" "}
-            <input type="text" name="prevWardNo" className="cr-tiny-input" />
+            <input
+              type="text"
+              name="prevWardNoSecondary"
+              className="cr-tiny-input"
+              value={form.prevWardNoSecondary}
+              onChange={handleChange}
+            />
             ), जिल्ला{" "}
             <input
               type="text"
@@ -251,7 +255,7 @@ export default function ComitteeRegistration() {
             </select>
           </div>
 
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="cr-submit-row">
             <button
@@ -268,7 +272,7 @@ export default function ComitteeRegistration() {
       </div>
 
       <footer className="cr-footer">
-        <footer className="cr-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );

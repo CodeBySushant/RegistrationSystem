@@ -54,7 +54,7 @@ export default function OrganizationRegistered() {
         if (payload[k] === "") payload[k] = null;
       });
       // POST to backend
-      const url = "/api/forms/organization-registered";
+      const url = "http://localhost:5000/api/forms/organization-registered";
       const res = await axios.post(url, payload);
       if (res.status === 201 || res.status === 200) {
         alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
@@ -230,7 +230,7 @@ export default function OrganizationRegistered() {
             </select>
           </div>
 
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="orgreg-submit-row">
             <button
@@ -246,7 +246,7 @@ export default function OrganizationRegistered() {
         </form>
       </div>
 
-      <footer className="orgreg-footer">
+      <footer className="nprc-footer">
         © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>

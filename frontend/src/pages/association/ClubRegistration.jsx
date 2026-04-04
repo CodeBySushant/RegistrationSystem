@@ -61,7 +61,7 @@ export default function ClubRegistration() {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "/api/forms/club-registration";
+      const url = "http://localhost:5000/api/forms/club-registration";
       const res = await axios.post(url, payload);
 
       if (res.status === 201 || res.status === 200) {
@@ -90,10 +90,7 @@ export default function ClubRegistration() {
       <div className="crp-paper">
         <div className="crp-letterhead">
           <div className="crp-logo">
-            <img
-              src="/nepallogo.svg"
-              alt="Emblem"
-            />
+            <img src="/nepallogo.svg" alt="Emblem" />
           </div>
 
           <div className="crp-head-text">
@@ -110,7 +107,7 @@ export default function ClubRegistration() {
             <div className="crp-meta-line">
               मिति :{" "}
               <input
-                type="text"
+                type="date"
                 name="date"
                 value={form.date}
                 onChange={handleChange}
@@ -240,7 +237,7 @@ export default function ClubRegistration() {
             </select>
           </div>
 
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="crp-submit-row">
             <button
@@ -257,7 +254,7 @@ export default function ClubRegistration() {
       </div>
 
       <footer className="crp-footer">
-        <footer className="crp-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
     </div>
   );
