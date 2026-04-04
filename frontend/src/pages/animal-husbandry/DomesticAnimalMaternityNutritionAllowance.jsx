@@ -114,10 +114,23 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
   };
 
   const handlePrint = async () => {
-    await handleSubmit(new Event("submit"));
-    setTimeout(() => {
-      window.print();
-    }, 500);
+    setLoading(true);
+
+    try {
+      const res = await axios.post("/api/forms/animal-maternity-allowance", form);
+
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+
+        window.print(); // ✅ print first
+
+        setForm(initialState); // ✅ reset AFTER print
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
