@@ -182,8 +182,7 @@ export default function WithdrawalFundRecommendation() {
         {/* Row 1 — single input */}
         <div className="addressee-row">
           <span className="input-wrap">
-            <R />
-            <input
+            <input 
               name="addressee_line1"
               type="text"
               className="line-input long-box"
@@ -196,7 +195,6 @@ export default function WithdrawalFundRecommendation() {
         {/* Row 2 — input + plain text "नगर कार्यपालिकाको कार्यालय" */}
         <div className="addressee-row">
           <span className="input-wrap">
-            <R />
             <input
               name="addressee_municipality"
               type="text"
@@ -213,7 +211,6 @@ export default function WithdrawalFundRecommendation() {
         {/* Row 3 — two inputs side by side */}
         <div className="addressee-row">
           <span className="input-wrap">
-            <R />
             <input
               name="addressee_implement_unit"
               type="text"
@@ -224,7 +221,6 @@ export default function WithdrawalFundRecommendation() {
             />
           </span>
           <span className="input-wrap">
-            <R />
             <input
               name="addressee_district"
               type="text"
