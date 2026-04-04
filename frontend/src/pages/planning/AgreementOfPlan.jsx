@@ -1,114 +1,141 @@
-// src/components/AgreementOfPlan.jsx
+// src/pages/AgreementOfPlan/AgreementOfPlan.jsx
 import React, { useState } from "react";
 import "./AgreementOfPlan.css";
+
+import axios from "../../utils/axiosInstance";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-const FORM_KEY = "agreement-of-plan";
-const API_BASE = import.meta.env.VITE_API_BASE || ""; // Vite safe; replace if using CRA
-const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
+// ─────────────────────────────────────────────
+// Initial State
+// ─────────────────────────────────────────────
+const initialState = {
+  // Meta
+  chalan_no: "",
+  fiscal_year: "२०८२/८३",
 
+  // Addressee
+  addressee_line1: "प्रमुख प्रशासकीय अधिकृत",
+  addressee_line2: "नगर कार्यपालिकाको कार्यालय",
+  addressee_implement_unit: "",
+  addressee_district: "",
+
+  // Body paragraph
+  district: "",
+  implement_unit: "",
+  project_title: "",
+  agreement_amount: "",
+  allocated_amount: "",
+  allocated_amount_in_words: "",
+  party_a: "",
+  party_b: "",
+
+  // Tapsil
+  name_of_program: "",
+  total_allocated: "",
+  amount_to_be_agreed: "",
+  budget_subcode: "",
+  expense_type: "",
+  ceiling: "",
+  work_description: "",
+  consumer_committee: "",
+
+  // Signature
+  signatory_name: "",
+  signatory_designation: "",
+
+  // Applicant
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+};
+
+// ─────────────────────────────────────────────
+// StarInput — wraps any input with your existing
+// .inline-input-wrapper + .input-required-star CSS
+// ─────────────────────────────────────────────
+const StarInput = ({ className = "", ...props }) => (
+  <div className="inline-input-wrapper">
+    <span className="input-required-star">*</span>
+    <input className={className} {...props} />
+  </div>
+);
+
+// ─────────────────────────────────────────────
+// Component
+// ─────────────────────────────────────────────
 export default function AgreementOfPlan() {
+  const { user } = useAuth();
+  const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null);
 
-  const [form, setForm] = useState({
-    project_code_or_id: "",
-    implement_unit: "",
-    district: "",
-    fiscal_year: "२०८२/८३",
-    project_title: "",
-    agreement_amount: "",
-    allocated_amount: "",
-    allocated_amount_in_words: "",
-    party_a: "",
-    party_b: "",
-    signatory_name: "",
-    signatory_designation: "",
-
-    // Applicant fields
-    applicantName: "",
-    applicantAddress: "",
-    applicantCitizenship: "",
-    applicantPhone: "",
-  });
-
-  // ✅ HANDLE CHANGE
+  // ── handleChange ──────────────────────────
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // collect values from page without changing layout or visuals
+  // ── handleSubmit ──────────────────────────
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMsg(null);
+    if (e && e.preventDefault) e.preventDefault();
+    if (loading) return false;
+
     setLoading(true);
-
     try {
-      // container is the form element
-      const formEl = e.target;
+      const payload = Object.fromEntries(
+        Object.entries(form).map(([k, v]) => [k, v === "" ? null : v])
+      );
 
-      // 1) Collect simple named fields
-      const formData = new FormData(formEl);
-      const obj = {};
-      for (const [k, v] of formData.entries()) {
-        // skip empty strings (optional)
-        obj[k] = v;
+      const res = await axios.post("/api/forms/agreement-of-plan", payload);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
+        setForm(initialState);
+        return true;
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+        return false;
       }
-
-      // 2) Collect tapsil rows (they are multiple groups of inputs in the UI)
-      // We assume each tapsil item in DOM has class `.tapsil-item` and contains inputs.
-      const tapsilEls = formEl.querySelectorAll(".tapsil-item");
-      const tapsil = Array.from(tapsilEls).map((itemEl) => {
-        // inside each tapsil-item, read inputs in the order or by name
-        const row = {};
-        // find all inputs inside this tapsil item
-        const inputs = itemEl.querySelectorAll("input, textarea, select");
-        inputs.forEach((inp) => {
-          const name =
-            inp.getAttribute("data-tapsil-name") ||
-            inp.name ||
-            inp.getAttribute("name");
-          // only include if name present
-          if (name) row[name] = inp.value;
-        });
-        return row;
-      });
-
-      // attach tapsil only if there is meaningful data
-      if (tapsil.length) obj.tapsil = tapsil;
-
-      // 3) Send JSON to backend
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(obj),
-      });
-
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.message || data.error || "Server error");
-
-      setMsg({ type: "success", text: `Saved (id: ${data.id})` });
     } catch (err) {
-      console.error(err);
-      setMsg({ type: "error", text: err.message || "Submission failed" });
+      const msg =
+        err.response?.data?.message || err.message || "Submission failed";
+      alert("त्रुटि: " + msg);
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
+  // ── handlePrint — save → print → reset ───
   const handlePrint = async () => {
-    await handleSubmit({ preventDefault: () => {} });
-    window.print();
+    setLoading(true);
+
+    try {
+      const res = await axios.post("/api/forms/agreement-of-plan", form);
+
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+
+        window.print(); // ✅ print first
+
+        setForm(initialState); // ✅ reset AFTER print
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // ─────────────────────────────────────────
+  // JSX
+  // ─────────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="plan-agreement-container">
-      {/* --- Top Bar --- */}
+
+      {/* ── Top Bar ── */}
       <div className="top-bar-title">
         योजना सम्झौता सिफारिस
         <span className="top-right-bread">
@@ -116,47 +143,47 @@ export default function AgreementOfPlan() {
         </span>
       </div>
 
-      {/* --- Header Section --- */}
+      {/* ── Letterhead ── */}
       <div className="form-header-section">
         <div className="header-logo">
           <img src="/nepallogo.svg" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
+          <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+          <h2 className="ward-title">
+            {user?.role === "SUPERADMIN"
+              ? "सबै वडा कार्यालय"
+              : `${user?.ward || MUNICIPALITY.wardNumber} नं. वडा कार्यालय`}
+          </h2>
+          <p className="address-text">{MUNICIPALITY.officeLine}</p>
+          <p className="province-text">{MUNICIPALITY.provinceLine}</p>
         </div>
       </div>
 
-      {/* --- Meta Data (Date/Ref) --- */}
+      {/* ── Meta Row ── */}
       <div className="meta-data-row">
         <div className="meta-left">
           <p>
             पत्र संख्या : <span className="bold-text">२०८२/८३</span>
           </p>
-          {/* added name attribute (invisible) so backend receives it */}
           <p>
-            <span>
-              चलानी नं. :{" "}
-              <input
-                name="project_code_or_id"
-                type="text"
-                style={{ display: "inline-block", marginLeft: 6 }}
-                className="addressee-row small-input"
-              />
-            </span>
+            चलानी नं. :{" "}
+            <StarInput
+              name="chalan_no"
+              type="text"
+              className="dotted-input small-input"
+              value={form.chalan_no}
+              onChange={handleChange}
+            />
           </p>
         </div>
         <div className="meta-right">
-          <p>
-            मिति : <span className="bold-text">२०८२-०८-०६</span>
-          </p>
+          <p>मिति : <span className="bold-text">२०८२-०८-०६</span></p>
           <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
         </div>
       </div>
 
-      {/* --- Subject --- */}
+      {/* ── Subject ── */}
       <div className="subject-section">
         <p>
           विषय:{" "}
@@ -166,244 +193,187 @@ export default function AgreementOfPlan() {
         </p>
       </div>
 
-      {/* --- Addressee Section --- */}
+      {/* ── Addressee ── */}
       <div className="addressee-section">
         <div className="addressee-row">
-          <span>
-            <input
-              type="text"
-              className="addressee-row long-box"
-              defaultValue="प्रमुख प्रशासकीय अधिकृत"
-            />
-          </span>
-        </div>
-        <div className="addressee-row">
-          <span>
-            <input
-              type="text"
-              className="addressee-row long-box"
-              defaultValue="नगर कार्यपालिकाको कार्यालय"
-            />
-          </span>
-        </div>
-        <div className="addressee-row">
-          {/* name attributes added only; layout same */}
-          <input
-            name="implement_unit"
+          <StarInput
+            name="addressee_line1"
             type="text"
-            className="addressee-row long-box"
-            defaultValue="नागार्जुन"
+            className="line-input medium-input"
+            value={form.addressee_line1}
+            onChange={handleChange}
           />
-          <input
-            name="district"
+        </div>
+        <div className="addressee-row">
+          <StarInput
+            name="addressee_line2"
             type="text"
-            className="addressee-row long-box"
-            defaultValue="काठमाडौँ"
+            className="line-input medium-input"
+            value={form.addressee_line2}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="addressee-row">
+          <StarInput
+            name="addressee_implement_unit"
+            type="text"
+            className="line-input medium-input"
+            placeholder="कार्यान्वयन इकाइ"
+            value={form.addressee_implement_unit}
+            onChange={handleChange}
+          />
+          <StarInput
+            name="addressee_district"
+            type="text"
+            className="line-input medium-input"
+            placeholder="जिल्ला"
+            value={form.addressee_district}
+            onChange={handleChange}
           />
         </div>
       </div>
 
-      {/* --- Main Body --- */}
+      {/* ── Body Paragraph ── */}
       <p className="body-paragraph">
-        उपरोक्त सम्बन्धमा
-        <span>
-          <input
-            name="district"
-            type="text"
-            className="inline-box-input"
-            defaultValue="काठमाडौँ"
-            required
-          />
-        </span>
-        <span>
-          <input
-            name="implement_unit"
-            type="text"
-            className="inline-box-input"
-            defaultValue="नागार्जुन नगरपालिका"
-            required
-          />
-        </span>
-        को चालु आ.व.
-        <input
+        उपरोक्त सम्बन्धमा{" "}
+        <StarInput
+          name="district"
+          type="text"
+          className="inline-box-input medium-box"
+          placeholder="जिल्ला"
+          value={form.district}
+          onChange={handleChange}
+          required
+        />{" "}
+        <StarInput
+          name="implement_unit"
+          type="text"
+          className="inline-box-input medium-box"
+          placeholder="कार्यान्वयन इकाइ"
+          value={form.implement_unit}
+          onChange={handleChange}
+          required
+        />{" "}
+        को चालु आ.व.{" "}
+        <StarInput
           name="fiscal_year"
           type="text"
           className="inline-box-input medium-box"
-          defaultValue="२०८२/८३"
-        />
-        को स्वीकृत बजेट तथा निति कार्यक्रम अनुसार
-        <span className="required-input">
-          <input
-            name="project_title"
-            type="text"
-            className="inline-box-input long-box"
-            required
-          />
-        </span>
-        लाई
-        <span className="required-input">
-          <input
-            name="agreement_amount"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-          />
-        </span>
-        कार्य गर्न रु
-        <span className="required-input">
-          <input
-            name="allocated_amount"
-            type="text"
-            className="inline-box-input medium-box"
-            required
-          />
-        </span>
-        (
-        <span className="required-input">
-          <input
-            name="allocated_amount_in_words"
-            type="text"
-            className="inline-box-input long-box"
-            required
-          />
-        </span>
-        ) विनियोजन भएको हुदा त्यहाँ कार्यालयको नियम अनुसार
-        <span className="required-input">
-          <input
-            name="party_a"
-            type="text"
-            className="inline-box-input long-box"
-            required
-          />
-        </span>
-        , र
-        <span className="required-input">
-          <input
-            name="party_b"
-            type="text"
-            className="inline-box-input long-box"
-            required
-          />
-        </span>
-        , विच योजना / कार्यक्रम सम्झौता गरि दिनुहुन यो सिफारिस गरिएको व्यहोरा
-        अनुरोध छ।
+          value={form.fiscal_year}
+          onChange={handleChange}
+        />{" "}
+        को स्वीकृत बजेट तथा निति कार्यक्रम अनुसार{" "}
+        <StarInput
+          name="project_title"
+          type="text"
+          className="inline-box-input long-box"
+          placeholder="योजनाको शीर्षक"
+          value={form.project_title}
+          onChange={handleChange}
+          required
+        />{" "}
+        लाई{" "}
+        <StarInput
+          name="agreement_amount"
+          type="text"
+          className="inline-box-input medium-box"
+          placeholder="सम्झौता रकम"
+          value={form.agreement_amount}
+          onChange={handleChange}
+          required
+        />{" "}
+        कार्य गर्न रु{" "}
+        <StarInput
+          name="allocated_amount"
+          type="text"
+          className="inline-box-input medium-box"
+          placeholder="विनियोजित रकम"
+          value={form.allocated_amount}
+          onChange={handleChange}
+          required
+        />{" "}
+        ({" "}
+        <StarInput
+          name="allocated_amount_in_words"
+          type="text"
+          className="inline-box-input long-box"
+          placeholder="अक्षरमा रकम"
+          value={form.allocated_amount_in_words}
+          onChange={handleChange}
+          required
+        />{" "}
+        ) विनियोजन भएको हुदा त्यहाँ कार्यालयको नियम अनुसार{" "}
+        <StarInput
+          name="party_a"
+          type="text"
+          className="inline-box-input long-box"
+          placeholder="पक्ष क"
+          value={form.party_a}
+          onChange={handleChange}
+          required
+        />{" "}
+        , र{" "}
+        <StarInput
+          name="party_b"
+          type="text"
+          className="inline-box-input long-box"
+          placeholder="पक्ष ख"
+          value={form.party_b}
+          onChange={handleChange}
+          required
+        />{" "}
+        , विच योजना / कार्यक्रम सम्झौता गरि दिनुहुन यो सिफारिस गरिएको
+        व्यहोरा अनुरोध छ।
       </p>
 
-      {/* --- Tapsil (Details List) --- */}
+      {/* ── Tapsil ── */}
       <div className="tapsil-section">
         <h4 className="underline-text bold-text">तपशिल</h4>
-
         <div className="tapsil-list">
-          <div className="tapsil-item">
-            <label>१. योजना तथा कार्यक्रमको नाम</label>
-            <span className="required-input">
-              <input
-                data-tapsil-name="name_of_program"
+          {[
+            { label: "१. योजना तथा कार्यक्रमको नाम",  name: "name_of_program"     },
+            { label: "२. विनियोजित रकम जम्मा",         name: "total_allocated"     },
+            { label: "३. हाल सम्झौता हुने रकम",         name: "amount_to_be_agreed" },
+            { label: "४. बजेट उपशिर्षक नं.",            name: "budget_subcode"      },
+            { label: "५. खर्चको प्रकार",                name: "expense_type"        },
+            { label: "६. सिलिङ",                        name: "ceiling"             },
+            { label: "७. कामको विवरण",                  name: "work_description"    },
+            { label: "८. उपभोक्ता समितिको नाम",         name: "consumer_committee"  },
+          ].map(({ label, name }) => (
+            <div className="tapsil-item" key={name}>
+              <label>{label}</label>
+              <StarInput
+                name={name}
                 type="text"
                 className="line-input long-input"
+                value={form[name]}
+                onChange={handleChange}
                 required
               />
-            </span>
-          </div>
-
-          <div className="tapsil-item">
-            <label>२. विनियोजित रकम जम्मा</label>
-            <span className="required-input">
-              <input
-                data-tapsil-name="total_allocated"
-                type="text"
-                className="line-input long-input"
-                required
-              />
-            </span>
-          </div>
-
-          <div className="tapsil-item">
-            <label>३. हाल सम्झौता हुने रकम</label>
-            <span className="required-input">
-              <input
-                data-tapsil-name="amount_to_be_agreed"
-                type="text"
-                className="line-input long-input"
-                required
-              />
-            </span>
-          </div>
-
-          <div className="tapsil-item">
-            <label>४. बजेट उपशिर्षक नं.</label>
-            <span className="required-input">
-              <input
-                data-tapsil-name="budget_subcode"
-                type="text"
-                className="line-input long-input"
-                required
-              />
-            </span>
-          </div>
-
-          <div className="tapsil-item">
-            <label>५. खर्चको प्रकार</label>
-            <span className="required-input">
-              <input
-                data-tapsil-name="expense_type"
-                type="text"
-                className="line-input long-input"
-                required
-              />
-            </span>
-          </div>
-
-          <div className="tapsil-item">
-            <label>६. सिलिङ</label>
-            <span className="required-input">
-              <input
-                data-tapsil-name="ceiling"
-                type="text"
-                className="line-input long-input"
-                required
-              />
-            </span>
-          </div>
-
-          <div className="tapsil-item">
-            <label>७. कामको विवरण</label>
-            <span className="required-input">
-              <input
-                data-tapsil-name="work_description"
-                type="text"
-                className="line-input long-input"
-                required
-              />
-            </span>
-          </div>
-
-          <div className="tapsil-item">
-            <label>८. उपभोक्ता समितिको नाम</label>
-            <span className="required-input">
-              <input
-                data-tapsil-name="consumer_committee"
-                type="text"
-                className="line-input long-input"
-                required
-              />
-            </span>
-          </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* --- Signature Section --- */}
+      {/* ── Signature ── */}
       <div className="signature-section">
         <div className="signature-block">
-          <div className="signature-line"></div>
-          <span className="red-mark">*</span>
-          <input
+          <div className="signature-line" />
+          <StarInput
             name="signatory_name"
             type="text"
             className="line-input full-width-input"
+            placeholder="नाम, थर"
+            value={form.signatory_name}
+            onChange={handleChange}
             required
           />
-          <select name="signatory_designation" className="designation-select">
+          <select
+            name="signatory_designation"
+            className="designation-select"
+            value={form.signatory_designation}
+            onChange={handleChange}
+          >
             <option value="">पद छनौट गर्नुहोस्</option>
             <option value="सचिव">सचिव</option>
             <option value="अध्यक्ष">अध्यक्ष</option>
@@ -412,9 +382,10 @@ export default function AgreementOfPlan() {
         </div>
       </div>
 
+      {/* ── Applicant Details ── */}
       <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-      {/* --- Footer Action --- */}
+      {/* ── Footer ── */}
       <div className="form-footer">
         <button
           type="button"
@@ -422,24 +393,14 @@ export default function AgreementOfPlan() {
           onClick={handlePrint}
           disabled={loading}
         >
-          {loading ? "सेभ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
 
-      {msg && (
-        <div
-          style={{
-            marginTop: 8,
-            color: msg.type === "error" ? "red" : "green",
-          }}
-        >
-          {msg.text}
-        </div>
-      )}
-
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
+
     </form>
   );
 }
