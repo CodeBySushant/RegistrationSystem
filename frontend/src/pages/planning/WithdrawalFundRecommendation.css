@@ -80,7 +80,7 @@
 .withdrawal-fund-container .dotted-input {
   border: none;
   border-bottom: 1px dotted #000;
-  background: transparent;
+  background: #fff;
   outline: none;
 }
 .small-input { width: 120px; }
@@ -91,7 +91,7 @@
 .withdrawal-fund-container .line-input {
   border: none;
   border-bottom: 1px dotted #000;
-  background: transparent;
+  background: #fff;
   outline: none;
 }
 .medium-input { width: 200px; }
