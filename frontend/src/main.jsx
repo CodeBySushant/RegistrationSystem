@@ -3,6 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
+import { installFetchInterceptor } from './utils/fetchInterceptor';
+installFetchInterceptor();
 
 // Inject Google Fonts
 const link = document.createElement('link');
