@@ -1,37 +1,66 @@
+// src/pages/GovOrganizationReg/GovOrganizationReg.jsx
 import React, { useState } from "react";
 import "./GovOrganizationReg.css";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
+import axios from "../../utils/axiosInstance";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+
+// ─────────────────────────────────────────────
+// Initial State — extracted so reset works
+// ─────────────────────────────────────────────
+const initialState = {
+  status: "pending", 
+  date: new Date().toISOString().slice(0, 10),
+  letterNo: "2082/83",
+  refNo: "",
+  proposalName: "",
+  officerName: "",
+  municipalityName: "",
+  wardNo: "",
+  purpose: "",
+  activities: "",
+  headOffice: "",
+  branchOffice: "",
+  liability: "",
+  femaleMembers: "",
+  maleMembers: "",
+  totalShareCapital: "",
+  entranceFee: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+};
+
+// ─────────────────────────────────────────────
+// StarInput — outside component to prevent
+// remount on every render (focus loss bug)
+// ─────────────────────────────────────────────
+const StarInput = ({ className = "", ...props }) => (
+  <div className="inline-input-wrapper">
+    <span className="input-required-star">*</span>
+    <input className={className} {...props} />
+  </div>
+);
+
+// ─────────────────────────────────────────────
+// Component
+// ─────────────────────────────────────────────
 const GovOrganizationReg = () => {
-  const [formData, setFormData] = useState({
-    date: new Date().toISOString().slice(0, 10), // Nepali BS sample; backend expects string (you can use AD if you prefer)
-    letterNo: "2082/83",
-    refNo: "",
-    proposalName: "",
-    wardNo: "",
-    purpose: "",
-    activities: "",
-    headOffice: "",
-    branchOffice: "",
-    liability: "",
-    femaleMembers: "",
-    maleMembers: "",
-    totalShareCapital: "",
-    entranceFee: "",
-    applicantName: "",
-    applicantAddress: "",
-    applicantCitizenship: "",
-    applicantPhone: "",
-  });
-
+  const { user } = useAuth();
+  const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
 
+  // ── handleChange ──────────────────────────
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
   };
 
+  // ── validate ──────────────────────────────
   const validate = () => {
-    // basic required checks
     const required = [
       "proposalName",
       "wardNo",
@@ -47,51 +76,96 @@ const GovOrganizationReg = () => {
       "applicantPhone",
     ];
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === "") return { ok: false, missing: k };
+      if (!formData[k] || String(formData[k]).trim() === "")
+        return { ok: false, missing: k };
     }
-    // phone simple check
     if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
       return { ok: false, missing: "applicantPhone (invalid)" };
     }
     return { ok: true };
   };
 
+  // ── handleSubmit ──────────────────────────
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
+    if (loading) return false;
+
     const v = validate();
     if (!v.ok) {
-      alert("Please fill/validate field: " + v.missing);
-      return;
+      alert("कृपया भर्नुहोस्: " + v.missing);
+      return false;
     }
 
     setLoading(true);
     try {
-      const payload = { ...formData };
-      const res = await fetch("/api/forms/gov-organization-registration", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || `Server returned ${res.status}`);
+      const payload = Object.fromEntries(
+        Object.entries(formData).map(([k, v]) => [k, v === "" ? null : v]),
+      );
+
+      const res = await axios.post(
+        "/api/forms/gov-organization-registration",
+        payload,
+      );
+
+      if (res.status === 200 || res.status === 201) {
+        alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
+        setFormData(initialState);
+        return true;
+      } else {
+        alert("Unexpected response");
+        return false;
       }
-      const body = await res.json();
-      alert("Saved successfully (id: " + body.id + ")");
-      setTimeout(() => window.print(), 200);
     } catch (err) {
-      console.error("Submit error:", err);
-      alert("Failed to save: " + (err.message || "unknown error"));
+      const msg =
+        err.response?.data?.message || err.message || "Submission failed";
+      alert("त्रुटि: " + msg);
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
+  // ── handlePrint — save → print → reset ───
+  const handlePrint = async () => {
+    const ok = await handleSubmit(null);
+    if (ok) {
+      window.print();
+      setFormData(initialState);
+    }
+  };
+
+  // ─────────────────────────────────────────
+  // JSX
+  // ─────────────────────────────────────────
   return (
     <div className="form-page">
       <form className="form-container" onSubmit={handleSubmit}>
-        <div className="header-title">सहकारी संस्था दर्ता सिफारिस ।</div>
+        {/* ── Top Bar ── */}
+        <div className="top-bar-title">
+          सहकारी संस्था दर्ता सिफारिस ।
+          <span className="top-right-bread">
+            सहकारी &gt; सहकारी संस्था दर्ता सिफारिस
+          </span>
+        </div>
 
+        {/* ── Letterhead Header ── */}
+        <div className="form-header-section">
+          <div className="header-logo">
+            <img src="/nepallogo.svg" alt="Nepal Emblem" />
+          </div>
+          <div className="header-text">
+            <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+            <h2 className="ward-title">
+              {user?.role === "SUPERADMIN"
+                ? "सबै वडा कार्यालय"
+                : `${user?.ward || MUNICIPALITY.wardNumber} नं. वडा कार्यालय`}
+            </h2>
+            <p className="address-text">{MUNICIPALITY.officeLine}</p>
+            <p className="province-text">{MUNICIPALITY.provinceLine}</p>
+          </div>
+        </div>
+
+        {/* ── Sub Header ── */}
         <div className="sub-header">
           <span>अनुसूची २</span>
           <br />
@@ -99,18 +173,47 @@ const GovOrganizationReg = () => {
         </div>
 
         <div className="top-info">
-          श्री दर्ता गर्ने अधिकारी _______ ज्यु, <br />
-          ______ नगर कार्यपालिकाको कार्यालय <br />
-          <br />
-          मिति:{" "}
-          <input
-            type="text"
-            className="date-input"
-            name="date"
-            placeholder="२०७८-०५-०५"
-            value={formData.date}
-            onChange={handleChange}
-          />
+          <div className="top-info-row">
+            <span>श्री दत्ता गर्ने अधिकारी</span>
+            <StarInput
+              type="text"
+              className="top-info-input"
+              name="officerName"
+              value={formData.officerName}
+              onChange={handleChange}
+            />
+            <span>ज्यू,</span>
+          </div>
+
+          <div className="top-info-row">
+            <StarInput
+              type="text"
+              className="top-info-input"
+              name="municipalityName"
+              value={formData.municipalityName}
+              onChange={handleChange}
+            />
+            <span>, नगर कार्यपालिकाको कार्यालय</span>
+          </div>
+
+          <div className="top-info-row">
+            <StarInput
+              type="text"
+              className="top-info-input"
+              name="letterNo"
+              value={formData.letterNo}
+              onChange={handleChange}
+            />
+            <StarInput
+              type="text"
+              className="top-info-input"
+              name="refNo"
+              placeholder="सन्दर्भ नं."
+              value={formData.refNo}
+              onChange={handleChange}
+            />
+            <span>।</span>
+          </div>
         </div>
 
         <h3 className="subject">विषय : सहकारी संस्था दर्ता ।</h3>
@@ -119,71 +222,126 @@ const GovOrganizationReg = () => {
           महोदय,
           <br />
           <br />
-          हामी देहायका व्यक्तिगत दर्ता भएको सहकारी संस्था दर्ता गरी पाउन निवेदन गर्दछौं। उद्देश्यअनुसार संस्थाले संचालन गर्न कार्यक्रमको योजना र
-          प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी पेश गरेको छ।
+          हामी देहायका व्यक्तिगत दर्ता भएको सहकारी संस्था दर्ता गरी पाउन निवेदन
+          गर्दछौं। उद्देश्यअनुसार संस्थाले संचालन गर्न कार्यक्रमको योजना र
+          प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी पेश गरेको
+          छ।
         </p>
 
         <h3 className="section-title">संस्थासम्बन्धी विवरण</h3>
 
         <div className="section">
           <label>(क) प्रस्तावित संस्था नामः *</label>
-          <input type="text" name="proposalName" value={formData.proposalName} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="proposalName"
+            value={formData.proposalName}
+            onChange={handleChange}
+          />
 
           <label>(ख) ठेगाना: वडा नं. *</label>
-          <input type="text" name="wardNo" value={formData.wardNo} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="wardNo"
+            value={formData.wardNo}
+            onChange={handleChange}
+          />
 
           <label>(ग) उद्देश्य: *</label>
-          <input type="text" name="purpose" value={formData.purpose} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="purpose"
+            value={formData.purpose}
+            onChange={handleChange}
+          />
 
           <label>(घ) गतिविधि: *</label>
-          <input type="text" name="activities" value={formData.activities} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="activities"
+            value={formData.activities}
+            onChange={handleChange}
+          />
 
           <label>(ङ) मुख्य कार्यालय: *</label>
-          <input type="text" name="headOffice" value={formData.headOffice} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="headOffice"
+            value={formData.headOffice}
+            onChange={handleChange}
+          />
 
           <label>(च) शाखा कार्यालय:</label>
-          <input type="text" name="branchOffice" value={formData.branchOffice} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="branchOffice"
+            value={formData.branchOffice}
+            onChange={handleChange}
+          />
 
           <label>(छ) दायित्व: *</label>
-          <input type="text" name="liability" value={formData.liability} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="liability"
+            value={formData.liability}
+            onChange={handleChange}
+          />
 
           <label>(ज) सदस्य संख्या:</label>
           <div className="inline-row">
-            महिला: <input type="text" name="femaleMembers" value={formData.femaleMembers} onChange={handleChange} /> जना
-            पुरुष: <input type="text" name="maleMembers" value={formData.maleMembers} onChange={handleChange} /> जना
+            महिला:{" "}
+            <StarInput
+              type="text"
+              name="femaleMembers"
+              value={formData.femaleMembers}
+              onChange={handleChange}
+            />{" "}
+            जना &nbsp; पुरुष:{" "}
+            <StarInput
+              type="text"
+              name="maleMembers"
+              value={formData.maleMembers}
+              onChange={handleChange}
+            />{" "}
+            जना
           </div>
 
           <label>(झ) कुल शेयर पूँजीको रकमः *</label>
-          <input type="text" name="totalShareCapital" value={formData.totalShareCapital} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="totalShareCapital"
+            value={formData.totalShareCapital}
+            onChange={handleChange}
+          />
 
           <label>(ञ) प्राप्त प्रवेश शुल्कको रकमः *</label>
-          <input type="text" name="entranceFee" value={formData.entranceFee} onChange={handleChange} />
+          <StarInput
+            type="text"
+            name="entranceFee"
+            value={formData.entranceFee}
+            onChange={handleChange}
+          />
         </div>
 
-        <h3 className="section-title">निवेदकको विवरण</h3>
+        {/* ── Applicant Details ── */}
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
-        <div className="section">
-          <label>निवेदकको नाम *</label>
-          <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} />
-
-          <label>निवेदकको ठेगाना *</label>
-          <input type="text" name="applicantAddress" value={formData.applicantAddress} onChange={handleChange} />
-
-          <label>निवेदकको नागरिकता नं *</label>
-          <input type="text" name="applicantCitizenship" value={formData.applicantCitizenship} onChange={handleChange} />
-
-          <label>निवेदकको फोन नं. *</label>
-          <input type="text" name="applicantPhone" value={formData.applicantPhone} onChange={handleChange} />
-        </div>
-
-        <div className="submit-box">
-          <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? "Saving..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        {/* ── Footer ── */}
+        <div className="form-footer">
+          <button
+            className="save-print-btn"
+            type="button"
+            onClick={handlePrint}
+            disabled={loading}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
-      </form>
 
-      <footer className="footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
+        <div className="copyright-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
+      </form>
     </div>
   );
 };
