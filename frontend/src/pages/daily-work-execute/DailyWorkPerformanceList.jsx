@@ -1,186 +1,250 @@
-import React, { useEffect, useState } from 'react';
+// src/pages/daily-work-execute/DailyWorkPerformanceList.jsx
+import React, { useEffect, useState, useCallback } from 'react';
 import './DailyWorkPerformanceList.css';
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import {
+  getFreshSubmissions,
+  deleteSubmission,
+  timeLeftLabel,
+} from '../../utils/submissionTracker';
 
 const DailyWorkPerformanceList = ({ setActiveLink }) => {
   const [data, setData] = useState([]);
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [filtered, setFiltered] = useState([]);
+  const [searchText, setSearchText] = useState('');
 
-  const baseUrl = '/api/forms/daily-work-performance-list';
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(baseUrl);
-      if (!res.ok) throw new Error('Failed to fetch');
-      const json = await res.json();
-      setData(json);
-    } catch (e) {
-      console.error('Fetch error', e);
-      setData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
+  // Load fresh submissions from localStorage (drops anything older than 24h automatically)
+  const reload = useCallback(() => {
+    const fresh = getFreshSubmissions();
+    // Newest first
+    fresh.sort((a, b) => b._submittedAt - a._submittedAt);
+    setData(fresh);
+    setFiltered(fresh);
   }, []);
 
+  // Load on mount
+  useEffect(() => {
+    reload();
+  }, [reload]);
+
+  // Auto-refresh every 60 seconds so expired rows disappear in real time
+  useEffect(() => {
+    const interval = setInterval(reload, 60_000);
+    return () => clearInterval(interval);
+  }, [reload]);
+
+  // Search/filter by form name
   const handleSearch = () => {
-    // Basic client-side filtering by date strings (you can implement server-side later)
-    if (!fromDate && !toDate) { fetchData(); return; }
-    const filtered = data.filter(d => {
-      const date = d.report_date || d.reportDate || '';
-      if (fromDate && date < fromDate) return false;
-      if (toDate && date > toDate) return false;
-      return true;
-    });
-    setData(filtered);
-  };
-
-  const handleAddRecord = () => {
-    // quick demo: open a prompt and POST a minimal record (replace with proper form later)
-    const date = prompt('Enter report date (e.g. २०८२-०८-०६):');
-    if (!date) return;
-    const totalForms = parseInt(prompt('Total forms:'), 10) || 0;
-    const totalAmount = prompt('Total amount (string):', '०');
-    const department = prompt('Department:', 'वडा नं. १');
-    const task = prompt('Task:', 'सिफारिस');
-
-    const payload = {
-      report_date: date,
-      total_forms: totalForms,
-      total_amount: totalAmount,
-      department,
-      task
-    };
-
-    fetch(baseUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then(r => r.json())
-      .then(result => {
-        alert('Created id: ' + result.id);
-        fetchData();
-      })
-      .catch(err => {
-        console.error('Create error', err);
-        alert('Create failed');
-      });
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('के तपाईं यो रेकर्ड मेटाउन चाहनुहुन्छ?')) return;
-    try {
-      const res = await fetch(`${baseUrl}/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Delete failed');
-      await fetchData();
-    } catch (e) {
-      console.error(e);
-      alert('Delete failed');
+    if (!searchText.trim()) {
+      setFiltered(data);
+      return;
     }
+    const lower = searchText.toLowerCase();
+    setFiltered(
+      data.filter(item =>
+        (item.formName || '').toLowerCase().includes(lower) ||
+        Object.values(item).some(v =>
+          String(v).toLowerCase().includes(lower)
+        )
+      )
+    );
   };
 
+  // Reset search
+  const handleReset = () => {
+    setSearchText('');
+    setFiltered(data);
+  };
+
+  // Delete a single entry
+  const handleDelete = (id) => {
+    if (!window.confirm('के तपाईं यो रेकर्ड मेटाउन चाहनुहुन्छ?')) return;
+    deleteSubmission(id);
+    reload();
+  };
+
+  // Export current filtered list as CSV
   const handleExcelExport = () => {
-    // Placeholder: convert current data to CSV and trigger download
-    if (!data.length) { alert('No data to export'); return; }
-    const header = ['report_date','total_forms','total_amount','department','task'];
-    const rows = data.map(r => [
-      r.report_date ?? r.reportDate ?? '',
-      r.total_forms ?? '',
-      r.total_amount ?? '',
-      r.department ?? '',
-      r.task ?? ''
+    if (!filtered.length) {
+      alert('निर्यात गर्न कुनै तथ्याङ्क छैन।');
+      return;
+    }
+    const skip = new Set(['id', '_submittedAt']);
+    const allKeys = [
+      ...new Set(filtered.flatMap(r => Object.keys(r).filter(k => !skip.has(k))))
+    ];
+    const header = ['पेश गरिएको समय', ...allKeys];
+    const rows = filtered.map(r => [
+      new Date(r._submittedAt).toLocaleString('ne-NP'),
+      ...allKeys.map(k => r[k] ?? ''),
     ]);
-    const csv = [header, ...rows].map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const csv = [header, ...rows]
+      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `daily-work-performance-${new Date().toISOString().slice(0,10)}.csv`;
+    a.download = `daily-work-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   return (
     <div className="daily-work-container">
+
+      {/* Header */}
       <div className="top-bar-header">
-        <h1>दैनिक कार्य सम्पादनका सूचीहरू ।</h1>
-        <button className="back-button" onClick={() => setActiveLink("गृहपृष्ठ")}>← Back</button>
+        <h1>दैनिक कार्य सम्पादनका सूचीहरू</h1>
+        <button className="back-button" onClick={() => setActiveLink('गृहपृष्ठ')}>
+          ← Back
+        </button>
       </div>
 
+      {/* Info message */}
+      <div style={{
+        background: '#e8f4fd',
+        border: '1px solid #bee3f8',
+        borderRadius: 6,
+        padding: '10px 16px',
+        marginBottom: 16,
+        fontSize: '0.9rem',
+        color: '#2c5282'
+      }}>
+        📋 यहाँ आजको पेश गरिएका सबै फारमहरू देखिन्छन्। पेश गरेको <strong>२४ घण्टापछि</strong> स्वतः हट्नेछ।
+      </div>
+
+      {/* Action buttons */}
       <div className="actions-bar">
-        <button className="excel-export-btn" onClick={handleExcelExport}>एक्सेल निर्यात</button>
-        <button className="add-record-btn" onClick={handleAddRecord}>+ नयाँ रेकर्ड थप्नुहोस</button>
+        <button className="excel-export-btn" onClick={handleExcelExport}>
+          📥 एक्सेल निर्यात
+        </button>
+        <span style={{ fontSize: '0.85rem', color: '#555', alignSelf: 'center' }}>
+          जम्मा: <strong>{filtered.length}</strong> फारम
+        </span>
       </div>
 
+      {/* Search bar */}
       <div className="search-filter-bar">
         <div className="date-input-group">
-          <input 
+          <input
             type="text"
-            placeholder="मिति देखि"
+            placeholder="फारमको नाम वा विवरणले खोज्नुहोस्..."
             className="filter-input"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSearch()}
           />
         </div>
-
-        <div className="date-input-group">
-          <input 
-            type="text"
-            placeholder="मिति सम्म"
-            className="filter-input"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-          />
-        </div>
-
         <button className="search-btn" onClick={handleSearch}>🔍</button>
+        <button
+          onClick={handleReset}
+          style={{
+            marginLeft: 8,
+            background: '#aaa',
+            color: 'white',
+            border: 'none',
+            padding: '10px 14px',
+            borderRadius: 4,
+            cursor: 'pointer'
+          }}
+        >
+          ✕ रिसेट
+        </button>
       </div>
 
+      {/* Table */}
       <div className="data-table-container">
-        {loading ? (
-          <div style={{padding:20}}>लोड हुँदैछ...</div>
-        ) : (
-          <table className="performance-table">
-            <thead>
+        <table className="performance-table">
+          <thead>
+            <tr>
+              <th style={{ width: 40 }}>#</th>
+              <th>फारमको नाम</th>
+              <th>पेश गरिएको समय</th>
+              <th>आवेदकको नाम</th>
+              <th>मुख्य विवरण</th>
+              <th style={{ width: 110 }}>समय बाँकी</th>
+              <th style={{ width: 100 }}>मेटाउनुहोस्</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
               <tr>
-                <th>मिति</th>
-                <th>कुल फारम</th>
-                <th>कुल रकम रू</th>
-                <th>वडा नं / विभाग</th>
-                <th>कार्य</th>
-                <th>कार्य (Delete)</th>
+                <td colSpan="7" style={{ textAlign: 'center', padding: 32, color: '#888' }}>
+                  <div style={{ fontSize: '2rem', marginBottom: 8 }}>📭</div>
+                  <div>अहिलेसम्म कुनै फारम पेश गरिएको छैन।</div>
+                  <div style={{ fontSize: '0.85rem', marginTop: 4 }}>
+                    फारम पेश गरेपछि यहाँ स्वतः देखिनेछ।
+                  </div>
+                </td>
               </tr>
-            </thead>
+            ) : filtered.map((item, idx) => {
+              const skip = new Set(['id', '_submittedAt', 'formName', 'applicantName', 'applicant_name']);
+              const detailPairs = Object.entries(item)
+                .filter(([k]) => !skip.has(k))
+                .slice(0, 4); // show max 4 detail fields to keep table clean
 
-            <tbody>
-              {data.length === 0 ? (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>
-                    कुनै तथ्याङ्क फेला परेन।
+              const applicantName =
+                item.applicantName ||
+                item.applicant_name ||
+                item['आवेदकको नाम'] ||
+                '—';
+
+              const submittedTime = new Date(item._submittedAt).toLocaleString('ne-NP');
+              const remaining = TWENTY_FOUR_HOURS - (Date.now() - item._submittedAt);
+              const isExpiringSoon = remaining < 2 * 60 * 60 * 1000; // less than 2 hours
+
+              return (
+                <tr key={item.id} style={isExpiringSoon ? { background: '#fff8f0' } : {}}>
+                  <td style={{ textAlign: 'center', color: '#888' }}>{idx + 1}</td>
+                  <td style={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    {item.formName || '—'}
+                  </td>
+                  <td style={{ fontSize: '0.82rem', color: '#555' }}>
+                    {submittedTime}
+                  </td>
+                  <td style={{ fontSize: '0.88rem' }}>
+                    {applicantName}
+                  </td>
+                  <td style={{ fontSize: '0.82rem', color: '#444' }}>
+                    {detailPairs.length > 0 ? (
+                      detailPairs.map(([k, v]) => (
+                        <div key={k}>
+                          <span style={{ color: '#888' }}>{k}:</span>{' '}
+                          <strong>{String(v).slice(0, 40)}</strong>
+                        </div>
+                      ))
+                    ) : '—'}
+                  </td>
+                  <td style={{
+                    fontSize: '0.78rem',
+                    color: isExpiringSoon ? '#e53e3e' : '#718096',
+                    fontWeight: isExpiringSoon ? 'bold' : 'normal',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {timeLeftLabel(item._submittedAt)}
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      style={{
+                        color: 'white',
+                        background: '#e53e3e',
+                        border: 'none',
+                        borderRadius: 4,
+                        padding: '4px 10px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem'
+                      }}
+                    >
+                      मेटाउनुहोस्
+                    </button>
                   </td>
                 </tr>
-              ) : data.map(item => (
-                <tr key={item.id}>
-                  <td>{item.report_date}</td>
-                  <td>{item.total_forms}</td>
-                  <td>{item.total_amount}</td>
-                  <td>{item.department}</td>
-                  <td>{item.task}</td>
-                  <td>
-                    <button onClick={() => handleDelete(item.id)} style={{color:'red'}}>मेटाउनुहोस्</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
       <div className="copyright-footer">
@@ -189,5 +253,8 @@ const DailyWorkPerformanceList = ({ setActiveLink }) => {
     </div>
   );
 };
+
+// Make TWENTY_FOUR_HOURS available inside the component without re-importing
+const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
 
 export default DailyWorkPerformanceList;
