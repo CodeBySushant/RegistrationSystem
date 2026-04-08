@@ -1,54 +1,50 @@
 import React, { useEffect, useState } from "react";
 import "./GovOrganizationRegProof.css";
+import PrintPreviewModal from "./PrintPreviewModal";
+import axios from "../../utils/axiosInstance";
 
 function formatDate(d) {
-  if (!d) return "";
-  // try to show YYYY-MM-DD if backend returned an AD date; otherwise show raw
+  if (!d) return "-";
   return String(d).slice(0, 10);
 }
 
 function toCSV(rows) {
   if (!rows || !rows.length) return "";
-  const header = Object.keys(rows[0]);
-  const csv = [header.join(",")].concat(
-    rows.map((r) =>
-      header
-        .map((h) => {
-          const v = r[h] == null ? "" : String(r[h]);
-          // escape quotes and commas
-          return `"${v.replace(/"/g, '""')}"`;
-        })
-        .join(",")
+  const headers = ["sn", "refNo", "date", "proposalName", "headOffice", "purpose", "activities"];
+  const csv = [headers.join(",")].concat(
+    rows.map((r, idx) =>
+      headers.map(h => {
+        const val = h === "sn" ? idx + 1 : (r[h] == null ? "" : String(r[h]));
+        return `"${val.replace(/"/g, '""')}"`;
+      }).join(",")
     )
   );
   return csv.join("\r\n");
 }
 
 const GovOrganizationRegProof = () => {
-  const [rows, setRows] = useState([]); // raw rows from server
-  const [filtered, setFiltered] = useState([]); // view after filters
+  const [rows, setRows] = useState([]);
+  const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [searchName, setSearchName] = useState("");
-  const [selected, setSelected] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [previewRow, setPreviewRow] = useState(null);
 
-  // Fetch all rows from generic endpoint (server-side pagination would be better for large data)
+  // ── fetch only approved rows ────────────────────
   const fetchRows = async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/forms/gov-organization-registration");
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
-      const data = await res.json();
-      // data is expected to be an array of DB rows
-      setRows(data || []);
-      setFiltered(data || []);
+      const res = await axios.get("/api/forms/gov-organization-registration");
+      const all = Array.isArray(res.data) ? res.data : [];
+      const approved = all.filter(r => r.status === "approved");
+      setRows(approved);
+      setFiltered(approved);
     } catch (err) {
       console.error("Fetch error:", err);
-      setError("Failed to load data. Check server or network.");
+      setError("डेटा लोड गर्न असफल भयो।");
     } finally {
       setLoading(false);
     }
@@ -58,188 +54,168 @@ const GovOrganizationRegProof = () => {
     fetchRows();
   }, []);
 
-  // client-side filtering; you can implement server-side filters by adding query params
+  // ── client-side filters ─────────────────────────
   useEffect(() => {
     let out = [...rows];
-
-    // filter by name (case-insensitive substring)
-    if (searchName.trim() !== "") {
+    if (searchName.trim()) {
       const q = searchName.trim().toLowerCase();
-      out = out.filter(
-        (r) =>
-          (r.proposalName && String(r.proposalName).toLowerCase().includes(q)) ||
-          (r.applicantName && String(r.applicantName).toLowerCase().includes(q)) ||
-          (r.headOffice && String(r.headOffice).toLowerCase().includes(q))
+      out = out.filter(r =>
+        (r.proposalName && r.proposalName.toLowerCase().includes(q)) ||
+        (r.applicantName && r.applicantName.toLowerCase().includes(q)) ||
+        (r.headOffice && r.headOffice.toLowerCase().includes(q))
       );
     }
-
-    // filter by date range — note: `date` column may be BS string or AD date string
     if (fromDate) {
-      out = out.filter((r) => {
-        const d = r.date ? String(r.date).slice(0, 10) : "";
-        return d ? d >= fromDate : false;
-      });
+      out = out.filter(r => r.date ? r.date.slice(0, 10) >= fromDate : false);
     }
     if (toDate) {
-      out = out.filter((r) => {
-        const d = r.date ? String(r.date).slice(0, 10) : "";
-        return d ? d <= toDate : false;
-      });
+      out = out.filter(r => r.date ? r.date.slice(0, 10) <= toDate : false);
     }
-
     setFiltered(out);
   }, [rows, fromDate, toDate, searchName]);
 
   const handleExport = () => {
-    const csv = toCSV(
-      filtered.map((r) => ({
-        sn: r.id,
-        regNo: r.refNo || "",
-        regDate: r.date || "",
-        orgName: r.proposalName || "",
-        address: r.headOffice || "",
-        category: r.purpose || "",
-        workArea: r.activities || "",
-      }))
-    );
-    if (!csv) {
-      alert("No rows to export");
-      return;
-    }
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const csv = toCSV(filtered);
+    if (!csv) { alert("निर्यात गर्न कुनै रेकर्ड छैन।"); return; }
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `gov_org_registration_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `gov_org_approved_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const openRow = (row) => {
-    setSelected(row);
-    setShowModal(true);
-  };
-
   return (
     <div className="gov-proof-page">
+
+      {/* Header */}
       <header className="gov-proof-header">
         <div className="gov-proof-title">सहकारी संस्था दर्ता प्रमाण-पत्र सूची।</div>
-        <a href="#back" className="gov-proof-back" onClick={(e) => e.preventDefault()}>
-          ← Back
-        </a>
+        <div className="gov-proof-btn-row">
+          <button
+            className="gov-proof-btn"
+            onClick={handleExport}
+            disabled={loading || !filtered.length}
+          >
+            📥 एक्सेल निर्यात
+          </button>
+          <button
+            className="gov-proof-btn"
+            onClick={() => window.print()}
+            disabled={loading}
+          >
+            🖨 प्रिन्ट
+          </button>
+        </div>
       </header>
 
-      <div className="gov-proof-btn-row">
-        <button className="gov-proof-btn" onClick={handleExport} disabled={loading || !filtered.length}>
-          एक्सेल निर्यात गर्नुहोस्
-        </button>
-        <button className="gov-proof-btn" onClick={handlePrint} disabled={loading}>
-          प्रिन्ट गर्नुहोस्
-        </button>
-      </div>
-
+      {/* Filter Bar */}
       <div className="gov-proof-filter-bar">
         <div className="gov-proof-filters">
           <div className="gov-proof-filter-group">
             <label>मिति देखि</label>
-            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
           </div>
           <div className="gov-proof-filter-group">
             <label>मिति सम्म</label>
-            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
           </div>
           <div className="gov-proof-filter-group wide">
             <label>सहकारी संस्थाको नाम / आवेदक</label>
-            <input type="text" value={searchName} onChange={(e) => setSearchName(e.target.value)} placeholder="नाम खोज्नुहोस्" />
+            <input
+              type="text"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              placeholder="नाम खोज्नुहोस्"
+            />
           </div>
         </div>
         <button
           className="gov-proof-search-btn"
           aria-label="Search"
-          onClick={() => {
-            // For now filters are applied automatically; this button can trigger server-side fetch if implemented
-            // Example of server-side filter call is shown in the notes below
-            if (!fromDate && !toDate && !searchName) {
-              fetchRows();
-            } else {
-              // client filters already applied via useEffect
-              // show a quick toast
-              // no-op
-            }
-          }}
+          onClick={fetchRows}
         >
           🔍
         </button>
       </div>
 
+      {/* Table */}
       <div className="gov-proof-table-wrapper">
         {loading ? (
-          <div style={{ padding: 24 }}>Loading...</div>
+          <div className="gov-proof-state-msg">Loading...</div>
         ) : error ? (
-          <div style={{ padding: 24, color: "crimson" }}>{error}</div>
+          <div className="gov-proof-state-msg gov-proof-error">{error}</div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: 24 }}>No records found.</div>
+          <div className="gov-proof-state-msg">कुनै स्वीकृत रेकर्ड भेटिएन।</div>
         ) : (
-          <table className="gov-proof-table">
-            <thead>
-              <tr>
-                <th>क्र. स.</th>
-                <th>दर्ता न.</th>
-                <th>दर्ता मिति</th>
-                <th>सहकारी संस्था नाम</th>
-                <th>ठेगाना</th>
-                <th>वर्गिकरण</th>
-                <th>कार्यक्षेत्र</th>
-                <th>कार्य</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((row, index) => (
-                <tr key={row.id || index} className={index % 2 === 0 ? "gov-proof-even" : "gov-proof-odd"}>
-                  <td>{index + 1}</td>
-                  <td>{row.refNo || "-"}</td>
-                  <td>{formatDate(row.date)}</td>
-                  <td>{row.proposalName || "-"}</td>
-                  <td>{row.headOffice || "-"}</td>
-                  <td className="gov-proof-ellipsis">{(row.purpose || "-").slice(0, 40)}</td>
-                  <td className="gov-proof-ellipsis">{(row.activities || "-").slice(0, 40)}</td>
-                  <td className="gov-proof-center">
-                    <button className="gov-proof-view" onClick={() => openRow(row)} title="View">
-                      👁
-                    </button>
-                  </td>
+          <div className="gov-proof-scroll">
+            <table className="gov-proof-table">
+              <thead>
+                <tr>
+                  <th>क्र. स.</th>
+                  <th>दर्ता न.</th>
+                  <th>दर्ता मिति</th>
+                  <th>सहकारी संस्था नाम</th>
+                  <th>ठेगाना</th>
+                  <th>वर्गिकरण</th>
+                  <th>कार्यक्षेत्र</th>
+                  <th>कार्य</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map((row, index) => (
+                  <tr
+                    key={row.id || index}
+                    className={index % 2 === 0 ? "gov-proof-even" : "gov-proof-odd"}
+                  >
+                    <td data-label="क्र. स.">{index + 1}</td>
+                    <td data-label="दर्ता न.">{row.refNo || "-"}</td>
+                    <td data-label="दर्ता मिति">{formatDate(row.date)}</td>
+                    <td data-label="सहकारी संस्था नाम">{row.proposalName || "-"}</td>
+                    <td data-label="ठेगाना">{row.headOffice || "-"}</td>
+                    <td data-label="वर्गिकरण" className="gov-proof-ellipsis">
+                      {(row.purpose || "-").slice(0, 40)}
+                    </td>
+                    <td data-label="कार्यक्षेत्र" className="gov-proof-ellipsis">
+                      {(row.activities || "-").slice(0, 40)}
+                    </td>
+                    <td data-label="कार्य" className="gov-proof-center">
+                      <button
+                        className="gov-proof-view"
+                        onClick={() => setPreviewRow(row)}
+                        title="प्रिन्ट पूर्वावलोकन"
+                      >
+                        👁
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
       <footer className="gov-proof-footer">© सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः</footer>
 
-      {/* Simple modal */}
-      {showModal && selected && (
-        <div className="gov-proof-modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="gov-proof-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Record Details</h3>
-            <div><strong>ID:</strong> {selected.id}</div>
-            <div><strong>Registration No:</strong> {selected.refNo}</div>
-            <div><strong>Date:</strong> {selected.date}</div>
-            <div><strong>Organization:</strong> {selected.proposalName}</div>
-            <div><strong>Address:</strong> {selected.headOffice}</div>
-            <div><strong>Purpose:</strong> {selected.purpose}</div>
-            <div><strong>Activities:</strong> {selected.activities}</div>
-            <div style={{ marginTop: 12 }}>
-              <button onClick={() => setShowModal(false)}>Close</button>
-            </div>
-          </div>
-        </div>
+      {/* Print Preview Modal */}
+      {previewRow && (
+        <PrintPreviewModal
+          row={previewRow}
+          onClose={() => setPreviewRow(null)}
+        />
       )}
     </div>
   );

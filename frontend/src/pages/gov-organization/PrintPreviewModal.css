@@ -1,0 +1,221 @@
+/* ── Overlay ── */
+.pp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+/* ── Modal shell ── */
+.pp-modal {
+  width: 860px;
+  max-width: 97vw;
+  max-height: 94vh;
+  background: #e8e8e8;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.35);
+  overflow: hidden;
+}
+
+/* ── Top bar ── */
+.pp-topbar {
+  background: #192236;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.pp-topbar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pp-print-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.pp-print-btn:hover {
+  background: #0062cc;
+}
+
+.pp-close-btn {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pp-close-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* ── Scrollable area ── */
+.pp-scroll {
+  overflow-y: auto;
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Paper ── */
+.pp-paper {
+  background: white;
+  width: 100%;
+  max-width: 760px;
+  padding: 36px 48px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  font-family: 'Kalimati', 'Kokila', 'Mangal', sans-serif;
+  color: #000;
+  font-size: 0.95rem;
+}
+
+/* ── Letterhead ── */
+.print-header {
+  text-align: center;
+  margin-bottom: 16px;
+  position: relative;
+  min-height: 90px;
+}
+
+.print-logo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 72px;
+}
+
+.municipality-name {
+  color: #c0392b;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ward-title {
+  color: #c0392b;
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.address-line {
+  color: #c0392b;
+  font-size: 0.9rem;
+  margin: 2px 0;
+}
+
+/* ── Sub header ── */
+.sub-header {
+  text-align: center;
+  border-top: 1px solid #bbb;
+  padding-top: 12px;
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 24px;
+}
+
+/* ── Top info (addressee) ── */
+.top-info {
+  margin: 18px 0;
+  font-size: 0.95rem;
+  line-height: 2.2;
+}
+
+.dotted-line {
+  border-bottom: 1px dotted #555;
+  display: inline-block;
+  min-width: 160px;
+  padding: 0 6px;
+}
+
+/* ── Subject ── */
+.subject {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 14px 0 8px;
+}
+
+/* ── Paragraph ── */
+.paragraph {
+  font-size: 0.95rem;
+  line-height: 2;
+  margin-bottom: 14px;
+}
+
+/* ── Section title ── */
+.section-title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 20px 0 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 6px;
+}
+
+/* ── Field rows ── */
+.field-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 10px;
+  font-size: 0.95rem;
+}
+
+.field-label {
+  min-width: 230px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.field-value {
+  border-bottom: 1px solid #aaa;
+  flex: 1;
+  padding-bottom: 2px;
+  min-height: 20px;
+  line-height: 1.6;
+}
+
+.inline-row {
+  display: flex;
+  gap: 28px;
+}
+
+/* ── Applicant box ── */
+.applicant-box {
+  border: 1px solid #ccc;
+  padding: 16px 20px;
+  border-radius: 4px;
+  margin-top: 20px;
+  background: rgba(0,0,0,0.02);
+}
+
+.applicant-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  color: #444;
+}

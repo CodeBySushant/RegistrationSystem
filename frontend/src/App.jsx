@@ -595,10 +595,10 @@ const Layout = () => {
       case "सहकारी संस्था दर्ता सिफारिस":
         return <GovOrganizationReg setActiveLink={setActiveLink} />;
       case "सहकारी संस्था दर्ता सिफारिसको सूची":
-        return <GovOrganizationRegUnsucessful setActiveLink={setActiveLink} />;
+        return <GovOrganizationRegRecommendation setActiveLink={setActiveLink} />;
       case "सहकारी संस्था दर्ता अस्वीकृत सूची":
         return (
-          <GovOrganizationRegRecommendation setActiveLink={setActiveLink} />
+          <GovOrganizationRegUnsucessful setActiveLink={setActiveLink} />
         );
       case "सहकारी संस्था दर्ता प्रमाण-पत्र सूची":
         return <GovOrganizationRegProof setActiveLink={setActiveLink} />;
