@@ -8,11 +8,9 @@ import axios from "../../utils/axiosInstance";
 const FORM_KEY = "citizenship-angkrit";
 const API_URL = `/api/forms/${FORM_KEY}`;
 
-// Immutable empty row factory
 const emptyFamilyRow = () => ({ name: "", relation: "", age: "" });
 
 const buildInitialState = (ward) => ({
-  // ANUSUCHI 7
   dao_district: "काठमाडौँ",
   applicant_name_body: "",
   application_fee: "",
@@ -20,7 +18,7 @@ const buildInitialState = (ward) => ({
   birth_place: "",
   dob: "",
   perm_district: "काठमाडौँ",
-  perm_municipality: MUNICIPALITY?.name,
+  perm_municipality: MUNICIPALITY?.name || "",
   perm_ward: ward ? String(ward) : "१",
   perm_tole: "",
   father_name: "",
@@ -41,8 +39,7 @@ const buildInitialState = (ward) => ({
   family_members: [emptyFamilyRow()],
   sign_date: new Date().toISOString().slice(0, 10),
 
-  // SIFARIS
-  rec_municipality: MUNICIPALITY?.name,
+  rec_municipality: MUNICIPALITY?.name || "",
   rec_ward: ward ? String(ward) : "१",
   rec_father_name: "",
   rec_relation_type: "छोरा",
@@ -51,14 +48,13 @@ const buildInitialState = (ward) => ({
   rec_signatory_position: "",
   rec_date: new Date().toISOString().slice(0, 10),
 
-  // ANUSUCHI 8
   cert_dao_district: "",
   cert_no: "",
   cert_name: "",
   cert_birth_place: "",
   cert_dob: "",
   cert_perm_district: "",
-  cert_perm_municipality: MUNICIPALITY?.name,
+  cert_perm_municipality: MUNICIPALITY?.name || "",
   cert_perm_ward: ward ? String(ward) : "१",
   cert_perm_tole: "",
   cert_father_name: "",
@@ -74,14 +70,12 @@ const buildInitialState = (ward) => ({
   cert_officer_position: "",
   cert_date: new Date().toISOString().slice(0, 10),
 
-  // Applicant details (camelCase for ApplicantDetailsNp)
   applicantName: "",
   applicantAddress: "",
   applicantCitizenship: "",
   applicantPhone: "",
   notes: "",
 
-  // status for DB NOT NULL constraint
   status: "pending",
 });
 
@@ -105,7 +99,6 @@ export default function CitizenshipAngkrit() {
     }
   }, [user]);
 
-  // Trigger print after successful save + re-render
   useEffect(() => {
     if (pendingPrintRef.current) {
       pendingPrintRef.current = false;
@@ -178,7 +171,6 @@ export default function CitizenshipAngkrit() {
           text: "रेकर्ड सफलतापूर्वक सेभ भयो । ID: " + (res.data?.id ?? ""),
         });
         pendingPrintRef.current = true;
-        // Reset form after save
         setForm(buildInitialState(user?.ward));
       } else {
         throw new Error("Unexpected response: " + res.status);
@@ -208,9 +200,7 @@ export default function CitizenshipAngkrit() {
         </span>
       </div>
 
-      {/* ============================================================
-          ANUSUCHI - 7  (Application Form)
-      ============================================================ */}
+      {/* ANUSUCHI - 7 */}
       <div className="schedule-section">
         <div className="schedule-header">
           <h3 className="schedule-title">अनुसूची-७</h3>
@@ -229,7 +219,7 @@ export default function CitizenshipAngkrit() {
             जिल्ला प्रशासन कार्यालय,{" "}
             <input
               name="dao_district"
-              className="f-input medium-input bold-text"
+              className="f-input medium-input"
               value={form.dao_district}
               onChange={handleChange}
             />{" "}
@@ -473,9 +463,7 @@ export default function CitizenshipAngkrit() {
         </div>
       </div>
 
-      {/* ============================================================
-          ANUSUCHI - 8  (Certificate Draft)
-      ============================================================ */}
+      {/* ANUSUCHI - 8 */}
       <div className="anusuchi-8-section">
         <div className="schedule-header">
           <h3 className="schedule-title">अनुसूची-८</h3>

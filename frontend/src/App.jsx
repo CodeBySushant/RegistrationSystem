@@ -413,7 +413,7 @@ const Layout = () => {
       case "नागरिकता सिफारिस":
         return <CitizenshipRecommendation setActiveLink={setActiveLink} />;
       case "नागरिकताको प्रमाण-पत्र प्रतिलिपि":
-        return <CitizenshipProofCopy setActiveLink={setActiveLink} />;
+        return <CitizenshipCertificateCopy setActiveLink={setActiveLink} />;
       case "नेपाली अंगीकृत नागरिकता":
         return <CitizenshipAngkrit setActiveLink={setActiveLink} />;
       case "पतिको नाममा नेपाली नागरिकताको प्रमाण-पत्र":

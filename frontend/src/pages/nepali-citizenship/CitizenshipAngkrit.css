@@ -28,7 +28,7 @@
 .sep-label {
   white-space: nowrap;
   flex-shrink: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 /* --- Top Bar --- */
@@ -39,11 +39,11 @@
   padding-bottom: 10px;
   margin-bottom: 20px;
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: #333;
 }
 .top-right-bread {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #777;
   font-weight: normal;
 }
@@ -51,41 +51,41 @@
 /* --- Schedule Sections --- */
 .schedule-section  { margin-bottom: 40px; }
 .schedule-header   { text-align: center; margin-bottom: 30px; }
-.schedule-title    { font-size: 1.2rem; margin: 0; color: #000; font-weight: bold; }
-.rule-text         { font-size: 0.95rem; margin: 5px 0; color: #333; }
-.form-type-title   { font-size: 1.5rem; margin: 15px 0 10px 0; color: #333; font-weight: bold; }
+.schedule-title    { font-size: 1.1rem; margin: 0; color: #000; font-weight: bold; }
+.rule-text         { font-size: 0.9rem; margin: 5px 0; color: #333; }
+.form-type-title   { font-size: 1.3rem; margin: 15px 0 10px 0; color: #333; font-weight: bold; }
 
 /* --- Addressee & Subject --- */
 .addressee-section {
   margin-bottom: 20px;
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 2;
 }
 .addressee-section p { margin: 2px 0; }
 .subject-section {
   text-align: center;
   margin: 30px 0;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: bold;
 }
 
 /* --- Main Body --- */
-.form-body        { font-size: 1.05rem; line-height: 1.9; }
+.form-body        { font-size: 1rem; line-height: 1.9; }
 .body-paragraph   { line-height: 2.2; text-align: justify; margin: 10px 0; }
 .indent-text      { text-indent: 40px; }
 
 /* --- Core Input Style --- */
 .f-input {
   display: inline-block;
-  height: 26px;
+  height: 24px;
   border: none;
   border-bottom: 1.5px solid #555;
-  background-color: #fff;
+  background-color: #ffffff;
   outline: none;
-  padding: 2px 6px;
+  padding: 1px 5px;
   margin: 0 2px;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #000;
   box-sizing: border-box;
   vertical-align: middle;
@@ -99,13 +99,13 @@
 /* --- Select --- */
 .f-select {
   display: inline-block;
-  height: 26px;
+  height: 24px;
   border: 1px solid #888;
-  background-color: #fff;
-  padding: 1px 4px;
+  background-color: #ffffff;
+  padding: 0 4px;
   margin: 0 2px;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #000;
   border-radius: 3px;
   cursor: pointer;
@@ -118,30 +118,31 @@
 }
 
 /* --- Input width variants --- */
-.tiny-input   { width: 52px;  text-align: center; }
-.small-input  { width: 105px; }
-.medium-input { width: 155px; }
-.long-input   { width: 270px; }
-.date-input   { width: 145px; }
+.tiny-input   { width: 48px;  text-align: center; }
+.small-input  { width: 95px; }
+.medium-input { width: 140px; }
+.long-input   { width: 240px; }
+.date-input   { width: 135px; }
 
 /* --- Details List --- */
 .details-list   { margin-top: 20px; }
 .details-indent { padding-left: 20px; }
 
 .detail-row {
-  margin-bottom: 9px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
 }
 .detail-row label {
   flex-shrink: 0;
   line-height: 1.4;
+  font-size: 0.95rem;
 }
 
 /* ============================================================
-   Family Members Table — improved design
+   Family Members Table
 ============================================================ */
 .details-table {
   width: 100%;
@@ -154,9 +155,9 @@
 
 .details-table th {
   border: 1px solid #2c3e50;
-  padding: 8px 10px;
+  padding: 6px 8px;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: bold;
   background-color: #2c3e50;
   color: #ffffff;
@@ -164,7 +165,7 @@
 
 .details-table td {
   border: 1px solid #bdc3c7;
-  padding: 5px 6px;
+  padding: 4px 5px;
   background-color: #fff;
   vertical-align: middle;
 }
@@ -175,13 +176,13 @@
 
 .table-input {
   width: 95%;
-  height: 26px;
+  height: 24px;
   border: none;
   border-bottom: 1px solid #bbb;
-  background: transparent;
+  background: #ffffff;
   outline: none;
-  padding: 2px 4px;
-  font-size: 0.95rem;
+  padding: 1px 4px;
+  font-size: 0.9rem;
   font-family: inherit;
   box-sizing: border-box;
   color: #000;
@@ -197,11 +198,11 @@
 .remove-btn {
   color: #fff;
   border: none;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -215,7 +216,7 @@
 .remove-btn:hover { background-color: #c0392b; }
 
 /* ============================================================
-   Thumbprint Box — improved design
+   Thumbprint Box
 ============================================================ */
 .signature-flex-container {
   display: flex;
@@ -234,7 +235,7 @@
 }
 
 .thumbprint-title {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: bold;
   border-bottom: 1.5px solid #2c3e50;
   padding-bottom: 4px;
@@ -252,8 +253,8 @@
 }
 
 .thumb-box {
-  width: 90px;
-  height: 110px;
+  width: 80px;
+  height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -269,7 +270,7 @@
 }
 
 .thumb-label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #555;
   text-align: center;
@@ -283,9 +284,8 @@
 .thumb-inner {
   flex: 1;
   width: 100%;
-  /* subtle fingerprint-like radial pattern */
   background-image: repeating-radial-gradient(
-    circle at 45px 55px,
+    circle at 40px 50px,
     transparent 0px,
     transparent 8px,
     rgba(0,0,0,0.04) 8px,
@@ -293,14 +293,14 @@
   );
 }
 
-.signature-block       { text-align: right; font-size: 1.05rem; }
+.signature-block       { text-align: right; font-size: 1rem; }
 .signature-block p     { margin: 10px 0; }
 
 /* --- Recommendation --- */
 .recommendation-section { margin-top: 30px; }
-.section-title          { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
+.section-title          { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; }
 
-.rec-signature-block    { text-align: right; margin-top: 30px; font-size: 1.05rem; }
+.rec-signature-block    { text-align: right; margin-top: 30px; font-size: 1rem; }
 .rec-signature-block p  { margin: 10px 0; }
 
 .sig-row {
@@ -320,18 +320,18 @@
   margin-top: 40px;
 }
 .gov-header   { margin-bottom: 20px; }
-.gov-header p { margin: 5px 0; font-size: 1.1rem; }
+.gov-header p { margin: 5px 0; font-size: 1.05rem; }
 
-.certificate-body { font-size: 1.05rem; }
+.certificate-body { font-size: 1rem; }
 
 .cert-row {
-  margin-bottom: 11px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
 }
-.cert-row label   { flex-shrink: 0; }
+.cert-row label   { flex-shrink: 0; font-size: 0.95rem; }
 .right-align      { justify-content: flex-end; }
 
 .cert-signature-block   { text-align: right; margin-top: 40px; }
@@ -339,10 +339,10 @@
 
 /* --- Submit message --- */
 .submit-msg {
-  padding: 8px 18px;
+  padding: 7px 16px;
   border-radius: 4px;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.95rem;
   margin-bottom: 12px;
   display: inline-block;
 }
@@ -352,15 +352,15 @@
 /* --- Applicant Details Box --- */
 .applicant-details-box {
   border: 1px solid #ddd;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.4);
+  padding: 18px;
+  background-color: rgba(255, 255, 255, 0.7);
   margin-top: 20px;
   border-radius: 4px;
 }
 
 .applicant-details-box h3 {
   color: #777;
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin: 0 0 15px 0;
   border-bottom: 1px solid #eee;
   padding-bottom: 8px;
@@ -369,98 +369,64 @@
 .details-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 15px;
+  gap: 12px;
 }
 
 .detail-group { display: flex; flex-direction: column; }
-.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-group label { font-size: 0.85rem; margin-bottom: 4px; font-weight: bold; color: #333; }
 .detail-input {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 6px 8px;
   border-radius: 4px;
   width: 100%;
+  height: 32px;
   box-sizing: border-box;
+  background-color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
 }
-.bg-gray { background-color: #eef2f5; } 
+.bg-gray { background-color: #eef2f5; }
 
 /* --- Footer --- */
 .form-footer { text-align: center; margin-top: 40px; }
 .save-print-btn {
   background-color: #2c3e50;
   color: white;
-  padding: 10px 25px;
+  padding: 9px 22px;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
 }
 .save-print-btn:hover { background-color: #1a252f; }
-.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
-
-.insurance-claim-container .applicant-details-box .details-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 18px !important;
+.copyright-footer {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
 }
 
-/* Control applicant input width */
-.insurance-claim-container 
-.applicant-details-box 
-.detail-input {
-  max-width: 400px;   /* adjust if needed: 480–550 */
-  width: 100%;
-}
-
-/* Red star */
-.required {
-  color: red;
-  margin-left: 4px;
-}
-
-.inline-input-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.input-required-star {
-  position: absolute;
-  left: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: red;
-  font-weight: bold;
-  pointer-events: none;
-  font-size: 14px;
-}
-
-.inline-input-wrapper input {
-  padding-left: 18px;
-}
+/* --- Hide on print --- */
+.hide-print { display: block; }
 
 /* ================= PRINT STYLES ================= */
 @media print {
-  body * {
-    visibility: hidden;
-  }
+  .hide-print { display: none !important; }
 
-  .insurance-claim-container,
-  .insurance-claim-container * {
-    visibility: visible;
-  }
-
-  .insurance-claim-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    box-shadow: none;
-    border: none;
-    margin: 0;
-    padding: 0;
+  .angkrit-citizenship-container {
+    max-width: 100%;
+    padding: 10px 20px;
+    background-image: none;
     background: white;
   }
 
-  .form-footer {
-    display: none;
+  .f-input,
+  .f-select,
+  .table-input {
+    border: none;
+    border-bottom: 1px solid #000;
+    background: transparent !important;
   }
 }
