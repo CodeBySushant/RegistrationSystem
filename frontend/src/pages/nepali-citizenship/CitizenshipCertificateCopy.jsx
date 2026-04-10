@@ -1,6 +1,7 @@
 // src/components/CitizenshipCertificateCopy.jsx
 import React, { useState } from "react";
 import "./CitizenshipCertificateCopy.css";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const FORM_KEY = "citizenship-proof-copy"; // <-- updated formKey
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -147,32 +148,18 @@ export default function CitizenshipCertificateCopy() {
         </div>
       </div>
 
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input value={form.applicant_name_footer} onChange={update("applicant_name_footer")} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input value={form.applicant_address_footer} onChange={update("applicant_address_footer")} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input value={form.applicant_citizenship_no} onChange={update("applicant_citizenship_no")} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input value={form.applicant_phone} onChange={update("applicant_phone")} className="detail-input bg-gray" />
-          </div>
-        </div>
+      {/* --- Applicant Details Box --- */}
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
+
+      {/* --- Footer Action --- */}
+      <div className="form-footer">
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
       </div>
 
-      <div className="form-footer">
-        <button className="save-print-btn" type="submit" disabled={loading}>
-          {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-        </button>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
 
       {message && <div style={{ marginTop: 10, color: message.type === "error" ? "crimson" : "green" }}>{message.text}</div>}
