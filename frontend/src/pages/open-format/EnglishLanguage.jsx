@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import './EnglishLanguage.css';
+import React, { useState } from "react";
+import "./EnglishLanguage.css";
+import axios from "../../utils/axiosInstance";
 import ApplicantDetailsEn from "../../components/ApplicantDetailsEn.jsx";
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 
-const FORM_KEY = "open-format-english";
-const API_URL = `/api/forms/${FORM_KEY}`;
+const FORM_KEY = "open-application";
 
 const EnglishLanguage = () => {
   const [form, setForm] = useState({
@@ -29,25 +29,43 @@ const EnglishLanguage = () => {
   const [message, setMessage] = useState(null);
 
   const upd = (k) => (e) => {
-    const v = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setForm(s => ({ ...s, [k]: v }));
+    const v = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    setForm((s) => ({ ...s, [k]: v }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
+
+    // ✅ Basic validation
+    if (!form.subject || !form.signatory_name) {
+      setMessage({
+        type: "error",
+        text: "Subject and Signatory Name required!",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+      // ✅ FIXED - Uses correct formKey with axios auth
+      const res = await axios.post(`/api/forms/${FORM_KEY}`, form);
+      
+      // ✅ PRINT AFTER SUCCESSFUL SAVE
+      window.print();
+      
+      setMessage({ 
+        type: "success", 
+        text: `Saved successfully! ID: ${res.data.id || 'N/A'}` 
       });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.message || "Submission failed");
-      setMessage({ type: 'success', text: `Saved successfully! ID: ${body.id}` });
     } catch (err) {
-      setMessage({ type: 'error', text: err.message });
+      console.error("Submit error:", err.response || err.message || err);
+      const msg = 
+        err.response?.data?.message || 
+        err.response?.data?.error || 
+        err.message || 
+        "Save failed. Check form key.";
+      setMessage({ type: "error", text: msg });
     } finally {
       setLoading(false);
     }
@@ -72,11 +90,35 @@ const EnglishLanguage = () => {
         {/* Meta Data Row */}
         <div className="meta-data-row">
           <div className="meta-left">
-            <p>Letter No. : <input type="text" className="dotted-input" value={form.letter_no} onChange={upd('letter_no')} /></p>
-            <p>Ref No. : <input type="text" className="dotted-input" value={form.reference_no} onChange={upd('reference_no')} /></p>
+            <p>
+              Letter No. :{" "}
+              <input
+                type="text"
+                className="dotted-input"
+                value={form.letter_no}
+                onChange={upd("letter_no")}
+              />
+            </p>
+            <p>
+              Ref No. :{" "}
+              <input
+                type="text"
+                className="dotted-input"
+                value={form.reference_no}
+                onChange={upd("reference_no")}
+              />
+            </p>
           </div>
           <div className="meta-right">
-            <p>Date : <input type="date" className="dotted-input" value={form.date} onChange={upd('date')} /></p>
+            <p>
+              Date :{" "}
+              <input
+                type="date"
+                className="dotted-input"
+                value={form.date}
+                onChange={upd("date")}
+              />
+            </p>
           </div>
         </div>
 
@@ -86,14 +128,26 @@ const EnglishLanguage = () => {
             <label>Subject:</label>
             <div className="inline-input-wrapper">
               <span className="input-required-star">*</span>
-              <input type="text" value={form.subject} onChange={upd('subject')} className="dotted-input large-input" required />
+              <input
+                type="text"
+                value={form.subject}
+                onChange={upd("subject")}
+                className="dotted-input large-input"
+                required
+              />
             </div>
           </div>
 
           <div className="addressee-row">
             <div className="inline-input-wrapper">
               <span className="input-required-star">*</span>
-              <input type="text" value={form.addressee_name} onChange={upd('addressee_name')} className="dotted-input long-input" required />
+              <input
+                type="text"
+                value={form.addressee_name}
+                onChange={upd("addressee_name")}
+                className="dotted-input long-input"
+                required
+              />
             </div>
           </div>
         </div>
@@ -105,13 +159,17 @@ const EnglishLanguage = () => {
               <span>Write Here: </span>
               <span className="upgrade-btn">⚡ Upgrade</span>
             </div>
-            <textarea 
-               className="editor-textarea" 
-               value={form.body_text} 
-               onChange={upd('body_text')} 
-               placeholder="Write your letter content here..."
+            <textarea
+              className="editor-textarea"
+              value={form.body_text}
+              onChange={upd("body_text")}
+              placeholder="Write your letter content here..."
             />
-            <div className="word-count"> { (form.body_text || '').split(/\s+/).filter(Boolean).length } words </div>
+            <div className="word-count">
+              {" "}
+              {(form.body_text || "").split(/\s+/).filter(Boolean).length}{" "}
+              words{" "}
+            </div>
           </div>
         </div>
 
@@ -120,9 +178,20 @@ const EnglishLanguage = () => {
           <div className="signature-block">
             <div className="inline-input-wrapper">
               <span className="input-required-star">*</span>
-              <input type="text" value={form.signatory_name} onChange={upd('signatory_name')} className="dotted-input" placeholder="Signatory Name" required />
+              <input
+                type="text"
+                value={form.signatory_name}
+                onChange={upd("signatory_name")}
+                className="dotted-input"
+                placeholder="Signatory Name"
+                required
+              />
             </div>
-            <select className="designation-select" value={form.signatory_position} onChange={upd('signatory_position')}>
+            <select
+              className="designation-select"
+              value={form.signatory_position}
+              onChange={upd("signatory_position")}
+            >
               <option value="">Select Designation</option>
               <option value="Ward Chairman">Ward Chairman</option>
               <option value="Ward Secretary">Ward Secretary</option>
@@ -141,9 +210,7 @@ const EnglishLanguage = () => {
         </div>
 
         {message && (
-          <div className={`status-message ${message.type}`}>
-            {message.text}
-          </div>
+          <div className={`status-message ${message.type}`}>{message.text}</div>
         )}
       </form>
       <div className="copyright-footer">

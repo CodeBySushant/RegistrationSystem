@@ -127,3 +127,16 @@
   color: #777;
   margin-top: 40px;
 }
+
+/* ✅ ADD THIS PRINT FIX */
+@media print {
+  body * { visibility: hidden; }
+  .open-format-container, .open-format-container * { visibility: visible; }
+  .open-format-container {
+    position: absolute; left: 0; top: 0; width: 100%; 
+    padding: 20px 40px; background: white !important; box-shadow: none;
+  }
+  .status-message, .form-footer, .editor-toolbar .upgrade-btn, .word-count { display: none !important; }
+  .rich-editor-mock { border: none !important; background: transparent !important; }
+  .editor-textarea { border: none !important; background: transparent !important; resize: none !important; }
+}

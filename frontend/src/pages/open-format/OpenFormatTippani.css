@@ -194,3 +194,35 @@
   border-top: 1px solid #eee;
   padding-top: 10px;
 }
+
+@media print {
+  body * { visibility: hidden; }
+  .tippani-container, .tippani-container * { visibility: visible; }
+  
+  .tippani-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px 40px;
+    background: white !important;
+    margin: 0;
+    box-shadow: none;
+  }
+  
+  .top-bar-title,
+  .form-footer,
+  .editor-toolbar .upgrade-btn {
+    display: none !important;
+  }
+  
+  .rich-editor-mock {
+    border: none !important;
+    background: transparent !important;
+  }
+  
+  .editor-textarea {
+    background: transparent !important;
+    border: none !important;
+  }
+}
