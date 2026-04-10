@@ -221,7 +221,7 @@ import EnglishLanguage from "./pages/open-format/EnglishLanguage.jsx";
 import NepaliLanguage from "./pages/open-format/NepaliLanguage.jsx";
 import OpenApplication from "./pages/open-format/OpenApplication.jsx";
 import OpenFormatTippani from "./pages/open-format/OpenFormatTippani.jsx";
-import PartialInformation from "./pages/open-format/PartialInformation.jsx";
+import SuchanaForm from "./pages/open-format/SuchanaForm.jsx";
 // pages/report
 import CategoryReportSearch from "./pages/report/CategoryReportSearch.jsx";
 import CertificateRenewalList from "./pages/report/CertificateRenewalList.jsx";
@@ -430,7 +430,7 @@ const Layout = () => {
       case "खुल्ला निवेदन":
         return <OpenApplication setActiveLink={setActiveLink} />;
       case "सूचना अध्यावधिक":
-        return <PartialInformation setActiveLink={setActiveLink} />;
+        return <SuchanaForm setActiveLink={setActiveLink} />;
       case "टिप्पणी new":
         return <OpenFormatTippani setActiveLink={setActiveLink} />;
       // pages/official-use
