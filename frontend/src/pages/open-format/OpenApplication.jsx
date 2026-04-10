@@ -1,55 +1,55 @@
 import React, { useState } from "react";
+import axios from "../../utils/axiosInstance"; // ✅ Fixed
+import { useWardForm } from "../../hooks/useWardForm"; // ✅ Added
 import "./OpenApplication.css";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext"; // ✅ Added
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-const FORM_KEY = "open-application";
-const API_BASE = import.meta.env.VITE_API_BASE || "";
-const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
+const initialState = {
+  date: "",
+  subject: "",
+  recipient_name: "",
+  rel_subject: "",
+  district: "",
+  municipality: "गाउँपालिका",
+  ward_no: "",
+  savik_address: "",
+  savik_vdc: "",
+  savik_ward: "",
+  body_text: "",
+  // ✅ ApplicantDetailsNp fields
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship_no: "",
+  applicant_cit_issued_date: "",
+  applicant_nid_no: "",
+  applicant_phone: "",
+};
 
 const OpenApplication = () => {
-  const [form, setForm] = useState({
-    date: "२०८२-१२-१८",
-    subject: "",
-    recipient_name: "",
-    rel_subject: "", 
-    district: "",
-    municipality: "गाउँपालिका",
-    ward_no: "",
-    savik_address: "",
-    savik_vdc: "",
-    savik_ward: "",
-    body_text: "",
-    // Fields expected by ApplicantDetailsNp based on your screenshot
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizenship_no: "",
-    applicant_cit_issued_date: "", // Added from image
-    applicant_nid_no: "",          // Added from image
-    applicant_phone: ""
-  });
-
+  const { form, setForm, handleChange } = useWardForm(initialState); // ✅ Hook
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null);
+  const { user } = useAuth(); // ✅ Dynamic ward
 
-  // Parent update function
-  const update = (k) => (e) => {
-    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
-    setForm((s) => ({ ...s, [k]: value }));
-  };
+  const handlePrint = async () => {
+    // ✅ Skip date validation - send as text
+    const submitData = {
+      ...form,
+      date: form.date || null, // ✅ Send as-is
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (res.ok) setMsg({ type: "success", text: "सुरक्षित गरियो" });
+      const res = await axios.post("/api/forms/open-application", submitData);
+      if (res.status === 201) {
+        alert("सफल! ID: " + res.data.id);
+        window.print();
+        setForm(initialState);
+      }
     } catch (err) {
-      setMsg({ type: "error", text: err.message });
+      console.error(err);
+      alert("त्रुटि: " + (err.response?.data?.message || "पठाउन सकिएन"));
     } finally {
       setLoading(false);
     }
@@ -57,69 +57,173 @@ const OpenApplication = () => {
 
   return (
     <div className="khulla-nivedan-container">
-      <form onSubmit={handleSubmit}>
-        <div className="top-bar-title">
-          खुल्ला निवेदन
-          <span className="top-right-bread">खुल्ला ढाँचा &gt; खुल्ला निवेदन</span>
-        </div>
+      <div className="top-bar-title">
+        खुल्ला निवेदन
+        <span className="top-right-bread">खुला ढाँचा &gt; खुल्ला निवेदन</span>
+      </div>
+
+      <form>
+        {/* ✅ DYNAMIC MUNICIPALITY HEADER */}
+        <header className="form-header-section">
+          <div className="header-logo">
+            <img src={MUNICIPALITY.logoSrc} alt="Nepal Logo" />
+          </div>
+          <div className="header-text">
+            <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+            <h2 className="ward-title">
+              {user?.role === "SUPERADMIN"
+                ? "सबै वडा कार्यालय"
+                : user?.ward
+                  ? `वडा नं. ${user.ward} वडा कार्यालय`
+                  : "वडा कार्यालय"}
+            </h2>
+            <p className="address-text">{MUNICIPALITY.officeLine}</p>
+            <p className="province-text">{MUNICIPALITY.provinceLine}</p>
+          </div>
+        </header>
 
         <div className="date-row">
-          मिति : <input type="text" className="dotted-input" value={form.date} onChange={update("date")} />
+          मिति :
+          <input
+            name="date"
+            type="text"
+            className="dotted-input"
+            value={form.date}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="recipient-section">
-          श्रीमान् <input type="text" className="dotted-input" value={form.recipient_name} onChange={update("recipient_name")} /> ज्यू,
-          <br /><input type="text" className="dotted-input" style={{ width: '200px' }} /> ,
-          <br /><input type="text" className="dotted-input" style={{ width: '200px' }} /> ।
+          श्रीमान्
+          <input
+            name="recipient_name"
+            type="text"
+            className="dotted-input"
+            value={form.recipient_name}
+            onChange={handleChange}
+          />{" "}
+          ज्यू,
+          <br />
+          <input
+            type="text"
+            className="dotted-input"
+            style={{ width: "200px" }}
+            placeholder="पद"
+          />
+          <br />
+          <input
+            type="text"
+            className="dotted-input"
+            style={{ width: "200px" }}
+            placeholder="कार्यालय"
+          />
         </div>
 
         <div className="subject-row">
-          विषय:- <input type="text" className="dotted-input" style={{ width: '300px' }} value={form.subject} onChange={update("subject")} required /> ।
+          विषय:-
+          <input
+            name="subject"
+            type="text"
+            className="dotted-input"
+            style={{ width: "300px" }}
+            value={form.subject}
+            onChange={handleChange}
+          />{" "}
+          ।
         </div>
 
         <div className="salutation">महोदय,</div>
 
         <div className="inline-meta-fields">
-          उपरोक्त सम्बन्धमा <input type="text" className="dotted-input" value={form.rel_subject} onChange={update("rel_subject")} /> 
-          जिल्ला <input type="text" className="dotted-input" value={form.district} onChange={update("district")} /> 
-          <select className="inline-select" value={form.municipality} onChange={update("municipality")}>
+          उपरोक्त सम्बन्धमा
+          <input
+            name="rel_subject"
+            type="text"
+            className="dotted-input inline-input"
+            value={form.rel_subject}
+            onChange={handleChange}
+          />
+          जिल्ला
+          <input
+            name="district"
+            type="text"
+            className="dotted-input inline-input"
+            value={form.district}
+            onChange={handleChange}
+          />
+          <select
+            name="municipality"
+            className="inline-select"
+            value={form.municipality}
+            onChange={handleChange}
+          >
             <option>गाउँपालिका</option>
             <option>नगरपालिका</option>
-          </select> 
-          वडा नं. <input type="text" className="dotted-input tiny-input" value={form.ward_no} onChange={update("ward_no")} /> 
-          साविक <input type="text" className="dotted-input" value={form.savik_address} onChange={update("savik_address")} /> 
-          गाविस <input type="text" className="dotted-input" value={form.savik_vdc} onChange={update("savik_vdc")} /> 
-          वडा नं. <input type="text" className="dotted-input tiny-input" value={form.savik_ward} onChange={update("savik_ward")} /> मा बस्ने ।
+          </select>
+          वडा नं.
+          <input
+            name="ward_no"
+            type="text"
+            className="dotted-input tiny-input"
+            value={form.ward_no}
+            onChange={handleChange}
+          />
+          साविक
+          <input
+            name="savik_address"
+            type="text"
+            className="dotted-input inline-input"
+            value={form.savik_address}
+            onChange={handleChange}
+          />
+          गाविस
+          <input
+            name="savik_vdc"
+            type="text"
+            className="dotted-input inline-input"
+            value={form.savik_vdc}
+            onChange={handleChange}
+          />
+          वडा नं.
+          <input
+            name="savik_ward"
+            type="text"
+            className="dotted-input tiny-input"
+            value={form.savik_ward}
+            onChange={handleChange}
+          />{" "}
+          मा बस्ने ।
         </div>
 
-        {/* Editor Area */}
         <div className="editor-area">
           <div className="rich-editor-mock">
             <div className="editor-toolbar">
               <span>File Edit View Insert Format Tools Table Help</span>
-              <span className="upgrade-btn">⚡ Upgrade</span>
             </div>
             <textarea
+              name="body_text"
               className="editor-textarea"
               value={form.body_text}
-              onChange={update("body_text")}
+              onChange={handleChange}
               placeholder="यहाँ पत्रको व्यहोरा लेख्नुहोस्..."
             />
           </div>
         </div>
 
-        {/* Applicant Details Component Integrated Here */}
-        <div className="applicant-details-wrapper">
-           <ApplicantDetailsNp formData={form} handleChange={update} />
-        </div>
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
         <div className="form-footer">
-          <button type="submit" className="save-print-btn" disabled={loading}>
+          <button
+            type="button"
+            className="save-print-btn"
+            onClick={handlePrint}
+            disabled={loading}
+          >
             {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
       </form>
-      
+
       <div className="copyright-footer">
         © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>

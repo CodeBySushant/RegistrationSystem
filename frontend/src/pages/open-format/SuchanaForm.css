@@ -177,3 +177,31 @@
   margin-top: 40px;
   color: #666;
 }
+
+/* ✅ ONLY ADD THESE */
+.top-bar-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+}
+
+.top-right-bread {
+  font-size: 0.9rem;
+  color: #777;
+  font-weight: normal;
+}
+
+/* PRINT */
+@media print {
+  body * { visibility: hidden; }
+  .suchana-paper-container, .suchana-paper-container * { visibility: visible; }
+  .suchana-paper-container {
+    position: absolute; left: 0; top: 0; width: 100%; padding: 20px 40px; background: white !important;
+  }
+  .top-bar-title, .footer-button-container, .editor-toolbar { display: none !important; }
+  .rich-editor-mock { border: none !important; background: transparent !important; }
+}

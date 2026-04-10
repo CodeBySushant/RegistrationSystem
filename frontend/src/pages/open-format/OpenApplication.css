@@ -10,6 +10,7 @@
   line-height: 1.8;
 }
 
+/* ✅ ORIGINAL STYLES - UNCHANGED */
 .dotted-input {
   border: none;
   border-bottom: 1px dotted #000;
@@ -26,7 +27,6 @@
 
 .tiny-input { width: 45px; text-align: center; }
 
-/* Editor Mockup */
 .rich-editor-mock {
   border: 1px solid #ccc;
   background: #fff;
@@ -42,7 +42,6 @@
   font-size: 1.1rem;
 }
 
-/* Ensure ApplicantDetailsNp looks like the screenshot */
 .applicant-details-wrapper .applicant-details-box {
   border: 1px solid #ddd;
   background-color: rgba(255, 255, 255, 0.4);
@@ -78,4 +77,131 @@
   font-size: 0.8rem;
   color: #666;
   margin-top: 40px;
+}
+
+/* ✅ NEW: Header Styles (Minimal - won't break layout) */
+.form-header-section {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.header-logo {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.header-logo img {
+  width: 80px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.municipality-name {
+  color: #e74c3c;
+  font-size: 2.2rem;
+  margin: 0;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.ward-title {
+  color: #e74c3c;
+  font-size: 2.5rem;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.address-text,
+.province-text {
+  color: #e74c3c;
+  font-size: 1rem;
+  margin: 2px 0;
+  font-weight: bold;
+}
+
+/* ✅ NEW: Inline input styles */
+.inline-input {
+  width: 120px;
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.inline-select {
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 2px 5px;
+  margin: 0 5px;
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+/* ✅ NEW: Top bar (if missing) */
+.top-bar-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+}
+
+.top-right-bread {
+  font-size: 0.9rem;
+  color: #777;
+  font-weight: normal;
+}
+
+/* ✅ PRINT STYLES - Only affects PRINT */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .khulla-nivedan-container,
+  .khulla-nivedan-container * {
+    visibility: visible;
+  }
+
+  .khulla-nivedan-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px 40px;
+    background: white !important; /* Override texture for print */
+    box-shadow: none;
+  }
+
+  /* Hide during print */
+  .top-bar-title,
+  .form-footer,
+  .editor-toolbar,
+  .upgrade-btn {
+    display: none !important;
+  }
+
+  .rich-editor-mock {
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .editor-textarea {
+    border: none !important;
+    background: transparent !important;
+    resize: none !important;
+    min-height: auto !important;
+  }
+
+  /* Keep paper texture subtle in print if wanted */
+  .khulla-nivedan-container {
+    background-image: none !important;
+  }
 }

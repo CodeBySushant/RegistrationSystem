@@ -19,14 +19,39 @@ const SuchanaForm = () => {
 
   const update = (key) => (e) => setForm((s) => ({ ...s, [key]: e.target.value }));
 
+  // ✅ ADD THIS SUBMIT HANDLER
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    
+    // Basic validation
+    if (!form.suchana_no || !form.signatory_name) {
+      alert("सूचना नं. र हस्ताक्षरकर्ताको नाम आवश्यक छ!");
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      // Optional: Save to backend
+      // await saveFormData(form);
+      
+      // Trigger print dialog
+      window.print();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("केही गडबड भयो!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="page-wrapper">
-      <form className="suchana-paper-container">
-        
+      <form className="suchana-paper-container" onSubmit={handleSubmit}>
         {/* Official Header */}
         <header className="form-header-section">
           <div className="header-logo">
-            <img src="/nepallogo.svg" alt="Nepal Logo" />
+            <img src="/nepallogo.jpg" alt="Nepal Logo" />
           </div>
           <div className="header-text">
             <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
@@ -86,7 +111,13 @@ const SuchanaForm = () => {
         </div>
 
         <div className="footer-button-container">
-          <button type="submit" className="save-print-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+          <button 
+            type="submit" 
+            className="save-print-btn"
+            disabled={loading}
+          >
+            {loading ? "प्रिन्ट गर्दैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
 
         <div className="bottom-copyright">© सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका</div>
