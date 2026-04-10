@@ -1,6 +1,7 @@
 // src/components/CitizenshipCertificateRecommendation.jsx
 import React, { useState } from "react";
 import "./CitizenshipCertificateRecommendation.css";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const FORM_KEY = "citizenship-certificate-recommendation";
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -165,18 +166,18 @@ export default function CitizenshipCertificateRecommendation() {
           <input type="date" value={form.recommender_date} onChange={update("recommender_date")} />
         </div>
 
-        <div className="applicant-details-box">
-          <input type="text" value={form.applicant_name} onChange={update("applicant_name")} placeholder="निवेदकको नाम" />
-          <input type="text" value={form.applicant_address} onChange={update("applicant_address")} placeholder="ठेगाना" />
-          <input type="text" value={form.applicant_citizenship_no} onChange={update("applicant_citizenship_no")} placeholder="नागरिकता नं" />
-          <input type="text" value={form.applicant_phone} onChange={update("applicant_phone")} placeholder="फोन नं" />
-        </div>
+        {/* --- Applicant Details Box --- */}
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
+
+      {/* --- Footer Action --- */}
+      <div className="form-footer">
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
       </div>
 
-      <div className="form-footer">
-        <button type="submit" disabled={loading} className="save-print-btn">
-          {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-        </button>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
 
       {message && <div style={{ color: message.type === "error" ? "crimson" : "green" }}>{message.text}</div>}

@@ -1,240 +1,596 @@
-// src/components/CitizenshipAngkrit.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./CitizenshipAngkrit.css";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import { useAuth } from "../../context/AuthContext";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import axios from "../../utils/axiosInstance";
 
 const FORM_KEY = "citizenship-angkrit";
 const API_URL = `/api/forms/${FORM_KEY}`;
 
-const todayIso = () => new Date().toISOString().slice(0, 10);
+// Immutable empty row factory
+const emptyFamilyRow = () => ({ name: "", relation: "", age: "" });
+
+const buildInitialState = (ward) => ({
+  // ANUSUCHI 7
+  dao_district: "काठमाडौँ",
+  applicant_name_body: "",
+  application_fee: "",
+  main_applicant_name: "",
+  birth_place: "",
+  dob: "",
+  perm_district: "काठमाडौँ",
+  perm_municipality: MUNICIPALITY?.name,
+  perm_ward: ward ? String(ward) : "१",
+  perm_tole: "",
+  father_name: "",
+  father_nationality: "",
+  mother_name: "",
+  mother_nationality: "",
+  husband_name: "",
+  husband_nationality: "",
+  religion: "",
+  education: "",
+  occupation: "",
+  marriage_date: "",
+  residence_years: "",
+  language_spoken: "नेपाली",
+  foreign_citizenship_renounced: "",
+  other_country_citizenship: "नलिएको",
+  nepal_business: "",
+  family_members: [emptyFamilyRow()],
+  sign_date: new Date().toISOString().slice(0, 10),
+
+  // SIFARIS
+  rec_municipality: MUNICIPALITY?.name,
+  rec_ward: ward ? String(ward) : "१",
+  rec_father_name: "",
+  rec_relation_type: "छोरा",
+  rec_name: "",
+  rec_signatory_name: "",
+  rec_signatory_position: "",
+  rec_date: new Date().toISOString().slice(0, 10),
+
+  // ANUSUCHI 8
+  cert_dao_district: "",
+  cert_no: "",
+  cert_name: "",
+  cert_birth_place: "",
+  cert_dob: "",
+  cert_perm_district: "",
+  cert_perm_municipality: MUNICIPALITY?.name,
+  cert_perm_ward: ward ? String(ward) : "१",
+  cert_perm_tole: "",
+  cert_father_name: "",
+  cert_father_address: "",
+  cert_father_citizenship: "",
+  cert_mother_name: "",
+  cert_mother_address: "",
+  cert_mother_citizenship: "",
+  cert_husband_name: "",
+  cert_husband_address: "",
+  cert_husband_citizenship: "",
+  cert_officer_name: "",
+  cert_officer_position: "",
+  cert_date: new Date().toISOString().slice(0, 10),
+
+  // Applicant details (camelCase for ApplicantDetailsNp)
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+  notes: "",
+
+  // status for DB NOT NULL constraint
+  status: "pending",
+});
 
 export default function CitizenshipAngkrit() {
-  const [form, setForm] = useState({
-    reg_no: "",
-    reg_date: todayIso(),
-    target_group: "जेष्ठ नागरिक (अन्य)",
-    applicant_name: "",
-    father_name: "",
-    mother_name: "",
-    gender: "पुरुष",
-    birth_date: "",
-    age_reach_date: "",
-    address: "",
-    issue_district: "",
-    citizenship_no: "",
-    contact_phone: "",
-    signature_text: "",
-    decision_date: "",
-    allowance_type: "",
-    id_card_no: "",
-    allowance_start_fy: "",
-    allowance_quarter: "",
-    notes: ""
+  const { user } = useAuth();
+
+  const [form, setForm] = useState(() => buildInitialState(user?.ward));
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const pendingPrintRef = useRef(false);
+
+  useEffect(() => {
+    if (user?.ward) {
+      setForm((prev) => ({
+        ...prev,
+        perm_ward: String(user.ward),
+        rec_ward: String(user.ward),
+        cert_perm_ward: String(user.ward),
+      }));
+    }
+  }, [user]);
+
+  // Trigger print after successful save + re-render
+  useEffect(() => {
+    if (pendingPrintRef.current) {
+      pendingPrintRef.current = false;
+      const t = setTimeout(() => window.print(), 200);
+      return () => clearTimeout(t);
+    }
   });
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null); // {type:'success'|'error', text: ''}
-
-  const update = (k) => (e) => setForm(s => ({ ...s, [k]: e.target.value }));
-
-  const validate = () => {
-    if (!form.applicant_name.trim()) return "निवेदकको नाम आवश्यक छ।";
-    if (!form.citizenship_no.trim()) return "नागरिकता नं. आवश्यक छ।";
-    if (!form.contact_phone.trim()) return "फोन नं. आवश्यक छ।";
-    return null;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // map to DB-friendly payload (snake_case)
-  const toPayload = (f) => ({
-    reg_no: f.reg_no || null,
-    reg_date: f.reg_date || null,
-    target_group: f.target_group || null,
-    applicant_name: f.applicant_name || null,
-    father_name: f.father_name || null,
-    mother_name: f.mother_name || null,
-    gender: f.gender || null,
-    birth_date: f.birth_date || null,
-    age_reach_date: f.age_reach_date || null,
-    address: f.address || null,
-    issue_district: f.issue_district || null,
-    citizenship_no: f.citizenship_no || null,
-    contact_phone: f.contact_phone || null,
-    signature_text: f.signature_text || null,
-    decision_date: f.decision_date || null,
-    allowance_type: f.allowance_type || null,
-    id_card_no: f.id_card_no || null,
-    allowance_start_fy: f.allowance_start_fy || null,
-    allowance_quarter: f.allowance_quarter || null,
-    notes: f.notes || null
-  });
+  const updateFamilyRow = (idx, key) => (e) => {
+    const val = e.target.value;
+    setForm((prev) => ({
+      ...prev,
+      family_members: prev.family_members.map((r, i) =>
+        i === idx ? { ...r, [key]: val } : r
+      ),
+    }));
+  };
+
+  const addFamilyRow = () =>
+    setForm((prev) => ({
+      ...prev,
+      family_members: [...prev.family_members, emptyFamilyRow()],
+    }));
+
+  const removeFamilyRow = (idx) => {
+    if (form.family_members.length <= 1) return;
+    setForm((prev) => ({
+      ...prev,
+      family_members: prev.family_members.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const validate = () => {
+    if (!form.main_applicant_name.trim())
+      return "निवेदकको नाम (फारम भित्र) आवश्यक छ।";
+    if (!form.cert_name.trim()) return "प्रमाणपत्रमा नाम आवश्यक छ।";
+    return null;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
+
     const err = validate();
-    if (err) { setMessage({ type: "error", text: err }); return; }
+    if (err) {
+      setMessage({ type: "error", text: err });
+      return;
+    }
 
     setLoading(true);
     try {
-      const payload = toPayload(form);
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      const payload = {
+        ...form,
+        family_members: JSON.stringify(form.family_members),
+        perm_ward: String(form.perm_ward),
+        rec_ward: String(form.rec_ward),
+        cert_perm_ward: String(form.cert_perm_ward),
+      };
 
-      const ct = res.headers.get("content-type") || "";
-      const body = ct.includes("application/json") ? await res.json() : await res.text();
+      const res = await axios.post(API_URL, payload);
 
-      if (!res.ok) {
-        const info = typeof body === "object" ? (body.message || JSON.stringify(body)) : body;
-        throw new Error(info || `HTTP ${res.status}`);
+      if (res.status === 200 || res.status === 201) {
+        setMessage({
+          type: "success",
+          text: "रेकर्ड सफलतापूर्वक सेभ भयो । ID: " + (res.data?.id ?? ""),
+        });
+        pendingPrintRef.current = true;
+        // Reset form after save
+        setForm(buildInitialState(user?.ward));
+      } else {
+        throw new Error("Unexpected response: " + res.status);
       }
-
-      setMessage({ type: "success", text: `रेकर्ड सेभ भयो (id: ${body.id || "unknown"})` });
-      // optionally reset: setForm({ ...initial state... });
     } catch (err) {
-      setMessage({ type: "error", text: err.message || "सेभ गर्न सकिएन" });
-      console.error("submit error:", err);
+      console.error("Submit error:", err);
+      setMessage({
+        type: "error",
+        text: err.response?.data?.message || err.message || "सेभ गर्न सकिएन",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form className="old-age-allowance-container" onSubmit={handleSubmit}>
-      <div className="center-text">
-        <h2 className="main-form-title">वृद्धा भत्ताको निवेदन।</h2>
-        <div className="sub-header-text">
-          <p>अनुसूची - ३ (क)</p>
-          <p>(दफा ६ को उपदफा ३ सँग सम्बन्धित)</p>
-        </div>
+    <form
+      className="angkrit-citizenship-container"
+      onSubmit={handleSubmit}
+      noValidate
+    >
+      {/* TOP BAR */}
+      <div className="top-bar-title hide-print">
+        अंगीकृत नेपाली नागरिकताको प्रमाण-पत्र ।
+        <span className="top-right-bread">
+          नेपाली नागरिकता &gt; अंगीकृत नेपाली नागरिकता
+        </span>
       </div>
 
-      <div className="addressee-date-row">
-        <div className="addressee-block">
-          <p>श्री अध्यक्ष ज्यू,</p>
-          <div className="addressee-details">
-            <input type="text" value={form.reg_no} onChange={update("reg_no")} placeholder="दर्ता नं." />
-            <span className="red">*</span>
-            <span className="ward-text">वडा 1</span>
+      {/* ============================================================
+          ANUSUCHI - 7  (Application Form)
+      ============================================================ */}
+      <div className="schedule-section">
+        <div className="schedule-header">
+          <h3 className="schedule-title">अनुसूची-७</h3>
+          <p className="rule-text">
+            (नियम ९ को उपनियम (१), नियम १४ को उपनियम (१) र नियम १५ सँग
+            सम्बन्धित)
+          </p>
+          <h2 className="form-type-title">
+            अंगीकृत नेपाली नागरिकताको प्रमाण-पत्र पाउनको लागि दिइने निवेदन
+          </h2>
+        </div>
+
+        <div className="addressee-section">
+          <p>श्रीमान् प्रमुख जिल्ला अधिकारी ज्यू,</p>
+          <p>
+            जिल्ला प्रशासन कार्यालय,{" "}
+            <input
+              name="dao_district"
+              className="f-input medium-input bold-text"
+              value={form.dao_district}
+              onChange={handleChange}
+            />{" "}
+            ।
+          </p>
+        </div>
+
+        <div className="subject-section">
+          <p>विषय : <u>नेपाली नागरिकताको प्रमाण-पत्र पाऊँ ।</u></p>
+        </div>
+
+        <div className="form-body">
+          <p>महोदय,</p>
+          <p className="body-paragraph indent-text">
+            मेरो जन्म नेपालमा भई नेपालमा नै स्थायी बसोबास गर्दै आएको /{" "}
+            <input
+              name="applicant_name_body"
+              className="f-input long-input"
+              value={form.applicant_name_body}
+              onChange={handleChange}
+              placeholder="नाम"
+            />{" "}
+            ले जन्मको नाताले नेपाली नागरिकताको प्रमाण-पत्र पाएको हुँदा
+            नेपाली नागरिकताको प्रमाण-पत्र पाउनको लागि तोकिएको दस्तुर रु.{" "}
+            <input
+              name="application_fee"
+              className="f-input small-input"
+              value={form.application_fee}
+              onChange={handleChange}
+            />{" "}
+            यसै साथ राखी यो निवेदन पत्र चढाएको छु ।
+          </p>
+
+          <div className="details-list">
+            <p className="bold-text">१. मेरो विवरण :</p>
+            <div className="details-indent">
+
+              <div className="detail-row">
+                <label>(क) नाम, थर : <span className="red">*</span></label>
+                <input name="main_applicant_name" className="f-input long-input" value={form.main_applicant_name} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(ख) जन्म स्थान : <span className="red">*</span></label>
+                <input name="birth_place" className="f-input long-input" value={form.birth_place} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(ग) जन्म मिति : <span className="red">*</span></label>
+                <input type="date" name="dob" className="f-input date-input" value={form.dob} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(घ) स्थायी ठेगाना : <span className="red">*</span></label>
+                <span className="sep-label">जिल्ला</span>
+                <input name="perm_district" className="f-input small-input" value={form.perm_district} onChange={handleChange} />
+                <span className="sep-label">गा.पा./न.पा.</span>
+                <input name="perm_municipality" className="f-input medium-input" value={form.perm_municipality} onChange={handleChange} />
+                <span className="sep-label">वडा नं.</span>
+                <input name="perm_ward" className="f-input tiny-input" value={form.perm_ward} onChange={handleChange} />
+                <span className="sep-label">गाउँ/टोल</span>
+                <input name="perm_tole" className="f-input medium-input" value={form.perm_tole} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(ङ) बाबुको नाम, थर : <span className="red">*</span></label>
+                <input name="father_name" className="f-input medium-input" value={form.father_name} onChange={handleChange} />
+                <span className="sep-label">राष्ट्रियता :</span>
+                <input name="father_nationality" className="f-input small-input" value={form.father_nationality} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(च) आमाको नाम, थर : <span className="red">*</span></label>
+                <input name="mother_name" className="f-input medium-input" value={form.mother_name} onChange={handleChange} />
+                <span className="sep-label">राष्ट्रियता :</span>
+                <input name="mother_nationality" className="f-input small-input" value={form.mother_nationality} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(छ) पतिको नाम, थर :</label>
+                <input name="husband_name" className="f-input medium-input" value={form.husband_name} onChange={handleChange} />
+                <span className="sep-label">राष्ट्रियता :</span>
+                <input name="husband_nationality" className="f-input small-input" value={form.husband_nationality} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(ज) धर्म :</label>
+                <input name="religion" className="f-input medium-input" value={form.religion} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(झ) शैक्षिक योग्यता :</label>
+                <input name="education" className="f-input medium-input" value={form.education} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(ञ) पेशा :</label>
+                <input name="occupation" className="f-input medium-input" value={form.occupation} onChange={handleChange} />
+              </div>
+
+              <div className="detail-row">
+                <label>(ट) विवाह भएको मिति (विवाहितको हकमा) :</label>
+                <input type="date" name="marriage_date" className="f-input date-input" value={form.marriage_date} onChange={handleChange} />
+              </div>
+            </div>
+
+            <div className="detail-row mt-10">
+              <label>२. नेपालमा बसोबास गरेको वर्ष : <span className="red">*</span></label>
+              <input name="residence_years" className="f-input small-input" value={form.residence_years} onChange={handleChange} />
+            </div>
+
+            <div className="detail-row">
+              <label>३. नेपाली भाषा वा अन्य कुन भाषा बोल्न र लेख्न जानेको छ : <span className="red">*</span></label>
+              <input name="language_spoken" className="f-input medium-input" value={form.language_spoken} onChange={handleChange} />
+            </div>
+
+            <div className="detail-row">
+              <label>४. विदेशी नागरिकता त्यागेको वा त्याग्न कारवाही चलाएको निस्सा : <span className="red">*</span></label>
+              <input name="foreign_citizenship_renounced" className="f-input long-input" value={form.foreign_citizenship_renounced} onChange={handleChange} />
+            </div>
+
+            <div className="detail-row">
+              <label>५. अन्य देशको नागरिकता लिए/नलिएको : <span className="red">*</span></label>
+              <input name="other_country_citizenship" className="f-input small-input" value={form.other_country_citizenship} onChange={handleChange} />
+            </div>
+
+            <div className="detail-row">
+              <label>६. नेपालमा कुनै पेशा वा व्यवसाय गरी बसेको भए सो को विवरण :</label>
+              <input name="nepal_business" className="f-input long-input" value={form.nepal_business} onChange={handleChange} />
+            </div>
+
+            <div className="detail-row mt-10">
+              <label className="bold-text">
+                ७. सगोलका परिवारका सदस्यहरुको विवरण : <span className="red">*</span>
+              </label>
+            </div>
+
+            <table className="details-table mb-20">
+              <thead>
+                <tr>
+                  <th style={{ width: "8%" }}>क्र.स.</th>
+                  <th>नाम, थर</th>
+                  <th style={{ width: "22%" }}>नाता</th>
+                  <th style={{ width: "15%" }}>उमेर</th>
+                  <th className="hide-print" style={{ width: "7%" }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {form.family_members.map((row, idx) => (
+                  <tr key={idx}>
+                    <td className="center-text">{idx + 1}</td>
+                    <td><input className="table-input" value={row.name} onChange={updateFamilyRow(idx, "name")} /></td>
+                    <td><input className="table-input" value={row.relation} onChange={updateFamilyRow(idx, "relation")} /></td>
+                    <td><input className="table-input" value={row.age} onChange={updateFamilyRow(idx, "age")} /></td>
+                    <td className="action-cell hide-print">
+                      {idx === 0 ? (
+                        <button type="button" className="add-btn" onClick={addFamilyRow}>+</button>
+                      ) : (
+                        <button type="button" className="remove-btn" onClick={() => removeFamilyRow(idx)}>×</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div className="detail-row bold-text">
+              <label>
+                ८. मैले नेपाली नागरिकताको प्रमाण-पत्र पाएमा नेपाल राज्य र नेपाल
+                सरकारप्रति बफादार रही नेपालको संविधान र प्रचलित कानुनको पूर्ण
+                रुपले पालना गर्नेछु ।
+              </label>
+            </div>
+          </div>
+
+          <div className="signature-flex-container">
+            <div className="thumbprint-container">
+              <p className="thumbprint-title">औंठा छाप</p>
+              <div className="thumbprint-boxes">
+                <div className="thumb-box">
+                  <span className="thumb-label">दायाँ</span>
+                  <div className="thumb-inner" />
+                </div>
+                <div className="thumb-box">
+                  <span className="thumb-label">बायाँ</span>
+                  <div className="thumb-inner" />
+                </div>
+              </div>
+            </div>
+            <div className="signature-block">
+              <p>निवेदकको सही: ................................</p>
+              <p>
+                मिति:{" "}
+                <input type="date" name="sign_date" className="f-input date-input" value={form.sign_date} onChange={handleChange} />
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="date-block">
-          <label>मिति:</label>
-          <input type="date" value={form.reg_date} onChange={update("reg_date")} />
-        </div>
-      </div>
-
-      <div className="subject-section center-text">
-        <p>विषय: <span className="underline-text bold-text">नाम दर्ता सम्बन्धमा</span></p>
-      </div>
-
-      <div className="target-group-section">
-        <label>लक्षित समूह:</label>
-        <select value={form.target_group} onChange={update("target_group")}>
-          <option>जेष्ठ नागरिक (दलित)</option>
-          <option>जेष्ठ नागरिक (अन्य)</option>
-          <option>विधवा</option>
-        </select>
-        <span className="small-text">(उपयुक्त कुनै एकमा चिन्ह लगाउने)</span>
-      </div>
-
-      <h3 className="section-title underline-text center-text">निवेदक</h3>
-
-      <div className="applicant-grid">
-        <div className="grid-col">
-          <label>नाम, थर: *</label>
-          <input type="text" value={form.applicant_name} onChange={update("applicant_name")} />
-
-          <label>बाबुको नाम: *</label>
-          <input type="text" value={form.father_name} onChange={update("father_name")} />
-
-          <label>ठेगाना: *</label>
-          <input type="text" value={form.address} onChange={update("address")} />
-
-          <label>ना.प्र.नं.: *</label>
-          <input type="text" value={form.citizenship_no} onChange={update("citizenship_no")} />
-
-          <label>जेष्ठ नागरिकको हकमा उमेर पुग्ने मिति:</label>
-          <input type="date" value={form.age_reach_date} onChange={update("age_reach_date")} />
-        </div>
-
-        <div className="grid-col">
-          <label>लिङ्ग:</label>
-          <select value={form.gender} onChange={update("gender")}>
-            <option>पुरुष</option>
-            <option>महिला</option>
-            <option>अन्य</option>
-          </select>
-
-          <label>आमाको नाम: *</label>
-          <input type="text" value={form.mother_name} onChange={update("mother_name")} />
-
-          <label>जन्ममिति:</label>
-          <input type="date" value={form.birth_date} onChange={update("birth_date")} />
-
-          <label>जारी जिल्ला: *</label>
-          <input type="text" value={form.issue_district} onChange={update("issue_district")} />
-
-          <label>सम्पर्क मोवाईल नं.: *</label>
-          <input type="text" value={form.contact_phone} onChange={update("contact_phone")} />
-        </div>
-
-        <div className="form-row full-span mt-20">
-          <label>दस्तखत:</label>
-          <input type="text" value={form.signature_text} onChange={update("signature_text")} />
-        </div>
-      </div>
-
-      <div className="office-use-box mt-30">
-        <h3 className="section-title center-text underline-text">कार्यालय प्रयोजनको लागि</h3>
-
-        <div className="office-grid">
-          <label>नाम दर्ता निर्णय मिति</label>
-          <input type="date" value={form.decision_date} onChange={update("decision_date")} />
-
-          <label>भत्ताको किसिम</label>
-          <input type="text" value={form.allowance_type} onChange={update("allowance_type")} />
-
-          <label>परिचय पत्र नं.</label>
-          <input type="text" value={form.id_card_no} onChange={update("id_card_no")} />
-
-          <label>भत्ता पाउन सुरु मिति: आ.व.</label>
-          <input type="text" value={form.allowance_start_fy} onChange={update("allowance_start_fy")} />
-
-          <label>कुन चौमासिक</label>
-          <input type="text" value={form.allowance_quarter} onChange={update("allowance_quarter")} />
-        </div>
-      </div>
-
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid-footer">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input type="text" value={form.applicant_name} onChange={update("applicant_name")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input type="text" value={form.address} onChange={update("address")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" value={form.citizenship_no} onChange={update("citizenship_no")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input type="text" value={form.contact_phone} onChange={update("contact_phone")} />
+        {/* WARD RECOMMENDATION */}
+        <div className="recommendation-section">
+          <h3 className="section-title center-text underline-text">सिफारिस</h3>
+          <p className="body-paragraph indent-text">
+            यसमा लेखिएको व्यहोरा ठिक साँचो हो, झुठा ठहरे कानुन बमोजिम सहुँला
+            बुझाउँला भनी यस{" "}
+            <input name="rec_municipality" className="f-input medium-input" value={form.rec_municipality} onChange={handleChange} />{" "}
+            वडा नं.{" "}
+            <input name="rec_ward" className="f-input tiny-input" value={form.rec_ward} onChange={handleChange} />{" "}
+            मा बस्ने श्री{" "}
+            <input name="rec_father_name" className="f-input medium-input" value={form.rec_father_name} onChange={handleChange} />{" "}
+            को{" "}
+            <select name="rec_relation_type" className="f-select" value={form.rec_relation_type} onChange={handleChange}>
+              <option value="छोरा">छोरा</option>
+              <option value="छोरी">छोरी</option>
+              <option value="पत्नी">पत्नी</option>
+            </select>{" "}
+            श्री{" "}
+            <input name="rec_name" className="f-input medium-input" value={form.rec_name} onChange={handleChange} />{" "}
+            ले मेरो रोहवरमा सहीछाप गरेको साँचो हो । निजलाई अंगीकृत नेपाली
+            नागरिकताको प्रमाण-पत्र दिएमा फरक पर्दैन भनी सिफारिस गर्दछु ।
+          </p>
+          <div className="rec-signature-block">
+            <p>सिफारिस गर्नेको सही: ........................</p>
+            <div className="sig-row">
+              <span className="sep-label">नाम:</span>
+              <input name="rec_signatory_name" className="f-input medium-input" value={form.rec_signatory_name} onChange={handleChange} />
+            </div>
+            <div className="sig-row">
+              <span className="sep-label">पद:</span>
+              <select name="rec_signatory_position" className="f-select" value={form.rec_signatory_position} onChange={handleChange}>
+                <option value="">पद छनौट गर्नुहोस्</option>
+                <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+                <option value="वडा सचिव">वडा सचिव</option>
+              </select>
+            </div>
+            <p>
+              मिति:{" "}
+              <input type="date" name="rec_date" className="f-input date-input" value={form.rec_date} onChange={handleChange} />
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="form-footer">
-        <button className="save-print-btn" type="submit">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+      {/* ============================================================
+          ANUSUCHI - 8  (Certificate Draft)
+      ============================================================ */}
+      <div className="anusuchi-8-section">
+        <div className="schedule-header">
+          <h3 className="schedule-title">अनुसूची-८</h3>
+          <p className="rule-text">(नियम ९ को उपनियम (२) सँग सम्बन्धित)</p>
+          <h2 className="form-type-title">अंगीकृत नेपाली नागरिकताको प्रमाण-पत्र</h2>
+        </div>
+
+        <div className="gov-header center-text">
+          <p className="bold-text">नेपाल सरकार</p>
+          <p className="bold-text">गृह मन्त्रालय</p>
+          <p className="bold-text">
+            जिल्ला प्रशासन कार्यालय{" "}
+            <input name="cert_dao_district" className="f-input medium-input" value={form.cert_dao_district} onChange={handleChange} />
+          </p>
+        </div>
+
+        <div className="certificate-body">
+          <div className="cert-row right-align">
+            <label>प्रमाणपत्र नं. :</label>
+            <input name="cert_no" className="f-input medium-input" value={form.cert_no} onChange={handleChange} />
+          </div>
+
+          <div className="cert-row mt-10">
+            <label>१. नाम, थर : <span className="red">*</span></label>
+            <input name="cert_name" className="f-input long-input" value={form.cert_name} onChange={handleChange} />
+          </div>
+
+          <div className="cert-row">
+            <label>२. जन्म स्थान : <span className="red">*</span></label>
+            <input name="cert_birth_place" className="f-input long-input" value={form.cert_birth_place} onChange={handleChange} />
+          </div>
+
+          <div className="cert-row">
+            <label>३. जन्म मिति वा उमेर : <span className="red">*</span></label>
+            <input type="date" name="cert_dob" className="f-input date-input" value={form.cert_dob} onChange={handleChange} />
+          </div>
+
+          <div className="cert-row">
+            <label>४. स्थायी ठेगाना : <span className="red">*</span></label>
+            <span className="sep-label">जिल्ला</span>
+            <input name="cert_perm_district" className="f-input small-input" value={form.cert_perm_district} onChange={handleChange} />
+            <span className="sep-label">गा.पा./न.पा.</span>
+            <input name="cert_perm_municipality" className="f-input medium-input" value={form.cert_perm_municipality} onChange={handleChange} />
+            <span className="sep-label">वडा नं.</span>
+            <input name="cert_perm_ward" className="f-input tiny-input" value={form.cert_perm_ward} onChange={handleChange} />
+            <span className="sep-label">टोल</span>
+            <input name="cert_perm_tole" className="f-input medium-input" value={form.cert_perm_tole} onChange={handleChange} />
+          </div>
+
+          <div className="cert-row">
+            <label>५. बाबुको नाम, थर : <span className="red">*</span></label>
+            <input name="cert_father_name" className="f-input medium-input" value={form.cert_father_name} onChange={handleChange} />
+            <span className="sep-label">ठेगाना :</span>
+            <input name="cert_father_address" className="f-input medium-input" value={form.cert_father_address} onChange={handleChange} />
+            <span className="sep-label">नागरिकता :</span>
+            <input name="cert_father_citizenship" className="f-input small-input" value={form.cert_father_citizenship} onChange={handleChange} />
+          </div>
+
+          <div className="cert-row">
+            <label>६. आमाको नाम, थर : <span className="red">*</span></label>
+            <input name="cert_mother_name" className="f-input medium-input" value={form.cert_mother_name} onChange={handleChange} />
+            <span className="sep-label">ठेगाना :</span>
+            <input name="cert_mother_address" className="f-input medium-input" value={form.cert_mother_address} onChange={handleChange} />
+            <span className="sep-label">नागरिकता :</span>
+            <input name="cert_mother_citizenship" className="f-input small-input" value={form.cert_mother_citizenship} onChange={handleChange} />
+          </div>
+
+          <div className="cert-row">
+            <label>७. पतिको नाम, थर :</label>
+            <input name="cert_husband_name" className="f-input medium-input" value={form.cert_husband_name} onChange={handleChange} />
+            <span className="sep-label">ठेगाना :</span>
+            <input name="cert_husband_address" className="f-input medium-input" value={form.cert_husband_address} onChange={handleChange} />
+            <span className="sep-label">नागरिकता :</span>
+            <input name="cert_husband_citizenship" className="f-input small-input" value={form.cert_husband_citizenship} onChange={handleChange} />
+          </div>
+
+          <p className="body-paragraph indent-text mt-20">
+            निजले नेपालको संविधान बमोजिम अंगीकृत नेपाली नागरिकताको प्रमाण-पत्र पाएको छ ।
+          </p>
+
+          <div className="cert-signature-block">
+            <p className="bold-text">प्रमाणपत्र दिने अधिकारीको :</p>
+            <p>सही : ........................</p>
+            <div className="sig-row">
+              <span className="sep-label">नाम, थर :</span>
+              <input name="cert_officer_name" className="f-input medium-input" value={form.cert_officer_name} onChange={handleChange} />
+            </div>
+            <div className="sig-row">
+              <span className="sep-label">पद :</span>
+              <input name="cert_officer_position" className="f-input medium-input" value={form.cert_officer_position} onChange={handleChange} />
+            </div>
+            <p>मिति : <input type="date" name="cert_date" className="f-input date-input" value={form.cert_date} onChange={handleChange} /></p>
+          </div>
+        </div>
       </div>
 
-      {message && <div style={{ color: message.type === "error" ? "crimson" : "green" }}>{message.text}</div>}
+      {/* APPLICANT DETAILS FOOTER */}
+      <div className="hide-print mt-20">
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
+      </div>
+
+      <div className="form-footer hide-print">
+        {message && (
+          <div className={`submit-msg ${message.type === "error" ? "msg-error" : "msg-success"}`}>
+            {message.text}
+          </div>
+        )}
+        <button type="submit" className="save-print-btn" disabled={loading}>
+          {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
+      </div>
+
+      <div className="copyright-footer hide-print">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY?.name || "नागार्जुन नगरपालिका"}
+      </div>
     </form>
   );
 }
