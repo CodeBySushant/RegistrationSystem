@@ -126,7 +126,7 @@ const ActingWardOfficerAssigned = () => {
     return errors;
   };
 
-  /* ── Submit ── */
+  /* ── Submit → Save → Print → Reset ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg(null);
@@ -154,21 +154,15 @@ const ActingWardOfficerAssigned = () => {
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "फारम सेभ गर्न त्रुटि भयो।");
+      // Print first, then reset
+      window.print();
+      setForm(initialForm);
       setMsg({ type: "success", text: `सफलतापूर्वक सेभ भयो (ID: ${body.id})` });
     } catch (err) {
       setMsg({ type: "error", text: err.message });
     } finally {
       setLoading(false);
     }
-  };
-
-  /* ── Print ── */
-  const handlePrint = () => window.print();
-
-  /* ── Reset ── */
-  const handleReset = () => {
-    setForm(initialForm);
-    setMsg(null);
   };
 
   const wardLabel =
@@ -358,34 +352,14 @@ const ActingWardOfficerAssigned = () => {
             </div>
           )}
 
-          {/* ══ ACTION BUTTONS (screen only) ══ */}
+          {/* ══ SINGLE ACTION BUTTON ══ */}
           <div className="awo-actions screen-only">
-            <button
-              type="button"
-              className="awo-btn awo-btn--secondary"
-              onClick={handleReset}
-              disabled={loading}
-            >
-              रिसेट गर्नुहोस्
-            </button>
             <button
               type="submit"
               className="awo-btn awo-btn--primary"
               disabled={loading}
             >
-              {loading ? (
-                <span className="awo-spinner">⏳ सेभ हुँदै...</span>
-              ) : (
-                "रेकर्ड सेभ गर्नुहोस्"
-              )}
-            </button>
-            <button
-              type="button"
-              className="awo-btn awo-btn--print"
-              onClick={handlePrint}
-              disabled={loading}
-            >
-              🖨 प्रिन्ट गर्नुहोस्
+              {loading ? "⏳ सेभ हुँदै..." : "🖨 सेभ र प्रिन्ट गर्नुहोस्"}
             </button>
           </div>
         </form>
