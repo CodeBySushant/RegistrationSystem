@@ -4,7 +4,7 @@
   margin: 20px auto;
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
+  font-family: 'Kalimati', 'Kokila', 'Arial', sans-serif;
   background-image: url("/papertexture1.jpg");
   background-repeat: repeat;
   background-size: auto;
@@ -14,26 +14,29 @@
   line-height: 1.5;
 }
 
+/* Header row */
+.header-row {
+  margin-bottom: 16px;
+}
+
 /* Title */
 .top-bar-title {
-  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
   font-weight: bold;
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 2px solid #000;
-  position: relative;
 }
 
 .top-right-bread {
-  position: absolute;
-  right: 0;
-  top: 0;
   font-size: 12px;
   font-weight: normal;
   color: #666;
 }
 
-/* Shree Block */
+/* Shree / Addressee Block */
 .shree-block {
   width: 100%;
   max-width: 600px;
@@ -53,12 +56,6 @@
   width: 180px;
 }
 
-.shree-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .stack-row {
   display: flex;
   align-items: center;
@@ -68,18 +65,21 @@
 .stack-input {
   flex: 1;
   height: 30px;
-  /* FIX: was background:transparent — values invisible in print */
   border: none;
   border-bottom: 1px dotted #000;
+  /* FIX: white so value is visible on screen and in print */
   background-color: #fff;
   outline: none;
   padding: 0 6px;
   font-size: 14px;
   font-family: inherit;
 }
-.stack-input:focus { border-bottom-color: #3b7dd8; background-color: #f0f7ff; }
+.stack-input:focus {
+  border-bottom-color: #3b7dd8;
+  background-color: #f0f7ff;
+}
 
-/* Inline Form */
+/* Date inline group */
 .form-group-inline {
   display: flex;
   align-items: baseline;
@@ -87,19 +87,22 @@
   margin: 15px 0;
   gap: 8px;
 }
-
+.form-group-inline label {
+  font-weight: bold;
+}
 .form-group-inline input[type="date"] {
-  width: 150px;
+  width: 160px;
   border: none;
   border-bottom: 1px dotted #000;
-  /* FIX: was transparent */
   background-color: #fff;
   outline: none;
   padding: 2px 6px;
   font-size: 14px;
   font-family: inherit;
 }
-.form-group-inline input[type="date"]:focus { border-bottom-color: #3b7dd8; }
+.form-group-inline input[type="date"]:focus {
+  border-bottom-color: #3b7dd8;
+}
 
 /* Subject */
 .subject-line {
@@ -111,18 +114,16 @@
 
 /* Certificate Body */
 .certificate-body {
-  line-height: 1.8;
-  font-size: 14px;
+  line-height: 2.6;
+  font-size: 15px;
   text-align: justify;
   margin-bottom: 25px;
-  text-indent: 40px;
 }
 
-/* ─── Inline inputs — white so values print correctly ─── */
+/* Inline inputs — white background so values render in print */
 .inline-input {
   border: none;
   border-bottom: 1px dotted #000;
-  /* FIX: was transparent — typed text invisible on print */
   background-color: #fff;
   margin: 0 4px;
   font-size: 14px;
@@ -144,7 +145,6 @@
 .inline-select {
   border: none;
   border-bottom: 1px dotted #000;
-  /* FIX: was transparent */
   background-color: #fff;
   margin: 0 4px;
   font-size: 14px;
@@ -153,14 +153,51 @@
   min-width: 80px;
   outline: none;
   cursor: pointer;
+  vertical-align: baseline;
 }
 .inline-select:focus { border-bottom-color: #3b7dd8; }
 
-.required {
-  color: red;
-  margin: 0 3px;
-  font-weight: bold;
+/* Applicant Details Box */
+.applicant-details-box {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.6);
+  margin-top: 20px;
+  border-radius: 4px;
 }
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.05rem;
+  margin: 0 0 14px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.indigenous-container .applicant-details-box .details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+.indigenous-container .applicant-details-box .detail-input {
+  max-width: 400px;
+  width: 100%;
+}
+
+.detail-group { display: flex; flex-direction: column; gap: 4px; }
+.detail-group label { font-size: 0.88rem; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: #fff;
+}
+.detail-input:focus { border-color: #aaa; outline: none; }
+.bg-gray { background-color: #eef2f5; }
+.required { color: red; margin-left: 2px; }
 
 /* Submit */
 .submit-area {
@@ -169,7 +206,6 @@
   padding-top: 20px;
   border-top: 1px solid #ccc;
 }
-
 .submit-btn {
   background-color: #343a40;
   color: white;
@@ -179,8 +215,8 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+  font-family: inherit;
 }
-
 .submit-btn:hover:not(:disabled) { background-color: #23272b; }
 .submit-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
 
@@ -198,42 +234,40 @@
     width: 100%;
     max-width: none;
     box-shadow: none;
+    border: none;
     margin: 0;
-    padding: 15px;
+    padding: 20px 40px;
     background: white !important;
     background-image: none !important;
     font-size: 14px;
     line-height: 1.6;
   }
 
+  /* Hide UI-only elements */
   .submit-area,
-  .submit-btn,
-  .top-right-bread {
-    display: none !important;
-  }
+  .top-right-bread { display: none !important; }
 
-  /* Ensure all inline inputs/selects render their values cleanly */
-  .inline-input,
-  .inline-select,
-  .stack-input,
-  .name-input,
-  .form-group-inline input {
+  /* All inputs render as plain text — no borders, white bg */
+  input,
+  select,
+  textarea {
     background: white !important;
+    color: black !important;
+    -webkit-text-fill-color: black !important;
     border: none !important;
     border-bottom: 1px solid #000 !important;
+    box-shadow: none !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
+  /* Applicant box stays readable */
   .applicant-details-box {
+    border: 1px solid #aaa !important;
     page-break-inside: avoid;
     break-inside: avoid;
   }
-}
-
-@media print {
-  input, select {
-    color: black !important;
-    -webkit-text-fill-color: black !important;
+  .detail-input {
+    border: 1px solid #999 !important;
   }
 }

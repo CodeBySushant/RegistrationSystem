@@ -30,37 +30,46 @@ const initialState = {
 };
 
 // ─────────────────────────────────────────────────────────────────
-//  PrintField — shows <input> on screen, <span> when printing
-//  This is the ONLY reliable cross-browser solution.
+// MUST be defined at module scope (outside any component).
+//
+// ROOT CAUSE of the 1-char bug:
+//   When a component is defined INSIDE another component's function
+//   body, React creates a brand-new component type identity on every
+//   render. React sees "old type ≠ new type" → unmounts the old
+//   <input> and mounts a fresh one → focus is lost after every
+//   keystroke → only 1 character can be typed at a time.
+//
+// Fix: define PrintField / PrintSelect here, at module level,
+// so their identity is stable across renders.
 // ─────────────────────────────────────────────────────────────────
-const PrintField = ({ value, isPrint, className = "", inputProps = {} }) => {
+
+const PrintField = ({ value, isPrint, className = "", name, onChange, ...rest }) => {
   if (isPrint) {
-    return (
-      <span className={`pf-value ${className}`}>
-        {value || ""}
-      </span>
-    );
+    return <span className={`pf-value ${className}`}>{value || ""}</span>;
   }
   return (
     <input
       type="text"
+      name={name}
       value={value}
+      onChange={onChange}
       className={`pf-input ${className}`}
-      {...inputProps}
+      {...rest}
     />
   );
 };
 
-const PrintSelect = ({ value, isPrint, className = "", children, selectProps = {} }) => {
+const PrintSelect = ({ value, isPrint, className = "", name, onChange, children }) => {
   if (isPrint) {
-    return (
-      <span className={`pf-value ${className}`}>
-        {value || ""}
-      </span>
-    );
+    return <span className={`pf-value ${className}`}>{value || ""}</span>;
   }
   return (
-    <select value={value} className={`pf-select ${className}`} {...selectProps}>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`pf-select ${className}`}
+    >
       {children}
     </select>
   );
@@ -69,11 +78,9 @@ const PrintSelect = ({ value, isPrint, className = "", children, selectProps = {
 // ─────────────────────────────────────────────────────────────────
 
 const BusinessDeregistrationForm = () => {
-  const [formData, setFormData]   = useState(initialState);
+  const [formData, setFormData]     = useState(initialState);
   const [submitting, setSubmitting] = useState(false);
-  // isPrint flips to true just before window.print() so React
-  // re-renders with span values, then resets after.
-  const [isPrint, setIsPrint]     = useState(false);
+  const [isPrint, setIsPrint]       = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,7 +122,6 @@ const BusinessDeregistrationForm = () => {
 
       if (res.status === 201 || res.status === 200) {
         alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
-        // Switch to print mode → React re-renders spans → then print
         setIsPrint(true);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
@@ -128,40 +134,24 @@ const BusinessDeregistrationForm = () => {
     }
   };
 
-  // When isPrint becomes true, wait one frame for React to
-  // finish rendering spans, then print, then reset everything.
+  // After isPrint → true, React repaints with <span> values,
+  // then RAF fires: print dialog opens, then form resets.
   useEffect(() => {
     if (!isPrint) return;
     const id = requestAnimationFrame(() => {
       window.print();
-      // After print dialog closes, reset form and exit print mode
       setFormData(initialState);
       setIsPrint(false);
     });
     return () => cancelAnimationFrame(id);
   }, [isPrint]);
 
-  // ── helpers so JSX stays readable ──────────────────────────────
-  const F = ({ name, className, ...rest }) => (
-    <PrintField
-      value={formData[name]}
-      isPrint={isPrint}
-      className={className}
-      inputProps={{ name, onChange: handleChange, ...rest }}
-    />
-  );
-
-  const S = ({ name, className, children }) => (
-    <PrintSelect
-      value={formData[name]}
-      isPrint={isPrint}
-      className={className}
-      selectProps={{ name, onChange: handleChange }}
-    >
-      {children}
-    </PrintSelect>
-  );
-  // ───────────────────────────────────────────────────────────────
+  const sigFields = [
+    { label: "दस्तखत",    name: "sigSignature" },
+    { label: "नाम",       name: "sigName"      },
+    { label: "ठेगाना",    name: "sigAddress"   },
+    { label: "फर्मको छाप", name: "sigFirmStamp" },
+  ];
 
   return (
     <div className="business-dereg-container">
@@ -177,11 +167,29 @@ const BusinessDeregistrationForm = () => {
         <div className="form-row">
           <div className="header-to-group">
             <div className="form-group-inline">
-              <F name="headerTo" className="header-field" />
+              <PrintField
+                name="headerTo"
+                value={formData.headerTo}
+                onChange={handleChange}
+                isPrint={isPrint}
+                className="header-field"
+              />
               <span>ज्यु,</span>
             </div>
-            <F name="headerMunicipality" className="header-field" />
-            <F name="headerOffice"       className="header-field" />
+            <PrintField
+              name="headerMunicipality"
+              value={formData.headerMunicipality}
+              onChange={handleChange}
+              isPrint={isPrint}
+              className="header-field"
+            />
+            <PrintField
+              name="headerOffice"
+              value={formData.headerOffice}
+              onChange={handleChange}
+              isPrint={isPrint}
+              className="header-field"
+            />
           </div>
 
           <div className="header-meta">
@@ -204,26 +212,64 @@ const BusinessDeregistrationForm = () => {
         {/* ── Body paragraph ── */}
         <p className="certificate-body">
           उपर्युक्त सम्बन्धमा मेरो नाममा यस&nbsp;
-          <S name="municipality">
+          <PrintSelect
+            name="municipality"
+            value={formData.municipality}
+            onChange={handleChange}
+            isPrint={isPrint}
+          >
             <option>{MUNICIPALITY?.name || "नागार्जुन नगरपालिका"}</option>
-          </S>
+          </PrintSelect>
           &nbsp;मा व्यापारिक प्रयोजनको लागि दर्ता भएको&nbsp;
-          <S name="firmType">
+          <PrintSelect
+            name="firmType"
+            value={formData.firmType}
+            onChange={handleChange}
+            isPrint={isPrint}
+          >
             <option>प्राइभेट फर्म</option>
             <option>साझेदारी फर्म</option>
-          </S>
+          </PrintSelect>
           &nbsp;नं.&nbsp;
-          <F name="firmRegNo" className="short" required />
+          <PrintField
+            name="firmRegNo"
+            value={formData.firmRegNo}
+            onChange={handleChange}
+            isPrint={isPrint}
+            className="short"
+            required
+          />
           &nbsp;को&nbsp;
-          <F name="firmName" placeholder="फर्मको नाम" required />
+          <PrintField
+            name="firmName"
+            value={formData.firmName}
+            onChange={handleChange}
+            isPrint={isPrint}
+            placeholder="फर्मको नाम"
+            required
+          />
           &nbsp;नामको फर्म&nbsp;
-          <F name="dissolveReason" placeholder="कारण" required />
+          <PrintField
+            name="dissolveReason"
+            value={formData.dissolveReason}
+            onChange={handleChange}
+            isPrint={isPrint}
+            placeholder="कारण"
+            required
+          />
           &nbsp;कारणले खारेज गरी पाउन रु. २० को टिकट टाँसी यो निवेदन दिएको छु।
           उक्त फर्मको नामबाट नेपाल सरकार र अन्य कुनै निकायमा कुनै राजस्व र अन्य रकम
           बुझाउन बाँकी छैन। कुनै किसिमको रकमा वा राजस्व बुझाउन बाँकी देखिएमा पछि
           कुनै उजुरबाजुर नगरी सम्बन्धित निकायमा बुझाउन मेरो मन्जुरी छ। निम्नानुसार
           लाग्ने दस्तुर तिरी मेरो&nbsp;
-          <F name="applicantNameForDissolve" placeholder="तपाईको नाम" required />
+          <PrintField
+            name="applicantNameForDissolve"
+            value={formData.applicantNameForDissolve}
+            onChange={handleChange}
+            isPrint={isPrint}
+            placeholder="तपाईको नाम"
+            required
+          />
           &nbsp;नामको उक्त फर्म खारेज गरी पाउन श्रीमान समक्ष अनुरोध गर्दछु।
         </p>
 
@@ -251,26 +297,25 @@ const BusinessDeregistrationForm = () => {
 
           <div className="signature-section">
             <p className="signature-label">निवेदक</p>
-            {[
-              { label: "दस्तखत", name: "sigSignature" },
-              { label: "नाम",    name: "sigName"      },
-              { label: "ठेगाना", name: "sigAddress"   },
-              { label: "फर्मको छाप", name: "sigFirmStamp" },
-            ].map(({ label, name }) => (
+            {sigFields.map(({ label, name }) => (
               <div className="form-group-inline" key={name}>
                 <label>{label} : <span className="req">*</span></label>
-                <F name={name} required />
+                <PrintField
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  isPrint={isPrint}
+                  required
+                />
               </div>
             ))}
           </div>
         </div>
 
         {/* ── Applicant Details ── */}
-        {/* ApplicantDetailsNp renders its own inputs; on print those
-            are handled by the global print CSS (see stylesheet).      */}
         <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
-        {/* ── Submit — hidden during print mode ── */}
+        {/* ── Submit (hidden in print mode) ── */}
         {!isPrint && (
           <div className="submit-area">
             <button type="submit" className="submit-btn" disabled={submitting}>
