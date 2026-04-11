@@ -1,8 +1,6 @@
 // src/components/InterLocalTransferRecommendation.jsx
 import React, { useState } from "react";
 import "./InterLocalTransferRecommendation.css";
-import axios from "../../utils/axiosInstance";
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
@@ -10,11 +8,63 @@ import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 const FORM_KEY = "inter-local-transfer-recommendation";
 const API_URL = `/api/forms/${FORM_KEY}`;
 
+/* ─────────────────────────────────────────────
+   PrintableInput — <input> on screen, <span> on print
+───────────────────────────────────────────── */
+const PrintableInput = ({
+  value,
+  onChange,
+  className = "",
+  required = false,
+  placeholder = "",
+  type = "text",
+}) => (
+  <>
+    <input
+      type={type}
+      className={`ilt-input ${className} screen-only`}
+      value={value}
+      onChange={onChange}
+      required={required}
+      placeholder={placeholder}
+    />
+    <span className={`ilt-print-value ${className} print-only`}>
+      {value || "\u00A0"}
+    </span>
+  </>
+);
+
+/* ─────────────────────────────────────────────
+   PrintableSelect
+───────────────────────────────────────────── */
+const PrintableSelect = ({ value, onChange, options, className = "" }) => (
+  <>
+    <select
+      className={`ilt-select ${className} screen-only`}
+      value={value}
+      onChange={onChange}
+    >
+      <option value="">पद छनौट गर्नुहोस्</option>
+      {options.map((o) => (
+        <option key={o} value={o}>{o}</option>
+      ))}
+    </select>
+    <span className={`ilt-print-value ${className} print-only`}>
+      {value || "\u00A0"}
+    </span>
+  </>
+);
+
+/* ═══════════════════════════════════════════
+   MAIN COMPONENT
+═══════════════════════════════════════════ */
 export default function InterLocalTransferRecommendation() {
-  const [form, setForm] = useState({
+  const { user } = useAuth();
+
+  const initialForm = {
     letter_no: "२०८२/८३",
     reference_no: "",
-    date: new Date().toISOString().slice(0, 10), // yyyy-mm-dd
+    date: new Date().toISOString().slice(0, 10),
     subject: "अन्तर स्थानीय सरुवा सहमति दिईएको सम्बन्धमा",
 
     requested_person_name: "",
@@ -28,7 +78,7 @@ export default function InterLocalTransferRecommendation() {
     employee_post_title: "",
     service_group: "",
 
-    appointing_local: "नागार्जुन नगरपालिका, काठमाडौँ",
+    appointing_local: MUNICIPALITY.name,        // ← from config
     transfer_local: "",
     permanent_address: "",
 
@@ -41,183 +91,291 @@ export default function InterLocalTransferRecommendation() {
     signatory_name: "",
     signatory_position: "",
 
-    applicant_name_footer: "",
-    applicant_address_footer: "",
+    // Applicant footer fields
+    applicant_name: "",
+    applicant_address: "",
     applicant_citizenship_no: "",
     applicant_phone: "",
 
-    notes: ""
-  });
+    notes: "",
+  };
 
+  const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [msg, setMsg] = useState(null);
 
   const upd = (k) => (e) => setForm((s) => ({ ...s, [k]: e.target.value }));
 
+  /* ── Validation ── */
   const validate = () => {
-    if (!form.employee_name) return "कर्मचारीको नाम आवश्यक छ।";
-    if (!form.citizenship_no) return "निवेदक/कर्मचारीको नागरिकता नं. आवश्यक छ।";
-    return null;
+    const errors = [];
+    if (!form.employee_name.trim()) errors.push("कर्मचारीको नाम आवश्यक छ।");
+    if (!form.citizenship_no.trim()) errors.push("नागरिकता नं. आवश्यक छ।");
+    if (!form.signatory_name.trim()) errors.push("हस्ताक्षरकर्ताको नाम आवश्यक छ।");
+    return errors;
   };
 
+  /* ── Submit → Save → Print → Reset ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(null);
-    const v = validate();
-    if (v) {
-      setMessage({ type: "error", text: v });
+    setMsg(null);
+
+    const errors = validate();
+    if (errors.length) {
+      setMsg({ type: "error", text: errors.join(" | ") });
       return;
     }
 
     setLoading(true);
     try {
-      const payload = { ...form };
+      const token = localStorage.getItem("token");
       const res = await fetch(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          ...form,
+          submitted_by: user?.username || "unknown",
+          ward: user?.ward,
+        }),
       });
 
       const ct = res.headers.get("content-type") || "";
-      const body = ct.includes("application/json") ? await res.json() : await res.text();
+      const body = ct.includes("application/json")
+        ? await res.json()
+        : { message: await res.text() };
 
-      if (!res.ok) {
-        throw new Error((body && body.message) || JSON.stringify(body) || `HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(body.message || `HTTP ${res.status}`);
 
-      setMessage({ type: "success", text: `रेकर्ड सेभ भयो (ID: ${body.id || "unknown"})` });
-      // optionally clear or keep form
+      // Save succeeded → print → reset
+      window.print();
+      setForm(initialForm);
+      setMsg({ type: "success", text: `सफलतापूर्वक सेभ भयो (ID: ${body.id || "—"})` });
     } catch (err) {
-      console.error("save error", err);
-      setMessage({ type: "error", text: err.message || "सेभ गर्न सकिएन" });
+      setMsg({ type: "error", text: err.message || "सेभ गर्न सकिएन" });
     } finally {
       setLoading(false);
     }
   };
 
+  const wardLabel =
+    user?.role === "SUPERADMIN"
+      ? "सबै वडा कार्यालय"
+      : `वडा नं. ${user?.ward || "—"} वडा कार्यालय`;
+
   return (
-    <form className="inter-local-transfer-container" onSubmit={handleSubmit}>
-      <div className="top-bar-title">
-        अन्तर स्थानीय संस्थागत सरुवा सहमति ।
-        <span className="top-right-bread">आर्थिक प्रबेश &gt; अन्तर स्थानीय संस्थागत सरुवा सहमति</span>
+    <div className="ilt-page-wrapper">
+      {/* ── Breadcrumb ── */}
+      <div className="ilt-breadcrumb screen-only">
+        <span className="ilt-breadcrumb-title">अन्तर स्थानीय संस्थागत सरुवा सहमति</span>
+        <span className="ilt-breadcrumb-path">
+          आर्थिक प्रबेश &rsaquo; अन्तर स्थानीय संस्थागत सरुवा सहमति
+        </span>
       </div>
 
-      <div className="form-header-section">
-        <div className="header-logo"><img src="/nepallogo.svg" alt="logo" /></div>
-        <div className="header-text">
-          <h1>नागार्जुन नगरपालिका</h1>
-          <h2>१ नं. वडा कार्यालय</h2>
-          <p>नागार्जुन, काठमाडौँ</p>
-        </div>
-      </div>
+      <div className="ilt-container">
+        <form onSubmit={handleSubmit} noValidate>
 
-      <div className="meta-data-row">
-        <div className="meta-left">
-          <p>पत्र संख्या : <input value={form.letter_no} onChange={upd("letter_no")} /></p>
-          <p>चलानी नं. : <input value={form.reference_no} onChange={upd("reference_no")} /></p>
-        </div>
-        <div className="meta-right">
-          <p>मिति : <input type="date" value={form.date} onChange={upd("date")} /></p>
-        </div>
-      </div>
+          {/* ══ OFFICIAL HEADER ══ */}
+          <header className="ilt-header">
+            <div className="ilt-header-logo">
+              <img src={MUNICIPALITY.logoSrc} alt="नेपाल सरकार" />
+            </div>
+            <div className="ilt-header-text">
+              <p className="ilt-gov-label">नेपाल सरकार</p>
+              <h1 className="ilt-municipality">{MUNICIPALITY.name}</h1>
+              <h2 className="ilt-ward">{wardLabel}</h2>
+              <p className="ilt-address">{MUNICIPALITY.officeLine}</p>
+              <p className="ilt-province">{MUNICIPALITY.provinceLine}</p>
+            </div>
+          </header>
 
-      <div className="subject-section">
-        <p>विषय: <input value={form.subject} onChange={upd("subject")} /></p>
-      </div>
+          <div className="ilt-divider" />
 
-      <div className="form-body">
-        <p className="body-paragraph">
-          श्री <input className="inline-box-input medium-input" value={form.requested_person_name} onChange={upd("requested_person_name")} placeholder="नाम" /> 
-          ले यस कार्यालयमा मिति <span className="bold-text">{form.date || "______"}</span> मा माथि स्वीकृति भई 
-          <input className="inline-box-input medium-input" value={form.transfer_to_local} onChange={upd("transfer_to_local")} placeholder="सरुवा जाने स्थानीय तह" /> 
-          को पद <input className="inline-box-input small-input" value={form.transfer_to_position} onChange={upd("transfer_to_position")} placeholder="पद" /> को च.न. 
-          <input className="inline-box-input small-input" value={form.requested_person_position_code} onChange={upd("requested_person_position_code")} placeholder="च.न." /> 
-          मा प्राप्त भएको निवेदन अनुसार कर्मचारी 
-          <input className="inline-box-input medium-input" value={form.employee_name} onChange={upd("employee_name")} placeholder="कर्मचारीको नाम" /> 
-          को पदनाम <input className="inline-box-input medium-input" value={form.employee_post_title} onChange={upd("employee_post_title")} placeholder="पद/तह" /> 
-          बमोजिम <input className="inline-box-input medium-input" value={form.service_group} onChange={upd("service_group")} placeholder="सेवा/समूह/उपसमूह" /> लाई यस गाउँपालिकाबाट सरुवा भई देहायको विवरण सहित सहमति प्रदान गरिएको व्यहोरा अनुरोध छ।
-        </p>
-      </div>
-
-      <div className="details-section">
-        <h4 className="bold-text underline-text">देहाय</h4>
-        <div className="details-grid">
-          <div className="detail-col-left">
-            <div className="detail-item">
-              <label>नाम थर:</label>
-              <input className="dotted-input full-width" value={form.employee_name} onChange={upd("employee_name")} />
+          {/* ══ META ROW ══ */}
+          <div className="ilt-meta-row">
+            <div className="ilt-meta-left">
+              <div className="ilt-meta-field">
+                <label>पत्र संख्या:</label>
+                <PrintableInput value={form.letter_no} onChange={upd("letter_no")} className="meta-input" />
+              </div>
+              <div className="ilt-meta-field">
+                <label>चलानी नं.:</label>
+                <PrintableInput value={form.reference_no} onChange={upd("reference_no")} className="meta-input" placeholder="चलानी नं." />
+              </div>
             </div>
-            <div className="detail-item">
-              <label>पद/तह:</label>
-              <input className="dotted-input full-width" value={form.employee_post_title} onChange={upd("employee_post_title")} />
-            </div>
-            <div className="detail-item">
-              <label>सेवा/समूह/उपसमूह:</label>
-              <input className="dotted-input full-width" value={form.service_group} onChange={upd("service_group")} />
-            </div>
-            <div className="detail-item">
-              <label>नियुक्ति दिने स्थानीय तह:</label>
-              <input className="dotted-input full-width" value={form.appointing_local} onChange={upd("appointing_local")} />
-            </div>
-            <div className="detail-item">
-              <label>सरुवा जाने स्थानीय तह:</label>
-              <input className="dotted-input full-width" value={form.transfer_local} onChange={upd("transfer_local")} />
-            </div>
-            <div className="detail-item">
-              <label>स्थायी ठेगाना:</label>
-              <input className="dotted-input full-width" value={form.permanent_address} onChange={upd("permanent_address")} />
+            <div className="ilt-meta-right">
+              <div className="ilt-meta-field">
+                <label>मिति:</label>
+                <PrintableInput value={form.date} onChange={upd("date")} className="meta-input" type="date" />
+              </div>
             </div>
           </div>
 
-          <div className="detail-col-right">
-            <div className="detail-item">
-              <label>फोन नं:</label>
-              <input className="dotted-input full-width" value={form.phone} onChange={upd("phone")} />
-            </div>
-            <div className="detail-item">
-              <label>जन्म मिति:</label>
-              <input type="date" className="dotted-input full-width" value={form.dob} onChange={upd("dob")} />
-            </div>
-            <div className="detail-item">
-              <label>ना.प्र.नं:</label>
-              <input className="dotted-input full-width" value={form.citizenship_no} onChange={upd("citizenship_no")} />
-            </div>
-            <div className="detail-item">
-              <label>जारी मिति:</label>
-              <input type="date" className="dotted-input full-width" value={form.citizenship_issue_date} onChange={upd("citizenship_issue_date")} />
-            </div>
-            <div className="detail-item">
-              <label>जारी जिल्ला:</label>
-              <input className="dotted-input full-width" value={form.citizenship_issue_district} onChange={upd("citizenship_issue_district")} />
+          {/* ══ SUBJECT ══ */}
+          <div className="ilt-subject">
+            <span className="ilt-subject-label">विषय:</span>
+            <span className="ilt-subject-text">{form.subject}</span>
+          </div>
+
+          {/* ══ BODY PARAGRAPH ══ */}
+          <div className="ilt-body-para">
+            <p>
+              श्री{" "}
+              <PrintableInput
+                value={form.requested_person_name}
+                onChange={upd("requested_person_name")}
+                className="inline-md"
+                placeholder="नाम"
+              />{" "}
+              ले यस कार्यालयमा मिति{" "}
+              <strong>{form.date || "______"}</strong>{" "}
+              मा माथि स्वीकृति भई{" "}
+              <PrintableInput
+                value={form.transfer_to_local}
+                onChange={upd("transfer_to_local")}
+                className="inline-lg"
+                placeholder="सरुवा जाने स्थानीय तह"
+              />{" "}
+              को पद{" "}
+              <PrintableInput
+                value={form.transfer_to_position}
+                onChange={upd("transfer_to_position")}
+                className="inline-md"
+                placeholder="पद"
+              />{" "}
+              को च.न.{" "}
+              <PrintableInput
+                value={form.requested_person_position_code}
+                onChange={upd("requested_person_position_code")}
+                className="inline-sm"
+                placeholder="च.न."
+              />{" "}
+              मा प्राप्त भएको निवेदन अनुसार कर्मचारी{" "}
+              <PrintableInput
+                value={form.employee_name}
+                onChange={upd("employee_name")}
+                className="inline-md"
+                placeholder="कर्मचारीको नाम"
+                required
+              />{" "}
+              को पदनाम{" "}
+              <PrintableInput
+                value={form.employee_post_title}
+                onChange={upd("employee_post_title")}
+                className="inline-md"
+                placeholder="पद/तह"
+              />{" "}
+              बमोजिम{" "}
+              <PrintableInput
+                value={form.service_group}
+                onChange={upd("service_group")}
+                className="inline-lg"
+                placeholder="सेवा/समूह/उपसमूह"
+              />{" "}
+              लाई यस गाउँपालिकाबाट सरुवा भई देहायको विवरण सहित सहमति प्रदान गरिएको व्यहोरा अनुरोध छ।
+            </p>
+          </div>
+
+          {/* ══ DEHAY (Details Table) ══ */}
+          <div className="ilt-dehay">
+            <h4 className="ilt-dehay-title">देहाय</h4>
+            <div className="ilt-dehay-grid">
+
+              {/* Left column */}
+              <div className="ilt-dehay-col">
+                {[
+                  ["नाम थर:", "employee_name"],
+                  ["पद/तह:", "employee_post_title"],
+                  ["सेवा/समूह/उपसमूह:", "service_group"],
+                  ["नियुक्ति दिने स्थानीय तह:", "appointing_local"],
+                  ["सरुवा जाने स्थानीय तह:", "transfer_local"],
+                  ["स्थायी ठेगाना:", "permanent_address"],
+                ].map(([label, key]) => (
+                  <div className="ilt-detail-item" key={key}>
+                    <label>{label}</label>
+                    <PrintableInput
+                      value={form[key]}
+                      onChange={upd(key)}
+                      className="detail-input"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Right column */}
+              <div className="ilt-dehay-col">
+                <div className="ilt-detail-item">
+                  <label>फोन नं:</label>
+                  <PrintableInput value={form.phone} onChange={upd("phone")} className="detail-input" />
+                </div>
+                <div className="ilt-detail-item">
+                  <label>जन्म मिति:</label>
+                  <PrintableInput value={form.dob} onChange={upd("dob")} className="detail-input" type="date" />
+                </div>
+                <div className="ilt-detail-item">
+                  <label>ना.प्र.नं:</label>
+                  <PrintableInput value={form.citizenship_no} onChange={upd("citizenship_no")} className="detail-input" required />
+                </div>
+                <div className="ilt-detail-item">
+                  <label>जारी मिति:</label>
+                  <PrintableInput value={form.citizenship_issue_date} onChange={upd("citizenship_issue_date")} className="detail-input" type="date" />
+                </div>
+                <div className="ilt-detail-item">
+                  <label>जारी जिल्ला:</label>
+                  <PrintableInput value={form.citizenship_issue_district} onChange={upd("citizenship_issue_district")} className="detail-input" />
+                </div>
+              </div>
+
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="signature-section">
-        <div className="signature-block">
-          <input className="line-input full-width-input" value={form.signatory_name} onChange={upd("signatory_name")} placeholder="दस्तखत" />
-          <select className="designation-select" value={form.signatory_position} onChange={upd("signatory_position")}>
-            <option value="">पद छनौट गर्नुहोस्</option>
-            <option>प्रमुख प्रशासकीय अधिकृत</option>
-            <option>वडा सचिव</option>
-          </select>
-        </div>
-      </div>
+          {/* ══ SIGNATURE ══ */}
+          <div className="ilt-signature-section">
+            <div className="ilt-signature-block">
+              <PrintableInput
+                value={form.signatory_name}
+                onChange={upd("signatory_name")}
+                className="sig-name-input"
+                required
+                placeholder="हस्ताक्षरकर्ताको नाम *"
+              />
+              <PrintableSelect
+                value={form.signatory_position}
+                onChange={upd("signatory_position")}
+                options={["प्रमुख प्रशासकीय अधिकृत", "वडा सचिव"]}
+                className="sig-pos-select"
+              />
+            </div>
+          </div>
 
-      {/* --- Applicant Details Box --- */}
-      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
+          {/* ══ APPLICANT DETAILS — no box ══ */}
+          <div className="ilt-applicant-wrapper screen-only">
+            <ApplicantDetailsNp formData={form} handleChange={upd} />
+          </div>
 
-      {/* --- Footer Action --- */}
-      <div className="form-footer">
-        <button className="save-print-btn" type="button" onClick={handlePrint}>
-          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-        </button>
-      </div>
+          {/* ══ MESSAGE ══ */}
+          {msg && (
+            <div className={`ilt-msg ilt-msg--${msg.type} screen-only`}>
+              {msg.type === "success" ? "✓" : "✗"} {msg.text}
+            </div>
+          )}
 
-      <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+          {/* ══ SINGLE BUTTON ══ */}
+          <div className="ilt-actions screen-only">
+            <button type="submit" className="ilt-btn" disabled={loading}>
+              {loading ? "⏳ सेभ हुँदै..." : "🖨 सेभ र प्रिन्ट गर्नुहोस्"}
+            </button>
+          </div>
+
+        </form>
+
+        <footer className="ilt-footer screen-only">
+          © सर्वाधिकार सुरक्षित — {MUNICIPALITY.name}
+        </footer>
       </div>
-    </form>
+    </div>
   );
 }
