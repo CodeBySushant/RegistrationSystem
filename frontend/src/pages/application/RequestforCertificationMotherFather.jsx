@@ -19,6 +19,10 @@ const initialState = {
   guardianName: "",
   doc1Detail: "",
   doc2Detail: "",
+  // FIX 1: sigName and sigMobile were missing from initialState
+  sigName: "",
+  sigMobile: "",
+  // ApplicantDetailsNp fields
   applicantName: "",
   applicantAddress: "",
   applicantCitizenship: "",
@@ -67,13 +71,13 @@ const RequestforCertificationMotherFather = () => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "/api/forms/request-for-certification-mf";
-      const res = await axios.post(url, payload);
+      const res = await axios.post("/api/forms/request-for-certification-mf", payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
-        setFormData(initialState);
-        setTimeout(() => window.print(), 150);
+        // FIX 3: print FIRST, then reset — so the printed page is not blank
+        window.print();
+        setTimeout(() => setFormData(initialState), 500);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -200,6 +204,33 @@ const RequestforCertificationMotherFather = () => {
           गरि पाउन, वडा कार्यालयको सिफारिस र कागजात संलग्न राखी यो निवेदन पेश
           गरेको छु ।
         </p>
+
+        {/* FIX 2: sigName and sigMobile were never rendered — added signature block */}
+        <div className="signature-section-left">
+          <h4>निवेदकको विवरण</h4>
+          <div className="form-group-column">
+            <label>नाम : <span className="required">*</span></label>
+            <input
+              type="text"
+              name="sigName"
+              value={formData.sigName}
+              onChange={handleChange}
+              placeholder="पूरा नाम"
+              required
+            />
+          </div>
+          <div className="form-group-column">
+            <label>मोबाइल नं. : <span className="required">*</span></label>
+            <input
+              type="text"
+              name="sigMobile"
+              value={formData.sigMobile}
+              onChange={handleChange}
+              placeholder="मोबाइल नम्बर"
+              required
+            />
+          </div>
+        </div>
 
         {/* Applicants details */}
         <ApplicantDetailsNp formData={formData} handleChange={handleChange} />

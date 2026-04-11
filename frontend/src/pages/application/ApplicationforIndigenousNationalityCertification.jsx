@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import "./ApplicationforIndigenousNationalityCertification.css";
 import axios from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
@@ -58,7 +59,6 @@ const ApplicationforIndigenousNationalityCertification = () => {
         (k) => payload[k] === "" && (payload[k] = null),
       );
 
-      // 🔥 1. SAVE TO DATABASE FIRST
       const res = await axios.post(
         "/api/forms/indigenous-certification",
         payload,
@@ -66,96 +66,9 @@ const ApplicationforIndigenousNationalityCertification = () => {
 
       if (res.status === 200 || res.status === 201) {
         alert("सफलतापूर्वक सुरक्षित भयो! ID: " + (res.data?.id || ""));
-
-        // 🔥 2. CAPTURE COMPLETE FORM HTML WITH ALL DATA
-        const container = document.querySelector(".indigenous-container");
-        const formHTML = container.outerHTML;
-
-        // 🔥 3. NEW PRINT WINDOW - DATA LOCKED FOREVER
-        const printWin = window.open("", "_blank", "width=850,height=1100");
-        printWin.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>जनजाति प्रमाणपत्र - Print</title>
-          <meta charset="UTF-8">
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-              font-family: 'Arial', sans-serif; 
-              font-size: 14px; 
-              line-height: 1.6;
-              background: white;
-              padding: 20px;
-              max-width: 800px;
-              margin: 0 auto;
-            }
-            .indigenous-container {
-              background: white !important;
-              background-image: none !important;
-              box-shadow: none !important;
-              border: none !important;
-              padding: 0 !important;
-            }
-            
-            /* FORCE ALL INPUTS TO SHOW DATA */
-            input, select, textarea {
-              background: white !important;
-              color: black !important;
-              -webkit-text-fill-color: black !important;
-              border-bottom: 1px solid black !important !important;
-              border: 1px solid #333 !important;
-              font-family: inherit !important;
-              font-size: 14px !important;
-              padding: 2px 4px !important;
-            }
-            
-            .certificate-body input,
-            .certificate-body select,
-            .inline-input,
-            .inline-select {
-              background: white !important;
-              color: black !important;
-              border-bottom: 1px solid black !important;
-            }
-            
-            .applicant-details-box input,
-            .detail-input {
-              background: white !important;
-              color: black !important;
-              border: 2px solid #333 !important;
-              font-size: 14px !important;
-            }
-            
-            /* Hide UI elements */
-            .submit-area,
-            .submit-btn,
-            .top-right-bread,
-            button { display: none !important; }
-            
-            @page { margin: 1cm; }
-            @media print {
-              body { padding: 10px; }
-              input, select { border-bottom: 1px solid black !important; }
-            }
-          </style>
-        </head>
-        <body>${formHTML}</body>
-        </html>
-      `);
-        printWin.document.close();
-
-        // 🔥 4. AUTO PRINT & CLOSE
-        printWin.onload = () => {
-          printWin.focus();
-          printWin.print();
-          setTimeout(() => printWin.close(), 1000);
-        };
-
-        // 🔥 5. RESET MAIN FORM AFTER PRINT
-        setTimeout(() => {
-          setFormData(initialState);
-        }, 3000);
+        // FIX: use simple window.print() like the reference — preserves all CSS and styling
+        window.print();
+        setTimeout(() => setFormData(initialState), 500);
       }
     } catch (err) {
       const msg = err.response?.data?.message || err.message || "त्रुटि भयो";
@@ -168,7 +81,13 @@ const ApplicationforIndigenousNationalityCertification = () => {
   return (
     <div className="indigenous-container">
       <form onSubmit={handleSubmit}>
-        {/* Title */}
+
+        {/* Municipality Header — matches reference pattern */}
+        <div className="header-row">
+          <MunicipalityHeader showLogo />
+        </div>
+
+        {/* Title bar */}
         <div className="top-bar-title">
           जनजाति प्रमाणपत्र जारी गर्ने दरखास्त
           <span className="top-right-bread">
@@ -176,7 +95,7 @@ const ApplicationforIndigenousNationalityCertification = () => {
           </span>
         </div>
 
-        {/* श्री */}
+        {/* Addressee block */}
         <div className="shree-block">
           <div className="shree-row">
             <span>श्रीमान्</span>
@@ -209,7 +128,7 @@ const ApplicationforIndigenousNationalityCertification = () => {
           </div>
         </div>
 
-        {/* Date */}
+        {/* Date — right-aligned */}
         <div className="form-group-inline">
           <label>मिति:</label>
           <input
@@ -225,13 +144,14 @@ const ApplicationforIndigenousNationalityCertification = () => {
           विषय: <u>जनजाति प्रमाणित गरि पाउँ।</u>
         </div>
 
-        {/* Body */}
+        {/* Body paragraph */}
         <p className="certificate-body">
           <input
             name="bodyDistrict"
             value={formData.bodyDistrict}
             onChange={handleChange}
             className="inline-input medium"
+            placeholder="जिल्ला"
           />
           जिल्ला
           <input
@@ -253,6 +173,7 @@ const ApplicationforIndigenousNationalityCertification = () => {
             value={formData.residentName}
             onChange={handleChange}
             className="inline-input long"
+            placeholder="निवासीको नाम"
           />
           को
           <select
@@ -272,6 +193,7 @@ const ApplicationforIndigenousNationalityCertification = () => {
             value={formData.guardianName}
             onChange={handleChange}
             className="inline-input long"
+            placeholder="अभिभावकको नाम"
           />
           जनजाति अन्तर्गत
           <input
@@ -279,11 +201,12 @@ const ApplicationforIndigenousNationalityCertification = () => {
             value={formData.tribeName}
             onChange={handleChange}
             className="inline-input long"
+            placeholder="जातिको नाम"
           />
           जातिमा पर्ने भएकोले प्रमाणित गरि पाउन निवेदन पेश गरेको छु।
         </p>
 
-        {/* Applicant Box */}
+        {/* Applicant Details Box */}
         <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
         {/* Submit */}

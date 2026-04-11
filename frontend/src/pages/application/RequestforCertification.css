@@ -6,7 +6,7 @@
   padding: 25px;
   border: 1px solid #ddd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif; /* Using a common font for Nepali */
+  font-family: 'Kalimati', 'Kokila', 'Arial', sans-serif;
   background-image: url("/papertexture1.jpg");
   background-repeat: repeat;
   background-size: auto;
@@ -14,11 +14,11 @@
   box-sizing: border-box;
 }
 
-/* General Form Layout - RESPONSIVE FIX */
+/* General Form Layout */
 .form-row {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap; /* Allows fields to stack on small screens */
+  flex-wrap: wrap;
   margin-bottom: 25px;
   padding-bottom: 15px;
   border-bottom: 1px dashed #ccc;
@@ -35,7 +35,7 @@
 }
 .form-group input {
   width: 200px;
-  max-width: 100%; /* Allows shrinking */
+  max-width: 100%;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -44,34 +44,32 @@
 
 /* Header "To" Section */
 .header-to-group {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 .header-to-group h3 {
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
 }
 .header-to-group input {
-    font-family: inherit;
-    font-size: 16px;
-    padding: 4px 6px;
-    margin-bottom: 8px;
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    width: 250px;
-    max-width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  padding: 4px 6px;
+  margin-bottom: 8px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  width: 250px;
+  max-width: 100%;
 }
 
 /* Date group */
-.date-group {
-    font-weight: bold;
-}
+.date-group { font-weight: bold; }
 .date-group input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
 }
 
 /* Subject Line */
@@ -81,7 +79,7 @@
   font-size: 16px;
 }
 
-/* Main Certificate Body Styling - RESPONSIVE FIX */
+/* Main Certificate Body */
 .certificate-body {
   line-height: 2.8;
   font-size: 16px;
@@ -89,8 +87,8 @@
 }
 .certificate-body input[type="text"],
 .certificate-body select {
-  display: inline-block; /* Keeps fields inline with text */
-  vertical-align: baseline; /* Aligns them nicely */
+  display: inline-block;
+  vertical-align: baseline;
   padding: 4px 6px;
   font-family: inherit;
   font-size: 15px;
@@ -106,24 +104,9 @@
   width: auto;
   min-width: 80px;
 }
-.certificate-body .short-input {
-    width: 80px;
-}
+.certificate-body .short-input { width: 80px; }
 
-/* Left-aligned Signature Section */
-.signature-section-left {
-  margin-top: 30px;
-  float: left; /* Aligns block to the left */
-  width: 40%;
-  min-width: 300px;
-}
-.signature-section-left h4 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-/* Re-using .form-group-column for signature inputs */
+/* Column form group (variation detail + signature fields) */
 .form-group-column {
   display: flex;
   flex-direction: column;
@@ -136,42 +119,42 @@
 }
 .form-group-column input {
   width: 350px;
-  max-width: 100%; /* Allows shrinking */
+  max-width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
   box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
 }
 
-/* Submit Button */
-.submit-area {
-  clear: both; /* Clears the float from the signature block */
-  text-align: center;
+/* Left-aligned Signature Section */
+.signature-section-left {
   margin-top: 30px;
-  padding-top: 30px; /* Extra space above button */
+  margin-bottom: 20px;
+  float: left;
+  width: 40%;
+  min-width: 300px;
 }
-.submit-btn {
-  background-color: #343a40;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+.signature-section-left h4 {
+  font-size: 18px;
   font-weight: bold;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 6px;
 }
-.submit-btn:hover { background-color: #23272b; }
 
-/* --- Applicant Details Box --- */
+/* Applicant Details Box */
 .applicant-details-box {
   border: 1px solid #ddd;
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.4);
   margin-top: 20px;
   border-radius: 4px;
+  /* clear the float from signature-section-left */
+  clear: both;
 }
-
 .applicant-details-box h3 {
   color: #777;
   font-size: 1.1rem;
@@ -179,13 +162,11 @@
   border-bottom: 1px solid #eee;
   padding-bottom: 8px;
 }
-
 .details-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 15px;
 }
-
 .detail-group { display: flex; flex-direction: column; }
 .detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
 .detail-input {
@@ -195,9 +176,31 @@
   width: 100%;
   box-sizing: border-box;
 }
-.bg-gray { background-color: #eef2f5; } 
+.bg-gray { background-color: #eef2f5; }
 
-/* --- Footer --- */
+/* Submit area */
+.submit-area {
+  clear: both;
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+}
+/* FIX 3: disabled state was missing */
+.submit-btn {
+  background-color: #343a40;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: inherit;
+}
+.submit-btn:hover { background-color: #23272b; }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Footer */
 .form-footer { text-align: center; margin-top: 40px; }
 .save-print-btn {
   background-color: #2c3e50;
@@ -209,33 +212,32 @@
   cursor: pointer;
 }
 .save-print-btn:hover { background-color: #1a252f; }
-.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+.copyright-footer {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
 
 .request-cert-container .applicant-details-box .details-grid {
   display: flex !important;
   flex-direction: column !important;
   gap: 18px !important;
 }
-
-/* Control applicant input width */
-.request-cert-container 
-.applicant-details-box 
-.detail-input {
-  max-width: 400px;   /* adjust if needed: 480–550 */
+.request-cert-container .applicant-details-box .detail-input {
+  max-width: 400px;
   width: 100%;
 }
 
 /* Red star */
-.required {
-  color: red;
-  margin-left: 4px;
-}
+.required { color: red; margin-left: 4px; }
 
 .inline-input-wrapper {
   position: relative;
   display: inline-block;
 }
-
 .input-required-star {
   position: absolute;
   left: 6px;
@@ -246,21 +248,14 @@
   pointer-events: none;
   font-size: 14px;
 }
-
-.inline-input-wrapper input {
-  padding-left: 18px;
-}
+.inline-input-wrapper input { padding-left: 18px; }
 
 /* ================= PRINT STYLES ================= */
 @media print {
-  body * {
-    visibility: hidden;
-  }
+  body * { visibility: hidden; }
 
   .request-cert-container,
-  .request-cert-container * {
-    visibility: visible;
-  }
+  .request-cert-container * { visibility: visible; }
 
   .request-cert-container {
     position: absolute;
@@ -270,11 +265,18 @@
     box-shadow: none;
     border: none;
     margin: 0;
-    padding: 0;
+    padding: 20px 40px;
     background: white;
   }
 
-  .form-footer {
-    display: none;
+  /* FIX 4: was only hiding .form-footer; .submit-area also needs to be hidden */
+  .form-footer,
+  .submit-area { display: none; }
+
+  /* Inputs look like plain text when printing */
+  input, select, textarea {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 }
