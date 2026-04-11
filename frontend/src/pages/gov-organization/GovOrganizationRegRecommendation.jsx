@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./GovOrganizationRegRecommendation.css";
-import PrintPreviewModal from "./PrintPreviewModal";
+import PrintPreviewModal from "../../components/PrintPreviewModal";
 import axios from "../../utils/axiosInstance";
 
 const STATUS = {
