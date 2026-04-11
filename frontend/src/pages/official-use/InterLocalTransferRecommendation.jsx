@@ -1,6 +1,11 @@
 // src/components/InterLocalTransferRecommendation.jsx
 import React, { useState } from "react";
 import "./InterLocalTransferRecommendation.css";
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const FORM_KEY = "inter-local-transfer-recommendation";
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -200,39 +205,19 @@ export default function InterLocalTransferRecommendation() {
         </div>
       </div>
 
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input className="detail-input bg-gray" value={form.applicant_name_footer} onChange={upd("applicant_name_footer")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input className="detail-input bg-gray" value={form.applicant_address_footer} onChange={upd("applicant_address_footer")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input className="detail-input bg-gray" value={form.applicant_citizenship_no} onChange={upd("applicant_citizenship_no")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input className="detail-input bg-gray" value={form.applicant_phone} onChange={upd("applicant_phone")} />
-          </div>
-        </div>
-      </div>
+      {/* --- Applicant Details Box --- */}
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
+      {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button type="submit" className="save-print-btn" disabled={loading}>
-          {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
 
-      {message && (
-        <div style={{ marginTop: 8, color: message.type === "error" ? "crimson" : "green" }}>
-          {message.text}
-        </div>
-      )}
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </div>
     </form>
   );
 }
