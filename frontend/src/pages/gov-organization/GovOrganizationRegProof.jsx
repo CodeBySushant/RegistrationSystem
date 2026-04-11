@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./GovOrganizationRegProof.css";
-import PrintPreviewModal from "./PrintPreviewModal";
+import PrintPreviewModal from "../../components/PrintPreviewModal";
 import axios from "../../utils/axiosInstance";
 
 function formatDate(d) {

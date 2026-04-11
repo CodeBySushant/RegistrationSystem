@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./GovOrganizationRegUnsuccessful.css";
-import PrintPreviewModal from "./PrintPreviewModal";
+import PrintPreviewModal from "../../components/PrintPreviewModal";
 import axios from "../../utils/axiosInstance";
 
 function toCSV(rows) {

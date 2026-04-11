@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import { MUNICIPALITY } from "../../config/municipalityConfig";
-import { useAuth } from "../../context/AuthContext";
+import { MUNICIPALITY } from "../config/municipalityConfig";
+import { useAuth } from "../context/AuthContext";
 import "./PrintPreviewModal.css";
 
 const PrintPreviewModal = ({ row, onClose }) => {
