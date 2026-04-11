@@ -1,6 +1,10 @@
 // src/components/DClassConstructionBusinessLicenseList.jsx
 import React, { useEffect, useState } from "react";
 import "./DClassConstructionBusinessLicenseList.css";
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 
 const FORM_KEY = "d-class-construction-business-license"; // MUST match forms.json and the POST key used in the form component
 
@@ -172,7 +176,9 @@ const DClassConstructionBusinessLicenseList = () => {
         )}
       </div>
 
-      <div className="copyright-footer">© सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका</div>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </div>
     </div>
   );
 };
