@@ -1,6 +1,10 @@
 // 1
 import React from 'react';
 import './FarmerGroupOrCommitteeRegistrationCertificate.css';
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 
 const FarmerGroupOrCommitteeRegistrationCertificate = () => {
   return (
@@ -100,11 +104,13 @@ const FarmerGroupOrCommitteeRegistrationCertificate = () => {
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button className="save-print-btn">रेकर्ड सेभ र प्रिन्ट गर्नुहोस्</button>
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
       </div>
-      
+
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </div>
   );

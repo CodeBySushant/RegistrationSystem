@@ -1,6 +1,11 @@
 // DClassConstructionBusinessLicense.jsx
 import React, { useState } from "react";
 import "./DClassConstructionBusinessLicense.css";
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const DClassConstructionBusinessLicense = () => {
   const [form, setForm] = useState({
@@ -146,48 +151,17 @@ const DClassConstructionBusinessLicense = () => {
       </div>
 
       {/* --- Applicant Details Box --- */}
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input type="text" className="detail-input bg-gray" value={form.applicant_name} onChange={update("applicant_name")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input type="text" className="detail-input bg-gray" value={form.applicant_address} onChange={update("applicant_address")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" className="detail-input bg-gray" value={form.applicant_citizenship_no} onChange={update("applicant_citizenship_no")} />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input type="text" className="detail-input bg-gray" value={form.applicant_phone} onChange={update("applicant_phone")} />
-          </div>
-        </div>
-      </div>
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-      {/* --- Notes / Footer Action --- */}
-      <div style={{ marginTop: 12 }}>
-        <label>नोट / अतिरिक्त जानकारी</label>
-        <textarea className="full-width-textarea" rows="3" value={form.notes} onChange={update("notes")} />
-      </div>
-
-      <div className="form-footer" style={{ marginTop: 12 }}>
-        <button type="submit" className="save-print-btn" disabled={loading}>
-          {loading ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+      {/* --- Footer Action --- */}
+      <div className="form-footer">
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
 
-      {message && (
-        <div style={{ marginTop: 8, color: message.type === "error" ? "crimson" : "green" }}>
-          {message.text}
-        </div>
-      )}
-
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </form>
   );

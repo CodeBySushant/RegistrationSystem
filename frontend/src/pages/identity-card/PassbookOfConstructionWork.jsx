@@ -1,12 +1,16 @@
 // src/pages/PassbookOfConstructionWork.jsx
 import React, { useState } from "react";
 import "./PassbookOfConstructionWork.css";
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const FORM_KEY = "passbook-construction-work";
 const API_URL = `/api/forms/${FORM_KEY}`;
 
 const todayIso = () => {
-  // placeholder default date in YYYY-MM-DD (you can change to Nepali date conversion if needed)
   const d = new Date();
   return d.toISOString().slice(0, 10);
 };
@@ -155,7 +159,9 @@ const PassbookOfConstructionWork = () => {
         </div>
       )}
 
-      <div className="copyright-footer">© सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका</div>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </div>
     </form>
   );
 };
