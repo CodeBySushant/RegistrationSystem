@@ -1,10 +1,11 @@
 // src/pages/application/ImpoverishedCitizenApplicationandRecommendation.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import "./ImpoverishedCitizenApplicationandRecommendation.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
