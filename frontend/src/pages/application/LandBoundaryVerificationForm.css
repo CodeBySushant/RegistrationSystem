@@ -147,52 +147,54 @@
 }
 
 
-/* Applicant Details - RESPONSIVE FIX */
-.applicant-details {
-  border-top: 1px dashed #ccc;
-  margin-top: 25px;
-  padding-top: 15px;
-  clear: both; /* Clears the float from the signature section if it were floated */
-}
-.applicant-details h3 { margin-bottom: 15px; font-size: 18px; }
-.form-group-column {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-}
-.form-group-column label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.form-group-column input {
-  width: 350px;
-  max-width: 100%; /* Allows shrinking */
-  padding: 8px;
-  border: 1px solid #ccc;
+/* --- Applicant Details Box --- */
+.applicant-details-box {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.4);
+  margin-top: 20px;
   border-radius: 4px;
-  background-color: #fff;
+}
+
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
   box-sizing: border-box;
 }
+.bg-gray { background-color: #eef2f5; } 
 
-/* Submit Button */
-.submit-area {
-  text-align: center;
-  margin-top: 30px;
-}
-.submit-btn {
-  background-color: #343a40;
+/* --- Footer --- */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn {
+  background-color: #2c3e50;
   color: white;
-  padding: 12px 25px;
+  padding: 10px 25px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
 }
-.submit-btn:hover { background-color: #23272b; }
+.save-print-btn:hover { background-color: #1a252f; }
+.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
 
-/* Applicants Details Container */
 .land-boundary-container .applicant-details-box .details-grid {
   display: flex !important;
   flex-direction: column !important;
@@ -200,8 +202,10 @@
 }
 
 /* Control applicant input width */
-.land-boundary-container .applicant-details-box .detail-input {
-  max-width: 400px; /* adjust if needed: 480–550 */
+.land-boundary-container 
+.applicant-details-box 
+.detail-input {
+  max-width: 400px;   /* adjust if needed: 480–550 */
   width: 100%;
 }
 
@@ -229,4 +233,32 @@
 
 .inline-input-wrapper input {
   padding-left: 18px;
+}
+
+/* ================= PRINT STYLES ================= */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .land-boundary-container,
+  .land-boundary-container * {
+    visibility: visible;
+  }
+
+  .land-boundary-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .form-footer {
+    display: none;
+  }
 }
