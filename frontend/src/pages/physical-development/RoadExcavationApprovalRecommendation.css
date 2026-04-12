@@ -15,8 +15,7 @@
 /* --- Utility Classes --- */
 .bold-text { font-weight: bold; }
 .underline-text { text-decoration: underline; }
-.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: middle;}
-.red-mark { color: red; position: absolute; top: 0; left: 0; }
+.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: middle; }
 
 /* --- Top Bar --- */
 .top-bar-title {
@@ -29,12 +28,7 @@
   font-size: 1.1rem;
   color: #333;
 }
-
-.top-right-bread {
-  font-size: 0.9rem;
-  color: #777;
-  font-weight: normal;
-}
+.top-right-bread { font-size: 0.9rem; color: #777; font-weight: normal; }
 
 /* --- Header Section --- */
 .form-header-section {
@@ -42,20 +36,8 @@
   margin-bottom: 20px;
   position: relative;
 }
-
-.header-logo img {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 80px;
-}
-
-.header-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
+.header-logo img { position: absolute; left: 0; top: 0; width: 80px; }
+.header-text { display: flex; flex-direction: column; align-items: center; }
 .municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
 .ward-title { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
 .address-text, .province-text { color: #e74c3c; margin: 0; font-size: 1rem; }
@@ -67,8 +49,19 @@
   margin-top: 20px;
   font-size: 1rem;
 }
+.meta-left { display: flex; flex-direction: column; gap: 6px; }
 .meta-left p, .meta-right p { margin: 5px 0; }
-.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; font-family: inherit; font-size: 1rem; }
+
+/* Fixed: white background */
+.dotted-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: #fff;
+  outline: none;
+  padding: 2px 5px;
+  font-family: inherit;
+  font-size: 1rem;
+}
 .small-input { width: 120px; }
 .medium-input { width: 180px; }
 
@@ -76,21 +69,19 @@
 .subject-section { text-align: center; margin: 30px 0; font-size: 1.1rem; font-weight: bold; }
 
 /* --- Addressee Section --- */
-.addressee-section {
-    margin-bottom: 20px;
-    font-size: 1.05rem;
-}
-.addressee-row {
-    margin-bottom: 8px;
-}
-.line-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    outline: none;
-    margin: 0 10px;
-}
+.addressee-section { margin-bottom: 20px; font-size: 1.05rem; }
+.addressee-row { margin-bottom: 8px; display: flex; align-items: center; }
 
+/* Fixed: white background */
+.line-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: #fff;
+  outline: none;
+  margin: 0 10px;
+  font-family: inherit;
+  font-size: 1rem;
+}
 
 /* --- Body Paragraph & Inputs --- */
 .form-body {
@@ -100,6 +91,7 @@
   margin-bottom: 20px;
 }
 
+/* Fixed: white background */
 .inline-box-input {
   border: 1px solid #ccc;
   background-color: #fff;
@@ -107,42 +99,31 @@
   border-radius: 3px;
   margin: 0 5px;
   font-size: 1rem;
+  font-family: inherit;
   outline: none;
   display: inline-block;
   vertical-align: middle;
 }
 
-.specific-details-grid {
-    margin-top: 20px;
-    display: grid;
-    gap: 15px;
-}
-.form-group-row { display: flex; align-items: center; }
-.form-group-row label { margin-right: 10px; white-space: nowrap; }
-.full-width { flex-grow: 1; margin-left: 10px; }
+.tiny-box { width: 50px; text-align: center; }
+.small-box { width: 100px; }
+.medium-box { width: 150px; }
+.long-box { width: 250px; }
+
+.specific-details-grid { margin-top: 20px; display: grid; gap: 15px; }
+.form-group-row { display: flex; align-items: center; gap: 8px; }
+.form-group-row label { white-space: nowrap; }
+.full-width { flex-grow: 1; }
 
 /* --- Conditions List --- */
 .conditions-section { margin-top: 20px; margin-bottom: 30px; }
-.conditions-list {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    padding-left: 20px;
-}
-.conditions-list li {
-    margin-bottom: 8px;
-    text-align: justify;
-}
+.conditions-list { font-size: 0.95rem; line-height: 1.8; padding-left: 20px; }
+.conditions-list li { margin-bottom: 8px; text-align: justify; }
 
 /* --- Former Address --- */
 .former-address-section { margin-bottom: 30px; }
-.address-input-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 250px;
-    margin-top: 5px;
-}
-.address-input-wrapper .dotted-input { width: 100%; padding-right: 20px; }
-.dropdown-arrow { position: absolute; right: 0; bottom: 5px; font-size: 0.8rem; color: #555; }
+.address-input-wrapper { display: block; width: 300px; margin-top: 5px; }
+.address-input-wrapper .dotted-input { width: 100%; }
 
 /* --- Signature Section --- */
 .signature-section {
@@ -151,25 +132,52 @@
   margin-top: 30px;
   margin-bottom: 30px;
 }
+.signature-block { width: 220px; text-align: center; }
+.signature-line { border-bottom: 1px solid #ccc; margin-bottom: 5px; width: 100%; }
 
-.signature-block { width: 220px; text-align: center; position: relative; }
-.signature-block .line-input {
-    width: 100%; margin-bottom: 5px; border: none; border-bottom: 1px solid #000; outline: none; background: transparent;
+/* Fixed: white background */
+.designation-select {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-family: inherit;
+  font-size: 1rem;
 }
-.signature-line {
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 5px;
-    width: 100%;
-}
-.designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; }
 
 /* --- Bodartha Section --- */
-.bodartha-section {
-    margin-bottom: 30px;
-    font-size: 0.95rem;
-}
+.bodartha-section { margin-bottom: 30px; font-size: 0.95rem; }
 .bodartha-item { margin-bottom: 15px; }
 .bodartha-item p { margin: 2px 0; }
+
+/* --- Applicant Details Box --- */
+.applicant-details-box {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.4);
+  margin-top: 20px;
+  border-radius: 4px;
+}
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+.details-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
+  background-color: #fff;
+}
 
 /* --- Footer --- */
 .form-footer { text-align: center; margin-top: 40px; }
@@ -183,4 +191,55 @@
   cursor: pointer;
 }
 .save-print-btn:hover { background-color: #1a252f; }
-.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+.save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.copyright-footer {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+/* --- Print Styles --- */
+@media print {
+  .top-bar-title,
+  .top-right-bread,
+  .form-footer,
+  .error-message,
+  .success-message {
+    display: none !important;
+  }
+
+  .road-excavation-container {
+    padding: 10px 20px;
+    background-image: none;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .dotted-input,
+  .line-input,
+  .inline-box-input,
+  .inline-select,
+  .designation-select,
+  .detail-input {
+    border: none;
+    border-bottom: 1px dotted #000;
+    background: transparent !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .inline-box-input {
+    border: none;
+    border-bottom: 1px solid #000;
+  }
+
+  .designation-select {
+    border: none;
+    border-bottom: 1px dotted #000;
+    appearance: none;
+  }
+
+  button { display: none !important; }
+}
