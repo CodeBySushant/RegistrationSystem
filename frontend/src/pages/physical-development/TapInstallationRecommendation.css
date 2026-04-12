@@ -15,6 +15,7 @@
 /* --- Utility Classes --- */
 .bold-text { font-weight: bold; }
 .underline-text { text-decoration: underline; }
+.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: middle; }
 
 /* --- Top Bar --- */
 .top-bar-title {
@@ -27,68 +28,51 @@
   font-size: 1.1rem;
   color: #333;
 }
-
-.top-right-bread {
-  font-size: 0.9rem;
-  color: #777;
-  font-weight: normal;
-}
+.top-right-bread { font-size: 0.9rem; color: #777; font-weight: normal; }
 
 /* --- Header Section --- */
-.form-header-section {
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.header-logo img {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 80px;
-}
-
-.header-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
+.form-header-section { text-align: center; margin-bottom: 20px; position: relative; }
+.header-logo img { position: absolute; left: 0; top: 0; width: 80px; }
+.header-text { display: flex; flex-direction: column; align-items: center; }
 .municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
 .ward-title { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
 .address-text, .province-text { color: #e74c3c; margin: 0; font-size: 1rem; }
 
 /* --- Meta Data --- */
-.meta-data-row {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+.meta-data-row { display: flex; justify-content: space-between; margin-top: 20px; font-size: 1rem; }
+.meta-left { display: flex; flex-direction: column; gap: 6px; }
+.meta-left p, .meta-right p { margin: 5px 0; }
+
+/* Fixed: white background */
+.dotted-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: #fff;
+  outline: none;
+  padding: 2px 5px;
+  font-family: inherit;
   font-size: 1rem;
 }
-.meta-left p, .meta-right p { margin: 5px 0; }
-.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; font-family: inherit; font-size: 1rem; }
 .small-input { width: 120px; }
 
 /* --- Subject --- */
 .subject-section { text-align: center; margin: 30px 0; font-size: 1.1rem; font-weight: bold; }
 
 /* --- Addressee Section --- */
-.addressee-section {
-    margin-bottom: 20px;
-    font-size: 1.05rem;
-}
-.addressee-row {
-    margin-bottom: 8px;
-}
+.addressee-section { margin-bottom: 20px; font-size: 1.05rem; }
+.addressee-row { margin-bottom: 8px; display: flex; align-items: center; }
+
+/* Fixed: white background */
 .line-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    outline: none;
-    margin: 0 10px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: #fff;
+  outline: none;
+  margin: 0 10px;
+  font-family: inherit;
+  font-size: 1rem;
 }
 .medium-input { width: 200px; }
-
 
 /* --- Body Paragraph & Inputs --- */
 .form-body {
@@ -98,6 +82,7 @@
   margin-bottom: 30px;
 }
 
+/* Fixed: white background */
 .inline-box-input {
   border: 1px solid #ccc;
   background-color: #fff;
@@ -105,18 +90,21 @@
   border-radius: 3px;
   margin: 0 5px;
   font-size: 1rem;
+  font-family: inherit;
   outline: none;
   display: inline-block;
   vertical-align: middle;
 }
 
+/* Fixed: white background */
 .inline-select {
-    border: 1px solid #ccc;
-    background-color: #fff;
-    padding: 4px;
-    border-radius: 3px;
-    margin: 0 5px;
-    font-size: 1rem;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 4px;
+  border-radius: 3px;
+  margin: 0 5px;
+  font-size: 1rem;
+  font-family: inherit;
 }
 
 .small-box { width: 100px; }
@@ -124,76 +112,60 @@
 .long-box { width: 250px; }
 
 /* --- Kitta Details Table --- */
-.table-section { margin-top: 20px; }
+.table-section { margin-top: 20px; margin-bottom: 20px; }
 .table-title { text-align: center; color: #2c3e50; margin-bottom: 10px; font-weight: bold; text-decoration: underline; }
 
-.kitta-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: rgba(255,255,255,0.6);
-}
+.kitta-table { width: 100%; border-collapse: collapse; background-color: rgba(255,255,255,0.6); }
+.kitta-table th { background-color: #eee; border: 1px solid #555; padding: 8px; text-align: center; font-size: 1rem; font-weight: bold; color: #333; }
+.kitta-table td { border: 1px solid #555; padding: 5px; }
 
-.kitta-table th {
-  background-color: #eee;
-  border: 1px solid #555;
-  padding: 8px;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #333;
-}
-
-.kitta-table td {
-  border: 1px solid #555;
-  padding: 5px;
-}
-
+/* Fixed: white background for table inputs */
 .table-input {
   width: 100%;
   border: none;
-  background: transparent;
+  background: #fff;
   outline: none;
   padding: 4px;
   font-size: 1rem;
-  color: #e74c3c;
+  font-family: inherit;
+  color: #000;
 }
 
-.action-cell { text-align: center; }
+.action-cell { text-align: center; white-space: nowrap; }
 .add-row-btn {
-    background-color: blue;
-    color: white;
-    border: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    line-height: 1;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  margin: 2px;
 }
+.add-row-btn.remove-btn { background-color: #c0392b; }
+.add-row-btn:hover { opacity: 0.85; }
 
 /* --- Signature Section --- */
-.signature-section {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 50px;
-  margin-bottom: 30px;
-}
-
+.signature-section { display: flex; justify-content: flex-end; margin-top: 50px; margin-bottom: 30px; }
 .signature-block { width: 220px; text-align: center; }
-.signature-block .line-input {
-    width: 100%; margin-bottom: 5px; border: none; border-bottom: 1px solid #000; outline: none; background: transparent;
+.signature-line { border-bottom: 1px solid #ccc; margin-bottom: 5px; width: 100%; }
+
+/* Fixed: white background */
+.designation-select {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-family: inherit;
+  font-size: 1rem;
 }
-.signature-line {
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 5px;
-    width: 100%;
-}
-.designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; }
 
 /* --- Bodartha Section --- */
 .bodartha-section { margin-bottom: 30px; }
-.bodartha-label { margin-bottom: 5px; font-weight: bold; }
-.bodartha-row { display: flex; align-items: center; }
+.bodartha-label { margin-bottom: 5px; }
+.bodartha-row { display: flex; align-items: center; gap: 8px; }
 
 /* --- Applicant Details Box --- */
 .applicant-details-box {
@@ -203,21 +175,8 @@
   margin-top: 20px;
   border-radius: 4px;
 }
-
-.applicant-details-box h3 {
-  color: #777;
-  font-size: 1.1rem;
-  margin: 0 0 15px 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-}
-
-.details-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
-}
-
+.applicant-details-box h3 { color: #777; font-size: 1.1rem; margin: 0 0 15px 0; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+.details-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
 .detail-group { display: flex; flex-direction: column; }
 .detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
 .detail-input {
@@ -226,19 +185,46 @@
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
 }
-.bg-gray { background-color: #eef2f5; } 
+/* Fixed: solid white */
+.bg-gray { background-color: #fff; }
 
 /* --- Footer --- */
 .form-footer { text-align: center; margin-top: 40px; }
-.save-print-btn {
-  background-color: #2c3e50;
-  color: white;
-  padding: 10px 25px;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-}
+.save-print-btn { background-color: #2c3e50; color: white; padding: 10px 25px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
 .save-print-btn:hover { background-color: #1a252f; }
+.save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+
+/* --- Print Styles --- */
+@media print {
+  .top-bar-title,
+  .top-right-bread,
+  .form-footer,
+  .action-cell {
+    display: none !important;
+  }
+  .tap-installation-container {
+    padding: 10px 20px;
+    background-image: none;
+    max-width: 100%;
+    margin: 0;
+  }
+  .dotted-input,
+  .line-input,
+  .inline-box-input,
+  .inline-select,
+  .designation-select,
+  .detail-input,
+  .table-input {
+    border: none;
+    border-bottom: 1px dotted #000;
+    background: transparent !important;
+  }
+  .inline-box-input { border: none; border-bottom: 1px solid #000; }
+  .designation-select { border: none; border-bottom: 1px dotted #000; appearance: none; }
+  .kitta-table th, .kitta-table td { border: 1px solid #000; }
+  button { display: none !important; }
+}

@@ -70,8 +70,18 @@
   font-size: 1rem;
 }
 .meta-left p, .meta-right p { margin: 5px 0; }
-.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; font-family: inherit; font-size: 1rem; }
-.small-input { width: 80px; }
+
+/* Fixed: white background instead of transparent */
+.dotted-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: #fff;
+  outline: none;
+  padding: 2px 5px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+.small-input { width: 120px; }
 
 /* --- Subject --- */
 .subject-section { text-align: center; margin: 30px 0; font-size: 1.1rem; font-weight: bold; }
@@ -84,24 +94,28 @@
 .addressee-row {
     margin-bottom: 8px;
 }
+
+/* Fixed: white background */
 .line-input {
     border: none;
     border-bottom: 1px dotted #000;
-    background: transparent;
+    background: #fff;
     outline: none;
     margin: 0 10px;
+    font-family: inherit;
+    font-size: 1rem;
 }
 .medium-input { width: 200px; }
-
 
 /* --- Body Paragraph & Inputs --- */
 .form-body {
   font-size: 1.05rem;
-  line-height: 2.6; /* Spacing for multiline inputs */
+  line-height: 2.6;
   text-align: justify;
   margin-bottom: 30px;
 }
 
+/* Fixed: white background */
 .inline-box-input {
   border: 1px solid #ccc;
   background-color: #fff;
@@ -112,8 +126,10 @@
   outline: none;
   display: inline-block;
   vertical-align: middle;
+  font-family: inherit;
 }
 
+/* Fixed: white background */
 .inline-select {
     border: 1px solid #ccc;
     background-color: #fff;
@@ -121,10 +137,11 @@
     border-radius: 3px;
     margin: 0 5px;
     font-size: 1rem;
+    font-family: inherit;
 }
 
 .medium-select { width: 120px; }
-.tiny-box { width: 40px; text-align: center; }
+.tiny-box { width: 50px; text-align: center; }
 .small-box { width: 100px; }
 .medium-box { width: 150px; }
 .long-box { width: 250px; }
@@ -139,14 +156,15 @@
 
 .signature-block { width: 220px; text-align: center; position: relative;}
 .signature-block .line-input {
-    width: 100%; margin-bottom: 5px; border: none; border-bottom: 1px solid #000; outline: none; background: transparent;
+    width: 100%; margin-bottom: 5px; border: none; border-bottom: 1px solid #000; outline: none; background: #fff;
 }
 .signature-line {
     border-bottom: 1px solid #ccc;
     margin-bottom: 5px;
     width: 100%;
 }
-.designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; }
+/* Fixed: white background */
+.designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; font-family: inherit; }
 
 /* --- Applicant Details Box --- */
 .applicant-details-box {
@@ -179,8 +197,11 @@
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
 }
-.bg-gray { background-color: #eef2f5; } 
+/* Fixed: solid white instead of light blue-gray */
+.bg-gray { background-color: #fff; }
 
 /* --- Footer --- */
 .form-footer { text-align: center; margin-top: 40px; }
@@ -194,4 +215,5 @@
   cursor: pointer;
 }
 .save-print-btn:hover { background-color: #1a252f; }
+.save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }

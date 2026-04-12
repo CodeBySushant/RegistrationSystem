@@ -1,15 +1,16 @@
 // src/components/RoadExcavationApprovalRecommendation.jsx
 import React, { useState } from "react";
+import axiosInstance from '../../utils/axiosInstance';
+import MunicipalityHeader from '../../components/MunicipalityHeader.jsx';
+import { MUNICIPALITY } from '../../config/municipalityConfig';
+import { useAuth } from '../../context/AuthContext';
 import "./RoadExcavationApprovalRecommendation.css";
 
 const FORM_KEY = "road-excavation-approval";
-const API_BASE = import.meta.env.VITE_API_BASE || ""; // Vite-safe env
-const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 
-const initial = {
-  chalan_no: "२०८२/८३",
-  date_nepali: new Date().toISOString().slice(0, 10),
-  addressee_prefix: "श्री",
+const emptyState = {
+  chalan_no: "",
+  date_nepali: "",
   addressee_name: "",
   addressee_place: "",
   subject_text: "सडक खन्ने स्वीकृति ।",
@@ -20,13 +21,12 @@ const initial = {
   approved_unit_value: "",
   deposit_amount: "",
   applicant_previous_address: "",
-  applicant_name: "",
-  applicant_designation: "",
-  recommendation_notes: ""
+  designation: "",
 };
 
 export default function RoadExcavationApprovalRecommendation() {
-  const [form, setForm] = useState(initial);
+  const { user } = useAuth();
+  const [form, setForm] = useState(emptyState);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -39,26 +39,20 @@ export default function RoadExcavationApprovalRecommendation() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setResult(null);
 
-    // basic validation
-    if (!form.addressee_name || !form.place_for_excavation || !form.applicant_name) {
-      setError("कृपया आवस्यक फिल्डहरू भर्नुहोस् (नाम, स्थान, निवेदक)।");
+    if (!form.addressee_name || !form.place_for_excavation) {
+      setError("कृपया आवस्यक फिल्डहरू भर्नुहोस् (नाम, स्थान)।");
       return;
     }
 
     setLoading(true);
     try {
-      const resp = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
-      const data = await resp.json();
-      if (!resp.ok) throw new Error(data.message || data.error || "Server error");
-      setResult(data);
-      // Optional: window.print();
+      const resp = await axiosInstance.post(`/api/forms/${FORM_KEY}`, form);
+      setResult(resp.data);
+      window.print();
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.response?.data?.error || err.message || "Server error");
     } finally {
       setLoading(false);
     }
@@ -67,61 +61,72 @@ export default function RoadExcavationApprovalRecommendation() {
   return (
     <div className="road-excavation-container">
       <form onSubmit={handleSubmit}>
+
+        {/* Top Bar */}
         <div className="top-bar-title">
           सडक खन्ने स्वीकृतिको सिफारिस ।
           <span className="top-right-bread">भौतिक निर्माण &gt; सडक खन्ने स्वीकृतिको सिफारिस</span>
         </div>
 
+        {/* Header */}
         <div className="form-header-section">
           <div className="header-logo">
-            <img src="/nepallogo.svg" alt="Nepal Emblem" />
+            <img src={MUNICIPALITY.logoSrc} alt="Nepal Emblem" />
           </div>
           <div className="header-text">
-            <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-            <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-            <p className="address-text">नागार्जुन, काठमाडौँ</p>
-            <p className="province-text">बागमती प्रदेश, नेपाल</p>
+            <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+            {user?.role === "SUPERADMIN" ? (
+              <h2 className="ward-title">सबै वडा कार्यालय</h2>
+            ) : (
+              <h2 className="ward-title">वडा नं. {user?.ward} वडा कार्यालय</h2>
+            )}
+            <p className="address-text">{MUNICIPALITY.officeLine}</p>
+            <p className="province-text">{MUNICIPALITY.provinceLine}</p>
           </div>
         </div>
 
+        {/* Meta Row */}
         <div className="meta-data-row">
           <div className="meta-left">
-            <label>पत्र संख्या :
-              <input name="chalan_no" value={form.chalan_no} onChange={onChange} className="dotted-input small-input" />
-            </label>
-            <label>चलानी नं. :
-              <input name="chalan_no" value={form.chalan_no} onChange={onChange} className="dotted-input small-input" />
+            <label>
+              पत्र संख्या :
+              <input name="chalan_no" value={form.chalan_no} onChange={onChange} className="dotted-input small-input" placeholder="२०८२/८३ ..." />
             </label>
           </div>
           <div className="meta-right">
-            <label>मिति :
-              <input name="date_nepali" value={form.date_nepali} onChange={onChange} className="dotted-input small-input" />
+            <label>
+              मिति :
+              <input name="date_nepali" value={form.date_nepali} onChange={onChange} className="dotted-input small-input" placeholder="२०८२-०८-०६" />
             </label>
           </div>
         </div>
 
+        {/* Subject */}
         <div className="subject-section">
-          <p>विषय: <span className="underline-text">{form.subject_text}</span></p>
+          <p>विषय: <span className="underline-text bold-text">{form.subject_text}</span></p>
         </div>
 
+        {/* Addressee */}
         <div className="addressee-section">
           <div className="addressee-row">
-            <span>{form.addressee_prefix}</span>
-            <input name="addressee_name" value={form.addressee_name} onChange={onChange} type="text" className="line-input medium-input" required />
-            <span className="red">*</span>
+            <span>श्री</span>
+            <input name="addressee_name" value={form.addressee_name} onChange={onChange} type="text" className="line-input medium-input" placeholder="नाम" required />
           </div>
           <div className="addressee-row">
-            <input name="addressee_place" value={form.addressee_place} onChange={onChange} type="text" className="line-input medium-input" />
-            <span className="bold-text" style={{ marginLeft: "20px" }}>वडा नं. १</span>
+            <input name="addressee_place" value={form.addressee_place} onChange={onChange} type="text" className="line-input medium-input" placeholder="ठेगाना" />
           </div>
         </div>
 
+        {/* Body */}
         <div className="form-body">
           <p className="body-paragraph">
-            तपाईंले यस वडा कार्यालयमा मिति {form.date_nepali} मा दिनु भएको निवेदन अनुसार निम्न बमोजिम स्थानको
-            <input name="place_for_excavation" value={form.place_for_excavation} onChange={onChange} className="inline-box-input medium-box" required /> सडक
-            खन्ने अनुमति दिईएको छ | लेखिए बमोजिमको शर्तहरु पालना गरी यो पत्र प्राप्त भएको मितिले
-            <input name="completion_days" value={form.completion_days} onChange={onChange} className="inline-box-input small-box" required /> दिन भित्र कार्य सम्पन्न गर्नुहोला |
+            तपाईंले यस वडा कार्यालयमा मिति
+            <input name="date_nepali" value={form.date_nepali} onChange={onChange} className="inline-box-input small-box" placeholder="मिति" />
+            मा दिनु भएको निवेदन अनुसार निम्न बमोजिम स्थानको
+            <input name="place_for_excavation" value={form.place_for_excavation} onChange={onChange} className="inline-box-input medium-box" placeholder="स्थान" required />
+            सडक खन्ने अनुमति दिईएको छ | लेखिए बमोजिमको शर्तहरु पालना गरी यो पत्र प्राप्त भएको मितिले
+            <input name="completion_days" value={form.completion_days} onChange={onChange} className="inline-box-input tiny-box" placeholder="दिन" />
+            दिन भित्र कार्य सम्पन्न गर्नुहोला |
           </p>
 
           <div className="specific-details-grid">
@@ -129,14 +134,12 @@ export default function RoadExcavationApprovalRecommendation() {
               <label className="bold-text">खन्न स्वीकृति प्रदान गरेको सडक</label>
               <input name="approved_road" value={form.approved_road} onChange={onChange} className="dotted-input full-width" />
             </div>
-
             <div className="form-group-row">
-              <label className="bold-text">सडक खन्न स्वीकृति इकाइ (बर्ग मिटर)</label>
+              <label className="bold-text">सडक खन्न स्वीकृति इकाइ</label>
               <input name="approved_unit" value={form.approved_unit} onChange={onChange} className="dotted-input medium-input" />
               <span>बर्ग मिटर</span>
-              <input name="approved_unit_value" value={form.approved_unit_value} onChange={onChange} className="dotted-input small-input" placeholder="value" />
+              <input name="approved_unit_value" value={form.approved_unit_value} onChange={onChange} className="dotted-input small-input" placeholder="मान" />
             </div>
-
             <div className="form-group-row">
               <label className="bold-text">धरौटी रकम (रु.)</label>
               <input name="deposit_amount" value={form.deposit_amount} onChange={onChange} className="dotted-input full-width" />
@@ -144,13 +147,18 @@ export default function RoadExcavationApprovalRecommendation() {
           </div>
         </div>
 
+        {/* Conditions */}
         <div className="conditions-section">
           <h4 className="bold-text">शर्तहरु :</h4>
           <ol className="conditions-list">
-            <li>... (retain your existing conditions text) ...</li>
+            <li>सडक खन्ने कार्य सम्पन्न भएपछि खनेको ठाउँ पहिलेकै अवस्थामा पुनर्स्थापना गर्नु पर्नेछ।</li>
+            <li>कार्य अवधिभर सुरक्षा व्यवस्था मिलाउनु पर्नेछ।</li>
+            <li>तोकिएको समयभित्र कार्य सम्पन्न नभएमा धरौटी जफत हुनेछ।</li>
+            <li>सम्बन्धित निकायको निर्देशन पालना गर्नु पर्नेछ।</li>
           </ol>
         </div>
 
+        {/* Former Address */}
         <div className="former-address-section">
           <label className="bold-text">निवेदकको साविकको ठेगाना</label>
           <div className="address-input-wrapper">
@@ -158,11 +166,11 @@ export default function RoadExcavationApprovalRecommendation() {
           </div>
         </div>
 
+        {/* Signature */}
         <div className="signature-section">
           <div className="signature-block">
             <div className="signature-line"></div>
-            <input name="applicant_name" value={form.applicant_name} onChange={onChange} className="line-input full-width-input" required />
-            <select name="applicant_designation" value={form.applicant_designation} onChange={onChange} className="designation-select">
+            <select name="designation" value={form.designation} onChange={onChange} className="designation-select">
               <option value="">पद छनौट गर्नुहोस्</option>
               <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
               <option value="वडा सचिव">वडा सचिव</option>
@@ -171,22 +179,30 @@ export default function RoadExcavationApprovalRecommendation() {
           </div>
         </div>
 
+        {/* Bodartha */}
         <div className="bodartha-section">
           <h4 className="bold-text">बोधार्थ</h4>
-          <div className="bodartha-item"><p className="bold-text">१. श्री प्राबिधिक शाखा :</p><p>माथि उल्लेखित शर्तहरु पालना भए नभएको अनुगमन गरी प्रतिवेदन पेश गर्नु हुन |</p></div>
-          <div className="bodartha-item"><p className="bold-text">२. श्री ट्राफिक प्रहरी कार्यालय :</p><p>सवारी साधनको सहजताको लागि अनुरोध छ |</p></div>
+          <div className="bodartha-item">
+            <p className="bold-text">१. श्री प्राबिधिक शाखा :</p>
+            <p>माथि उल्लेखित शर्तहरु पालना भए नभएको अनुगमन गरी प्रतिवेदन पेश गर्नु हुन |</p>
+          </div>
+          <div className="bodartha-item">
+            <p className="bold-text">२. श्री ट्राफिक प्रहरी कार्यालय :</p>
+            <p>सवारी साधनको सहजताको लागि अनुरोध छ |</p>
+          </div>
         </div>
 
+        {/* Footer */}
         <div className="form-footer">
           <button className="save-print-btn" type="submit" disabled={loading}>
             {loading ? "सेभ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
-        {error && <div style={{ color: "red", marginTop: 8 }}>{error}</div>}
-        {result && <div style={{ color: "green", marginTop: 8 }}>Saved successfully. id: {result.id}</div>}
+        {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
+        {result && <div style={{ color: "green", marginTop: "10px" }}>सफलतापूर्वक सेभ भयो। ID: {result.id}</div>}
 
-        <div className="copyright-footer">© सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका</div>
+        <div className="copyright-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</div>
       </form>
     </div>
   );
