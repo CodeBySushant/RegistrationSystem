@@ -1,117 +1,100 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ShopAgriculturalForm.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
+const initialState = {
+  province: MUNICIPALITY.provinceLine,
+  district: MUNICIPALITY.city,
+  municipality: MUNICIPALITY.name,
+  ward: "",
+  sabik: "",
+  sabik_no: "",
+  sabik_ward_no: "",
+  owner_age: "",
+  owner_name: "",
+  on_behalf_of: "",
+  location_name: "",
+  land_location: "",
+  shop_name: "",
+  registration_no: "",
+  operation_from: "",
+  operation_to: "",
+  period_year: "",
+  period_month: "",
+  boundary_east: "",
+  boundary_west: "",
+  boundary_north: "",
+  boundary_south: "",
+  rohabar_ward_no: "",
+  rohabar_post: "",
+  rohabar_person: "",
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship: "",
+  applicant_phone: "",
+  notes: "",
+};
 
 export default function ShopAgriculturalForm() {
-  const [form, setForm] = useState({
-    province: MUNICIPALITY.provinceLine,
-    district: MUNICIPALITY.city,
-    municipality: MUNICIPALITY.name,
-    ward: "",
-    sabik: "",
-    sabik_no: "",
-    owner_age: "",
-    owner_name: "",
-    on_behalf_of: "",
-    location_name: "",
-    registration_no: "",
-    operation_from: "",
-    operation_to: "",
-    period_year: "",
-    period_month: "",
-    boundary_east: "",
-    boundary_west: "",
-    boundary_north: "",
-    boundary_south: "",
-    rohabar_ward_no: "",
-    rohabar_post: "",
-    rohabar_person: "",
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizenship: "",
-    applicant_phone: "",
-    notes: null,
-  });
+  const { user } = useAuth();
+  const [form, setForm] = useState(initialState);
+  const [loading, setLoading] = useState(false);
 
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState(null);
+  useEffect(() => {
+    if (user?.ward && !form.ward) {
+      setForm((prev) => ({ ...prev, ward: user.ward }));
+    }
+  }, [user]);
 
-  const update = (k, v) => setForm((s) => ({ ...s, [k]: v }));
-
-  const validate = () => {
-    if (!form.applicant_name?.trim()) return "निवेदकको नाम आवश्यक छ";
-    if (!form.applicant_citizenship?.trim()) return "नागरिकता नं आवश्यक छ";
-    return null;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const err = validate();
-    if (err) {
-      alert(err);
-      return;
-    }
-    if (submitting) return;
-    setSubmitting(true);
-    setMessage(null);
+    setLoading(true);
 
     try {
-      const payload = { ...form };
-      // Convert empty strings to null to keep columns count stable
-      Object.keys(payload).forEach((k) => {
-        if (payload[k] === "") payload[k] = null;
-      });
-
-      const res = await fetch("/api/forms/shop-agricultural-form", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message || `Server returned ${res.status}`);
+      const res = await axiosInstance.post("/api/forms/shop-agricultural", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-
-      const data = await res.json();
-      setMessage({ type: "success", text: `सेभ भयो (id: ${data.id})` });
-
-      // optional reset
-      setForm({
-        province: MUNICIPALITY.provinceLine,
-        district: MUNICIPALITY.city,
-        municipality: MUNICIPALITY.name,
-        ward: "",
-        sabik: "",
-        sabik_no: "",
-        owner_age: "",
-        owner_name: "",
-        on_behalf_of: "",
-        location_name: "",
-        registration_no: "",
-        operation_from: "",
-        operation_to: "",
-        period_year: "",
-        period_month: "",
-        boundary_east: "",
-        boundary_west: "",
-        boundary_north: "",
-        boundary_south: "",
-        rohabar_ward_no: "",
-        rohabar_post: "",
-        rohabar_person: "",
-        applicant_name: "",
-        applicant_address: "",
-        applicant_citizenship: "",
-        applicant_phone: "",
-        notes: null,
-      });
     } catch (err) {
-      setMessage({ type: "error", text: err.message });
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+
+    try {
+      const res = await axiosInstance.post("/api/forms/shop-agricultural", form);
+
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print();
+        setForm(initialState);
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -125,36 +108,60 @@ export default function ShopAgriculturalForm() {
       </header>
 
       <form className="saf-paper" onSubmit={handleSubmit}>
+        {/* Letterhead */}
+        <div className="saf-letterhead">
+          <div className="saf-logo">
+            <img alt="Emblem" src={MUNICIPALITY.logoSrc} />
+          </div>
+          <div className="saf-head-text">
+            <div className="saf-head-main">{MUNICIPALITY.name}</div>
+            <div className="saf-head-ward">
+              {user?.role === "SUPERADMIN"
+                ? "सबै वडा कार्यालय"
+                : `वडा नं. ${user?.ward || ""} वडा कार्यालय`}
+            </div>
+            <div className="saf-head-sub">
+              {MUNICIPALITY.officeLine}
+              <br />
+              {MUNICIPALITY.provinceLine}
+            </div>
+          </div>
+        </div>
+
         <h2 className="saf-main-title">पसल, कृषि, पक्षी फार्म दर्ता मन्जुरी</h2>
 
         <div className="saf-inline-row">
           <span>लिखित</span>
           <select
+            name="province"
             value={form.province}
-            onChange={(e) => update("province", e.target.value)}
+            onChange={handleChange}
           >
-            <option>{MUNICIPALITY.provinceLine}</option>
+            <option value={MUNICIPALITY.provinceLine}>{MUNICIPALITY.provinceLine}</option>
           </select>
           <span>जिल्ला</span>
           <select
+            name="district"
             value={form.district}
-            onChange={(e) => update("district", e.target.value)}
+            onChange={handleChange}
           >
-            <option>{MUNICIPALITY.city}</option>
+            <option value={MUNICIPALITY.city}>{MUNICIPALITY.city}</option>
           </select>
           <span>स्थानीय तह</span>
           <select
+            name="municipality"
             value={form.municipality}
-            onChange={(e) => update("municipality", e.target.value)}
+            onChange={handleChange}
           >
-            <option>{MUNICIPALITY.name}</option>
+            <option value={MUNICIPALITY.name}>{MUNICIPALITY.name}</option>
           </select>
           <span>वडा नं.</span>
           <input
             type="text"
+            name="ward"
             className="saf-small"
             value={form.ward}
-            onChange={(e) => update("ward", e.target.value)}
+            onChange={handleChange}
           />
         </div>
 
@@ -162,37 +169,42 @@ export default function ShopAgriculturalForm() {
           <span>साबिक</span>
           <input
             type="text"
+            name="sabik"
             className="saf-medium"
             value={form.sabik}
-            onChange={(e) => update("sabik", e.target.value)}
+            onChange={handleChange}
           />
           <span>का</span>
           <input
             type="text"
+            name="sabik_no"
             className="saf-small"
             value={form.sabik_no}
-            onChange={(e) => update("sabik_no", e.target.value)}
+            onChange={handleChange}
           />
           <span>वर्ष</span>
           <input
             type="text"
+            name="owner_age"
             className="saf-tiny"
             value={form.owner_age}
-            onChange={(e) => update("owner_age", e.target.value)}
+            onChange={handleChange}
           />
           <span>का श्री</span>
           <input
             type="text"
+            name="owner_name"
             className="saf-medium"
             value={form.owner_name}
-            onChange={(e) => update("owner_name", e.target.value)}
+            onChange={handleChange}
           />
           <span>को तर्फबाट</span>
           <input
             type="text"
+            name="on_behalf_of"
             className="saf-medium"
             value={form.on_behalf_of}
-            onChange={(e) => update("on_behalf_of", e.target.value)}
+            onChange={handleChange}
           />
         </div>
 
@@ -200,30 +212,34 @@ export default function ShopAgriculturalForm() {
           <span>उक्त</span>
           <input
             type="text"
+            name="location_name"
             className="saf-medium"
             value={form.location_name}
-            onChange={(e) => update("location_name", e.target.value)}
+            onChange={handleChange}
           />
           <span>को नाममा पासल / कृषि फार्म दर्ता मन्जुर भएको पूर्व</span>
           <input
             type="text"
+            name="registration_no"
             className="saf-medium"
             value={form.registration_no}
-            onChange={(e) => update("registration_no", e.target.value)}
+            onChange={handleChange}
           />
           <span>नं. {MUNICIPALITY.name} वडा नं.</span>
           <input
             type="text"
+            name="ward"
             className="saf-tiny"
             value={form.ward}
-            onChange={(e) => update("ward", e.target.value)}
+            onChange={handleChange}
           />
           <span>साबिक वडा नं.</span>
           <input
             type="text"
+            name="sabik_ward_no"
             className="saf-tiny"
-            value={form.sabik_no}
-            onChange={(e) => update("sabik_no", e.target.value)}
+            value={form.sabik_ward_no}
+            onChange={handleChange}
           />
         </div>
 
@@ -231,30 +247,34 @@ export default function ShopAgriculturalForm() {
           <span>जमिन</span>
           <input
             type="text"
+            name="land_location"
             className="saf-medium"
-            value={form.location_name}
-            onChange={(e) => update("location_name", e.target.value)}
+            value={form.land_location}
+            onChange={handleChange}
           />
           <span>को स्थानमा रहेको</span>
           <input
             type="text"
+            name="shop_name"
             className="saf-medium"
-            value={form.location_name}
-            onChange={(e) => update("location_name", e.target.value)}
+            value={form.shop_name}
+            onChange={handleChange}
           />
           <span>किराना / कृषि / पशुपंक्षी फार्मको मिति</span>
           <input
             type="text"
+            name="operation_from"
             className="saf-small"
             value={form.operation_from}
-            onChange={(e) => update("operation_from", e.target.value)}
+            onChange={handleChange}
           />
           <span>देखि</span>
           <input
             type="text"
+            name="operation_to"
             className="saf-small"
             value={form.operation_to}
-            onChange={(e) => update("operation_to", e.target.value)}
+            onChange={handleChange}
           />
           <span>सम्म संचालन गर्न मन्जुरी दिएको छ ।</span>
         </div>
@@ -268,50 +288,56 @@ export default function ShopAgriculturalForm() {
           <span>यी शब्दमा, साल</span>
           <input
             type="text"
+            name="period_year"
             className="saf-small"
             value={form.period_year}
-            onChange={(e) => update("period_year", e.target.value)}
+            onChange={handleChange}
           />
           <span>महिना</span>
           <input
             type="text"
+            name="period_month"
             className="saf-small"
             value={form.period_month}
-            onChange={(e) => update("period_month", e.target.value)}
+            onChange={handleChange}
           />
         </div>
 
         <h3 className="saf-subtitle">तपशिल</h3>
         <div className="saf-field-row">
-          <span>१) पूर्व दिशाको सीमाना *</span>
+          <span>१) पूर्व दिशाको सीमाना</span>
           <input
             type="text"
+            name="boundary_east"
             value={form.boundary_east}
-            onChange={(e) => update("boundary_east", e.target.value)}
+            onChange={handleChange}
           />
         </div>
         <div className="saf-field-row">
-          <span>२) पश्चिम दिशाको सीमाना *</span>
+          <span>२) पश्चिम दिशाको सीमाना</span>
           <input
             type="text"
+            name="boundary_west"
             value={form.boundary_west}
-            onChange={(e) => update("boundary_west", e.target.value)}
+            onChange={handleChange}
           />
         </div>
         <div className="saf-field-row">
-          <span>३) उत्तर दिशाको सीमाना *</span>
+          <span>३) उत्तर दिशाको सीमाना</span>
           <input
             type="text"
+            name="boundary_north"
             value={form.boundary_north}
-            onChange={(e) => update("boundary_north", e.target.value)}
+            onChange={handleChange}
           />
         </div>
         <div className="saf-field-row">
-          <span>४) दक्षिण दिशाको सीमाना *</span>
+          <span>४) दक्षिण दिशाको सीमाना</span>
           <input
             type="text"
+            name="boundary_south"
             value={form.boundary_south}
-            onChange={(e) => update("boundary_south", e.target.value)}
+            onChange={handleChange}
           />
         </div>
 
@@ -320,86 +346,43 @@ export default function ShopAgriculturalForm() {
           <span>{MUNICIPALITY.name}</span>
           <input
             type="text"
+            name="rohabar_ward_no"
             className="saf-tiny"
             value={form.rohabar_ward_no}
-            onChange={(e) => update("rohabar_ward_no", e.target.value)}
+            onChange={handleChange}
           />
           <span>नं. वडा का पदधारी</span>
           <select
+            name="rohabar_post"
             value={form.rohabar_post}
-            onChange={(e) => update("rohabar_post", e.target.value)}
+            onChange={handleChange}
           >
             <option value="">पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
           </select>
           <span>श्री</span>
           <input
             type="text"
+            name="rohabar_person"
             className="saf-medium"
             value={form.rohabar_person}
-            onChange={(e) => update("rohabar_person", e.target.value)}
+            onChange={handleChange}
           />
         </div>
 
-        <h3 className="saf-subtitle">निवेदकको विवरण</h3>
-        <div className="saf-applicant-box">
-          <div className="saf-field">
-            <label>निवेदकको नाम *</label>
-            <input
-              type="text"
-              value={form.applicant_name}
-              onChange={(e) => update("applicant_name", e.target.value)}
-            />
-          </div>
-          <div className="saf-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input
-              type="text"
-              value={form.applicant_address}
-              onChange={(e) => update("applicant_address", e.target.value)}
-            />
-          </div>
-          <div className="saf-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input
-              type="text"
-              value={form.applicant_citizenship}
-              onChange={(e) => update("applicant_citizenship", e.target.value)}
-            />
-          </div>
-          <div className="saf-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input
-              type="text"
-              value={form.applicant_phone}
-              onChange={(e) => update("applicant_phone", e.target.value)}
-            />
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        <div className="saf-submit-row">
-          <button
-            className="saf-submit-btn"
-            type="submit"
-            disabled={submitting}
-          >
-            {submitting ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        <div className="form-footer">
+          <button className="save-print-btn" type="button" onClick={handlePrint}>
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
-        {message && (
-          <div
-            className={`saf-message ${
-              message.type === "error" ? "error" : "success"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
+        <div className="copyright-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
       </form>
-
-      <footer className="saf-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
     </div>
   );
 }

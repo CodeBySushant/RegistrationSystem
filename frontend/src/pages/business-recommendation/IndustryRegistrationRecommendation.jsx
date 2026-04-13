@@ -1,113 +1,117 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./IndustryRegistrationRecommendation.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
+const initialState = {
+  date: new Date().toISOString().slice(0, 10),
+  refLetterNo: "",
+  chalaniNo: "",
+  to_line1: "",
+  to_line2: "",
+  sabik_district: "",
+  sabik_ward_no: "",
+  current_residence: "",
+  residence_from: "",
+  residence_to: "",
+  place_details: "",
+  industry_place_details: "",
+  kitta_no: "",
+  area_size: "",
+  boundary_east: "",
+  boundary_west: "",
+  boundary_north: "",
+  boundary_south: "",
+  structure_types: "",
+  inspection_notes: "",
+  sign_name: "",
+  sign_position: "",
+  ward_no: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+};
 
 export default function IndustryRegistrationRecommendation() {
-  const [form, setForm] = useState({
-    date: new Date().toISOString().slice(0, 10),
-    refLetterNo: "",
-    chalaniNo: "",
-    to_line1: "",
-    to_line2: "",
-    sabik_district: "",
-    sabik_ward_no: "",
-    current_residence: "",
-    residence_from: "",
-    residence_to: "",
-    place_details: "",
-    kitta_no: "",
-    area_size: "",
-    boundary_east: "",
-    boundary_west: "",
-    boundary_north: "",
-    boundary_south: "",
-    structure_types: "",
-    inspection_notes: "",
-    sign_name: "",
-    sign_position: "",
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizenship: "",
-    applicant_phone: "",
-  });
+  const { user } = useAuth();
+  const [form, setForm] = useState(initialState);
+  const [loading, setLoading] = useState(false);
 
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState(null);
+  useEffect(() => {
+    if (user?.ward && !form.ward_no) {
+      setForm((prev) => ({ ...prev, ward_no: user.ward }));
+    }
+  }, [user]);
 
-  const update = (k, v) => setForm((s) => ({ ...s, [k]: v }));
-
-  const validate = () => {
-    if (!form.applicant_name?.trim()) return "निवेदकको नाम आवश्यक छ।";
-    return null;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const err = validate();
-    if (err) {
-      alert(err);
-      return;
-    }
-    setSubmitting(true);
-    setMessage(null);
+    setLoading(true);
 
     try {
       const payload = { ...form };
-      // convert empty string -> null
       Object.keys(payload).forEach((k) => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const res = await fetch(
+      const res = await axiosInstance.post(
         "/api/forms/industry-registration-recommendation",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
+        payload
       );
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message || `Server returned ${res.status}`);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-
-      const data = await res.json();
-      setMessage({ type: "success", text: `सेभ भयो (id: ${data.id})` });
-      // optional reset
-      setForm({
-        date: "",
-        refLetterNo: "",
-        chalaniNo: "",
-        to_line1: "",
-        to_line2: "",
-        sabik_district: "",
-        sabik_ward_no: "",
-        current_residence: "",
-        residence_from: "",
-        residence_to: "",
-        place_details: "",
-        kitta_no: "",
-        area_size: "",
-        boundary_east: "",
-        boundary_west: "",
-        boundary_north: "",
-        boundary_south: "",
-        structure_types: "",
-        inspection_notes: "",
-        sign_name: "",
-        sign_position: "",
-        applicant_name: "",
-        applicant_address: "",
-        applicant_citizenship: "",
-        applicant_phone: "",
-      });
     } catch (err) {
-      setMessage({ type: "error", text: err.message });
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const payload = { ...form };
+      Object.keys(payload).forEach((k) => {
+        if (payload[k] === "") payload[k] = null;
+      });
+
+      const res = await axiosInstance.post(
+        "/api/forms/industry-registration-recommendation",
+        payload
+      );
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print();
+        setForm(initialState);
+      }
+    } catch (err) {
+      console.error(err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -119,15 +123,17 @@ export default function IndustryRegistrationRecommendation() {
       </header>
 
       <form className="irr-paper" onSubmit={handleSubmit}>
-        {/* letterhead */}
+        {/* Letterhead */}
         <div className="irr-letterhead">
           <div className="irr-logo">
-            <img alt="Emblem" src="./nepallogo.svg" />
+            <img alt="Emblem" src={MUNICIPALITY.logoSrc} />
           </div>
           <div className="irr-head-text">
             <div className="irr-head-main">{MUNICIPALITY.name}</div>
             <div className="irr-head-ward">
-              वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
+              {user?.role === "SUPERADMIN"
+                ? "सबै वडा कार्यालय"
+                : `वडा नं. ${user?.ward || ""} वडा कार्यालय`}
             </div>
             <div className="irr-head-sub">
               {MUNICIPALITY.officeLine}
@@ -140,8 +146,9 @@ export default function IndustryRegistrationRecommendation() {
               मिति :{" "}
               <input
                 type="text"
+                name="date"
                 value={form.date}
-                onChange={(e) => update("date", e.target.value)}
+                onChange={handleChange}
                 className="irr-small-input"
               />
             </div>
@@ -152,15 +159,17 @@ export default function IndustryRegistrationRecommendation() {
           <div className="irr-ref-block">
             <label>पत्र संख्या :</label>
             <input
+              name="refLetterNo"
               value={form.refLetterNo}
-              onChange={(e) => update("refLetterNo", e.target.value)}
+              onChange={handleChange}
             />
           </div>
           <div className="irr-ref-block">
             <label>चलानी नं. :</label>
             <input
+              name="chalaniNo"
               value={form.chalaniNo}
-              onChange={(e) => update("chalaniNo", e.target.value)}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -168,15 +177,17 @@ export default function IndustryRegistrationRecommendation() {
         <div className="irr-to-block">
           <span>श्री</span>
           <input
+            name="to_line1"
             value={form.to_line1}
-            onChange={(e) => update("to_line1", e.target.value)}
+            onChange={handleChange}
             className="irr-long-input"
           />
           <span>ज्यु,</span>
           <br />
           <input
+            name="to_line2"
             value={form.to_line2}
-            onChange={(e) => update("to_line2", e.target.value)}
+            onChange={handleChange}
             className="irr-long-input irr-to-second"
           />
         </div>
@@ -189,68 +200,77 @@ export default function IndustryRegistrationRecommendation() {
         </div>
 
         <p className="irr-body">
-          उपरोक्त सम्बन्धमा जिल्ला काठमाडौं साबिक
+          उपरोक्त सम्बन्धमा जिल्ला {MUNICIPALITY.englishDistrict} साबिक{" "}
           <input
             type="text"
+            name="sabik_district"
             className="irr-small-field"
             value={form.sabik_district}
-            onChange={(e) => update("sabik_district", e.target.value)}
-          />
-          वडा नं.
+            onChange={handleChange}
+          />{" "}
+          वडा नं.{" "}
           <input
             type="text"
+            name="sabik_ward_no"
             className="irr-tiny-field"
             value={form.sabik_ward_no}
-            onChange={(e) => update("sabik_ward_no", e.target.value)}
-          />
-          भई हाल {MUNICIPALITY.name} वडा नं. {MUNICIPALITY.wardNumber} मा बस्ने
+            onChange={handleChange}
+          />{" "}
+          भई हाल {MUNICIPALITY.name} वडा नं. {user?.ward || ""} मा बस्ने{" "}
           <input
             type="text"
+            name="current_residence"
             className="irr-medium-field"
             value={form.current_residence}
-            onChange={(e) => update("current_residence", e.target.value)}
-          />
-          ले
+            onChange={handleChange}
+          />{" "}
+          ले{" "}
           <input
             type="text"
+            name="place_details"
             className="irr-small-field"
             value={form.place_details}
-            onChange={(e) => update("place_details", e.target.value)}
-          />
-          उद्योग दर्ता गर्न सिफारिस पाऊँ भनी निवेदन अनुसार, मिति
+            onChange={handleChange}
+          />{" "}
+          उद्योग दर्ता गर्न सिफारिस पाऊँ भनी निवेदन अनुसार, मिति{" "}
           <input
             type="text"
+            name="residence_from"
             className="irr-small-field"
             value={form.residence_from}
-            onChange={(e) => update("residence_from", e.target.value)}
+            onChange={handleChange}
           />{" "}
-          देखि
+          देखि{" "}
           <input
             type="text"
+            name="residence_to"
             className="irr-small-field"
             value={form.residence_to}
-            onChange={(e) => update("residence_to", e.target.value)}
+            onChange={handleChange}
           />{" "}
-          सम्म स्थानमा रहेर व्यवसाय संचालन गर्दै आएको र सो स्थान
+          सम्म स्थानमा रहेर व्यवसाय संचालन गर्दै आएको र सो स्थान{" "}
           <input
             type="text"
+            name="industry_place_details"
             className="irr-medium-field"
-            value={form.place_details}
-            onChange={(e) => update("place_details", e.target.value)}
+            value={form.industry_place_details}
+            onChange={handleChange}
           />{" "}
-          को किता नं.
+          को किता नं.{" "}
           <input
             type="text"
+            name="kitta_no"
             className="irr-small-field"
             value={form.kitta_no}
-            onChange={(e) => update("kitta_no", e.target.value)}
+            onChange={handleChange}
           />{" "}
-          को क्षेत्रफल
+          को क्षेत्रफल{" "}
           <input
             type="text"
+            name="area_size"
             className="irr-small-field"
             value={form.area_size}
-            onChange={(e) => update("area_size", e.target.value)}
+            onChange={handleChange}
           />{" "}
           मा रहेको देखिन्छ ।
         </p>
@@ -258,104 +278,69 @@ export default function IndustryRegistrationRecommendation() {
         <p className="irr-body">
           स्थानमा पूर्व{" "}
           <input
+            name="boundary_east"
             className="irr-medium-field"
             value={form.boundary_east}
-            onChange={(e) => update("boundary_east", e.target.value)}
-          />
+            onChange={handleChange}
+          />{" "}
           पश्चिम{" "}
           <input
+            name="boundary_west"
             className="irr-medium-field"
             value={form.boundary_west}
-            onChange={(e) => update("boundary_west", e.target.value)}
-          />
+            onChange={handleChange}
+          />{" "}
           उत्तर{" "}
           <input
+            name="boundary_north"
             className="irr-medium-field"
             value={form.boundary_north}
-            onChange={(e) => update("boundary_north", e.target.value)}
-          />
+            onChange={handleChange}
+          />{" "}
           दक्षिण{" "}
           <input
+            name="boundary_south"
             className="irr-medium-field"
             value={form.boundary_south}
-            onChange={(e) => update("boundary_south", e.target.value)}
+            onChange={handleChange}
           />{" "}
           गरी चार किल्ला घेरिएको जग्गामा कस्ता प्रकारका संरचना रहेको...
         </p>
 
+        {/* Signature */}
         <div className="irr-sign-top">
           <input
+            name="sign_name"
             placeholder="नाम, थर"
             value={form.sign_name}
-            onChange={(e) => update("sign_name", e.target.value)}
+            onChange={handleChange}
             className="irr-sign-name"
           />
           <select
+            name="sign_position"
             className="irr-post-select"
             value={form.sign_position}
-            onChange={(e) => update("sign_position", e.target.value)}
+            onChange={handleChange}
           >
             <option value="">पद छनौट गर्नुहोस्</option>
-            <option>अध्यक्ष</option>
-            <option>सचिव</option>
-            <option>अधिकृत</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
 
-        <h3 className="irr-section-title">निवेदकको विवरण</h3>
-        <div className="irr-applicant-box">
-          <div className="irr-field">
-            <label>निवेदकको नाम *</label>
-            <input
-              value={form.applicant_name}
-              onChange={(e) => update("applicant_name", e.target.value)}
-            />
-          </div>
-          <div className="irr-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input
-              value={form.applicant_address}
-              onChange={(e) => update("applicant_address", e.target.value)}
-            />
-          </div>
-          <div className="irr-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input
-              value={form.applicant_citizenship}
-              onChange={(e) => update("applicant_citizenship", e.target.value)}
-            />
-          </div>
-          <div className="irr-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input
-              value={form.applicant_phone}
-              onChange={(e) => update("applicant_phone", e.target.value)}
-            />
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        <div className="irr-submit-row">
-          <button
-            className="irr-submit-btn"
-            disabled={submitting}
-            type="submit"
-          >
-            {submitting ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        <div className="form-footer">
+          <button className="save-print-btn" type="button" onClick={handlePrint}>
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
-        {message && (
-          <div
-            className={`irr-message ${
-              message.type === "error" ? "error" : "success"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
+        <div className="copyright-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
       </form>
-
-      <footer className="irr-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
     </div>
   );
 }

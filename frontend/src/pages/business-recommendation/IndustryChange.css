@@ -1,216 +1,330 @@
 body {
   margin: 0;
-  font-family: "Mangal", "Roboto", sans-serif;
+  font-family: "Kalimati", "Kokila", "Mangal", sans-serif;
   background: #d6d7da;
 }
 
+/* ===== PAGE WRAPPER ===== */
 .usc-page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  max-width: 950px;
+  margin: 0 auto;
 }
 
-/* Topbar */
+/* ===== TOP BAR ===== */
 .usc-topbar {
-  background: #111827;
-  color: white;
-  padding: 8px 24px;
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
 }
+.usc-top-left { font-weight: bold; }
+.usc-top-right { font-size: 0.9rem; color: #777; font-weight: normal; }
 
-.usc-top-left {
-  font-weight: 600;
-}
-
-/* Paper */
+/* ===== MAIN PAPER ===== */
 .usc-paper {
-  margin: 0 24px 20px;
-  padding: 30px 40px;
-  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
-  background-size: 250px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.25);
+  padding: 30px 50px;
+  background-image: url("/papertexture1.jpg");
+  background-repeat: repeat;
+  background-size: auto;
+  background-position: top left;
+  font-family: "Kalimati", "Kokila", sans-serif;
+  color: #000;
+  position: relative;
 }
 
-/* Title Block */
+/* ===== TITLE BLOCK ===== */
 .usc-title-block {
   text-align: center;
-  line-height: 1.6;
+  line-height: 1.8;
+  margin-bottom: 10px;
+  font-size: 1rem;
 }
-
 .usc-title-bold {
   font-weight: 700;
+  font-size: 1.1rem;
   margin-top: 6px;
 }
 
-/* Date */
+/* ===== DATE ===== */
 .usc-date-row {
   text-align: right;
   margin-top: 12px;
+  font-size: 1rem;
 }
-
 .usc-date-input {
   width: 120px;
-  padding: 4px;
-  border: 1px solid #c1c1c1;
+  padding: 2px 5px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: #fff;
+  outline: none;
+  font-family: inherit;
+  font-size: 1rem;
 }
 
-/* To block */
+/* ===== TO ROW ===== */
 .usc-to-row {
   margin-top: 20px;
-  font-size: 14px;
+  font-size: 1.05rem;
+  line-height: 2;
 }
-
 .usc-long {
   width: 260px;
-  padding: 5px;
-  border: 1px solid #c1c1c1;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  margin: 0 6px;
 }
+.margin-top { margin-top: 6px; display: inline-block; }
 
-.margin-top {
-  margin-top: 6px;
-}
-
-/* Subject */
+/* ===== SUBJECT ===== */
 .usc-subject-row {
   margin-top: 24px;
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 6px;
-  font-size: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
 }
+.usc-sub-label { font-weight: bold; }
+.usc-subject-bold { text-decoration: underline; }
 
-.usc-sub-label {
-  font-weight: 600;
-}
-
-.usc-subject-bold {
-  text-decoration: underline;
-}
-
-/* Body */
+/* ===== BODY ===== */
 .usc-body {
   margin-top: 20px;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 1.05rem;
+  line-height: 2.4;
+  text-align: justify;
 }
 
-/* Input widths */
-.usc-small { width: 110px; }
-.usc-medium { width: 170px; }
-.usc-tiny { width: 60px; }
+/* ===== INLINE INPUT SIZES ===== */
+.usc-small {
+  width: 110px;
+  padding: 3px 5px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  margin: 0 4px;
+}
+.usc-medium {
+  width: 170px;
+  padding: 3px 5px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  margin: 0 4px;
+}
+.usc-tiny {
+  width: 55px;
+  padding: 3px 5px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  margin: 0 4px;
+}
 
-/* Table */
+/* ===== TABLE ===== */
 .usc-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  font-size: 14px;
+  font-size: 0.95rem;
 }
-
-.usc-table th, .usc-table td {
+.usc-table th,
+.usc-table td {
   border: 1px solid #c2c2c2;
-  padding: 8px 6px;
+  padding: 6px 4px;
+  text-align: left;
 }
-
 .usc-table th {
   background: #f0f0f0;
+  text-align: center;
+  font-weight: bold;
 }
-
-/* Add Row */
-.usc-add-btn {
-  background: #1276d1;
-  color: white;
-  padding: 5px 10px;
+.usc-table td input {
+  width: 100%;
   border: none;
-  cursor: pointer;
+  padding: 4px;
+  outline: none;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
 }
+.usc-action-cell { text-align: center; white-space: nowrap; }
+.usc-add-btn {
+  background: #2c3e50;
+  color: white;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 2px;
+}
+.usc-add-btn:hover { background: #1a252f; }
+.usc-remove-btn {
+  background: #c0392b;
+  color: white;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 2px;
+}
+.usc-remove-btn:hover { background: #922b21; }
 
-/* Signature box */
+/* ===== SIGNATURE SECTION ===== */
 .usc-sign-section {
   display: flex;
   justify-content: flex-end;
-  margin-top: 24px;
+  margin-top: 30px;
 }
-
 .usc-sign-box {
-  border: 1px solid #c1c1c1;
-  padding: 12px;
-  width: 260px;
-  font-size: 13px;
+  border: 1px solid #ccc;
+  padding: 14px;
+  width: 280px;
+  font-size: 0.95rem;
+  background: #fff;
 }
-
 .usc-sign-label {
   text-align: right;
-  font-weight: 600;
-  margin-bottom: 6px;
+  font-weight: bold;
+  margin-bottom: 8px;
 }
-
 .usc-sign-field {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   gap: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
-
+.usc-sign-field span { white-space: nowrap; }
 .usc-sign-field input {
   flex: 1;
-  border: 1px solid #c1c1c1;
-  padding: 4px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: #fff;
+  padding: 3px 4px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
 }
 
-/* Docs List */
+/* ===== DOCUMENTS LIST ===== */
 .usc-subheader {
   margin-top: 26px;
-  font-size: 16px;
+  font-size: 1.05rem;
   font-weight: bold;
 }
-
 .usc-doc-list {
-  font-size: 14px;
+  font-size: 1rem;
   margin-top: 8px;
+  line-height: 1.8;
 }
+.usc-doc-list li { margin-bottom: 4px; }
 
-.usc-doc-list li {
-  margin-bottom: 4px;
+/* ===== APPLICANT DETAILS BOX ===== */
+.applicant-details-box {
+  border: 2px solid #999;
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 20px;
+  border-radius: 4px;
 }
-
-/* Applicant Section */
-.usc-applicant-box {
-  border: 1px solid #d3d3d3;
-  padding: 16px;
-  margin-top: 10px;
-  max-width: 360px;
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
-
-.usc-field {
-  margin-bottom: 10px;
+.details-grid {
   display: flex;
   flex-direction: column;
+  gap: 18px;
 }
-
-.usc-field input {
-  padding: 6px;
-  border: 1px solid #c1c1c1;
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  background: #fff;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
 }
+.bg-gray { background-color: #eef2f5; }
 
-/* Submit */
-.usc-submit-row {
-  margin-top: 22px;
-  text-align: center;
-}
-
-.usc-submit-btn {
-  background: #222;
+/* ===== FOOTER ===== */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn {
+  background-color: #2c3e50;
   color: white;
-  padding: 10px 22px;
+  padding: 10px 25px;
   border: none;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
 }
-
-/* Footer */
-.usc-footer {
+.save-print-btn:hover { background-color: #1a252f; }
+.copyright-footer {
   text-align: right;
-  padding: 12px 24px;
-  font-size: 13px;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+/* Red star */
+.required { color: red; margin-left: 4px; }
+.inline-input-wrapper { position: relative; display: inline-block; }
+.input-required-star {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: red;
+  font-weight: bold;
+  pointer-events: none;
+  font-size: 14px;
+}
+.inline-input-wrapper input { padding-left: 18px; }
+
+/* ================= PRINT STYLES ================= */
+@media print {
+  body * { visibility: hidden; }
+  .usc-paper,
+  .usc-paper * { visibility: visible; }
+  .usc-paper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 20px 40px;
+    background: white;
+  }
+  .form-footer { display: none; }
 }

@@ -1,5 +1,5 @@
 // ElectricityInstallation.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './ElectricityInstallation.css';
 import axiosInstance from '../../utils/axiosInstance';
 import MunicipalityHeader from '../../components/MunicipalityHeader.jsx';
@@ -18,8 +18,8 @@ const initialForm = {
   date_bs: '',
   date_ad: todayIso(),
   recipient_office: '',
-  municipality_name: '',
-  ward_no: '',
+  // FIX: initialised to MUNICIPALITY.name so input is always controlled
+  municipality_name: MUNICIPALITY.name,
   salutation: 'श्री',
   applicant_full_name: '',
   father_husband_relation: 'पति',
@@ -43,7 +43,7 @@ const initialForm = {
   house_owner_name: '',
   signatory_name: '',
   signatory_designation: 'वडा अध्यक्ष',
-  // applicant fields — managed by ApplicantDetailsNp
+  // ApplicantDetailsNp fields
   applicant_name: '',
   applicant_address: '',
   applicant_citizenship_no: '',
@@ -57,14 +57,35 @@ const ElectricityInstallation = () => {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
 
+  // readyToPrint is STATE so setting it triggers a re-render;
+  // useEffect fires after React commits filled DOM → safe to window.print()
+  const [readyToPrint, setReadyToPrint] = useState(false);
+  // Snapshot of form at submit time — print view reads from here,
+  // so a mid-print state reset never blanks the printout
+  const printDataRef = useRef(null);
+
+  useEffect(() => {
+    if (!readyToPrint) return;
+    const onAfterPrint = () => {
+      setReadyToPrint(false);
+      printDataRef.current = null;
+      setForm({ ...initialForm, date_ad: todayIso() });
+    };
+    window.addEventListener('afterprint', onAfterPrint);
+    window.print();
+    return () => window.removeEventListener('afterprint', onAfterPrint);
+  }, [readyToPrint]);
+
   const handle = (k) => (e) => {
     setForm((prev) => ({ ...prev, [k]: e.target.value }));
     if (errors[k]) setErrors((prev) => ({ ...prev, [k]: null }));
   };
 
-  // Used by ApplicantDetailsNp to update applicant fields
-  const handleApplicantChange = (fields) => {
-    setForm((prev) => ({ ...prev, ...fields }));
+  // FIX: ApplicantDetailsNp expects handleChange(e) with e.target.name / e.target.value
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: null }));
   };
 
   const validate = () => {
@@ -91,15 +112,19 @@ const ElectricityInstallation = () => {
       const payload = {
         ...form,
         municipality: MUNICIPALITY.name,
-        ward_no: user?.ward || form.ward_no || null,
+        // FIX: ward_no in payload comes from user context, not form state
+        // (form no longer has a ward_no field to avoid collision)
+        ward_no: user?.ward || null,
       };
 
       const res = await axiosInstance.post(API_URL, payload);
       const savedId = res.data?.id || 'unknown';
+
       setMessage({ type: 'success', text: `रेकर्ड सफलतापूर्वक सेभ भयो (id: ${savedId})` });
 
-      setTimeout(() => window.print(), 300);
-      setForm({ ...initialForm, date_ad: todayIso() });
+      // Snapshot filled data; trigger print via state → useEffect after DOM commit
+      printDataRef.current = { ...form };
+      setReadyToPrint(true);
     } catch (error) {
       const info = error.response?.data?.message || error.message || 'Failed to save';
       setMessage({ type: 'error', text: `Error: ${info}` });
@@ -109,7 +134,38 @@ const ElectricityInstallation = () => {
     }
   };
 
-  const wardDisplay = user?.ward || form.ward_no;
+  const wardDisplay = user?.ward || '—';
+  // Data source: snapshot during print, live form otherwise
+  const d = readyToPrint && printDataRef.current ? printDataRef.current : form;
+
+  // Renders <span> during print (text always visible) and <input> while editing.
+  // Browser reliably prints span text; inputs with transparent bg print blank.
+  const Field = ({ name, className = '', placeholder = '', readOnly = false, type = 'text' }) =>
+    readyToPrint ? (
+      <span className={`print-field ${className}`}>{d[name] || ''}</span>
+    ) : (
+      <input
+        type={type}
+        className={`dotted-input ${className}${errors[name] ? ' input-error' : ''}`}
+        value={form[name]}
+        onChange={handle(name)}
+        placeholder={placeholder}
+        readOnly={readOnly}
+      />
+    );
+
+  const InlineField = ({ name, className = '', placeholder = '' }) =>
+    readyToPrint ? (
+      <span className={`print-field ${className}`}>{d[name] || ''}</span>
+    ) : (
+      <input
+        type="text"
+        className={`inline-box-input ${className}${errors[name] ? ' input-error' : ''}`}
+        value={form[name]}
+        onChange={handle(name)}
+        placeholder={placeholder}
+      />
+    );
 
   return (
     <div className="electricity-application-container">
@@ -124,7 +180,7 @@ const ElectricityInstallation = () => {
 
       <form onSubmit={handleSubmit}>
 
-        {/* --- Header Section (print + screen) --- */}
+        {/* --- Header Section --- */}
         <div className="form-header-section">
           <div className="header-logo">
             <img src={MUNICIPALITY.logoSrc} alt="Nepal Emblem" />
@@ -144,34 +200,17 @@ const ElectricityInstallation = () => {
           <div className="meta-left">
             <p>
               पत्र संख्या :&nbsp;
-              <input
-                type="text"
-                className="dotted-input small-input"
-                value={form.letter_no}
-                onChange={handle('letter_no')}
-                placeholder="२०८२/८३"
-              />
+              <Field name="letter_no" className="small-input" placeholder="२०८२/८३" />
             </p>
             <p>
               चलानी नं. :&nbsp;
-              <input
-                type="text"
-                className="dotted-input small-input"
-                value={form.reference_no}
-                onChange={handle('reference_no')}
-              />
+              <Field name="reference_no" className="small-input" />
             </p>
           </div>
           <div className="meta-right">
             <p>
               मिति (बीएस) :&nbsp;
-              <input
-                type="text"
-                className="dotted-input small-input"
-                value={form.date_bs}
-                onChange={handle('date_bs')}
-                placeholder="२०८२-०८-०६"
-              />
+              <Field name="date_bs" className="small-input" placeholder="२०८२-०८-०६" />
             </p>
           </div>
         </div>
@@ -183,15 +222,20 @@ const ElectricityInstallation = () => {
 
         {/* --- Addressee Section --- */}
         <div className="addressee-section">
-          <p className="bold-text">श्री बुटवल पावर कम्पनी लिमिटेड</p>
+          {/* FIX: was hardcoded "बुटवल पावर कम्पनी", now uses MUNICIPALITY.city */}
+          <p className="bold-text">श्री नेपाल विद्युत प्राधिकरण</p>
           <div className="addressee-row">
-            <input
-              type="text"
-              className="line-input medium-input"
-              value={form.recipient_office}
-              onChange={handle('recipient_office')}
-              placeholder="कार्यालयको नाम"
-            />
+            {readyToPrint ? (
+              <span className="print-field medium-input">{d.recipient_office}</span>
+            ) : (
+              <input
+                type="text"
+                className="line-input medium-input"
+                value={form.recipient_office}
+                onChange={handle('recipient_office')}
+                placeholder="कार्यालयको नाम"
+              />
+            )}
             <span className="bold-text">, {MUNICIPALITY.city}</span>
           </div>
         </div>
@@ -200,38 +244,23 @@ const ElectricityInstallation = () => {
         <div className="form-body">
           <p className="body-paragraph">
             त्यहाँ विद्युत शक्ति सप्लाई गर्ने आवेदन दिने&nbsp;
-            <input
-              type="text"
-              className="inline-box-input medium-box"
-              value={form.municipality_name || MUNICIPALITY.englishMunicipality}
-              onChange={handle('municipality_name')}
-            />
+            {/* FIX: always controlled — initialised to MUNICIPALITY.name */}
+            <InlineField name="municipality_name" className="medium-box" />
             &nbsp;वडा नं.&nbsp;
-            <input
-              type="text"
-              className="inline-box-input tiny-box"
-              value={wardDisplay}
-              onChange={handle('ward_no')}
-              readOnly={!!user?.ward}
-            />
+            {/* FIX: ward display comes from user context, not editable form field */}
+            <span className="inline-box-input tiny-box">{wardDisplay}</span>
             &nbsp;बस्ने&nbsp;
-            <select
-              className="inline-select"
-              value={form.salutation}
-              onChange={handle('salutation')}
-            >
-              <option>श्री</option>
-              <option>सुश्री</option>
-              <option>श्रीमती</option>
-            </select>
+            {readyToPrint ? (
+              <span className="print-field">{d.salutation}</span>
+            ) : (
+              <select className="inline-select" value={form.salutation} onChange={handle('salutation')}>
+                <option>श्री</option>
+                <option>सुश्री</option>
+                <option>श्रीमती</option>
+              </select>
+            )}
             &nbsp;
-            <input
-              type="text"
-              className={`inline-box-input long-box${errors.applicant_full_name ? ' input-error' : ''}`}
-              value={form.applicant_full_name}
-              onChange={handle('applicant_full_name')}
-              placeholder="पूरा नाम"
-            />
+            <InlineField name="applicant_full_name" className="long-box" placeholder="पूरा नाम" />
             &nbsp;तिन पुस्ते र घर जग्गाको निम्न बमोजिम भएकोले सो घरको विद्युत जडानको लागि सिफारिस गरिएको छ ।
           </p>
           {errors.applicant_full_name && <span className="error">{errors.applicant_full_name}</span>}
@@ -240,58 +269,34 @@ const ElectricityInstallation = () => {
         {/* --- Family Details --- */}
         <div className="family-details-section">
           <div className="form-row">
-            <select
-              className="inline-select"
-              value={form.father_husband_relation}
-              onChange={handle('father_husband_relation')}
-            >
-              <option>पति</option>
-              <option>पिता</option>
-            </select>
+            {readyToPrint ? (
+              <span className="print-field">{d.father_husband_relation}</span>
+            ) : (
+              <select className="inline-select" value={form.father_husband_relation} onChange={handle('father_husband_relation')}>
+                <option>पति</option>
+                <option>पिता</option>
+              </select>
+            )}
             <label>को नाम, थर, वतन :-</label>
-            <input
-              type="text"
-              className={`dotted-input medium-input${errors.father_husband_name ? ' input-error' : ''}`}
-              value={form.father_husband_name}
-              onChange={handle('father_husband_name')}
-              placeholder="नाम थर"
-            />
+            <Field name="father_husband_name" className={`medium-input${errors.father_husband_name ? ' input-error' : ''}`} placeholder="नाम थर" />
             <span>,</span>
-            <input
-              type="text"
-              className="dotted-input medium-input"
-              value={form.father_husband_hometown}
-              onChange={handle('father_husband_hometown')}
-              placeholder="वतन"
-            />
+            <Field name="father_husband_hometown" className="medium-input" placeholder="वतन" />
           </div>
           {errors.father_husband_name && <span className="error">{errors.father_husband_name}</span>}
 
           <div className="form-row">
-            <select
-              className="inline-select"
-              value={form.grandfather_relation}
-              onChange={handle('grandfather_relation')}
-            >
-              <option>ससुरा</option>
-              <option>बाजे</option>
-            </select>
+            {readyToPrint ? (
+              <span className="print-field">{d.grandfather_relation}</span>
+            ) : (
+              <select className="inline-select" value={form.grandfather_relation} onChange={handle('grandfather_relation')}>
+                <option>ससुरा</option>
+                <option>बाजे</option>
+              </select>
+            )}
             <label>को नाम, थर, वतन :-</label>
-            <input
-              type="text"
-              className="dotted-input medium-input"
-              value={form.grandfather_name}
-              onChange={handle('grandfather_name')}
-              placeholder="नाम थर"
-            />
+            <Field name="grandfather_name" className="medium-input" placeholder="नाम थर" />
             <span>,</span>
-            <input
-              type="text"
-              className="dotted-input medium-input"
-              value={form.grandfather_hometown}
-              onChange={handle('grandfather_hometown')}
-              placeholder="वतन"
-            />
+            <Field name="grandfather_hometown" className="medium-input" placeholder="वतन" />
           </div>
         </div>
 
@@ -300,43 +305,22 @@ const ElectricityInstallation = () => {
           <span className="section-label">घर रहेको जग्गाको विवरण :-</span>
           <div className="form-row">
             <label>साविक</label>
-            <select
-              className="inline-select medium-select"
-              value={form.land_old_type}
-              onChange={handle('land_old_type')}
-            >
-              <option></option>
-              <option>गा.वि.स.</option>
-              <option>नगरपालिका</option>
-            </select>
-            <input
-              type="text"
-              className="dotted-input medium-input"
-              value={form.land_old_name}
-              onChange={handle('land_old_name')}
-              placeholder="नाम"
-            />
+            {readyToPrint ? (
+              <span className="print-field">{d.land_old_type}</span>
+            ) : (
+              <select className="inline-select medium-select" value={form.land_old_type} onChange={handle('land_old_type')}>
+                <option></option>
+                <option>गा.वि.स.</option>
+                <option>नगरपालिका</option>
+              </select>
+            )}
+            <Field name="land_old_name" className="medium-input" placeholder="नाम" />
             <label>वडा नं.</label>
-            <input
-              type="text"
-              className="dotted-input tiny-input"
-              value={form.land_ward_no}
-              onChange={handle('land_ward_no')}
-            />
+            <Field name="land_ward_no" className="tiny-input" />
             <label>कि.नं.</label>
-            <input
-              type="text"
-              className="dotted-input small-input"
-              value={form.land_ki_no}
-              onChange={handle('land_ki_no')}
-            />
+            <Field name="land_ki_no" className="small-input" />
             <label>क्षेत्रफल</label>
-            <input
-              type="text"
-              className="dotted-input medium-input"
-              value={form.land_area}
-              onChange={handle('land_area')}
-            />
+            <Field name="land_area" className="medium-input" />
           </div>
         </div>
 
@@ -348,13 +332,7 @@ const ElectricityInstallation = () => {
             <span className="bg-gray-text">{MUNICIPALITY.name}</span>
             <span className="bg-gray-text">वडा नं. {wardDisplay}</span>
             <label>टोल</label>
-            <input
-              type="text"
-              className="dotted-input medium-input"
-              value={form.tole}
-              onChange={handle('tole')}
-              placeholder="टोलको नाम"
-            />
+            <Field name="tole" className="medium-input" placeholder="टोलको नाम" />
           </div>
         </div>
 
@@ -364,39 +342,19 @@ const ElectricityInstallation = () => {
           <div className="killa-grid">
             <div className="killa-item">
               <label>पूर्वमा:-</label>
-              <input
-                type="text"
-                className={`dotted-input full-killa-input${errors.east ? ' input-error' : ''}`}
-                value={form.east}
-                onChange={handle('east')}
-              />
+              <Field name="east" className={`full-killa-input${errors.east ? ' input-error' : ''}`} />
             </div>
             <div className="killa-item">
               <label>पश्चिममा:-</label>
-              <input
-                type="text"
-                className={`dotted-input full-killa-input${errors.west ? ' input-error' : ''}`}
-                value={form.west}
-                onChange={handle('west')}
-              />
+              <Field name="west" className={`full-killa-input${errors.west ? ' input-error' : ''}`} />
             </div>
             <div className="killa-item">
               <label>उत्तरमा:-</label>
-              <input
-                type="text"
-                className={`dotted-input full-killa-input${errors.north ? ' input-error' : ''}`}
-                value={form.north}
-                onChange={handle('north')}
-              />
+              <Field name="north" className={`full-killa-input${errors.north ? ' input-error' : ''}`} />
             </div>
             <div className="killa-item">
               <label>दक्षिणमा:-</label>
-              <input
-                type="text"
-                className={`dotted-input full-killa-input${errors.south ? ' input-error' : ''}`}
-                value={form.south}
-                onChange={handle('south')}
-              />
+              <Field name="south" className={`full-killa-input${errors.south ? ' input-error' : ''}`} />
             </div>
           </div>
         </div>
@@ -406,29 +364,11 @@ const ElectricityInstallation = () => {
           <div className="form-body">
             <p className="body-paragraph">
               घरको विवरण :&nbsp;
-              <input
-                type="text"
-                className="dotted-input medium-input"
-                value={form.house_material}
-                onChange={handle('house_material')}
-                placeholder="सामग्री"
-              />
+              <Field name="house_material" className="medium-input" placeholder="सामग्री" />
               &nbsp;ले बनेको&nbsp;
-              <input
-                type="text"
-                className="dotted-input small-input"
-                value={form.house_floors}
-                onChange={handle('house_floors')}
-                placeholder="तल्ला"
-              />
+              <Field name="house_floors" className="small-input" placeholder="तल्ला" />
               &nbsp;तल्ले घर -१ निजले विद्युत सप्लाईको लागि आवेदन घर&nbsp;
-              <input
-                type="text"
-                className="dotted-input medium-input"
-                value={form.house_owner_name}
-                onChange={handle('house_owner_name')}
-                placeholder="नाम"
-              />
+              <Field name="house_owner_name" className="medium-input" placeholder="नाम" />
               &nbsp;को नाममा छ।
             </p>
           </div>
@@ -436,7 +376,7 @@ const ElectricityInstallation = () => {
 
         {/* --- Declarations --- */}
         <div className="declarations-section mt-10">
-          <p>विद्युत शक्ति दिन यस नगरपालिकालाई कुनै आपत्ति छैन।</p>
+          <p>विद्युत शक्ति दिन यस {MUNICIPALITY.name}लाई कुनै आपत्ति छैन।</p>
           <p className="underline-text">निजले आवेदन दिएको घरमा :</p>
           <ul className="dashed-list">
             <li>- पहिले विद्युत सप्लाई थिएन तसर्थ निजलाई नयाँ मीटर आवश्यक भएको हो।</li>
@@ -448,38 +388,39 @@ const ElectricityInstallation = () => {
         <div className="signature-section">
           <div className="signature-block">
             <div className="signature-line"></div>
-            <input
-              type="text"
-              className="line-input full-width-input"
-              value={form.signatory_name}
-              onChange={handle('signatory_name')}
-              placeholder="हस्ताक्षरकर्ताको नाम"
-            />
-            <select
-              className="designation-select"
-              value={form.signatory_designation}
-              onChange={handle('signatory_designation')}
-            >
-              <option>पद छनौट गर्नुहोस्</option>
-              <option>वडा अध्यक्ष</option>
-              <option>वडा सचिव</option>
-              <option>कार्यवाहक वडा अध्यक्ष</option>
-            </select>
+            {readyToPrint ? (
+              <span className="print-field full-width-input">{d.signatory_name}</span>
+            ) : (
+              <input
+                type="text"
+                className="line-input full-width-input"
+                value={form.signatory_name}
+                onChange={handle('signatory_name')}
+                placeholder="हस्ताक्षरकर्ताको नाम"
+              />
+            )}
+            {readyToPrint ? (
+              <span className="print-field">{d.signatory_designation}</span>
+            ) : (
+              <select
+                className="designation-select"
+                value={form.signatory_designation}
+                onChange={handle('signatory_designation')}
+              >
+                <option>पद छनौट गर्नुहोस्</option>
+                <option>वडा अध्यक्ष</option>
+                <option>वडा सचिव</option>
+                <option>कार्यवाहक वडा अध्यक्ष</option>
+              </select>
+            )}
           </div>
         </div>
 
         {/* --- Applicant Details via ApplicantDetailsNp --- */}
+        {/* FIX: correct props — formData + handleChange (not values + onChange) */}
         <ApplicantDetailsNp
-          values={{
-            applicant_name: form.applicant_name,
-            applicant_address: form.applicant_address,
-            applicant_citizenship_no: form.applicant_citizenship_no,
-            applicant_phone: form.applicant_phone,
-          }}
-          onChange={handleApplicantChange}
-          errors={{
-            applicant_name: errors.applicant_name,
-          }}
+          formData={readyToPrint ? d : form}
+          handleChange={handleChange}
         />
 
         {/* --- Footer Action --- */}
