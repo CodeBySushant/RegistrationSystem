@@ -20,21 +20,57 @@ body {
   font-size: 14px;
 }
 
-.praf-top-left {
-  font-weight: 600;
-}
-
-.praf-top-right {
-  opacity: 0.9;
-}
+.praf-top-left { font-weight: 600; }
+.praf-top-right { opacity: 0.9; }
 
 /* Paper */
 .praf-paper {
-  margin: 0 24px 20px;
+  max-width: 950px;
+  margin: 24px auto;
   padding: 28px 40px 40px;
-  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
-  background-size: 280px 280px;
+  background: #ffffff;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Letterhead */
+.praf-letterhead {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.praf-logo img {
+  width: 80px;
+  height: 80px;
+}
+
+.praf-head-text {
+  text-align: center;
+}
+
+.praf-head-main {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.praf-head-ward {
+  font-size: 26px;
+  font-weight: 700;
+  color: #e60000;
+}
+
+.praf-head-sub {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+/* All inputs white */
+.praf-paper input,
+.praf-paper select,
+.praf-paper textarea {
+  background-color: #ffffff;
 }
 
 /* Title + date */
@@ -42,7 +78,7 @@ body {
   text-align: center;
   font-size: 20px;
   font-weight: 600;
-  margin: 0 0 8px;
+  margin: 8px 0;
 }
 
 .praf-date-row {
@@ -54,6 +90,7 @@ body {
   width: 120px;
   padding: 4px 6px;
   border: 1px solid #c1c1c1;
+  background: #fff;
 }
 
 /* To block */
@@ -67,34 +104,11 @@ body {
   padding: 4px 6px;
   border: 1px solid #c1c1c1;
   margin-left: 6px;
+  background: #fff;
 }
 
 .praf-to-second {
   margin-top: 6px;
-}
-
-/* Subject */
-.praf-subject-row {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-}
-
-.praf-sub-label {
-  font-weight: 600;
-  margin-right: 6px;
-}
-
-.praf-subject-text {
-  text-decoration: underline;
-}
-
-/* Body */
-.praf-body {
-  margin-top: 14px;
-  font-size: 14px;
-  line-height: 1.6;
 }
 
 /* Sections */
@@ -115,25 +129,23 @@ body {
   align-items: center;
   gap: 6px;
   font-size: 14px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .praf-field-row input,
 .praf-field-row select {
   padding: 4px 6px;
   border: 1px solid #c1c1c1;
+  background: #fff;
 }
 
 /* Width helpers */
-.praf-small-input { width: 80px; }
+.praf-small-input  { width: 80px; }
 .praf-medium-input { width: 160px; }
-.praf-wide-input { flex: 1; min-width: 230px; }
+.praf-wide-input   { flex: 1; min-width: 230px; }
+.praf-select       { min-width: 80px; }
 
-.praf-select {
-  min-width: 80px;
-}
-
-/* Tables */
+/* Partners table */
 .praf-table {
   width: 100%;
   border-collapse: collapse;
@@ -158,78 +170,87 @@ body {
   border: none;
   padding: 3px 4px;
   outline: none;
+  background: #fff;
 }
 
-/* Add button */
-.praf-add-btn {
-  background-color: #1276d1;
-  border: none;
-  color: #ffffff;
-  padding: 3px 8px;
-  border-radius: 2px;
+.praf-table td button {
+  padding: 2px 8px;
+  margin: 0 2px;
   cursor: pointer;
+  border: 1px solid #c1c1c1;
+  border-radius: 3px;
+  background: #f0f0f0;
 }
 
-/* Note section */
-.praf-note-section {
-  border-top: 1px dashed #b7b7b7;
-  padding-top: 10px;
+/* --- Applicant Details Box --- */
+.applicant-details-box {
+  border: 2px solid #999;
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 20px;
+  border-radius: 4px;
 }
 
-.praf-note-text {
-  margin-top: 4px;
-  font-size: 14px;
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
-/* Bullet list for deed section */
-.praf-points {
-  font-size: 14px;
-  margin: 6px 0 0;
-  padding-left: 20px;
-}
-
-/* Applicant box */
-.praf-applicant-box {
-  border: 1px solid #d3d3d3;
-  padding: 16px;
-  max-width: 360px;
-  margin-top: 6px;
-}
-
-.praf-field {
+.details-grid {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  gap: 15px;
 }
 
-.praf-field label {
-  font-size: 14px;
-  margin-bottom: 4px;
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  background: #fff;
 }
+.bg-gray { background-color: #eef2f5; }
 
-.praf-field input {
-  padding: 6px 8px;
-  border: 1px solid #c1c1c1;
-}
-
-/* Submit */
-.praf-submit-row {
-  margin-top: 22px;
-  text-align: center;
-}
-
-.praf-submit-btn {
-  background-color: #222222;
-  color: #ffffff;
+/* --- Footer --- */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn {
+  background-color: #2c3e50;
+  color: white;
+  padding: 10px 25px;
   border: none;
-  padding: 8px 22px;
-  font-size: 14px;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
 }
+.save-print-btn:hover { background-color: #1a252f; }
+.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
 
-/* Footer */
-.praf-footer {
-  text-align: right;
-  padding: 10px 24px 18px;
-  font-size: 13px;
+/* ================= PRINT STYLES ================= */
+@media print {
+  body * { visibility: hidden; }
+
+  .praf-paper,
+  .praf-paper * { visibility: visible; }
+
+  .praf-paper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 20px 40px;
+    background: white;
+  }
+
+  .praf-topbar,
+  .form-footer { display: none; }
 }

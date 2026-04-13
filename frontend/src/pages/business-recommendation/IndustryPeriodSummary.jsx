@@ -1,307 +1,202 @@
-import React, { useState } from "react";
-import axios from "axios";
+// IndustryPeriodSummary.jsx
+import React, { useState, useEffect } from "react";
 import "./IndustryPeriodSummary.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-function IndustryPeriodSummary() {
-  // ---- state + defaults (keeps original texts / structure) ----
-  const defaultProductionRow = {
-    description: "",
-    quantity: "",
-    unit: "",
-    productOutput: "",
-    outputUnit: "",
-    unitPrice: "",
-    percentTotal: ""
-  };
+const defaultProductionRow = {
+  description: "", quantity: "", unit: "", productOutput: "",
+  outputUnit: "", unitPrice: "", percentTotal: "",
+};
+const defaultRawRow = { description: "", unit: "", quantity: "", unitPrice: "" };
+const defaultManRow = { type: "", female: "", male: "", total: "" };
 
-  const defaultRawRow = { description: "", unit: "", quantity: "", unitPrice: "" };
-  const defaultManRow = { type: "", female: "", male: "", total: "" };
+const initialForm = {
+  date: new Date().toISOString().slice(0, 10),
+  industryName: "",
+  address: "",
+  periodFrom: "",
+  periodTo: "",
+  fiscalYear: "",
+  registrationDate: "",
+  industryType: "",
+  establishedDate: "",
+  operatingDuration: "",
+  exportCountry: "",
+  exportValue: "",
+  exportQuantity: "",
+  governmentBenefits: "",
+  environmentMeasures: "",
+  preparer: "",
+  opener: "",
+  water_unit: "", water_quantity: "", water_unit_price: "",
+  power_unit: "", power_quantity: "", power_unit_price: "",
+  raw_unit: "", raw_quantity: "", raw_unit_price: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+};
 
-  const [form, setForm] = useState({
-    // matches the existing visible fields
-    date: new Date().toISOString().slice(0, 10),
-    industryName: "",
-    address: "",
-    periodFrom: "",
-    periodTo: "",
-    fiscalYear: "",
-    registrationDate: "",
-    industryType: "",
-    establishedDate: "",
-    operatingDuration: "",
-    exportCountry: "",
-    exportValue: "",
-    exportQuantity: "",
-    governmentBenefits: "",
-    environmentMeasures: "",
-    preparer: "",
-    opener: "",
-    applicantName: "",
-    applicantAddress: "",
-    applicantCitizenship: "",
-    applicantPhone: ""
-  });
+export default function IndustryPeriodSummary() {
+  const { user } = useAuth();
 
-  const [productionRows, setProductionRows] = useState([ { ...defaultProductionRow } ]);
-  const [rawMaterialRows, setRawMaterialRows] = useState([ { ...defaultRawRow } ]);
+  const [form, setForm] = useState(initialForm);
+  const [productionRows, setProductionRows] = useState([{ ...defaultProductionRow }]);
+  const [rawMaterialRows, setRawMaterialRows] = useState([{ ...defaultRawRow }]);
   const [manpowerRows, setManpowerRows] = useState([
     { ...defaultManRow, type: "प्राविधिक" },
     { ...defaultManRow, type: "प्रशासनिक" },
-    { ...defaultManRow, type: "श्रमिक" }
+    { ...defaultManRow, type: "श्रमिक" },
   ]);
+  const [loading, setLoading] = useState(false);
 
-  const [submitting, setSubmitting] = useState(false);
-
-  // ---- handlers ----
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((p) => ({ ...p, [name]: value }));
   };
 
-  // Production table handlers
   const handleProductionChange = (index, e) => {
     const { name, value } = e.target;
-    setProductionRows((prev) => {
-      const copy = [...prev];
-      copy[index] = { ...copy[index], [name]: value };
-      return copy;
-    });
+    setProductionRows((prev) => { const c = [...prev]; c[index] = { ...c[index], [name]: value }; return c; });
   };
   const addProductionRow = () => setProductionRows((p) => [...p, { ...defaultProductionRow }]);
   const removeProductionRow = (i) => setProductionRows((p) => p.filter((_, idx) => idx !== i));
 
-  // Raw material handlers
   const handleRawChange = (index, e) => {
     const { name, value } = e.target;
-    setRawMaterialRows((prev) => {
-      const copy = [...prev];
-      copy[index] = { ...copy[index], [name]: value };
-      return copy;
-    });
+    setRawMaterialRows((prev) => { const c = [...prev]; c[index] = { ...c[index], [name]: value }; return c; });
   };
   const addRawRow = () => setRawMaterialRows((p) => [...p, { ...defaultRawRow }]);
   const removeRawRow = (i) => setRawMaterialRows((p) => p.filter((_, idx) => idx !== i));
 
-  // Manpower handlers
   const handleManpowerChange = (index, e) => {
     const { name, value } = e.target;
-    setManpowerRows((prev) => {
-      const copy = [...prev];
-      copy[index] = { ...copy[index], [name]: value };
-      return copy;
-    });
+    setManpowerRows((prev) => { const c = [...prev]; c[index] = { ...c[index], [name]: value }; return c; });
   };
   const addManRow = () => setManpowerRows((p) => [...p, { ...defaultManRow }]);
   const removeManRow = (i) => setManpowerRows((p) => p.filter((_, idx) => idx !== i));
 
-  const validate = () => {
-    if (!form.industryName?.trim()) return "उद्योगको नाम आवश्यक छ";
-    if (!form.applicantName?.trim()) return "निवेदकको नाम आवश्यक छ";
-    return null;
+  const buildPayload = () => {
+    const payload = { ...form };
+    Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+    payload.productionRows = JSON.stringify(productionRows);
+    payload.rawMaterialRows = JSON.stringify(rawMaterialRows);
+    payload.manpowerRows = JSON.stringify(manpowerRows);
+    return payload;
+  };
+
+  const resetAll = () => {
+    setForm(initialForm);
+    setProductionRows([{ ...defaultProductionRow }]);
+    setRawMaterialRows([{ ...defaultRawRow }]);
+    setManpowerRows([
+      { ...defaultManRow, type: "प्राविधिक" },
+      { ...defaultManRow, type: "प्रशासनिक" },
+      { ...defaultManRow, type: "श्रमिक" },
+    ]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submitting) return;
-    const err = validate();
-    if (err) { alert(err); return; }
-    setSubmitting(true);
+    setLoading(true);
     try {
-      const payload = {
-        ...form,
-        // many of your other forms send arrays as JSON strings; convert if backend expects that
-        production: JSON.stringify(productionRows),
-        rawMaterials: JSON.stringify(rawMaterialRows),
-        manpower: JSON.stringify(manpowerRows)
-      };
-
-      // convert empty strings -> null (keeps DB tidy)
-      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
-
-      const res = await axios.post("/api/forms/industry-period-summary", payload);
-
-      if (res.status === 200 || res.status === 201) {
-        alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
-        // reset visible fields (keeps structure, resets values)
-        setForm((p) => ({
-          ...p,
-          industryName: "",
-          address: "",
-          periodFrom: "",
-          periodTo: "",
-          fiscalYear: "",
-          registrationDate: "",
-          industryType: "",
-          establishedDate: "",
-          operatingDuration: "",
-          exportCountry: "",
-          exportValue: "",
-          exportQuantity: "",
-          governmentBenefits: "",
-          environmentMeasures: "",
-          preparer: "",
-          opener: "",
-          applicantName: "",
-          applicantAddress: "",
-          applicantCitizenship: "",
-          applicantPhone: ""
-        }));
-        setProductionRows([ { ...defaultProductionRow } ]);
-        setRawMaterialRows([ { ...defaultRawRow } ]);
-        setManpowerRows([
-          { ...defaultManRow, type: "प्राविधिक" },
-          { ...defaultManRow, type: "प्रशासनिक" },
-          { ...defaultManRow, type: "श्रमिक" }
-        ]);
+      const res = await axiosInstance.post("/api/forms/industry-period-summary", buildPayload());
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        resetAll();
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
     } catch (err) {
-      console.error("Submit error:", err);
-      const msg = err.response?.data?.message || err.message || "Submission failed";
-      alert("त्रुटि: " + msg);
-    } finally {
-      setSubmitting(false);
+      setLoading(false);
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Submission failed";
+      alert("Error: " + msg);
     }
   };
 
-  // ---- render (keeps your original structure & classes; inputs controlled) ----
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post("/api/forms/industry-period-summary", buildPayload());
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print();
+        resetAll();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="ups-page">
-      {/* Top dark bar */}
-      <header className="ups-topbar">
-        <div className="ups-top-left">उद्योग वार्षिक विवरण</div>
-        <div className="ups-top-right">अवलोकन पृष्ठ / उद्योग वार्षिक विवरण</div>
-      </header>
+      <div className="ups-topbar">
+        उद्योग वार्षिक विवरण ।
+        <span className="ups-top-right">उद्योग &gt; उद्योग वार्षिक विवरण</span>
+      </div>
 
-      {/* Main paper */}
-      <div className="ups-paper">
-        {/* Annex heading */}
+      <form className="ups-paper" onSubmit={handleSubmit}>
+
+        {/* --- Annex Heading --- */}
         <div className="ups-annex">
           <div>अनुसूची–२०</div>
-          <div>
-            (नियम ८ को उपनियम (३) को खण्ड (ख) र नियम १२ को उपनियम (१) को खण्ड (ग)
-            संग सम्बन्धित)
-          </div>
+          <div>(नियम ८ को उपनियम (३) को खण्ड (ख) र नियम १२ को उपनियम (१) को खण्ड (ग) संग सम्बन्धित)</div>
         </div>
-
         <h2 className="ups-main-title">उद्योगको वार्षिक विवरण</h2>
 
-        {/* Basic industry info */}
+        {/* --- Section 1: Basic Info --- */}
         <section className="ups-section">
           <h3 className="ups-subtitle">१. उद्योगको सामान्य विवरण</h3>
 
           <div className="ups-field-row">
             <span>१. उद्योगको नाम :</span>
-            <input
-              type="text"
-              className="ups-wide-input"
-              name="industryName"
-              value={form.industryName}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-wide-input" name="industryName" value={form.industryName} onChange={handleChange} />
           </div>
-
           <div className="ups-field-row">
             <span>२. ठेगाना :</span>
-            <input
-              type="text"
-              className="ups-wide-input"
-              name="address"
-              value={form.address}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-wide-input" name="address" value={form.address} onChange={handleChange} />
           </div>
-
           <div className="ups-field-row">
             <span>३. विवरण पेश गरेको अवधि : मिति</span>
-            <input
-              type="text"
-              className="ups-small-input"
-              name="periodFrom"
-              value={form.periodFrom}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-small-input" name="periodFrom" value={form.periodFrom} onChange={handleChange} />
             <span>देखि</span>
-            <input
-              type="text"
-              className="ups-small-input"
-              name="periodTo"
-              value={form.periodTo}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-small-input" name="periodTo" value={form.periodTo} onChange={handleChange} />
             <span>सम्म</span>
           </div>
-
           <div className="ups-field-row">
             <span>आर्थिक वर्ष :</span>
-            <input
-              type="text"
-              className="ups-small-input"
-              name="fiscalYear"
-              value={form.fiscalYear}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-small-input" name="fiscalYear" value={form.fiscalYear} onChange={handleChange} />
             <span>उद्योगको दर्ता मिति :</span>
-            <input
-              type="text"
-              className="ups-small-input"
-              name="registrationDate"
-              value={form.registrationDate}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-small-input" name="registrationDate" value={form.registrationDate} onChange={handleChange} />
           </div>
-
           <div className="ups-field-row">
             <span>४. उद्योगको प्रकार :</span>
-            <input
-              type="text"
-              className="ups-medium-input"
-              name="industryType"
-              value={form.industryType}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-medium-input" name="industryType" value={form.industryType} onChange={handleChange} />
           </div>
-
           <div className="ups-field-row">
             <span>५. उद्योग स्थापना / संचालनको मिति :</span>
-            <input
-              type="text"
-              className="ups-small-input"
-              name="establishedDate"
-              value={form.establishedDate}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-small-input" name="establishedDate" value={form.establishedDate} onChange={handleChange} />
             <span>उद्योग संचालन भएको अवधि :</span>
-            <input
-              type="text"
-              className="ups-small-input"
-              name="operatingDuration"
-              value={form.operatingDuration}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-small-input" name="operatingDuration" value={form.operatingDuration} onChange={handleChange} />
           </div>
         </section>
 
-        {/* Production table */}
+        {/* --- Section 6: Production Table --- */}
         <section className="ups-section">
           <h3 className="ups-subtitle">६. उत्पादनको विवरण :</h3>
-
           <table className="ups-table">
             <thead>
               <tr>
-                <th>क्र.स.</th>
-                <th>विवरण</th>
-                <th>परिमाण</th>
-                <th>एकाई</th>
-                <th>उत्पाद परिणाम</th>
-                <th>एकाइ</th>
-                <th>प्रति एकाइ मूल्य</th>
-                <th>कुल परिमाण (प्रतिशत)</th>
-                <th>कार्य</th>
+                <th>क्र.स.</th><th>विवरण</th><th>परिमाण</th><th>एकाई</th>
+                <th>उत्पाद परिणाम</th><th>एकाइ</th><th>प्रति एकाइ मूल्य</th>
+                <th>कुल परिमाण (प्रतिशत)</th><th>कार्य</th>
               </tr>
             </thead>
             <tbody>
@@ -315,9 +210,9 @@ function IndustryPeriodSummary() {
                   <td><input name="outputUnit" value={r.outputUnit} onChange={(e) => handleProductionChange(i, e)} /></td>
                   <td><input name="unitPrice" value={r.unitPrice} onChange={(e) => handleProductionChange(i, e)} /></td>
                   <td><input name="percentTotal" value={r.percentTotal} onChange={(e) => handleProductionChange(i, e)} /></td>
-                  <td>
-                    {productionRows.length > 1 && <button type="button" onClick={() => removeProductionRow(i)}>−</button>}
-                    {i === productionRows.length - 1 && <button type="button" onClick={addProductionRow}>+</button>}
+                  <td className="ups-action-cell">
+                    {productionRows.length > 1 && <button type="button" className="ups-remove-btn" onClick={() => removeProductionRow(i)}>−</button>}
+                    {i === productionRows.length - 1 && <button type="button" className="ups-add-btn" onClick={addProductionRow}>+</button>}
                   </td>
                 </tr>
               ))}
@@ -325,19 +220,13 @@ function IndustryPeriodSummary() {
           </table>
         </section>
 
-        {/* Raw materials table */}
+        {/* --- Section 7: Raw Materials --- */}
         <section className="ups-section">
           <h3 className="ups-subtitle">७. कच्चा पदार्थ, केमिकल एवं यांत्रिक सामान :</h3>
-
           <table className="ups-table">
             <thead>
               <tr>
-                <th>क्र.स.</th>
-                <th>विवरण</th>
-                <th>एकाइ</th>
-                <th>परिमाण</th>
-                <th>सरदर एकाइको मूल्य</th>
-                <th>कार्य</th>
+                <th>क्र.स.</th><th>विवरण</th><th>एकाइ</th><th>परिमाण</th><th>सरदर एकाइको मूल्य</th><th>कार्य</th>
               </tr>
             </thead>
             <tbody>
@@ -348,9 +237,9 @@ function IndustryPeriodSummary() {
                   <td><input name="unit" value={r.unit} onChange={(e) => handleRawChange(i, e)} /></td>
                   <td><input name="quantity" value={r.quantity} onChange={(e) => handleRawChange(i, e)} /></td>
                   <td><input name="unitPrice" value={r.unitPrice} onChange={(e) => handleRawChange(i, e)} /></td>
-                  <td>
-                    {rawMaterialRows.length > 1 && <button type="button" onClick={() => removeRawRow(i)}>−</button>}
-                    {i === rawMaterialRows.length - 1 && <button type="button" onClick={addRawRow}>+</button>}
+                  <td className="ups-action-cell">
+                    {rawMaterialRows.length > 1 && <button type="button" className="ups-remove-btn" onClick={() => removeRawRow(i)}>−</button>}
+                    {i === rawMaterialRows.length - 1 && <button type="button" className="ups-add-btn" onClick={addRawRow}>+</button>}
                   </td>
                 </tr>
               ))}
@@ -358,111 +247,66 @@ function IndustryPeriodSummary() {
           </table>
         </section>
 
-        {/* Market / export info */}
+        {/* --- Section 8: Export --- */}
         <section className="ups-section">
           <h3 className="ups-subtitle">८. उत्पादित सामानको निकासी :</h3>
-
           <div className="ups-field-row">
             <span>(क) बिक्री गरेको मुलुकको नाम :</span>
-            <input
-              type="text"
-              className="ups-wide-input"
-              name="exportCountry"
-              value={form.exportCountry}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-wide-input" name="exportCountry" value={form.exportCountry} onChange={handleChange} />
           </div>
-
           <div className="ups-field-row">
             <span>(ख) बिक्री रकम :</span>
-            <input
-              type="text"
-              className="ups-medium-input"
-              name="exportValue"
-              value={form.exportValue}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-medium-input" name="exportValue" value={form.exportValue} onChange={handleChange} />
             <span>(ग) निकासी परिमाण :</span>
-            <input
-              type="text"
-              className="ups-medium-input"
-              name="exportQuantity"
-              value={form.exportQuantity}
-              onChange={handleChange}
-            />
+            <input type="text" className="ups-medium-input" name="exportQuantity" value={form.exportQuantity} onChange={handleChange} />
           </div>
-
           <div className="ups-field-row">
-            <span>
-              ९. कुनै पनि तहबाट नेपाल सरकारबाट उद्योगले प्राप्त गरेको कुनै
-              छुट सुविधा:
-            </span>
-            <input
-              type="text"
-              className="ups-wide-input"
-              name="governmentBenefits"
-              value={form.governmentBenefits}
-              onChange={handleChange}
-            />
+            <span>९. कुनै पनि तहबाट नेपाल सरकारबाट उद्योगले प्राप्त गरेको कुनै छुट सुविधा:</span>
+            <input type="text" className="ups-wide-input" name="governmentBenefits" value={form.governmentBenefits} onChange={handleChange} />
           </div>
         </section>
 
-        {/* Other resources table */}
+        {/* --- Section 9: Other Resources (static rows) --- */}
         <section className="ups-section">
           <h3 className="ups-subtitle">९. उद्योगले प्रयोग गरेको अन्य आवश्यकताहरू :</h3>
-
           <table className="ups-table">
             <thead>
               <tr>
-                <th>क्र.स.</th>
-                <th>विवरण</th>
-                <th>एकाइ</th>
-                <th>परिमाण</th>
-                <th>सरदर एकाइको मूल्य</th>
+                <th>क्र.स.</th><th>विवरण</th><th>एकाइ</th><th>परिमाण</th><th>सरदर एकाइको मूल्य</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>१</td>
-                <td>पानी</td>
-                <td><input type="text" name="water_unit" value={form.water_unit || ""} onChange={handleChange} /></td>
-                <td><input type="text" name="water_quantity" value={form.water_quantity || ""} onChange={handleChange} /></td>
-                <td><input type="text" name="water_unit_price" value={form.water_unit_price || ""} onChange={handleChange} /></td>
+                <td>१</td><td>पानी</td>
+                <td><input type="text" name="water_unit" value={form.water_unit} onChange={handleChange} /></td>
+                <td><input type="text" name="water_quantity" value={form.water_quantity} onChange={handleChange} /></td>
+                <td><input type="text" name="water_unit_price" value={form.water_unit_price} onChange={handleChange} /></td>
               </tr>
               <tr>
-                <td>२</td>
-                <td>विद्धुत शक्ति / इन्धन इत्यादि</td>
-                <td><input type="text" name="power_unit" value={form.power_unit || ""} onChange={handleChange} /></td>
-                <td><input type="text" name="power_quantity" value={form.power_quantity || ""} onChange={handleChange} /></td>
-                <td><input type="text" name="power_unit_price" value={form.power_unit_price || ""} onChange={handleChange} /></td>
+                <td>२</td><td>विद्धुत शक्ति / इन्धन इत्यादि</td>
+                <td><input type="text" name="power_unit" value={form.power_unit} onChange={handleChange} /></td>
+                <td><input type="text" name="power_quantity" value={form.power_quantity} onChange={handleChange} /></td>
+                <td><input type="text" name="power_unit_price" value={form.power_unit_price} onChange={handleChange} /></td>
               </tr>
               <tr>
-                <td>३</td>
-                <td>कच्चा माल / सहयोगी सामग्री</td>
-                <td><input type="text" name="raw_unit" value={form.raw_unit || ""} onChange={handleChange} /></td>
-                <td><input type="text" name="raw_quantity" value={form.raw_quantity || ""} onChange={handleChange} /></td>
-                <td><input type="text" name="raw_unit_price" value={form.raw_unit_price || ""} onChange={handleChange} /></td>
+                <td>३</td><td>कच्चा माल / सहयोगी सामग्री</td>
+                <td><input type="text" name="raw_unit" value={form.raw_unit} onChange={handleChange} /></td>
+                <td><input type="text" name="raw_quantity" value={form.raw_quantity} onChange={handleChange} /></td>
+                <td><input type="text" name="raw_unit_price" value={form.raw_unit_price} onChange={handleChange} /></td>
               </tr>
             </tbody>
           </table>
         </section>
 
-        {/* Manpower table */}
+        {/* --- Section 10: Manpower --- */}
         <section className="ups-section">
           <h3 className="ups-subtitle">१०. उद्योगमा कार्यरत जनशक्ति :</h3>
-
           <table className="ups-table">
             <thead>
               <tr>
-                <th rowSpan="2">क्र.स.</th>
-                <th rowSpan="2">विवरण</th>
-                <th colSpan="3">संख्या</th>
+                <th rowSpan="2">क्र.स.</th><th rowSpan="2">विवरण</th><th colSpan="3">संख्या</th>
               </tr>
-              <tr>
-                <th>महिला</th>
-                <th>पुरुष</th>
-                <th>कुल</th>
-              </tr>
+              <tr><th>महिला</th><th>पुरुष</th><th>कुल</th></tr>
             </thead>
             <tbody>
               {manpowerRows.map((m, i) => (
@@ -476,19 +320,16 @@ function IndustryPeriodSummary() {
               ))}
               <tr>
                 <td colSpan="5" style={{ textAlign: "right" }}>
-                  <button type="button" onClick={addManRow}>+ थप</button>
+                  <button type="button" className="ups-add-btn" onClick={addManRow}>+ थप</button>
                 </td>
               </tr>
             </tbody>
           </table>
         </section>
 
-        {/* Environment section */}
+        {/* --- Section 11: Environment --- */}
         <section className="ups-section">
-          <h3 className="ups-subtitle">
-            ११. उद्योग संचालन गर्दा वातावरणमा पर्न जाने प्रतिकूल प्रभाव न्युनिकरणको लागि अपनाएको उपायहरू:
-          </h3>
-
+          <h3 className="ups-subtitle">११. उद्योग संचालन गर्दा वातावरणमा पर्न जाने प्रतिकूल प्रभाव न्युनिकरणको लागि अपनाएको उपायहरू:</h3>
           <textarea
             className="ups-textarea"
             rows="4"
@@ -497,90 +338,34 @@ function IndustryPeriodSummary() {
             value={form.environmentMeasures}
             onChange={handleChange}
           />
-
           <div className="ups-sign-row">
             <div className="ups-sign-left">
               <span>तयार गर्ने</span>
-              <input
-                type="text"
-                className="ups-medium-input"
-                name="preparer"
-                value={form.preparer}
-                onChange={handleChange}
-              />
+              <input type="text" className="ups-medium-input" name="preparer" value={form.preparer} onChange={handleChange} />
             </div>
-
             <div className="ups-sign-right">
               <span>खुल्ने गर्ने</span>
-              <input
-                type="text"
-                className="ups-medium-input"
-                name="opener"
-                value={form.opener}
-                onChange={handleChange}
-              />
+              <input type="text" className="ups-medium-input" name="opener" value={form.opener} onChange={handleChange} />
               <div className="ups-sign-role">संचालक/व्यवस्थापक</div>
             </div>
           </div>
         </section>
 
-        {/* Applicant details */}
-        <section className="ups-section">
-          <h3 className="ups-subtitle">निवेदकको विवरण</h3>
-          <div className="ups-applicant-box">
-            <div className="ups-field">
-              <label>निवेदकको नाम *</label>
-              <input
-                type="text"
-                name="applicantName"
-                value={form.applicantName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="ups-field">
-              <label>निवेदकको ठेगाना *</label>
-              <input
-                type="text"
-                name="applicantAddress"
-                value={form.applicantAddress}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="ups-field">
-              <label>निवेदकको नागरिकता नं. *</label>
-              <input
-                type="text"
-                name="applicantCitizenship"
-                value={form.applicantCitizenship}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="ups-field">
-              <label>निवेदकको फोन नं. *</label>
-              <input
-                type="text"
-                name="applicantPhone"
-                value={form.applicantPhone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-        </section>
+        {/* --- Applicant Details Box --- */}
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        {/* Submit button */}
-        <div className="ups-submit-row">
-          <button className="ups-submit-btn" onClick={handleSubmit} disabled={submitting}>
-            {submitting ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        {/* --- Footer Action --- */}
+        <div className="form-footer">
+          <button className="save-print-btn" type="button" onClick={handlePrint}>
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
-      </div>
 
-      {/* Footer */}
-      <footer className="ups-footer">
-        © सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः
-      </footer>
+        <div className="copyright-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
+
+      </form>
     </div>
   );
 }
-
-export default IndustryPeriodSummary;

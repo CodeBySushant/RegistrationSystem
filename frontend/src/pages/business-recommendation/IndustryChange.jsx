@@ -1,96 +1,122 @@
-import React, { useState } from "react";
+// IndustryChange.jsx
+import React, { useState, useEffect } from "react";
 import "./IndustryChange.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-function IndustryChange() {
-  const [form, setForm] = useState({
-    date: new Date().toISOString().slice(0, 10),
-    to_line1: MUNICIPALITY.officeLine, // e.g. "नगर कार्यपालिकाको कार्यालय, काठमाडौं"
-    to_line2: MUNICIPALITY.name,
-    province: MUNICIPALITY.provinceLine, // e.g. "बागमती प्रदेश, नेपाल"
-    district: MUNICIPALITY.englishDistrict || "", // optional short district
-    municipality: MUNICIPALITY.name,
-    ward: MUNICIPALITY.wardNumber,
-    industry_name: "",
-    industry_other_info: "",
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizen_no: "",
-    applicant_phone: "",
-    applicant_email: "",
-    table_rows: [
-      { current_work: "", change_required: "", reason: "", action: "" },
-    ],
-  });
+const toNepaliDigits = (str) => {
+  const map = { 0: "०", 1: "१", 2: "२", 3: "३", 4: "४", 5: "५", 6: "६", 7: "७", 8: "८", 9: "९" };
+  return String(str).replace(/[0-9]/g, (d) => map[d]);
+};
 
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState(null);
+const makeEmptyRow = () => ({ current_work: "", change_required: "", reason: "" });
 
-  const updateField = (key, value) => {
-    setForm((s) => ({ ...s, [key]: value }));
+const initialForm = {
+  date: new Date().toISOString().slice(0, 10),
+  to_line1: MUNICIPALITY.officeLine,
+  to_line2: MUNICIPALITY.name,
+  district: MUNICIPALITY.englishDistrict || "",
+  municipality: MUNICIPALITY.name,
+  ward: "",
+  industry_name: "",
+  industry_other_info: "",
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizen_no: "",
+  applicant_phone: "",
+  applicant_email: "",
+  signature: "",
+};
+
+export default function IndustryChange() {
+  const { user } = useAuth();
+
+  const [form, setForm] = useState(initialForm);
+  const [tableRows, setTableRows] = useState([makeEmptyRow()]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.ward && !form.ward) {
+      setForm((prev) => ({ ...prev, ward: user.ward }));
+    }
+  }, [user]);
+
+  const updateField = (key, value) => setForm((s) => ({ ...s, [key]: value }));
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((s) => ({ ...s, [name]: value }));
   };
 
   const updateTableRow = (index, key, value) => {
-    setForm((s) => {
-      const rows = s.table_rows.map((r, i) =>
-        i === index ? { ...r, [key]: value } : r
-      );
-      return { ...s, table_rows: rows };
+    setTableRows((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [key]: value };
+      return copy;
     });
   };
 
-  const addRow = () =>
-    setForm((s) => ({
-      ...s,
-      table_rows: [
-        ...s.table_rows,
-        { current_work: "", change_required: "", reason: "", action: "" },
-      ],
-    }));
+  const addRow = () => setTableRows((prev) => [...prev, makeEmptyRow()]);
 
-  const removeRow = (index) =>
-    setForm((s) => ({
-      ...s,
-      table_rows: s.table_rows.filter((_, i) => i !== index),
-    }));
+  const removeRow = (index) => setTableRows((prev) => prev.filter((_, i) => i !== index));
+
+  const buildPayload = () => {
+    const payload = { ...form };
+    Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+    payload.table_rows = JSON.stringify(tableRows);
+    return payload;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
-    setMessage(null);
-
+    setLoading(true);
     try {
-      const res = await fetch("/api/forms/industry-change", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `Server returned ${res.status}`);
+      const res = await axiosInstance.post("/api/forms/industry-change", buildPayload());
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialForm);
+        setTableRows([makeEmptyRow()]);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-      const data = await res.json();
-      setMessage({ type: "success", text: `Record created (id: ${data.id})` });
-      // Optional: reset form or navigate
     } catch (err) {
-      setMessage({ type: "error", text: err.message });
+      setLoading(false);
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post("/api/forms/industry-change", buildPayload());
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print();
+        setForm(initialForm);
+        setTableRows([makeEmptyRow()]);
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="usc-page">
       <header className="usc-topbar">
-        <div className="usc-top-left">उद्योगको दर्ता हेरफेर।</div>
-        <div className="usc-top-right">
-          डाउनलोड / उद्योगको स्थिर पुँजी परिवर्तन
-        </div>
+        <div className="usc-top-left">उद्योगको दर्ता हेरफेर ।</div>
+        <div className="usc-top-right">उद्योग &gt; उद्योगको स्थिर पुँजी परिवर्तन</div>
       </header>
 
       <form className="usc-paper" onSubmit={handleSubmit}>
+
+        {/* --- Title Block --- */}
         <div className="usc-title-block">
           <div>अनुसूची–३२</div>
           <div>(नियम १२ को उपनियम (३) संग सम्बन्धित)</div>
@@ -99,17 +125,17 @@ function IndustryChange() {
           </div>
         </div>
 
+        {/* --- Date --- */}
         <div className="usc-date-row">
-          मिति :
+          मिति :{" "}
           <input
-            type="text"
+            readOnly
             className="usc-date-input"
-            value={form.date}
-            onChange={(e) => updateField("date", e.target.value)}
-            placeholder="YYYY-MM-DD"
+            value={toNepaliDigits(form.date)}
           />
         </div>
 
+        {/* --- To Row --- */}
         <div className="usc-to-row">
           <span>श्री</span>
           <input
@@ -128,119 +154,90 @@ function IndustryChange() {
           />
         </div>
 
+        {/* --- Subject --- */}
         <div className="usc-subject-row">
           <span className="usc-sub-label">विषयः</span>
           <span className="usc-subject-bold">
-            {" "}
-            उद्योगको स्थिर पुँजी / क्षमता परिवर्तन वा हेरफेर सम्बन्धमा ।{" "}
+            उद्योगको स्थिर पुँजी / क्षमता परिवर्तन वा हेरफेर सम्बन्धमा ।
           </span>
         </div>
 
+        {/* --- Body --- */}
         <p className="usc-body">
           महोदय,
-          <br />
-          <br />
-          <span>{form.province}</span>
+          <br /><br />
+          <span>{MUNICIPALITY.provinceLine}</span>{" "}
           <input
             className="usc-small"
             value={form.district}
             onChange={(e) => updateField("district", e.target.value)}
           />
-          <span>जिल्ला</span>
+          <span> जिल्ला </span>
           <span>{MUNICIPALITY.name}</span>
-          <input
-            className="usc-medium"
-            value={form.municipality}
-            onChange={(e) => updateField("municipality", e.target.value)}
-          />
-          वडा नं.
+          {" "}वडा नं.{" "}
           <input
             className="usc-tiny"
             value={form.ward}
             onChange={(e) => updateField("ward", e.target.value)}
           />{" "}
-          मा दर्ता भई
+          मा दर्ता भई{" "}
           <input
             className="usc-medium"
             value={form.industry_name}
             onChange={(e) => updateField("industry_name", e.target.value)}
           />{" "}
-          नामक उद्योग
+          नामक उद्योग{" "}
           <input
             className="usc-small"
             value={form.industry_other_info}
             onChange={(e) => updateField("industry_other_info", e.target.value)}
           />{" "}
-          मिति
-          <input
-            className="usc-small"
-            value={form.date}
-            onChange={(e) => updateField("date", e.target.value)}
-          />{" "}
           देखि संचालन भई आएको छ।
-          <br />
-          <br />
+          <br /><br />
           स्थिर पुँजी तथा क्षमता विवरण अनुसार परिवर्तन वा हेरफेर गर्न आवश्यक
           भएकाले विवरण साथमा निवेदन गरेको छु ।
         </p>
 
+        {/* --- Table --- */}
         <table className="usc-table">
           <thead>
             <tr>
               <th>क्र.स.</th>
-              <th>हालको कामय रहको</th>
+              <th>हालको कायम रहेको</th>
               <th>परिवर्तन वा हेरफेर गर्नुपर्ने</th>
               <th>कारण</th>
               <th>कार्य</th>
             </tr>
           </thead>
           <tbody>
-            {form.table_rows.map((r, i) => (
+            {tableRows.map((r, i) => (
               <tr key={i}>
                 <td>{i + 1}</td>
                 <td>
                   <input
                     type="text"
                     value={r.current_work}
-                    onChange={(e) =>
-                      updateTableRow(i, "current_work", e.target.value)
-                    }
+                    onChange={(e) => updateTableRow(i, "current_work", e.target.value)}
                   />
                 </td>
                 <td>
                   <input
                     type="text"
                     value={r.change_required}
-                    onChange={(e) =>
-                      updateTableRow(i, "change_required", e.target.value)
-                    }
+                    onChange={(e) => updateTableRow(i, "change_required", e.target.value)}
                   />
                 </td>
                 <td>
                   <input
                     type="text"
                     value={r.reason}
-                    onChange={(e) =>
-                      updateTableRow(i, "reason", e.target.value)
-                    }
+                    onChange={(e) => updateTableRow(i, "reason", e.target.value)}
                   />
                 </td>
-                <td>
-                  <button
-                    type="button"
-                    className="usc-add-btn"
-                    onClick={() => addRow()}
-                  >
-                    +
-                  </button>
-                  {form.table_rows.length > 1 && (
-                    <button
-                      type="button"
-                      className="usc-remove-btn"
-                      onClick={() => removeRow(i)}
-                    >
-                      -
-                    </button>
+                <td className="usc-action-cell">
+                  <button type="button" className="usc-add-btn" onClick={addRow}>+</button>
+                  {tableRows.length > 1 && (
+                    <button type="button" className="usc-remove-btn" onClick={() => removeRow(i)}>−</button>
                   )}
                 </td>
               </tr>
@@ -248,48 +245,30 @@ function IndustryChange() {
           </tbody>
         </table>
 
+        {/* --- Signature Section --- */}
         <div className="usc-sign-section">
           <div className="usc-sign-box">
             <div className="usc-sign-label">निवेदकको</div>
-
             <div className="usc-sign-field">
               <span>हस्ताक्षर :</span>
-              <input
-                type="text"
-                value={form.signature || ""}
-                onChange={(e) => updateField("signature", e.target.value)}
-              />
+              <input type="text" value={form.signature} onChange={(e) => updateField("signature", e.target.value)} />
             </div>
-
             <div className="usc-sign-field">
               <span>नाम, थर :</span>
-              <input
-                type="text"
-                value={form.applicant_name}
-                onChange={(e) => updateField("applicant_name", e.target.value)}
-              />
+              <input type="text" value={form.applicant_name} onChange={(e) => updateField("applicant_name", e.target.value)} />
             </div>
-
             <div className="usc-sign-field">
               <span>फोन नम्बर :</span>
-              <input
-                type="text"
-                value={form.applicant_phone}
-                onChange={(e) => updateField("applicant_phone", e.target.value)}
-              />
+              <input type="text" value={form.applicant_phone} onChange={(e) => updateField("applicant_phone", e.target.value)} />
             </div>
-
             <div className="usc-sign-field">
               <span>ईमेल :</span>
-              <input
-                type="text"
-                value={form.applicant_email}
-                onChange={(e) => updateField("applicant_email", e.target.value)}
-              />
+              <input type="text" value={form.applicant_email} onChange={(e) => updateField("applicant_email", e.target.value)} />
             </div>
           </div>
         </div>
 
+        {/* --- Documents List --- */}
         <h3 className="usc-subheader">संलग्न कागजात</h3>
         <ul className="usc-doc-list">
           <li>अघिल्लो आ. व. को विवरणपत्र प्रतिवेदन</li>
@@ -302,70 +281,21 @@ function IndustryChange() {
           <li>अन्य कागजात</li>
         </ul>
 
-        <h3 className="usc-subheader">निवेदकको विवरण</h3>
-        <div className="usc-applicant-box">
-          <div className="usc-field">
-            <label>निवेदकको नाम *</label>
-            <input
-              type="text"
-              value={form.applicant_name}
-              onChange={(e) => updateField("applicant_name", e.target.value)}
-            />
-          </div>
-          <div className="usc-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input
-              type="text"
-              value={form.applicant_address}
-              onChange={(e) => updateField("applicant_address", e.target.value)}
-            />
-          </div>
-          <div className="usc-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input
-              type="text"
-              value={form.applicant_citizen_no}
-              onChange={(e) =>
-                updateField("applicant_citizen_no", e.target.value)
-              }
-            />
-          </div>
-          <div className="usc-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input
-              type="text"
-              value={form.applicant_phone}
-              onChange={(e) => updateField("applicant_phone", e.target.value)}
-            />
-          </div>
-        </div>
+        {/* --- Applicant Details Box --- */}
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        <div className="usc-submit-row">
-          <button
-            type="submit"
-            className="usc-submit-btn"
-            disabled={submitting}
-          >
-            {submitting ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        {/* --- Footer Action --- */}
+        <div className="form-footer">
+          <button className="save-print-btn" type="button" onClick={handlePrint}>
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
-        {message && (
-          <div
-            className={`usc-message ${
-              message.type === "error" ? "error" : "success"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
-      </form>
+        <div className="copyright-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
 
-      <footer className="usc-footer">
-              <footer className="usc-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
-      </footer>
+      </form>
     </div>
   );
 }
-
-export default IndustryChange;
