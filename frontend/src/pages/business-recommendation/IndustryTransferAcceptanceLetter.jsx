@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./IndustryTransferAcceptanceRequest.css";
+import "./IndustryTransferAcceptanceLetter.css";
 
 import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
