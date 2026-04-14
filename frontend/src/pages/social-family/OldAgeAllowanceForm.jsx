@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import './OldAgeAllowanceForm.css';
 
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
 /* Safe API base resolver for CRA, Vite and window fallback */
 const getApiBase = () => {
   try {
@@ -49,63 +55,51 @@ const emptyState = {
 };
 
 const OldAgeAllowanceForm = () => {
-  const [form, setForm] = useState({ ...emptyState });
-  const [saving, setSaving] = useState(false);
-
-  const setField = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+  const { form, setForm, handleChange } = useWardForm(initialState);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSaving(true);
+    setLoading(true);
     try {
-      const now = timestampNow();
-      // Build full payload to match forms.json / db columns
-      const payload = {
-        municipality: form.municipality ?? '',
-        ward_no: form.ward_no ?? '',
-        date_bs: form.date_bs ?? null,
-        subject: form.subject ?? '',
-        target_group: form.target_group ?? '',
-
-        applicant_name: form.applicant_name ?? '',
-        father_name: form.father_name ?? '',
-        mother_name: form.mother_name ?? '',
-        address: form.address ?? '',
-        npr_no: form.npr_no ?? '',
-        npr_issue_district: form.npr_issue_district ?? '',
-        gender: form.gender ?? '',
-        dob_bs: form.dob_bs ?? '',
-        age_reach_date: form.age_reach_date ?? null,
-
-        municipality_name: form.municipality_name ?? '',
-        ward_title: form.ward_title ?? '',
-
-        created_at: now,
-        updated_at: now
-      };
-
-      console.log('OUTGOING PAYLOAD:', JSON.stringify(payload, null, 2));
-
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `Server returned ${res.status}`);
+      // backend URL - adjust if different
+      const res = await axios.post("/api/forms/old-age-allowance", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState); // reset form on success
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-
-      const json = await res.json();
-      alert(`Record created with id: ${json.id}`);
     } catch (err) {
-      console.error(err);
-      alert('Error saving record: ' + err.message);
-    } finally {
-      setSaving(false);
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
     }
   };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.post("/api/forms/old-age-allowance", form);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print(); // ✅ print first
+        setForm(initialState); // ✅ reset AFTER print
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <form className="old-age-allowance-container" onSubmit={handleSubmit}>
@@ -223,15 +217,15 @@ const OldAgeAllowanceForm = () => {
         </div>
       </div>
 
-      {/* --- Footer --- */}
-      <div className="form-footer" style={{ marginTop: 20 }}>
-        <button type="submit" className="save-print-btn" disabled={saving}>
-          {saving ? 'Saving...' : 'रेकर्ड सेभ र प्रिन्ट गर्नुहोस्'}
+      {/* --- Footer Action --- */}
+      <div className="form-footer">
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
 
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </form>
   );
