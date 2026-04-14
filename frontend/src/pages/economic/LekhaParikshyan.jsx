@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import axios from "../../utils/axiosInstance";
 import "./LekhaParikshyan.css";
-import { useAuth } from "../../context/AuthContext";
-
 import { useWardForm } from "../../hooks/useWardForm";
 
+import axios from "../../utils/axiosInstance";
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   chalani_no: "",
@@ -39,45 +39,45 @@ const LekhaParikshyan = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  const [msg, setMsg] = useState(null);
-
-  const validate = () => {
-    if (!form.subject_to) return "प्राप्तकर्ता (श्री …) अनिवार्य छ";
-    if (!form.organization_name) return "संस्थाको नाम आवश्यक छ";
-    if (!form.auditor_name) return "लेखा परीक्षकको नाम आवश्यक छ";
-    if (!form.signer_name) return "दस्तखत गर्ने नाम आवश्यक छ";
-    return null;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      // backend URL - adjust if different
+      const res = await axios.post("/api/forms/lekha-parikshyan", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState); // reset form on success
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
   };
 
-  const handleSubmit = async () => {
-    const err = validate();
-    if (err) {
-      setMsg({ type: "error", text: err });
-      return;
-    }
-
+  const handlePrint = async () => {
     setLoading(true);
-    setMsg(null);
-
     try {
-      const res = await fetch("/api/forms/lekha-parikshyan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) throw new Error("Server error");
-
-      const data = await res.json();
-      setMsg({ type: "success", text: "रेकर्ड सेभ भयो! ID: " + data.id });
-
-      // Reset form
-      setForm(initialState);
-    } catch (e) {
-      setMsg({ type: "error", text: e.message });
+      const res = await axios.post("/api/forms/lekha-parikshyan", form);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print(); // ✅ print first
+        setForm(initialState); // ✅ reset AFTER print
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -280,85 +280,14 @@ const LekhaParikshyan = () => {
         </div>
       </div>
 
-      {/* --- Applicant Details Box --- */}
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>
-              निवेदकको नाम<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_name"
-              type="text"
-              className="detail-input bg-gray"
-              value={form.applicant_name}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="detail-group">
-            <label>
-              निवेदकको ठेगाना<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_address"
-              type="text"
-              className="detail-input bg-gray"
-              value={form.applicant_address}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="detail-group">
-            <label>
-              निवेदकको नागरिकता नं.<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_citizenship_no"
-              type="text"
-              className="detail-input bg-gray"
-              value={form.applicant_citizenship_no}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="detail-group">
-            <label>
-              निवेदकको फोन नं.<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_phone"
-              type="text"
-              className="detail-input bg-gray"
-              value={form.applicant_phone}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-      </div>
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-      {/* Submit */}
+      {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button
-          type="button"
-          className="save-print-btn"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
       </div>
-
-      {msg && (
-        <p
-          style={{
-            color: msg.type === "error" ? "red" : "green",
-            textAlign: "center",
-            marginTop: "10px",
-            fontWeight: "bold",
-          }}
-        >
-          {msg.text}
-        </p>
-      )}
 
       <div className="copyright-footer">
         © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}

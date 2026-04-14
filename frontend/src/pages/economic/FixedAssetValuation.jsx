@@ -2,8 +2,11 @@
 import React, { useState } from "react";
 import "./FixedAssetValuation.css"; // keep your styles or tweak as needed
 // Issue in form complete form is error
+import axios from "../../utils/axiosInstance";
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const emptyRow = () => ({
   owner_name: "",
@@ -16,116 +19,48 @@ const emptyRow = () => ({
 });
 
 export default function FixedAssetValuationForm() {
-  const [form, setForm] = useState({
-    letter_no: "",
-    chalani_no: "",
-    date: "",
-    former_area: "",
-    former_vdc_mun: "",
-    former_ward: "",
-    current_municipality: MUNICIPALITY.name,
-    current_ward: MUNICIPALITY.wardNumber,
-    person_title: "श्री",
-    person_name: "",
-    application_to: "नगरपालिका",
-    application_ward: "",
-    signature_name: "",
-    designation: "",
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizenship: "",
-    applicant_phone: "",
-    notes: "",
-  });
-
-  const [rows, setRows] = useState([emptyRow()]);
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState(null);
-
-  const update = (key, value) => setForm((p) => ({ ...p, [key]: value }));
-
-  const updateRow = (idx, key, value) =>
-    setRows((prev) =>
-      prev.map((r, i) => (i === idx ? { ...r, [key]: value } : r))
-    );
-
-  const addRow = () => setRows((p) => [...p, emptyRow()]);
-  const removeRow = (idx) => setRows((p) => p.filter((_, i) => i !== idx));
-
-  const validate = () => {
-    if (!form.person_name.trim()) return "निवेदकको नाम आवश्यक छ";
-    if (!form.applicant_name.trim()) return "निवेदकको विवरण भर्नुहोस्";
-    // require at least one tapashil owner_name or kitta
-    const hasTapashil = rows.some(
-      (r) => r.owner_name.trim() || r.owner_kitta_no.trim()
-    );
-    if (!hasTapashil) return "कम्तिमा एउटा तपशीिल पंक्ति आवश्यक छ";
-    return null;
-  };
+  const { form, setForm, handleChange } = useWardForm(initialState);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
-    e && e.preventDefault();
-    if (submitting) return;
-    const err = validate();
-    if (err) {
-      setMessage({ type: "error", text: err });
-      return;
-    }
-    setSubmitting(true);
-    setMessage(null);
-
-    // Build payload consistent with forms.json columns
-    const payload = {
-      ...form,
-      // server expects business-like JSON string for complex fields if needed;
-      // we send tapashil as JSON string field `tapashil` (or you can adapt server to accept array)
-      tapashil: JSON.stringify(rows),
-    };
-
+    e.preventDefault();
+    setLoading(true);
     try {
-      const res = await fetch("/api/forms/fixed-asset-valuation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.message || `Server returned ${res.status}`);
+      // backend URL - adjust if different
+      const res = await axios.post("/api/forms/fixed-asset-valuation", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState); // reset form on success
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-
-      const data = await res.json();
-      setMessage({
-        type: "success",
-        text: `रेकर्ड सेभ भयो (id: ${data.id ?? "n/a"})`,
-      });
-      // optional: reset
-      setForm({
-        letter_no: "",
-        chalani_no: "",
-        date: new Date().toISOString().slice(0, 10),
-        former_area: "",
-        former_vdc_mun: "",
-        former_ward: "",
-        current_municipality: MUNICIPALITY.name,
-        current_ward: MUNICIPALITY.wardNumber,
-        person_title: "श्री",
-        person_name: "",
-        application_to: "नगरपालिका",
-        application_ward: "",
-        signature_name: "",
-        designation: "",
-        applicant_name: "",
-        applicant_address: "",
-        applicant_citizenship: "",
-        applicant_phone: "",
-        notes: "",
-      });
-      setRows([emptyRow()]);
     } catch (err) {
-      setMessage({ type: "error", text: err.message || "Submission failed" });
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.post("/api/forms/fixed-asset-valuation", form);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print(); // ✅ print first
+        setForm(initialState); // ✅ reset AFTER print
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -343,35 +278,7 @@ export default function FixedAssetValuationForm() {
             />
           </div>
 
-          <div className="grid-row">
-            <label>निवेदकको नाम</label>
-            <input
-              name="applicant_name"
-              value={form.applicant_name}
-              onChange={(e) => update("applicant_name", e.target.value)}
-            />
-            <label>ठेगाना</label>
-            <input
-              name="applicant_address"
-              value={form.applicant_address}
-              onChange={(e) => update("applicant_address", e.target.value)}
-            />
-          </div>
-
-          <div className="grid-row">
-            <label>नागरिकता नं.</label>
-            <input
-              name="applicant_citizenship"
-              value={form.applicant_citizenship}
-              onChange={(e) => update("applicant_citizenship", e.target.value)}
-            />
-            <label>फोन</label>
-            <input
-              name="applicant_phone"
-              value={form.applicant_phone}
-              onChange={(e) => update("applicant_phone", e.target.value)}
-            />
-          </div>
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           <div className="grid-row">
             <label>कैफियत / नोट्स</label>
