@@ -162,7 +162,7 @@
   width: 100%;
   box-sizing: border-box;
 }
-.bg-gray { background-color: #eef2f5; } 
+.bg-gray { background-color: #eef2f5; }
 
 /* --- Footer --- */
 .form-footer { text-align: center; margin-top: 40px; }
@@ -185,10 +185,10 @@
 }
 
 /* Control applicant input width */
-.backward-community-container 
-.applicant-details-box 
+.backward-community-container
+.applicant-details-box
 .detail-input {
-  max-width: 400px;   /* adjust if needed: 480–550 */
+  max-width: 400px;
   width: 100%;
 }
 
@@ -220,15 +220,19 @@
 
 /* ================= PRINT STYLES ================= */
 @media print {
+
+  /* 1. Hide everything on the page first */
   body * {
     visibility: hidden;
   }
 
+  /* 2. Make the form and all its children visible */
   .backward-community-container,
   .backward-community-container * {
     visibility: visible;
   }
 
+  /* 3. Position the form at the top-left corner of the printed page */
   .backward-community-container {
     position: absolute;
     left: 0;
@@ -237,11 +241,97 @@
     box-shadow: none;
     border: none;
     margin: 0;
-    padding: 0;
-    background: white;
+    padding: 20px 40px;
+    background-image: none;
+    background-color: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
-  .form-footer {
-    display: none;
+  /* 4. Hide action buttons */
+  .form-footer,
+  .top-bar-title .top-right-bread {
+    display: none !important;
+  }
+
+  /* 5. CRITICAL: Make all inputs render their value as plain text.
+        Browsers do NOT print input box content by default.
+        We hide the real input and use ::after on a wrapper,
+        OR we simply make the input look like plain text. */
+  .backward-community-container input,
+  .backward-community-container select,
+  .backward-community-container textarea {
+    border: none !important;
+    border-bottom: 1px solid #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    padding: 0 2px !important;
+    margin: 0 3px !important;
+    font-family: 'Kalimati', 'Kokila', sans-serif !important;
+    font-size: 1rem !important;
+    color: #000 !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* 6. Dotted input in meta area: keep dotted bottom border */
+  .backward-community-container .dotted-input {
+    border-bottom: 1px dotted #000 !important;
+  }
+
+  /* 7. Inline box inputs in body paragraph: underline style only */
+  .backward-community-container .inline-box-input {
+    border: none !important;
+    border-bottom: 1px solid #000 !important;
+    min-width: 60px;
+  }
+
+  /* 8. Inline select: hide the dropdown arrow, show selected value */
+  .backward-community-container .inline-select,
+  .backward-community-container .designation-select {
+    border: none !important;
+    border-bottom: 1px solid #000 !important;
+    background: transparent !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+
+  /* 9. Applicant details box: keep the box visible */
+  .backward-community-container .applicant-details-box {
+    border: 1px solid #ccc !important;
+    background-color: #fff !important;
+    padding: 15px !important;
+  }
+
+  /* 10. Detail inputs inside the applicant box */
+  .backward-community-container .applicant-details-box .detail-input {
+    border: none !important;
+    border-bottom: 1px solid #aaa !important;
+    background: transparent !important;
+    max-width: 100% !important;
+  }
+
+  /* 11. Keep red municipality name color on print */
+  .municipality-name,
+  .ward-title,
+  .address-text,
+  .province-text {
+    color: #e74c3c !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 12. Signature line */
+  .backward-community-container .signature-block .line-input {
+    border-bottom: 1px solid #000 !important;
+    width: 100% !important;
+  }
+
+  /* 13. Page setup */
+  @page {
+    size: A4 portrait;
+    margin: 15mm 15mm 15mm 15mm;
   }
 }
