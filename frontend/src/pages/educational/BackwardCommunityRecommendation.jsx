@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import axios from "../../utils/axiosInstance";
 import { useWardForm } from "../../hooks/useWardForm";
 import "./BackwardCommunityRecommendation.css";
-// 2
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   // applicant details
@@ -17,22 +16,43 @@ const initialState = {
   // signer
   signer_name: "",
   signer_designation: "",
+
+  // meta / letter fields
+  chalani_no: "",
+
+  // form body fields
+  tole_address: "",
+  ward_no: "",
+  applicant_gender: "श्री",
+  applicant_fullname: "",
 };
+
 const BackwardCommunityRecommendation = () => {
   const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // backend URL - adjust if different
-      const res = await axios.post("/api/forms/domestic-animal", form);
+      const payload = { ...form };
+
+      Object.keys(payload).forEach((k) => {
+        if (payload[k] === "") payload[k] = null;
+      });
+
+      const res = await axiosInstance.post(
+        "/api/forms/animal-maternity-allowance",
+        payload,
+      );
+
       setLoading(false);
+
       if (res.status === 201) {
         alert("Form submitted successfully! ID: " + res.data.id);
-        setForm(initialState); // reset form on success
+        setForm(initialState);
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
@@ -50,15 +70,27 @@ const BackwardCommunityRecommendation = () => {
 
   const handlePrint = async () => {
     setLoading(true);
+
     try {
-      await axios.post("/api/forms/scholarship", form);
-      setLoading(false);
-      setTimeout(() => window.print(), 500);
+      const res = await axiosInstance.post(
+        "/api/forms/animal-maternity-allowance",
+        form,
+      );
+
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+
+        window.print();
+
+        setForm(initialState);
+      }
     } catch (err) {
+      console.error(err);
+    } finally {
       setLoading(false);
-      alert("Submission failed");
     }
   };
+
   return (
     <div className="backward-community-container">
       {/* --- Top Bar --- */}
@@ -70,7 +102,6 @@ const BackwardCommunityRecommendation = () => {
       {/* --- Header Section --- */}
       <div className="form-header-section">
         <div className="header-logo">
-          {/* Replace with your actual logo path */}
           <img src="/nepallogo.svg" alt="Nepal Emblem" />
         </div>
         <div className="header-text">
@@ -91,7 +122,13 @@ const BackwardCommunityRecommendation = () => {
           </p>
           <p>
             चलानी नं. :{" "}
-            <input type="text" className="dotted-input small-input" />
+            <input
+              type="text"
+              name="chalani_no"
+              value={form.chalani_no}
+              onChange={handleChange}
+              className="dotted-input small-input"
+            />
           </p>
         </div>
         <div className="meta-right">
@@ -121,15 +158,41 @@ const BackwardCommunityRecommendation = () => {
           उपरोक्त विषयमा{" "}
           <span className="bold-text underline-text">{MUNICIPALITY.name}</span>
           वडा नं. {MUNICIPALITY.wardNumber}{" "}
-          <input type="text" className="inline-box-input medium-box" />, वडा नं.{" "}
-          <input type="text" className="inline-box-input tiny-box" required /> )
-          निवासी श्री
-          <select className="inline-select bold-text">
+          <input
+            type="text"
+            name="tole_address"
+            value={form.tole_address}
+            onChange={handleChange}
+            className="inline-box-input medium-box"
+          />
+          , वडा नं.{" "}
+          <input
+            type="text"
+            name="ward_no"
+            value={form.ward_no}
+            onChange={handleChange}
+            className="inline-box-input tiny-box"
+            required
+          />{" "}
+          ) निवासी श्री
+          <select
+            name="applicant_gender"
+            value={form.applicant_gender}
+            onChange={handleChange}
+            className="inline-select bold-text"
+          >
             <option>श्री</option>
             <option>सुश्री</option>
             <option>श्रीमती</option>
           </select>
-          <input type="text" className="inline-box-input long-box" required />{" "}
+          <input
+            type="text"
+            name="applicant_fullname"
+            value={form.applicant_fullname}
+            onChange={handleChange}
+            className="inline-box-input long-box"
+            required
+          />{" "}
           ले मेरो पारिवारिक आर्थिक स्थिति नाजुक भएको कारणले विपन्न भएको हुनाले
           मेरो परिवार मेरो उच्च शिक्षाको खर्च जुटाउन असमर्थ भएकोले सो खुलाई
           सिफारिस पाऊँ भनी यस कार्यालयमा निवेदन पेश गरेकोले सो सम्बन्धमा बुझ्दा
@@ -143,70 +206,30 @@ const BackwardCommunityRecommendation = () => {
       <div className="signature-section">
         <div className="signature-block">
           <div className="signature-line"></div>
-          <input type="text" className="line-input full-width-input" required />
-          <select className="designation-select">
-            <option>पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
-            <option>कार्यवाहक वडा अध्यक्ष</option>
+          <input
+            type="text"
+            name="signer_name"
+            value={form.signer_name}
+            onChange={handleChange}
+            className="line-input full-width-input"
+            required
+          />
+          <select
+            name="signer_designation"
+            value={form.signer_designation}
+            onChange={handleChange}
+            className="designation-select"
+          >
+            <option value="">पद छनौट गर्नुहोस्</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>
 
       {/* --- Applicant Details Box --- */}
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>
-              निवेदकको नाम<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_name"
-              type="text"
-              className="detail-input bg-gray"
-              value={form.applicant_name}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="detail-group">
-            <label>
-              निवेदकको ठेगाना<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_address"
-              type="text"
-              className="detail-input bg-gray"
-              value={form.applicant_address}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="detail-group">
-            <label>
-              निवेदकको नागरिकता नं.<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_citizenship_no"
-              type="text"
-              className="detail-input bg-gray"
-              value={form.applicant_citizenship_no}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="detail-group">
-            <label>
-              निवेदकको फोन नं.<span className="required">*</span>
-            </label>
-            <input
-              name="applicant_phone"
-              type="text"
-              className="detail-input bg-gray"
-              value={form.applicant_phone}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-      </div>
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
       {/* --- Footer Action --- */}
       <div className="form-footer">

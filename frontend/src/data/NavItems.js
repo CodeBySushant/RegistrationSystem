@@ -83,7 +83,7 @@ export const NAV_ITEMS = [
         id: 'educational',
         label: 'शैक्षिक',
         icon: GraduationCap,
-        children: ['छात्रवृत्ति सिफारिस', 'विपन्नता सिफारिस', 'जहेन्दार छात्रवृत्ति सिफारिस', 'कक्षा थप सिफारिस']
+        children: ['छात्रवृत्ति सिफारिस', 'विपन्नता सिफारिस', 'कक्षा थप सिफारिस']
     },
     {
         id: 'physical-development',
