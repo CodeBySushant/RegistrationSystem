@@ -1,192 +1,271 @@
-// src/pages/citizenship/NepaliLanguage.jsx
 import React, { useState } from "react";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
 import "./NepaliLanguage.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig"; // ✅ Single import
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-const FORM_KEY = "nepali-language"; // use this in forms.json and backend route
-const API_BASE = import.meta.env.VITE_API_BASE || "";
-const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
+const initialState = {
+  // Header fields
+  patra_sankhya: "२०८२/८३",
+  chalani_no: "",
+  date_nepali: "२०८२-१२-१८",
 
-// helper: convert Devanagari digits to ASCII digits
-function devanagariToAscii(s = "") {
-  if (!s) return s;
-  const map = { '०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9' };
-  return s.replace(/[०-९]/g, (d) => map[d] || d);
-}
+  // Main form fields
+  subject: "",
+  recipient_name: "",
+  body_text: "",
+  bodartha: "",
+
+  // Signature
+  signatory_name: "",
+  signatory_designation: "",
+
+  // ✅ Fixed: Match ApplicantDetailsNp field names
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+};
 
 const NepaliLanguage = () => {
-  const [form, setForm] = useState({
-    applicant_full_name: "",
-    issued_date_nepali: "", // sample
-    issued_date_ad: new Date().toISOString().slice(0, 10), // ISO date yyyy-mm-dd — required for DB
-    issue_district: "",
-    full_name_en: "",
-    sex: "पुरुष",
-    marriage_date_nepali: "",
-    marriage_date_ad: "",
-    permanent_district: "",
-    permanent_municipality: "",
-    permanent_ward: "",
-    temporary_district: "",
-    temporary_municipality: "",
-    temporary_ward: "",
-    father_name: "",
-    mother_name: "",
-    husband_name: "",
-    birth_place: "",
-    birth_date_nepali: "",
-    birth_date_ad: "",
-    angikrit_reason: "",
-    notes: ""
-  });
+  const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
-
-  const update = (k) => (e) => setForm(s => ({ ...s, [k]: e.target.value }));
-
-  // prepare payload: convert devanagari digits -> ascii in date strings (but DO NOT convert BS->AD)
-  // The important part: you MUST send date_ad in ISO (YYYY-MM-DD). If you want BS->AD conversion, do it server-side (example provided below).
-  const preparePayload = () => {
-    const payload = { ...form };
-
-    // normalize Nepali-digit date fields to ASCII so they can be stored as text (if you want)
-    // keep originals too
-    if (payload.issued_date_nepali) {
-      payload.issued_date_nepali_ascii = devanagariToAscii(payload.issued_date_nepali);
-    }
-    if (payload.birth_date_nepali) {
-      payload.birth_date_nepali_ascii = devanagariToAscii(payload.birth_date_nepali);
-    }
-    if (payload.marriage_date_nepali) {
-      payload.marriage_date_nepali_ascii = devanagariToAscii(payload.marriage_date_nepali);
-    }
-
-    // IMPORTANT: DB DATE column expects ISO AD date (yyyy-mm-dd) — ensure date_ad fields are provided
-    // If user filled Nepali date only, you must convert BS->AD separately (not implemented here).
-    // We'll include date_ad fields exactly as set in form; backend will validate.
-    return payload;
-  };
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(null);
-
-    // Basic client-side validation: require issued_date_ad if you plan to store a DATE column
-    if (!form.issued_date_ad) {
-      setMessage({ type: "error", text: "कृपया 'मिति (AD)' मा ISO मिति (YYYY-MM-DD) राख्नुहोस् — MySQL DATE फरम्याट हो।" });
-      return;
-    }
-
     setLoading(true);
+
     try {
-      const payload = preparePayload();
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const body = await res.json();
-      if (!res.ok) {
-        setMessage({ type: "error", text: body.message || JSON.stringify(body) });
-      } else {
-        setMessage({ type: "success", text: `Saved (id: ${body.id || "unknown"})` });
+      const res = await axios.post("/api/forms/nepali-language", form);
+      setLoading(false);
+
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState);
       }
     } catch (err) {
-      setMessage({ type: "error", text: err.message });
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+
+    try {
+      const res = await axios.post("/api/forms/nepali-language", form);
+
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print(); // ✅ Print first
+        setForm(initialState); // ✅ Reset after print
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form className="angikrit-container" onSubmit={handleSubmit}>
+    <div className="nepali-language-container">
       <div className="top-bar-title">
-        अंगिकृत नागरिकता सिफारिस ।
-        <span className="top-right-bread">नागरिकता &gt; अंगिकृत नागरिकता सिफारिस</span>
+        नेपाली भाषामा पत्र लेखन
+        <span className="top-right-bread">खुला ढाँचा &gt; नेपाली प्रपत्र</span>
       </div>
 
-      <div className="application-form-grid">
-        <div className="grid-item full-width-grid">
-          <label>पूरा नाम :</label>
-          <input type="text" value={form.applicant_full_name} onChange={update("applicant_full_name")} className="dotted-input long-input" required />
+      <form onSubmit={handleSubmit}>
+        {/* ✅ ROBUST DYNAMIC Header */}
+        <header className="form-header-section">
+          <div className="header-logo">
+            <img src={MUNICIPALITY.logoSrc} alt="Nepal Logo" />
+          </div>
+          <div className="header-text">
+            <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+            <h2 className="ward-title">
+              {
+                user?.role === "SUPERADMIN"
+                  ? "सबै वडा कार्यालय"
+                  : user?.ward
+                    ? `वडा नं. ${user.ward} वडा कार्यालय`
+                    : "वडा कार्यालय" // ✅ Safe fallback
+              }
+            </h2>
+            <p className="address-text">{MUNICIPALITY.officeLine}</p>
+            <p className="province-text">{MUNICIPALITY.provinceLine}</p>
+          </div>
+        </header>
 
-          <label>जारी मिति (नेपाली)</label>
-          <input type="text" value={form.issued_date_nepali} onChange={update("issued_date_nepali")} className="dotted-input medium-input" />
-
-          <label>जारी मिति (AD, YYYY-MM-DD) *</label>
-          <input type="date" value={form.issued_date_ad} onChange={update("issued_date_ad")} className="dotted-input medium-input" required />
-
-          <label>जिल्ला:</label>
-          <input type="text" value={form.issue_district} onChange={update("issue_district")} className="dotted-input medium-input" />
+        {/* Metadata Row */}
+        <div className="meta-data-row">
+          <div className="meta-left">
+            <div className="meta-item">
+              पत्र संख्या :{" "}
+              <span className="bold-text">{form.patra_sankhya}</span>
+            </div>
+            <div className="meta-item">
+              चलानी नं. :
+              <input
+                name="chalani_no"
+                type="text"
+                className="dotted-input small-input"
+                value={form.chalani_no}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="meta-right">
+            <div className="meta-item">
+              मिति : <span className="bold-text">{form.date_nepali}</span>
+            </div>
+            <p className="nepali-date-string">ने.सं. ११४६ चौलागा, २४ शनिबार</p>
+          </div>
         </div>
 
-        <div className="grid-item full-width-grid">
-          <label>लिङ्ग / Sex :</label>
-          <select value={form.sex} onChange={update("sex")} className="inline-select">
-            <option>पुरुष</option>
-            <option>महिला</option>
-            <option>अन्य</option>
-          </select>
-
-          <label>जन्म मिति (नेपाली)</label>
-          <input type="text" value={form.birth_date_nepali} onChange={update("birth_date_nepali")} className="dotted-input medium-input" />
-
-          <label>जन्म मिति (AD YYYY-MM-DD)</label>
-          <input type="date" value={form.birth_date_ad} onChange={update("birth_date_ad")} className="dotted-input medium-input" />
-
-          <label>जन्म स्थान</label>
-          <input type="text" value={form.birth_place} onChange={update("birth_place")} className="dotted-input medium-input" />
+        {/* Subject */}
+        <div className="subject-section">
+          विषय:
+          <div className="inline-input-wrapper">
+            <span className="input-required-star">*</span>
+            <input
+              name="subject"
+              type="text"
+              className="dotted-input medium-input"
+              value={form.subject}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
-        <div className="grid-item full-width-grid">
-          <h4>ठेगाना (स्थायी / अस्थायी)</h4>
-          <input type="text" placeholder="स्थायी जिल्ला" value={form.permanent_district} onChange={update("permanent_district")} className="dotted-input medium-input" />
-          <input type="text" placeholder="स्थायी गाउँ/नगर" value={form.permanent_municipality} onChange={update("permanent_municipality")} className="dotted-input medium-input" />
-          <input type="text" placeholder="वडा नं." value={form.permanent_ward} onChange={update("permanent_ward")} className="dotted-input tiny-input" />
-
-          <input type="text" placeholder="अस्थायी जिल्ला" value={form.temporary_district} onChange={update("temporary_district")} className="dotted-input medium-input" />
-          <input type="text" placeholder="अस्थायी गाउँ/नगर" value={form.temporary_municipality} onChange={update("temporary_municipality")} className="dotted-input medium-input" />
-          <input type="text" placeholder="वडा नं." value={form.temporary_ward} onChange={update("temporary_ward")} className="dotted-input tiny-input" />
+        {/* Addressee */}
+        <div className="addressee-section">
+          <div className="addressee-row">
+            श्री
+            <div className="inline-input-wrapper">
+              <span className="input-required-star">*</span>
+              <input
+                name="recipient_name"
+                type="text"
+                className="dotted-input long-input"
+                value={form.recipient_name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+          <div className="addressee-row">
+            <input
+              type="text"
+              className="dotted-input long-input"
+              placeholder="पद/कार्यालय"
+            />
+          </div>
+          <div className="addressee-row">
+            <input
+              type="text"
+              className="dotted-input long-input"
+              placeholder="ठेगाना"
+            />
+          </div>
         </div>
 
-        <div className="grid-item full-width-grid">
-          <h4>बाबु / आमाको नाम</h4>
-          <input type="text" placeholder="बाबुको नाम" value={form.father_name} onChange={update("father_name")} className="dotted-input medium-input" />
-          <input type="text" placeholder="आमाको नाम" value={form.mother_name} onChange={update("mother_name")} className="dotted-input medium-input" />
-          <input type="text" placeholder="पतिको नाम (यदि लागु)" value={form.husband_name} onChange={update("husband_name")} className="dotted-input medium-input" />
+        {/* Body Text */}
+        <div className="editor-area">
+          <div className="rich-editor-mock">
+            <div className="editor-toolbar">
+              <span>पत्रको विवरण यहाँ लेख्नुहोस्: </span>
+            </div>
+            <textarea
+              name="body_text"
+              className="editor-textarea"
+              value={form.body_text}
+              onChange={handleChange}
+              placeholder="यहाँ पत्रको मुख्य विवरण लेख्नुहोस्..."
+              rows={12}
+            />
+            <div className="word-count">
+              {(form.body_text || "").length} अक्षर
+            </div>
+          </div>
         </div>
 
-        <div className="grid-item full-width-grid">
-          <h4>अंगीकृत नागरिकताको विवरण</h4>
-          <input type="text" placeholder="कारण" value={form.angikrit_reason} onChange={update("angikrit_reason")} className="dotted-input long-input" />
-          <label>विवाह मिति (नेपाली)</label>
-          <input type="text" value={form.marriage_date_nepali} onChange={update("marriage_date_nepali")} className="dotted-input medium-input" />
-          <label>विवाह मिति (AD)</label>
-          <input type="date" value={form.marriage_date_ad} onChange={update("marriage_date_ad")} className="dotted-input medium-input" />
+        {/* Bodartha */}
+        <div className="bodartha-section">
+          बोधार्थ:-
+          <textarea
+            name="bodartha"
+            className="full-width-textarea"
+            value={form.bodartha}
+            onChange={handleChange}
+            rows={2}
+            placeholder="बोधार्थ लेख्नुहोस्..."
+          />
         </div>
 
-        <div>
-          <label>नोट्स / कैफियत</label>
-          <textarea value={form.notes} onChange={update("notes")} rows={3} className="full-width-textarea" />
+        {/* Signature */}
+        <div className="signature-container">
+          <div className="signature-block">
+            <div className="signature-line"></div>
+            <div className="inline-input-wrapper">
+              <span className="input-required-star">*</span>
+              <input
+                name="signatory_name"
+                type="text"
+                className="dotted-input full-width-input"
+                value={form.signatory_name}
+                onChange={handleChange}
+                placeholder="नाम"
+                required
+              />
+            </div>
+            <select
+              name="signatory_designation"
+              className="designation-select"
+              value={form.signatory_designation}
+              onChange={handleChange}
+              required
+            >
+              <option value="">पद छनौट गर्नुहोस्</option>
+              <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+              <option value="वडा सचिव">वडा सचिव</option>
+              <option value="कार्यवाहक वडा अध्यक्ष">
+                कार्यवाहक वडा अध्यक्ष
+              </option>
+            </select>
+          </div>
         </div>
 
-      </div>
+        {/* Applicant Details */}
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-      <div className="form-footer">
-        <button type="submit" className="save-print-btn" disabled={loading}>
-          {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-        </button>
-      </div>
-
-      {message && (
-        <div style={{ marginTop: 8, color: message.type === "error" ? "crimson" : "green" }}>
-          {message.text}
+        {/* Footer */}
+        <div className="form-footer">
+          <button
+            type="button"
+            className="save-print-btn"
+            onClick={handlePrint}
+            disabled={loading}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
-      )}
+      </form>
 
+      {/* ✅ Dynamic footer */}
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
-    </form>
+    </div>
   );
 };
 

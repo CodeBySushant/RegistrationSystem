@@ -1,17 +1,22 @@
 // BusinessRegSummary.jsx
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import "./BusinessRegSummary.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-const initialState = {
+const toNepaliDigits = (str) => {
+  const map = { 0: "०", 1: "१", 2: "२", 3: "३", 4: "४", 5: "५", 6: "६", 7: "७", 8: "८", 9: "९" };
+  return String(str).replace(/[0-9]/g, (d) => map[d]);
+};
+
+const initialForm = {
   date: new Date().toISOString().slice(0, 10),
   refLetterNo: "",
   chalaniNo: "",
   addressee: "",
-  municipality: MUNICIPALITY.name,
   mailTo: "",
   introText: "",
   description: "",
@@ -22,12 +27,16 @@ const initialState = {
   positionTitle: "",
 };
 
+const makeEmptyBusiness = () => ({
+  regNo: "", regDate: "", businessName: "", address: "", proprietor: "",
+});
+
 export default function BusinessRegSummary() {
-  const [form, setForm] = useState(initialState);
-  const [businessList, setBusinessList] = useState([
-    { regNo: "", regDate: "", businessName: "", address: "", proprietor: "" },
-  ]);
-  const [submitting, setSubmitting] = useState(false);
+  const { user } = useAuth();
+
+  const [form, setForm] = useState(initialForm);
+  const [businessList, setBusinessList] = useState([makeEmptyBusiness()]);
+  const [loading, setLoading] = useState(false);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -43,126 +52,110 @@ export default function BusinessRegSummary() {
     });
   };
 
-  const addBusinessRow = () => {
-    setBusinessList((prev) => [
-      ...prev,
-      { regNo: "", regDate: "", businessName: "", address: "", proprietor: "" },
-    ]);
-  };
+  const addBusinessRow = () => setBusinessList((prev) => [...prev, makeEmptyBusiness()]);
 
   const removeBusinessRow = (index) => {
     setBusinessList((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const validate = () => {
-    if (!form.applicantName?.trim()) return "निवेदकको नाम आवश्यक छ";
-    // ensure at least one filled business row or allow empty — here require at least one with regNo or name
-    const hasBusiness = businessList.some(
-      (b) =>
-        (b.regNo && b.regNo.trim()) || (b.businessName && b.businessName.trim())
+  const buildPayload = () => {
+    const payload = { ...form };
+    Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+    payload.businesses = JSON.stringify(
+      businessList.filter((b) => b.regNo || b.businessName)
     );
-    if (!hasBusiness) return "कम्तिमा एउटा व्यवसायको विवरण दिनुहोस्";
-    return null;
+    return payload;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submitting) return;
-    const err = validate();
-    if (err) {
-      alert(err);
-      return;
-    }
-    setSubmitting(true);
+    setLoading(true);
     try {
-      const payload = { ...form };
-      // attach businessList as JSON string (server can parse)
-      payload.businessList = JSON.stringify(businessList);
-      // normalize empty to null
-      Object.keys(payload).forEach((k) => {
-        if (payload[k] === "") payload[k] = null;
-      });
-
-      const url = "/api/forms/business-reg-summary";
-      const res = await axios.post(url, payload);
-
-      if (res.status === 200 || res.status === 201) {
-        alert("Saved successfully. ID: " + (res.data?.id ?? ""));
-        setForm(initialState);
-        setBusinessList([
-          {
-            regNo: "",
-            regDate: "",
-            businessName: "",
-            address: "",
-            proprietor: "",
-          },
-        ]);
+      const res = await axiosInstance.post("/api/forms/business-reg-summary", buildPayload());
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialForm);
+        setBusinessList([makeEmptyBusiness()]);
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
-    } catch (error) {
-      console.error("Submit error:", error);
-      const msg =
-        error.response?.data?.message || error.message || "Submission failed";
-      alert("त्रुटि: " + msg);
+    } catch (err) {
+      setLoading(false);
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post("/api/forms/business-reg-summary", buildPayload());
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print();
+        setForm(initialForm);
+        setBusinessList([makeEmptyBusiness()]);
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="brs-page">
       <form className="brs-paper" onSubmit={handleSubmit}>
-        {/* header */}
+
+        {/* --- Top Bar --- */}
+        <div className="brs-topbar">
+          व्यवसाय दर्ता विवरण ।
+          <span className="brs-topbar-right">व्यवसाय &gt; व्यवसाय दर्ता विवरण</span>
+        </div>
+
+        {/* --- Letterhead --- */}
         <div className="brs-letterhead">
           <div className="brs-logo">
-            <img
-              alt="Emblem"
-              src="./nepallogo"
-            />
+            <img alt="Nepal Emblem" src={MUNICIPALITY.logoSrc} />
           </div>
           <div className="brs-head-text">
             <div className="brs-head-main">{MUNICIPALITY.name}</div>
             <div className="brs-head-ward">
-              {MUNICIPALITY.wardNumber} नं. वडा कार्यालय
+              {user?.role === "SUPERADMIN"
+                ? "सबै वडा कार्यालय"
+                : `${user?.ward || ""} नं. वडा कार्यालय`}
+            </div>
+            <div className="brs-head-sub">
+              {MUNICIPALITY.officeLine} <br /> {MUNICIPALITY.provinceLine}
             </div>
           </div>
           <div className="brs-head-meta">
             <div>
               मिति :{" "}
               <input
-                name="date"
-                value={form.date}
-                onChange={onChange}
+                readOnly
                 className="brs-small-input"
+                value={toNepaliDigits(form.date)}
               />
             </div>
             <div className="brs-meta-line">ने.सं.: ११४६ भाद्र, २ शनिवार</div>
           </div>
         </div>
 
-        {/* reference */}
+        {/* --- Ref Numbers --- */}
         <div className="brs-ref-row">
           <div className="brs-ref-block">
             <label>पत्र संख्या :</label>
-            <input
-              name="refLetterNo"
-              value={form.refLetterNo}
-              onChange={onChange}
-            />
+            <input name="refLetterNo" value={form.refLetterNo} onChange={onChange} />
           </div>
           <div className="brs-ref-block">
             <label>चलानी नं. :</label>
-            <input
-              name="chalaniNo"
-              value={form.chalaniNo}
-              onChange={onChange}
-            />
+            <input name="chalaniNo" value={form.chalaniNo} onChange={onChange} />
           </div>
         </div>
 
-        {/* addressee */}
+        {/* --- Addressee --- */}
         <div className="brs-to-block">
           <label>श्री</label>
           <input
@@ -172,35 +165,19 @@ export default function BusinessRegSummary() {
             className="brs-long-input"
           />
           <br />
-          <span>{MUNICIPALITY.name}</span>
-          <input
-            name="municipality"
-            value={form.municipality}
-            onChange={onChange}
-            className="brs-medium-input"
-          />
-          <span>, {Municipality.city}</span>
+          <span>{MUNICIPALITY.name}, {MUNICIPALITY.city}</span>
         </div>
 
-        {/* subject */}
+        {/* --- Subject --- */}
         <div className="brs-subject-row">
           <span className="brs-subject-label">विषयः</span>
-          <span className="brs-subject-text">
-            व्यवसाय दर्ताको विवरण पठाईदिनु बारे ।
-          </span>
+          <span className="brs-subject-text">व्यवसाय दर्ताको विवरण पठाईदिनु बारे ।</span>
         </div>
 
-        {/* intro + mail to */}
+        {/* --- Body --- */}
         <p className="brs-body-para">
-          प्रस्तुत विषयमा {MUNICIPALITY.name}{" "}
-          <input
-            name="municipality"
-            value={form.municipality}
-            onChange={onChange}
-            className="brs-under-input"
-          />
-          को उद्योग, व्यवसाय, दर्ता, नविकरण, संचालन र नियमन सम्बन्धी ...
-          कार्यालयले मेल
+          प्रस्तुत विषयमा {MUNICIPALITY.name} को उद्योग, व्यवसाय, दर्ता, नविकरण, संचालन र नियमन
+          सम्बन्धी ... कार्यालयले मेल{" "}
           <input
             name="mailTo"
             value={form.mailTo}
@@ -210,7 +187,7 @@ export default function BusinessRegSummary() {
           मा पठाईदिन अनुरोध गरेको छ ।
         </p>
 
-        {/* business list table */}
+        {/* --- Business Table --- */}
         <div className="brs-table-wrapper">
           <table className="brs-table">
             <thead>
@@ -228,54 +205,17 @@ export default function BusinessRegSummary() {
               {businessList.map((b, i) => (
                 <tr key={i}>
                   <td>{i + 1}</td>
-                  <td>
-                    <input
-                      name="regNo"
-                      value={b.regNo}
-                      onChange={(e) => onBusinessChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="regDate"
-                      value={b.regDate}
-                      onChange={(e) => onBusinessChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="businessName"
-                      value={b.businessName}
-                      onChange={(e) => onBusinessChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="address"
-                      value={b.address}
-                      onChange={(e) => onBusinessChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="proprietor"
-                      value={b.proprietor}
-                      onChange={(e) => onBusinessChange(i, e)}
-                    />
-                  </td>
+                  <td><input name="regNo" value={b.regNo} onChange={(e) => onBusinessChange(i, e)} /></td>
+                  <td><input name="regDate" value={b.regDate} onChange={(e) => onBusinessChange(i, e)} /></td>
+                  <td><input name="businessName" value={b.businessName} onChange={(e) => onBusinessChange(i, e)} /></td>
+                  <td><input name="address" value={b.address} onChange={(e) => onBusinessChange(i, e)} /></td>
+                  <td><input name="proprietor" value={b.proprietor} onChange={(e) => onBusinessChange(i, e)} /></td>
                   <td>
                     {businessList.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeBusinessRow(i)}
-                      >
-                        −
-                      </button>
+                      <button type="button" className="brs-row-btn" onClick={() => removeBusinessRow(i)}>−</button>
                     )}
                     {i === businessList.length - 1 && (
-                      <button type="button" onClick={addBusinessRow}>
-                        +
-                      </button>
+                      <button type="button" className="brs-row-btn" onClick={addBusinessRow}>+</button>
                     )}
                   </td>
                 </tr>
@@ -284,82 +224,34 @@ export default function BusinessRegSummary() {
           </table>
         </div>
 
-        {/* detailed description */}
+        {/* --- Description --- */}
         <div className="brs-desc-block">
           <label>बिस्तृतः</label>
-          <textarea
-            name="description"
-            rows="6"
-            value={form.description}
-            onChange={onChange}
-          />
+          <textarea name="description" rows="4" value={form.description} onChange={onChange} />
         </div>
 
-        {/* applicant */}
-        <h3 className="brs-section-title">निवेदकको विवरण</h3>
-        <div className="brs-applicant-box">
-          <div className="brs-field">
-            <label>निवेदकको नाम *</label>
-            <input
-              name="applicantName"
-              value={form.applicantName}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <div className="brs-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input
-              name="applicantAddress"
-              value={form.applicantAddress}
-              onChange={onChange}
-            />
-          </div>
-          <div className="brs-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input
-              name="applicantCitizenship"
-              value={form.applicantCitizenship}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <div className="brs-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input
-              name="applicantPhone"
-              value={form.applicantPhone}
-              onChange={onChange}
-            />
-          </div>
-        </div>
+        {/* --- Applicant Details --- */}
+        <ApplicantDetailsNp formData={form} handleChange={onChange} />
 
-        {/* bottom */}
+        {/* --- Position + Footer --- */}
         <div className="brs-bottom-row">
-          <div className="brs-post-select">
-            <input
-              name="positionTitle"
-              value={form.positionTitle}
-              onChange={onChange}
-              className="brs-post-input"
-              placeholder="पद"
-            />
-          </div>
-          <div className="brs-submit-row">
-            <button
-              className="brs-submit-btn"
-              type="submit"
-              disabled={submitting}
-            >
-              {submitting
-                ? "पठाइँ हुँदैछ..."
-                : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-            </button>
-          </div>
+          <input
+            name="positionTitle"
+            value={form.positionTitle}
+            onChange={onChange}
+            className="brs-post-input"
+            placeholder="पद"
+          />
+          <button className="save-print-btn" type="button" onClick={handlePrint}>
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
+
       </form>
 
-      <footer className="brs-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </div>
     </div>
   );
 }

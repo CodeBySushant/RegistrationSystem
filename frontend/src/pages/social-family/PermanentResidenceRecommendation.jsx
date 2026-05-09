@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import './PermanentResidenceRecommendation.css';
 
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
 /* Safe API base resolver (CRA / Vite / window.__API_BASE) */
 const getApiBase = () => {
   try {
@@ -29,109 +35,51 @@ const timestampNow = () => {
 };
 
 const PermanentResidenceRecommendation = () => {
-  const [form, setForm] = useState({
-    reference_no: '२०८२/८३',
-    chalani_no: '',
-    date_bs: '२०८२-०८-०६',   // store BS as string (VARCHAR)
-    salutation_person_prefix: 'श्री',
-    applicant_name: '',
-    current_municipality: 'नागार्जुन',
-    current_municipality_display: 'नागार्जुन',
-    ward_no: '1',
-    previous_unit: '', // साविक ... text
-    since_date_bs: '२०८२-०८-०६',
-    npr_no: '',
-    npr_issue_district: '',
-    npr_issue_date_bs: '२०८२-०८-०६',
-    signatory_name: '',
-    signatory_designation: '',
-    applicant_name_box: '',
-    applicant_address_box: '',
-    applicant_citizenship_no: '',
-    applicant_phone: '',
-    municipality_name: 'नागार्जुन नगरपालिका',
-    ward_title: '१ नं. वडा कार्यालय'
-  });
-
-  const [locations, setLocations] = useState([ emptyLocationRow() ]);
-  const [saving, setSaving] = useState(false);
-
-  const setField = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
-
-  const onLocationChange = (idx, key, value) => {
-    setLocations(prev => {
-      const copy = prev.map(r => ({ ...r }));
-      copy[idx][key] = value;
-      return copy;
-    });
-  };
-
-  const addLocation = () => setLocations(prev => ([ ...prev, emptyLocationRow() ]));
-  const removeLocation = (idx) => setLocations(prev => prev.filter((_, i) => i !== idx));
+  const { form, setForm, handleChange } = useWardForm(initialState);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSaving(true);
+    setLoading(true);
     try {
-      const now = timestampNow();
-
-      // build full payload matching forms.json / SQL columns
-      const payload = {
-        reference_no: form.reference_no ?? '',
-        chalani_no: form.chalani_no ?? '',
-        date_bs: form.date_bs ?? null,
-        salutation_person_prefix: form.salutation_person_prefix ?? '',
-        applicant_name: form.applicant_name ?? '',
-        current_municipality: form.current_municipality ?? '',
-        current_municipality_display: form.current_municipality_display ?? '',
-        ward_no: form.ward_no ?? '',
-        previous_unit: form.previous_unit ?? '',
-        since_date_bs: form.since_date_bs ?? null,
-
-        npr_no: form.npr_no ?? '',
-        npr_issue_district: form.npr_issue_district ?? '',
-        npr_issue_date_bs: form.npr_issue_date_bs ?? null,
-
-        // locations will be stored as JSON in DB
-        locations: locations && locations.length ? locations : [],
-
-        signatory_name: form.signatory_name ?? '',
-        signatory_designation: form.signatory_designation ?? '',
-
-        applicant_name_box: form.applicant_name_box ?? '',
-        applicant_address_box: form.applicant_address_box ?? '',
-        applicant_citizenship_no: form.applicant_citizenship_no ?? '',
-        applicant_phone: form.applicant_phone ?? '',
-
-        municipality_name: form.municipality_name ?? '',
-        ward_title: form.ward_title ?? '',
-
-        created_at: now,
-        updated_at: now
-      };
-
-      console.log('OUTGOING PAYLOAD:', JSON.stringify(payload, null, 2));
-
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `Server returned ${res.status}`);
+      // backend URL - adjust if different
+      const res = await axios.post("/api/forms/permanent-residence-recommendation", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState); // reset form on success
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-
-      const json = await res.json();
-      alert(`Record created with id: ${json.id}`);
     } catch (err) {
-      console.error(err);
-      alert('Error saving record: ' + err.message);
-    } finally {
-      setSaving(false);
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
     }
   };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.post("/api/forms/permanent-residence-recommendation", form);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print(); // ✅ print first
+        setForm(initialState); // ✅ reset AFTER print
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <form className="permanent-residence-container" onSubmit={handleSubmit}>
@@ -254,35 +202,18 @@ const PermanentResidenceRecommendation = () => {
         </div>
       </div>
 
-      {/* --- Applicant Details Box --- */}
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input value={form.applicant_name_box} onChange={e => setField('applicant_name_box', e.target.value)} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input value={form.applicant_address_box} onChange={e => setField('applicant_address_box', e.target.value)} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input value={form.applicant_citizenship_no} onChange={e => setField('applicant_citizenship_no', e.target.value)} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input value={form.applicant_phone} onChange={e => setField('applicant_phone', e.target.value)} className="detail-input bg-gray" />
-          </div>
-        </div>
-      </div>
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
       {/* --- Footer Action --- */}
       <div className="form-footer">
-        <button type="submit" className="save-print-btn" disabled={saving}>{saving ? 'Saving...' : 'रेकर्ड सेभ र प्रिन्ट गर्नुहोस्'}</button>
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
       </div>
 
-      <div className="copyright-footer">© सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका</div>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </div>
     </form>
   );
 };

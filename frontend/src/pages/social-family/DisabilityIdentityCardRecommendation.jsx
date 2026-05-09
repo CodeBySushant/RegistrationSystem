@@ -2,6 +2,12 @@
 import React, { useState } from "react";
 import "./DisabilityIdentityCardRecommendation.css";
 
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
 const FORM_KEY = "disability-identity-card-recommendation";
 
 /**
@@ -16,19 +22,23 @@ const FORM_KEY = "disability-identity-card-recommendation";
 function getApiBase() {
   // --- Vite (always safe) ---
   try {
-    if (typeof import.meta !== "undefined" &&
-        import.meta &&
-        import.meta.env &&
-        import.meta.env.VITE_API_BASE) {
+    if (
+      typeof import.meta !== "undefined" &&
+      import.meta &&
+      import.meta.env &&
+      import.meta.env.VITE_API_BASE
+    ) {
       return import.meta.env.VITE_API_BASE;
     }
   } catch (e) {}
 
   // --- CRA / Node environments ---
   try {
-    if (typeof process !== "undefined" &&
-        process.env &&
-        (process.env.REACT_APP_API_BASE || process.env.API_BASE)) {
+    if (
+      typeof process !== "undefined" &&
+      process.env &&
+      (process.env.REACT_APP_API_BASE || process.env.API_BASE)
+    ) {
       return process.env.REACT_APP_API_BASE || process.env.API_BASE;
     }
   } catch (e) {}
@@ -47,75 +57,51 @@ const API_BASE = getApiBase();
 const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
 
 const DisabilityIdentityCardRecommendation = () => {
+  const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null);
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMsg(null);
     setLoading(true);
-
     try {
-      const fd = new FormData(e.target);
-      const flat = {};
-      for (const [k, v] of fd.entries()) flat[k] = v;
+      // backend URL - adjust if different
+      const res = await axios.post("/api/forms/disability-identity-card-recommendation", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState); // reset form on success
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
 
-      const addressee = {
-        office: flat.addressee_office || "महिला तथा बाल विकास कार्यालाय",
-        local: flat.addressee_local || flat.addressee_local || "नागार्जुन",
-        district: flat.addressee_district || "काठमाडौँ"
-      };
-
-      const location = {
-        old_unit_name: flat.old_unit_name || null,
-        old_unit_type: flat.old_unit_type || null,
-        old_unit_ward: flat.old_unit_ward || null,
-        current_ward: flat.current_ward || "1"
-      };
-
-      const disability = {
-        title: flat.person_title || null,
-        name: flat.person_name || null,
-        disability_type: flat.disability_type || null,
-        registered_unit: flat.registered_unit || null
-      };
-
-      const applicant = {
-        name: flat.applicant_name || null,
-        address: flat.applicant_address || null,
-        citizenship_no: flat.applicant_citizenship_no || null,
-        phone: flat.applicant_phone || null
-      };
-
-      const payload = {
-        chalani_no: flat.chalani_no || null,
-        addressee,
-        location,
-        disability,
-        applicant,
-        signatory_name: flat.signatory_name || null,
-        signatory_designation: flat.signatory_designation || null,
-        meta_date: flat.meta_date || null
-      };
-
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || data.error || "Server error");
-
-      setMsg({ type: "success", text: `Saved (id: ${data.id})` });
-      // optionally e.target.reset();
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.post("/api/forms/disability-identity-card-recommendation", form);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print(); // ✅ print first
+        setForm(initialState); // ✅ reset AFTER print
+      }
     } catch (err) {
       console.error(err);
-      setMsg({ type: "error", text: err.message || "Submission failed" });
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <form className="disability-recommendation-form" onSubmit={handleSubmit}>
@@ -123,7 +109,9 @@ const DisabilityIdentityCardRecommendation = () => {
         {/* --- Top Bar --- */}
         <div className="top-bar-title">
           अपाङ्ग परिचयपत्र सिफारिस ।
-          <span className="top-right-bread">सामाजिक / पारिवारिक &gt; अपाङ्ग परिचयपत्र सिफारिस</span>
+          <span className="top-right-bread">
+            सामाजिक / पारिवारिक &gt; अपाङ्ग परिचयपत्र सिफारिस
+          </span>
         </div>
 
         {/* --- Header Section --- */}
@@ -142,18 +130,31 @@ const DisabilityIdentityCardRecommendation = () => {
         {/* --- Meta Data (Date/Ref) --- */}
         <div className="meta-data-row">
           <div className="meta-left">
-            <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
-            <p>चलानी नं. : <input name="chalani_no" type="text" className="dotted-input small-input" /></p>
+            <p>
+              पत्र संख्या : <span className="bold-text">२०८२/८३</span>
+            </p>
+            <p>
+              चलानी नं. :{" "}
+              <input
+                name="chalani_no"
+                type="text"
+                className="dotted-input small-input"
+              />
+            </p>
           </div>
           <div className="meta-right">
-            <p>मिति : <span className="bold-text">२०८२-०८-०६</span></p>
+            <p>
+              मिति : <span className="bold-text">२०८२-०८-०६</span>
+            </p>
             <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
           </div>
         </div>
 
         {/* --- Subject --- */}
         <div className="subject-section">
-          <p>विषय:<span className="underline-text">सिफारिस सम्बन्धमा।</span></p>
+          <p>
+            विषय:<span className="underline-text">सिफारिस सम्बन्धमा।</span>
+          </p>
         </div>
 
         {/* --- Addressee Section --- */}
@@ -162,32 +163,74 @@ const DisabilityIdentityCardRecommendation = () => {
             <span>श्री महिला तथा बाल विकास कार्यालाय,</span>
           </div>
           <div className="addressee-row">
-             <input name="addressee_local" type="text" className="line-input medium-input" defaultValue="नागार्जुन" />
-             <span>,</span>
-             <input name="addressee_district" type="text" className="line-input medium-input" defaultValue="काठमाडौँ" />
-             <span style={{float: 'right'}}>|</span>
+            <input
+              name="addressee_local"
+              type="text"
+              className="line-input medium-input"
+              defaultValue="नागार्जुन"
+            />
+            <span>,</span>
+            <input
+              name="addressee_district"
+              type="text"
+              className="line-input medium-input"
+              defaultValue="काठमाडौँ"
+            />
+            <span style={{ float: "right" }}>|</span>
           </div>
         </div>
 
         {/* --- Main Body --- */}
         <div className="form-body">
           <p className="body-paragraph">
-            उपरोक्त सम्बन्धमा <span className="underline-text">नागार्जुन नगरपालिका</span> , वडा नं. <span className="underline-text">१</span> (साविक
-            <input name="old_unit_name" type="text" className="inline-box-input medium-box" />
+            उपरोक्त सम्बन्धमा{" "}
+            <span className="underline-text">नागार्जुन नगरपालिका</span> , वडा
+            नं. <span className="underline-text">१</span> (साविक
+            <input
+              name="old_unit_name"
+              type="text"
+              className="inline-box-input medium-box"
+            />
             <select name="old_unit_type" className="inline-select">
-                <option value=""></option>
-                <option>गा.वि.स.</option>
-                <option>न.पा.</option>
+              <option value=""></option>
+              <option>गा.वि.स.</option>
+              <option>न.पा.</option>
             </select>
-            वडा नं. <input name="old_unit_ward" type="text" className="inline-box-input tiny-box" required /> <span className="red">*</span> ) बस्ने 
+            वडा नं.{" "}
+            <input
+              name="old_unit_ward"
+              type="text"
+              className="inline-box-input tiny-box"
+              required
+            />{" "}
+            <span className="red">*</span> ) बस्ने
             <select name="person_title" className="inline-select">
-                <option value="श्री">श्री</option>
-                <option value="सुश्री">सुश्री</option>
-                <option value="श्रीमती">श्रीमती</option>
+              <option value="श्री">श्री</option>
+              <option value="सुश्री">सुश्री</option>
+              <option value="श्रीमती">श्रीमती</option>
             </select>
-            <input name="person_name" type="text" className="inline-box-input medium-box" required /> <span className="red">*</span> ले (अपाङ्गताको किसिम उल्लेख गर्ने) 
-            <input name="disability_type" type="text" className="inline-box-input medium-box" required /> <span className="red">*</span> अपाङ्ग भएकोले अपाङ्ग परिचयपत्र बनाउनको लागि "सिफारिस गरी पाउँ" भनी यस वडा कार्यालय पर्ने आएको निवेदन सम्बन्धमा तहाको नियमानुसार अपाङ्ग परिचयपत्रको लागि सिफारिस गरिन्छ ।
-            <input name="registered_unit" type="hidden" value="नागार्जुन नगरपालिका" />
+            <input
+              name="person_name"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+            />{" "}
+            <span className="red">*</span> ले (अपाङ्गताको किसिम उल्लेख गर्ने)
+            <input
+              name="disability_type"
+              type="text"
+              className="inline-box-input medium-box"
+              required
+            />{" "}
+            <span className="red">*</span> अपाङ्ग भएकोले अपाङ्ग परिचयपत्र
+            बनाउनको लागि "सिफारिस गरी पाउँ" भनी यस वडा कार्यालय पर्ने आएको
+            निवेदन सम्बन्धमा तहाको नियमानुसार अपाङ्ग परिचयपत्रको लागि सिफारिस
+            गरिन्छ ।
+            <input
+              name="registered_unit"
+              type="hidden"
+              value="नागार्जुन नगरपालिका"
+            />
           </p>
         </div>
 
@@ -196,54 +239,36 @@ const DisabilityIdentityCardRecommendation = () => {
           <div className="signature-block">
             <div className="signature-line"></div>
             <span className="red-mark">*</span>
-            <input name="signatory_name" type="text" className="line-input full-width-input" required />
+            <input
+              name="signatory_name"
+              type="text"
+              className="line-input full-width-input"
+              required
+            />
             <select name="signatory_designation" className="designation-select">
-               <option value="">पद छनौट गर्नुहोस्</option>
-               <option>वडा अध्यक्ष</option>
-               <option>वडा सचिव</option>
-               <option>कार्यवाहक वडा अध्यक्ष</option>
+              <option value="">पद छनौट गर्नुहोस्</option>
+              <option>वडा अध्यक्ष</option>
+              <option>वडा सचिव</option>
+              <option>कार्यवाहक वडा अध्यक्ष</option>
             </select>
           </div>
         </div>
 
-        {/* --- Applicant Details Box --- */}
-        <div className="applicant-details-box">
-          <h3>निवेदकको विवरण</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>निवेदकको नाम</label>
-              <input name="applicant_name" type="text" className="detail-input bg-gray" />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको ठेगाना</label>
-              <input name="applicant_address" type="text" className="detail-input bg-gray" />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको नागरिकता नं.</label>
-              <input name="applicant_citizenship_no" type="text" className="detail-input bg-gray" />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको फोन नं.</label>
-              <input name="applicant_phone" type="text" className="detail-input bg-gray" />
-            </div>
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
         {/* --- Footer Action --- */}
         <div className="form-footer">
-          <button type="submit" className="save-print-btn" disabled={loading}>
-            {loading ? "सेभ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          <button
+            className="save-print-btn"
+            type="button"
+            onClick={handlePrint}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
-        {msg && (
-          <div style={{ marginTop: 8, color: msg.type === "error" ? "red" : "green" }}>
-            {msg.text}
-          </div>
-        )}
-
         <div className="copyright-footer">
-          © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
         </div>
       </div>
     </form>

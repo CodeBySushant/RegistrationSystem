@@ -1,6 +1,11 @@
 // src/pages/identity-card/FarmerGroupOrCommitteeRegistrationCertificateList.jsx
 import React, { useEffect, useState } from "react";
 import "./FarmerGroupOrCommitteeRegistrationCertificateList.css";
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const FORM_KEY = "farmer-group-committee-registration"; // must match forms.json
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -187,9 +192,8 @@ const FarmerGroupOrCommitteeRegistrationCertificateList = () => {
         )}
       </div>
 
-      {/* --- Footer --- */}
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </div>
   );

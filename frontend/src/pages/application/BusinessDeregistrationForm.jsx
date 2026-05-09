@@ -1,6 +1,6 @@
 // src/pages/application/BusinessDeregistrationForm.jsx
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import axios from "../../utils/axiosInstance";
 import "./BusinessDeregistrationForm.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
@@ -9,7 +9,6 @@ import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   headerTo: "श्रीमान्",
-  // prefer MUNICIPALITY Nepali tokens if available
   headerMunicipality: MUNICIPALITY?.name || "",
   headerOffice: MUNICIPALITY?.englishDistrict || "",
   date: new Date().toISOString().slice(0, 10),
@@ -27,13 +26,61 @@ const initialState = {
   applicantAddress: "",
   applicantCitizenship: "",
   applicantPhone: "",
-  // add ward default if you want it shown elsewhere
   wardNo: MUNICIPALITY?.wardNumber || "",
 };
 
+// ─────────────────────────────────────────────────────────────────
+// MUST be defined at module scope (outside any component).
+//
+// ROOT CAUSE of the 1-char bug:
+//   When a component is defined INSIDE another component's function
+//   body, React creates a brand-new component type identity on every
+//   render. React sees "old type ≠ new type" → unmounts the old
+//   <input> and mounts a fresh one → focus is lost after every
+//   keystroke → only 1 character can be typed at a time.
+//
+// Fix: define PrintField / PrintSelect here, at module level,
+// so their identity is stable across renders.
+// ─────────────────────────────────────────────────────────────────
+
+const PrintField = ({ value, isPrint, className = "", name, onChange, ...rest }) => {
+  if (isPrint) {
+    return <span className={`pf-value ${className}`}>{value || ""}</span>;
+  }
+  return (
+    <input
+      type="text"
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`pf-input ${className}`}
+      {...rest}
+    />
+  );
+};
+
+const PrintSelect = ({ value, isPrint, className = "", name, onChange, children }) => {
+  if (isPrint) {
+    return <span className={`pf-value ${className}`}>{value || ""}</span>;
+  }
+  return (
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`pf-select ${className}`}
+    >
+      {children}
+    </select>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────
+
 const BusinessDeregistrationForm = () => {
-  const [formData, setFormData] = useState(initialState);
+  const [formData, setFormData]     = useState(initialState);
   const [submitting, setSubmitting] = useState(false);
+  const [isPrint, setIsPrint]       = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,26 +89,16 @@ const BusinessDeregistrationForm = () => {
 
   const validate = (d) => {
     const required = [
-      "firmRegNo",
-      "firmName",
-      "dissolveReason",
-      "applicantNameForDissolve",
-      "sigSignature",
-      "sigName",
-      "sigAddress",
-      "sigFirmStamp",
-      "applicantName",
-      "applicantAddress",
-      "applicantCitizenship",
+      "firmRegNo", "firmName", "dissolveReason",
+      "applicantNameForDissolve", "sigSignature",
+      "sigName", "sigAddress", "sigFirmStamp",
+      "applicantName", "applicantAddress", "applicantCitizenship",
     ];
     for (const f of required) {
-      if (!d[f] || (typeof d[f] === "string" && d[f].trim() === "")) {
-        return `${f} is required`;
-      }
+      if (!d[f] || !String(d[f]).trim()) return `${f} आवश्यक छ`;
     }
-    // optional: phone format check
     if (d.applicantPhone && !/^[0-9+\-\s]{6,20}$/.test(String(d.applicantPhone))) {
-      return "applicantPhone (invalid format)";
+      return "फोन नम्बर अमान्य";
     }
     return null;
   };
@@ -79,39 +116,48 @@ const BusinessDeregistrationForm = () => {
     setSubmitting(true);
     try {
       const payload = { ...formData };
-      Object.keys(payload).forEach((k) => {
-        if (payload[k] === "") payload[k] = null;
-      });
+      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
 
-      // use relative API endpoint (adjust if your backend differs)
-      const url = "/api/forms/business-deregistration";
-      const res = await axios.post(url, payload);
+      const res = await axios.post("/api/forms/business-deregistration", payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
-        setFormData(initialState);
-        console.log("Saved:", res.data);
-        setTimeout(() => window.print(), 150);
+        setIsPrint(true);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
     } catch (error) {
-      console.error("Submit error:", error);
-      const msg =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        error.message ||
-        "Submission failed";
+      const msg = error.response?.data?.message || error.message || "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
     }
   };
 
+  // After isPrint → true, React repaints with <span> values,
+  // then RAF fires: print dialog opens, then form resets.
+  useEffect(() => {
+    if (!isPrint) return;
+    const id = requestAnimationFrame(() => {
+      window.print();
+      setFormData(initialState);
+      setIsPrint(false);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isPrint]);
+
+  const sigFields = [
+    { label: "दस्तखत",    name: "sigSignature" },
+    { label: "नाम",       name: "sigName"      },
+    { label: "ठेगाना",    name: "sigAddress"   },
+    { label: "फर्मको छाप", name: "sigFirmStamp" },
+  ];
+
   return (
     <div className="business-dereg-container">
       <form onSubmit={handleSubmit}>
-        {/* Reusable Nepali header */}
+
+        {/* ── Header ── */}
         <div className="title-header">
           <MunicipalityHeader showLogo />
           <h3>अनुसूची-१५.३</h3>
@@ -121,30 +167,28 @@ const BusinessDeregistrationForm = () => {
         <div className="form-row">
           <div className="header-to-group">
             <div className="form-group-inline">
-              <input
-                type="text"
+              <PrintField
                 name="headerTo"
                 value={formData.headerTo}
                 onChange={handleChange}
-                className="header-input"
+                isPrint={isPrint}
+                className="header-field"
               />
               <span>ज्यु,</span>
             </div>
-
-            <input
-              type="text"
+            <PrintField
               name="headerMunicipality"
               value={formData.headerMunicipality}
               onChange={handleChange}
-              className="header-input"
+              isPrint={isPrint}
+              className="header-field"
             />
-
-            <input
-              type="text"
+            <PrintField
               name="headerOffice"
               value={formData.headerOffice}
               onChange={handleChange}
-              className="header-input"
+              isPrint={isPrint}
+              className="header-field"
             />
           </div>
 
@@ -152,64 +196,84 @@ const BusinessDeregistrationForm = () => {
             <div className="stamp-box">रु. २० को टिकट</div>
             <div className="form-group date-group">
               <label>मिति :</label>
-              <input type="text" name="date" value={formData.date} onChange={handleChange} />
+              {isPrint
+                ? <span className="pf-value">{formData.date}</span>
+                : <input type="date" name="date" value={formData.date} onChange={handleChange} />
+              }
             </div>
           </div>
         </div>
 
+        {/* ── Subject ── */}
         <div className="subject-line">
           <strong>विषय: <u>फर्म खारेजी सम्बन्धमा ।</u></strong>
         </div>
 
+        {/* ── Body paragraph ── */}
         <p className="certificate-body">
-          उपर्युक्त सम्बन्धमा मेरो नाममा यस
-          <select name="municipality" value={formData.municipality} onChange={handleChange}>
+          उपर्युक्त सम्बन्धमा मेरो नाममा यस&nbsp;
+          <PrintSelect
+            name="municipality"
+            value={formData.municipality}
+            onChange={handleChange}
+            isPrint={isPrint}
+          >
             <option>{MUNICIPALITY?.name || "नागार्जुन नगरपालिका"}</option>
-          </select>
-          मा व्यापारिक प्रयोजनको लागि दर्ता भएको
-          <select name="firmType" value={formData.firmType} onChange={handleChange}>
+          </PrintSelect>
+          &nbsp;मा व्यापारिक प्रयोजनको लागि दर्ता भएको&nbsp;
+          <PrintSelect
+            name="firmType"
+            value={formData.firmType}
+            onChange={handleChange}
+            isPrint={isPrint}
+          >
             <option>प्राइभेट फर्म</option>
             <option>साझेदारी फर्म</option>
-          </select>
-          नं.
-          <input
-            type="text"
+          </PrintSelect>
+          &nbsp;नं.&nbsp;
+          <PrintField
             name="firmRegNo"
             value={formData.firmRegNo}
             onChange={handleChange}
+            isPrint={isPrint}
+            className="short"
             required
-            className="short-input"
           />
-          को
-          <input
-            type="text"
+          &nbsp;को&nbsp;
+          <PrintField
             name="firmName"
-            placeholder="फर्मको नाम"
             value={formData.firmName}
             onChange={handleChange}
+            isPrint={isPrint}
+            placeholder="फर्मको नाम"
             required
           />
-          नामको फर्म
-          <input
-            type="text"
+          &nbsp;नामको फर्म&nbsp;
+          <PrintField
             name="dissolveReason"
-            placeholder="कारण"
             value={formData.dissolveReason}
             onChange={handleChange}
+            isPrint={isPrint}
+            placeholder="कारण"
             required
           />
-          कारणले खारेज गरी पाउन रु. २० को टिकट टाँसी यो निवेदन दिएको छु। उक्त फर्मको नामबाट नेपाल सरकार र अन्य कुनै निकायमा कुनै राजस्व र अन्य रकम बुझाउन बाँकी छैन। कुनै किसिमको रकमा वा राजस्व बुझाउन बाँकी देखिएमा पछि कुनै उजुरबाजुर नगरी सम्बन्धित निकायमा बुझाउन मेरो मन्जुरी छ। निम्नानुसार लाग्ने दस्तुर तिरी मेरो
-          <input
-            type="text"
+          &nbsp;कारणले खारेज गरी पाउन रु. २० को टिकट टाँसी यो निवेदन दिएको छु।
+          उक्त फर्मको नामबाट नेपाल सरकार र अन्य कुनै निकायमा कुनै राजस्व र अन्य रकम
+          बुझाउन बाँकी छैन। कुनै किसिमको रकमा वा राजस्व बुझाउन बाँकी देखिएमा पछि
+          कुनै उजुरबाजुर नगरी सम्बन्धित निकायमा बुझाउन मेरो मन्जुरी छ। निम्नानुसार
+          लाग्ने दस्तुर तिरी मेरो&nbsp;
+          <PrintField
             name="applicantNameForDissolve"
-            placeholder="तपाईको नाम"
             value={formData.applicantNameForDissolve}
             onChange={handleChange}
+            isPrint={isPrint}
+            placeholder="तपाईको नाम"
             required
           />
-          नामको उक्त फर्म खारेज गरी पाउन श्रीमान समक्ष अनुरोध गर्दछु।
+          &nbsp;नामको उक्त फर्म खारेज गरी पाउन श्रीमान समक्ष अनुरोध गर्दछु।
         </p>
 
+        {/* ── Documents list ── */}
         <div className="documents-list">
           <strong>संलग्न कागजातहरु:</strong>
           <ol>
@@ -221,44 +285,44 @@ const BusinessDeregistrationForm = () => {
           </ol>
         </div>
 
+        {/* ── Signature & Thumbprint ── */}
         <div className="signature-wrapper">
           <div className="thumb-section">
             <label className="section-title">औंठा छाप</label>
             <div className="thumb-boxes">
-              <div className="thumb-box"><label>बायाँ</label><div className="thumb-area"></div></div>
-              <div className="thumb-box"><label>दायाँ</label><div className="thumb-area"></div></div>
+              <div className="thumb-box"><label>बायाँ</label><div className="thumb-area" /></div>
+              <div className="thumb-box"><label>दायाँ</label><div className="thumb-area" /></div>
             </div>
           </div>
 
           <div className="signature-section">
             <p className="signature-label">निवेदक</p>
-            <div className="form-group-inline">
-              <label>दस्तखत : *</label>
-              <input type="text" name="sigSignature" value={formData.sigSignature} onChange={handleChange} required />
-            </div>
-            <div className="form-group-inline">
-              <label>नाम : *</label>
-              <input type="text" name="sigName" value={formData.sigName} onChange={handleChange} required />
-            </div>
-            <div className="form-group-inline">
-              <label>ठेगाना : *</label>
-              <input type="text" name="sigAddress" value={formData.sigAddress} onChange={handleChange} required />
-            </div>
-            <div className="form-group-inline">
-              <label>फर्मको छाप : *</label>
-              <input type="text" name="sigFirmStamp" value={formData.sigFirmStamp} onChange={handleChange} required />
-            </div>
+            {sigFields.map(({ label, name }) => (
+              <div className="form-group-inline" key={name}>
+                <label>{label} : <span className="req">*</span></label>
+                <PrintField
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  isPrint={isPrint}
+                  required
+                />
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Applicants details */}
+        {/* ── Applicant Details ── */}
         <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
-        <div className="submit-area">
-          <button type="submit" className="submit-btn" disabled={submitting}>
-            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-          </button>
-        </div>
+        {/* ── Submit (hidden in print mode) ── */}
+        {!isPrint && (
+          <div className="submit-area">
+            <button type="submit" className="submit-btn" disabled={submitting}>
+              {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

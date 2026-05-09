@@ -1,154 +1,222 @@
-// src/components/EnglishLanguage.jsx
-import React, { useState } from 'react';
-import './EnglishLanguage.css';
+import React, { useState } from "react";
+import "./EnglishLanguage.css";
+import axios from "../../utils/axiosInstance";
+import ApplicantDetailsEn from "../../components/ApplicantDetailsEn.jsx";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 
-const FORM_KEY = "open-format-nepali";
-const API_URL = `/api/forms/${FORM_KEY}`;
+const FORM_KEY = "open-application";
 
 const EnglishLanguage = () => {
   const [form, setForm] = useState({
-    letter_no: "२०८२/८३",
+    letter_no: "2082/83",
     reference_no: "",
     date: new Date().toISOString().slice(0, 10),
     subject: "",
     addressee_name: "",
     addressee_line2: "",
     body_text: "",
-    archive: false,
-    bodartha: "",
     signatory_name: "",
     signatory_position: "",
     applicant_name: "",
     applicant_address: "",
     applicant_citizenship_no: "",
     applicant_phone: "",
-    notes: ""
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
   const upd = (k) => (e) => {
-    const v = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setForm(s => ({ ...s, [k]: v }));
+    const v = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    setForm((s) => ({ ...s, [k]: v }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
 
-    // minimal validation
-    if (!form.subject || !form.addressee_name || !form.signatory_name) {
-      setMessage({ type: 'error', text: 'सबै आवश्यक फिल्ड (subject, addressee, signatory) भर्नुहोस्।' });
+    // ✅ Basic validation
+    if (!form.subject || !form.signatory_name) {
+      setMessage({
+        type: "error",
+        text: "Subject and Signatory Name required!",
+      });
       return;
     }
 
     setLoading(true);
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+      // ✅ FIXED - Uses correct formKey with axios auth
+      const res = await axios.post(`/api/forms/${FORM_KEY}`, form);
+      
+      // ✅ PRINT AFTER SUCCESSFUL SAVE
+      window.print();
+      
+      setMessage({ 
+        type: "success", 
+        text: `Saved successfully! ID: ${res.data.id || 'N/A'}` 
       });
-
-      const body = await res.json();
-      if (!res.ok) {
-        setMessage({ type: 'error', text: body.message || JSON.stringify(body) });
-      } else {
-        setMessage({ type: 'success', text: `रेकर्ड सफल—ID: ${body.id || 'unknown'}` });
-      }
     } catch (err) {
-      setMessage({ type: 'error', text: err.message });
+      console.error("Submit error:", err.response || err.message || err);
+      const msg = 
+        err.response?.data?.message || 
+        err.response?.data?.error || 
+        err.message || 
+        "Save failed. Check form key.";
+      setMessage({ type: "error", text: msg });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form className="open-format-container" onSubmit={handleSubmit}>
-      <div className="top-bar-title">
-        नेपाली भाषामा ।
-        <span className="top-right-bread">खुला ढाँचा &gt; नेपाली प्रपत्र</span>
-      </div>
+    <div className="open-format-container">
+      <form onSubmit={handleSubmit}>
+        {/* Header Section from Image */}
+        <header className="form-header-section">
+          <div className="header-logo">
+            <img src="/nepallogo.svg" alt="Nepal Logo" />
+          </div>
+          <div className="header-text">
+            <h1 className="municipality-name">Nagarjun Municipality</h1>
+            <h2 className="ward-title">{MUNICIPALITY.ward} No. Ward Office</h2>
+            <p className="address-text">Kathmandu, Kathmandu</p>
+            <p className="province-text">Bagmati Province, Nepal</p>
+          </div>
+        </header>
 
-      <div className="meta-data-row">
-        <div className="meta-left">
-          <label>पत्र संख्या :</label>
-          <input type="text" value={form.letter_no} onChange={upd('letter_no')} />
+        {/* Meta Data Row */}
+        <div className="meta-data-row">
+          <div className="meta-left">
+            <p>
+              Letter No. :{" "}
+              <input
+                type="text"
+                className="dotted-input"
+                value={form.letter_no}
+                onChange={upd("letter_no")}
+              />
+            </p>
+            <p>
+              Ref No. :{" "}
+              <input
+                type="text"
+                className="dotted-input"
+                value={form.reference_no}
+                onChange={upd("reference_no")}
+              />
+            </p>
+          </div>
+          <div className="meta-right">
+            <p>
+              Date :{" "}
+              <input
+                type="date"
+                className="dotted-input"
+                value={form.date}
+                onChange={upd("date")}
+              />
+            </p>
+          </div>
         </div>
-        <div className="meta-left">
-          <label>चलानी नं. :</label>
-          <input type="text" value={form.reference_no} onChange={upd('reference_no')} />
+
+        {/* Subject and Addressee */}
+        <div className="addressee-subject-section">
+          <div className="subject-block">
+            <label>Subject:</label>
+            <div className="inline-input-wrapper">
+              <span className="input-required-star">*</span>
+              <input
+                type="text"
+                value={form.subject}
+                onChange={upd("subject")}
+                className="dotted-input large-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="addressee-row">
+            <div className="inline-input-wrapper">
+              <span className="input-required-star">*</span>
+              <input
+                type="text"
+                value={form.addressee_name}
+                onChange={upd("addressee_name")}
+                className="dotted-input long-input"
+                required
+              />
+            </div>
+          </div>
         </div>
-        <div className="meta-right">
-          <label>मिति :</label>
-          <input type="date" value={form.date} onChange={upd('date')} />
+
+        {/* Editor Area Mockup */}
+        <div className="editor-area">
+          <div className="rich-editor-mock">
+            <div className="editor-toolbar">
+              <span>Write Here: </span>
+              <span className="upgrade-btn">⚡ Upgrade</span>
+            </div>
+            <textarea
+              className="editor-textarea"
+              value={form.body_text}
+              onChange={upd("body_text")}
+              placeholder="Write your letter content here..."
+            />
+            <div className="word-count">
+              {" "}
+              {(form.body_text || "").split(/\s+/).filter(Boolean).length}{" "}
+              words{" "}
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="addressee-subject-section">
-        <div className="subject-block">
-          <label>विषय:</label>
-          <input type="text" value={form.subject} onChange={upd('subject')} className="line-input large-input" required />
+        {/* Signature Block */}
+        <div className="signature-wrapper">
+          <div className="signature-block">
+            <div className="inline-input-wrapper">
+              <span className="input-required-star">*</span>
+              <input
+                type="text"
+                value={form.signatory_name}
+                onChange={upd("signatory_name")}
+                className="dotted-input"
+                placeholder="Signatory Name"
+                required
+              />
+            </div>
+            <select
+              className="designation-select"
+              value={form.signatory_position}
+              onChange={upd("signatory_position")}
+            >
+              <option value="">Select Designation</option>
+              <option value="Ward Chairman">Ward Chairman</option>
+              <option value="Ward Secretary">Ward Secretary</option>
+            </select>
+          </div>
         </div>
 
-        <div className="addressee-row">
-          <span>श्री</span>
-          <input type="text" value={form.addressee_name} onChange={upd('addressee_name')} className="line-input long-input" required />
+        {/* Applicant Details Component */}
+        <ApplicantDetailsEn formData={form} handleChange={upd} />
+
+        {/* Footer Actions */}
+        <div className="form-footer">
+          <button type="submit" className="save-print-btn" disabled={loading}>
+            {loading ? "Saving..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
         </div>
-        <div className="addressee-row">
-          <input type="text" value={form.addressee_line2} onChange={upd('addressee_line2')} className="line-input long-input" />
-        </div>
-      </div>
 
-      <div className="editor-area">
-        <textarea className="editor-textarea" rows="10" placeholder="लेख यहाँ..." value={form.body_text} onChange={upd('body_text')} />
-        <div className="word-count"> { (form.body_text || '').split(/\s+/).filter(Boolean).length } words</div>
+        {message && (
+          <div className={`status-message ${message.type}`}>{message.text}</div>
+        )}
+      </form>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
       </div>
-
-      <div className="footer-options">
-        <label><input type="checkbox" checked={!!form.archive} onChange={upd('archive')} /> अभिलेख गर्नुहोस्</label>
-      </div>
-
-      <div className="footer-options">
-        <label>बोधार्थ:</label>
-        <input type="text" value={form.bodartha} onChange={upd('bodartha')} className="line-input long-input" />
-      </div>
-
-      <div className="signature-section">
-        <input type="text" value={form.signatory_name} onChange={upd('signatory_name')} placeholder="दस्तखत/नाम" required />
-        <select value={form.signatory_position} onChange={upd('signatory_position')}>
-          <option value="">पद छनौट गर्नुहोस्</option>
-          <option>वडा अध्यक्ष</option>
-          <option>वडा सचिव</option>
-        </select>
-      </div>
-
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <input type="text" placeholder="नाम" value={form.applicant_name} onChange={upd('applicant_name')} />
-          <input type="text" placeholder="ठेगाना" value={form.applicant_address} onChange={upd('applicant_address')} />
-          <input type="text" placeholder="नागरिकता नं." value={form.applicant_citizenship_no} onChange={upd('applicant_citizenship_no')} />
-          <input type="text" placeholder="फोन" value={form.applicant_phone} onChange={upd('applicant_phone')} />
-        </div>
-      </div>
-
-      <div style={{ marginTop: 12 }}>
-        <label>Notes</label>
-        <textarea rows={2} value={form.notes} onChange={upd('notes')} />
-      </div>
-
-      <div className="form-footer" style={{ marginTop: 12 }}>
-        <button type="submit" disabled={loading}>{loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}</button>
-      </div>
-
-      {message && (
-        <div style={{ marginTop: 8, color: message.type === 'error' ? 'crimson' : 'green' }}>
-          {message.text}
-        </div>
-      )}
-    </form>
+    </div>
   );
 };
 

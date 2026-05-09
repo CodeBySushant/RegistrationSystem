@@ -1,228 +1,142 @@
 /* --- Main Container --- */
 .open-format-container {
   max-width: 950px;
-  margin: 0 auto;
-  padding: 30px 50px;
+  margin: 20px auto;
+  padding: 40px 60px;
   background-image: url("/papertexture1.jpg");
   background-repeat: repeat;
   background-size: auto;
-  background-position: top left;
-  font-family: 'Kalimati', 'Kokila', sans-serif;
-  color: #000;
-  position: relative;
-}
-
-/* --- Utility Classes --- */
-.bold-text { font-weight: bold; }
-.underline-text { text-decoration: underline; }
-.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: sub;}
-.red-mark { color: red; position: absolute; top: 0; left: 0; }
-.ml-20 { margin-left: 20px; }
-
-/* --- Top Bar --- */
-.top-bar-title {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  font-weight: bold;
-  font-size: 1.1rem;
+  font-family: 'Times New Roman', serif;
   color: #333;
-}
-
-.top-right-bread {
-  font-size: 0.9rem;
-  color: #777;
-  font-weight: normal;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 /* --- Header Section --- */
 .form-header-section {
   text-align: center;
-  margin-bottom: 20px;
   position: relative;
+  margin-bottom: 30px;
 }
 
 .header-logo img {
   position: absolute;
   left: 0;
   top: 0;
-  width: 80px;
+  width: 90px;
 }
 
-.header-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+.header-text .municipality-name { color: #d32f2f; font-size: 1.8rem; margin: 0; font-weight: bold; }
+.header-text .ward-title { color: #d32f2f; font-size: 2.8rem; margin: 5px 0; font-weight: bold; }
+.header-text .address-text, .province-text { color: #d32f2f; margin: 2px 0; font-size: 1.1rem; font-weight: 500; }
 
-.municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
-.ward-title { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
-.address-text, .province-text { color: #e74c3c; margin: 0; font-size: 1rem; }
-
-/* --- Meta Data --- */
+/* --- Meta & Inputs --- */
 .meta-data-row {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+}
+
+.dotted-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  outline: none;
+  padding: 2px 5px;
   font-size: 1rem;
 }
-.meta-left p, .meta-right p { margin: 5px 0; }
-.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; font-family: inherit; font-size: 1rem; }
-.small-input { width: 120px; }
 
-/* --- Addressee & Subject --- */
-.addressee-subject-section {
-    margin-bottom: 20px;
-    font-size: 1rem;
-}
-.addressee-row { margin-bottom: 8px; display: flex; align-items: center; }
-.line-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; margin: 0 5px; padding: 0 5px; }
-.long-input { width: 350px; }
-.medium-input { width: 250px; }
+.large-input { width: 300px; }
+.long-input { width: 400px; }
 
-.subject-block {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-.subject-block label { margin-right: 10px; font-weight: bold; }
-
-
-/* --- Rich Text Editor Mock --- */
-.editor-area { margin-bottom: 30px; }
-
+/* --- Editor Mock --- */
 .rich-editor-mock {
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    background-color: #fff;
+  border: 1px solid #ddd;
+  background: #fff;
+  margin-top: 20px;
 }
+
 .editor-toolbar {
-    background-color: #f5f5f5;
-    padding: 5px 10px;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    font-family: sans-serif;
-    font-size: 0.9rem;
-}
-.editor-toolbar-2 {
-    background-color: #fff;
-    padding: 5px 10px;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    font-family: sans-serif;
-    font-size: 0.9rem;
-}
-
-.tool-btn {
-    cursor: pointer;
-    padding: 2px 5px;
-    border: 1px solid transparent;
-}
-.tool-btn:hover { border: 1px solid #ccc; background-color: #e0e0e0; border-radius: 2px; }
-.tool-sep { color: #ccc; }
-
-.editor-select {
-    border: 1px solid #ccc;
-    padding: 2px;
-    font-size: 0.9rem;
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #666;
 }
 
 .editor-textarea {
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 15px;
-    font-family: serif; /* Font style typically used in RTE */
-    font-size: 1rem;
-    resize: vertical;
-    box-sizing: border-box;
-    min-height: 200px;
-}
-.word-count {
-    padding: 5px 15px;
-    font-size: 0.75rem;
-    color: #999;
-    text-align: right;
-}
-.upgrade-btn {
-    margin-left: auto;
-    color: #2980b9;
-    font-weight: bold;
-    cursor: pointer;
+  width: 100%;
+  min-height: 400px;
+  border: none;
+  padding: 20px;
+  box-sizing: border-box;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  resize: vertical;
 }
 
-/* --- Footer Options --- */
-.footer-options {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-.footer-options input { margin-right: 8px; }
-
-/* --- Signature Section --- */
-.signature-section {
+/* --- Signature --- */
+.signature-wrapper {
   display: flex;
   justify-content: flex-end;
-  margin-top: 50px;
-  margin-bottom: 30px;
+  margin-top: 40px;
 }
 
-.signature-block { width: 220px; text-align: center; position: relative;}
-.signature-block .line-input {
-    width: 100%; margin-bottom: 5px; border: none; border-bottom: 1px dotted #000; outline: none; background: transparent;
-}
-.designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; }
-
-/* --- Applicant Details Box --- */
-.applicant-details-box {
-  border: 1px solid #ddd;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.4);
-  margin-top: 20px;
-  border-radius: 4px;
+.signature-block {
+  width: 250px;
+  text-align: right;
 }
 
-.applicant-details-box h3 {
-  color: #777;
-  font-size: 1.1rem;
-  margin: 0 0 15px 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-}
-
-.details-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
-}
-
-.detail-group { display: flex; flex-direction: column; }
-.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
-.detail-input {
-  border: 1px solid #ddd;
-  padding: 8px;
-  border-radius: 4px;
+.designation-select {
   width: 100%;
-  box-sizing: border-box;
-  background-color: #eef2f5; 
+  margin-top: 10px;
+  padding: 5px;
 }
 
-/* --- Footer --- */
-.form-footer { text-align: center; margin-top: 40px; }
+/* --- Applicant Details Box (Bottom) --- */
+.applicant-details-box {
+  margin-top: 40px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+/* --- Status Messages --- */
+.status-message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+.status-message.error { background: #fee2e2; color: #b91c1c; }
+.status-message.success { background: #dcfce7; color: #15803d; }
+
 .save-print-btn {
-  background-color: #2c3e50;
+  background: #2c3e50;
   color: white;
-  padding: 10px 25px;
+  padding: 10px 30px;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
   cursor: pointer;
+  font-size: 1rem;
 }
-.save-print-btn:hover { background-color: #1a252f; }
-.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+
+.copyright-footer {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 40px;
+}
+
+/* ✅ ADD THIS PRINT FIX */
+@media print {
+  body * { visibility: hidden; }
+  .open-format-container, .open-format-container * { visibility: visible; }
+  .open-format-container {
+    position: absolute; left: 0; top: 0; width: 100%; 
+    padding: 20px 40px; background: white !important; box-shadow: none;
+  }
+  .status-message, .form-footer, .editor-toolbar .upgrade-btn, .word-count { display: none !important; }
+  .rich-editor-mock { border: none !important; background: transparent !important; }
+  .editor-textarea { border: none !important; background: transparent !important; resize: none !important; }
+}

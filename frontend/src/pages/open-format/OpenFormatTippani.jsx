@@ -1,200 +1,200 @@
 import React, { useState } from "react";
+import axios from "../../utils/axiosInstance"; // ✅ Fixed
+import { useWardForm } from "../../hooks/useWardForm"; // ✅ Added
 import "./OpenFormatTippani.css";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext"; // ✅ Added
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp"; // ✅ Optional
 
-const FORM_KEY = "open-format-tippani";
-const API_BASE = import.meta.env.VITE_API_BASE || "";
-const API_URL = `${API_BASE}/api/forms/${FORM_KEY}`;
+const initialState = {
+  date: "",
+  addressee: "",
+  subject: "",
+  body_text: "",
+  archive: false,
+  approve: false,
+  signature_name: "",
+  signature_designation: "",
+};
 
 const OpenFormatTippani = () => {
-
-  const [form, setForm] = useState({
-    date: new Date().toISOString().slice(0, 10),
-    addressee: "",
-    subject: "",
-    body_text: "",
-    archive: false,
-    approve: false,
-    signature_name: "",
-    signature_designation: "",
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizenship_no: "",
-    applicant_phone: ""
-  });
-
-  const [msg, setMsg] = useState(null);
+  const { form, setForm, handleChange } = useWardForm(initialState); // ✅ Hook
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth(); // ✅ Dynamic ward
 
-  const update = (k) => (e) => {
-    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
-    setForm((s) => ({ ...s, [k]: value }));
-  };
-
-  function validate() {
-    if (!form.date) return "Please provide a valid date (YYYY-MM-DD)";
-    if (!form.subject) return "Subject is required.";
-    if (!form.addressee) return "Addressee is required.";
-    return null;
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMsg(null);
-    const err = validate();
-    if (err) {
-      setMsg({ type: "error", text: err });
-      return;
-    }
+  const handlePrint = async () => { // ✅ Print + Save
+    // ✅ Skip date validation
+    const submitData = {
+      ...form,
+      date: form.date || null  // ✅ Safe date handling
+    };
 
     setLoading(true);
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
-
-      const body = await res.json();
-
-      if (!res.ok) {
-        setMsg({ type: "error", text: body.message || "Error submitting form" });
-      } else {
-        setMsg({ type: "success", text: "Saved successfully" });
+      const res = await axios.post("/api/forms/open-format-tippani", submitData);
+      if (res.status === 201) {
+        alert("सफल! ID: " + res.data.id);
+        window.print();
+        setForm(initialState);
       }
-    } catch (e) {
-      setMsg({ type: "error", text: e.message });
+    } catch (err) {
+      console.error(err);
+      alert("त्रुटि: " + (err.response?.data?.message || "पठाउन सकिएन"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form className="tippani-container" onSubmit={handleSubmit}>
-
-      <div className="top-bar-title">
-        टिप्पणी
-        <span className="top-right-bread">खुला ढाँचा &gt; टिप्पणी</span>
-      </div>
-
-      <div className="form-header-section">
-        <div className="header-logo">
-          <img src="/logo.png" alt="Nepal Emblem" />
+    <div className="tippani-outer-wrapper">
+      <form className="tippani-container">
+        <div className="top-bar-title">
+          टिप्पणी
+          <span className="top-right-bread">खुला ढाँचा &gt; टिप्पणी</span>
         </div>
 
-        <div className="header-text">
-          <h1 className="municipality-name">नागार्जुन नगरपालिका</h1>
-          <h2 className="ward-title">१ नं. वडा कार्यालय</h2>
-          <p className="address-text">नागार्जुन, काठमाडौँ</p>
-          <p className="province-text">बागमती प्रदेश, नेपाल</p>
-          <h3 className="certificate-title red-text">टिप्पणी र आदेश</h3>
-        </div>
-      </div>
-
-      <div className="date-section">
-        <label>मिति :</label>
-        <input type="date" value={form.date} onChange={update("date")} />
-      </div>
-
-      <div className="addressee-subject-section">
-        <div className="addressee-row">
-          <span>श्रीमान्</span>
-          <input type="text" className="line-input large-input" onChange={update("addressee")} />
-        </div>
-
-        <div className="subject-block">
-          <label>विषय: <span className="red">*</span></label>
-          <input type="text" className="line-input large-input" onChange={update("subject")} />
-        </div>
-      </div>
-
-      <div className="editor-area">
-        <div className="rich-editor-mock">
-          <div className="editor-toolbar">
-            <span className="tool-btn">File</span>
-            <span className="tool-btn">Edit</span>
-            <span className="tool-btn">View</span>
-            <span className="tool-btn">Insert</span>
-            <span className="tool-btn">Format</span>
+        {/* ✅ DYNAMIC HEADER */}
+        <div className="form-header-section">
+          <div className="header-logo">
+            <img src={MUNICIPALITY.logoSrc} alt="Nepal Logo" />
           </div>
-
-          <textarea
-            className="editor-textarea"
-            rows="10"
-            placeholder="Write notes..."
-            value={form.body_text}
-            onChange={update("body_text")}
-          ></textarea>
+          <div className="header-text">
+            <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
+            <h2 className="ward-title">
+              {user?.role === "SUPERADMIN" 
+                ? "सबै वडा कार्यालय"
+                : user?.ward 
+                  ? `वडा नं. ${user.ward} वडा कार्यालय`
+                  : "वडा कार्यालय"
+              }
+            </h2>
+            <p className="address-text">{MUNICIPALITY.officeLine}</p>
+            <p className="province-text">{MUNICIPALITY.provinceLine}</p>
+            <h3 className="certificate-title red-text">टिप्पणी र आदेश</h3>
+          </div>
         </div>
-      </div>
 
-      <div className="checkbox-options">
-        <input type="checkbox" id="archive" checked={form.archive} onChange={update("archive")} />
-        <label htmlFor="archive">अभिलेख गर्नुहोस्</label>
-
-        <input type="checkbox" id="approve" className="ml-20" checked={form.approve} onChange={update("approve")} />
-        <label htmlFor="approve">स्वीकृत गर्नुपर्ने</label>
-      </div>
-
-      <div className="signature-section">
-        <div className="signature-block">
-          <input
-            type="text"
-            placeholder="नाम"
-            className="line-input full-width-input"
-            onChange={update("signature_name")}
+        <div className="date-section-row">
+          मिति : 
+          <input 
+            name="date" 
+            type="text" 
+            className="dotted-input" 
+            value={form.date} 
+            onChange={handleChange} 
           />
-
-          <select className="designation-select" onChange={update("signature_designation")}>
-            <option value="">पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
-          </select>
         </div>
-      </div>
 
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input type="text" onChange={update("applicant_name")} className="detail-input bg-gray" />
+        <div className="addressee-subject-section">
+          <div className="addressee-row">
+            <span>श्रीमान्</span>
+            <div className="inline-input-wrapper">
+              <span className="input-required-star">*</span>
+              <input 
+                name="addressee" 
+                type="text" 
+                className="dotted-input large-input" 
+                value={form.addressee} 
+                onChange={handleChange} 
+              />
+            </div>
+            <span>,</span>
           </div>
 
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input type="text" onChange={update("applicant_address")} className="detail-input bg-gray" />
-          </div>
-
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input type="text" onChange={update("applicant_citizenship_no")} className="detail-input bg-gray" />
-          </div>
-
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input type="text" onChange={update("applicant_phone")} className="detail-input bg-gray" />
+          <div className="subject-block">
+            <label>विषय:</label>
+            <div className="inline-input-wrapper">
+              <span className="input-required-star">*</span>
+              <input 
+                name="subject" 
+                type="text" 
+                className="dotted-input large-input" 
+                value={form.subject} 
+                onChange={handleChange} 
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="form-footer">
-        <button type="submit" className="save-print-btn" disabled={loading}>
-          {loading ? "Saving..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-        </button>
-      </div>
-
-      {msg && (
-        <div style={{ color: msg.type === "error" ? "red" : "green", marginTop: 10 }}>
-          {msg.text}
+        <div className="editor-area">
+          <div className="rich-editor-mock">
+            <div className="editor-toolbar">
+              <div className="toolbar-left">File Edit View Insert Format Tools Table Help</div>
+            </div>
+            <textarea
+              name="body_text"
+              className="editor-textarea"
+              value={form.body_text}
+              onChange={handleChange}
+              placeholder="यहाँ टिप्पणी लेख्नुहोस्..."
+            />
+          </div>
         </div>
-      )}
 
-      <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
-      </div>
+        <div className="checkbox-signature-grid">
+          <div className="checkbox-group">
+            <label className="checkbox-item">
+              <input 
+                name="archive" 
+                type="checkbox" 
+                checked={form.archive} 
+                onChange={handleChange} 
+              /> 
+              अर्को थप्नुहोस्
+            </label>
+            <label className="checkbox-item">
+              <input 
+                name="approve" 
+                type="checkbox" 
+                checked={form.approve} 
+                onChange={handleChange} 
+              /> 
+              स्वीकृत गर्नुहोस्
+            </label>
+          </div>
 
-    </form>
+          <div className="approver-block">
+            <label className="certifier-label">प्रमाणीत गर्ने</label>
+            <div className="inline-input-wrapper full-width">
+              <span className="input-required-star">*</span>
+              <input 
+                name="signature_name" 
+                type="text" 
+                className="dotted-input full-width" 
+                value={form.signature_name} 
+                onChange={handleChange} 
+              />
+            </div>
+            <select 
+              name="signature_designation" 
+              className="designation-select" 
+              value={form.signature_designation} 
+              onChange={handleChange}
+            >
+              <option value="">पद छनौट गर्नुहोस्</option>
+              <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+              <option value="वडा सचिव">वडा सचिव</option>
+              <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="form-footer">
+          <button 
+            type="button" 
+            className="save-print-btn" 
+            onClick={handlePrint}
+            disabled={loading}
+          >
+            {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
+        </div>
+
+        <div className="copyright-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
+      </form>
+    </div>
   );
 };
 

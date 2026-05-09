@@ -1,6 +1,10 @@
 // ConsumerCommitteeRegistrationList.jsx
 import React, { useState, useMemo } from "react";
 import "./ConsumerCommitteeRegistrationList.css";
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 
 const initialData = [
   {
@@ -146,9 +150,8 @@ const ConsumerCommitteeRegistrationList = () => {
         <div className="pagination-info">Page 1 of 1</div>
       </div>
 
-      {/* --- Footer --- */}
       <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </div>
     </div>
   );

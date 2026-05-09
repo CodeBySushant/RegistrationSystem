@@ -1,39 +1,53 @@
 // BusinessClosed.jsx
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import axiosInstance from "../../utils/axiosInstance";
 import "./BusinessClosed.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
+const toNepaliDigits = (str) => {
+  const map = { 0: "०", 1: "१", 2: "२", 3: "३", 4: "४", 5: "५", 6: "६", 7: "७", 8: "८", 9: "९" };
+  return String(str).replace(/[0-9]/g, (d) => map[d]);
+};
 
 const initialForm = {
   date: new Date().toISOString().slice(0, 10),
   refLetterNo: "",
   chalaniNo: "",
   municipality: MUNICIPALITY.name,
-  wardNo: MUNICIPALITY.wardNumber,
+  wardNo: "",
   introText: "",
   applicantName: "",
   applicantAddress: "",
   applicantCitizenship: "",
   applicantPhone: "",
-  toOfficePerson: "", // optional salutation target
+  toOfficePerson: "",
 };
 
-const initialBusinessRow = {
-  id: 1,
+const makeNewRow = (id) => ({
+  id,
   type: "",
   name: "",
   houseNo: "",
   tole: "",
   wardNo: "",
   remarks: "",
-};
+});
 
 export default function BusinessClosed() {
+  const { user } = useAuth();
+
   const [form, setForm] = useState(initialForm);
-  const [rows, setRows] = useState([initialBusinessRow]);
-  const [submitting, setSubmitting] = useState(false);
+  const [rows, setRows] = useState([makeNewRow(1)]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.ward && !form.wardNo) {
+      setForm((prev) => ({ ...prev, wardNo: user.ward }));
+    }
+  }, [user]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -49,288 +63,199 @@ export default function BusinessClosed() {
     });
   };
 
-  const addRow = () =>
-    setRows((p) => [
-      ...p,
-      {
-        id: p.length + 1,
-        type: "",
-        name: "",
-        houseNo: "",
-        tole: "",
-        wardNo: "",
-        remarks: "",
-      },
-    ]);
+  const addRow = () => setRows((p) => [...p, makeNewRow(p.length + 1)]);
 
-  const validate = () => {
-    if (!form.applicantName?.trim()) return "Applicant name required";
-    if (!form.applicantCitizenship?.trim())
-      return "Applicant citizenship required";
-    // ensure no partial business rows (if any field filled, all required)
-    for (let i = 0; i < rows.length; i++) {
-      const r = rows[i];
-      const any =
-        r.type || r.name || r.houseNo || r.tole || r.wardNo || r.remarks;
-      if (any && (!r.type || !r.name))
-        return `Complete business row ${i + 1} (type & name required)`;
-    }
-    return null;
+  const buildPayload = () => {
+    const payload = { ...form };
+    Object.keys(payload).forEach((k) => {
+      if (payload[k] === "") payload[k] = null;
+    });
+    payload.businesses = JSON.stringify(
+      rows.filter((r) => r.type || r.name || r.houseNo || r.tole || r.wardNo || r.remarks)
+    );
+    return payload;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submitting) return;
-    const err = validate();
-    if (err) {
-      alert("कृपया आवश्यक क्षेत्रहरू भर्नुहोस्: " + err);
-      return;
-    }
-
-    setSubmitting(true);
+    setLoading(true);
     try {
-      const payload = { ...form };
-      // convert empty strings -> null
-      Object.keys(payload).forEach((k) => {
-        if (payload[k] === "") payload[k] = null;
-      });
-      // send business rows as JSON string (backend in your project tends to expect JSON strings)
-      payload.businesses = JSON.stringify(
-        rows.filter(
-          (r) =>
-            r.type || r.name || r.houseNo || r.tole || r.wardNo || r.remarks
-        )
-      );
-      const url = "/api/forms/business-closed";
-      const res = await axios.post(url, payload);
-      if (res.status === 201 || res.status === 200) {
-        alert("Saved successfully. ID: " + (res.data?.id ?? ""));
+      const payload = buildPayload();
+      const res = await axiosInstance.post("/api/forms/business-closed", payload);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
         setForm(initialForm);
-        setRows([initialBusinessRow]);
+        setRows([makeNewRow(1)]);
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
-    } catch (error) {
-      console.error("Submit error:", error);
-      const msg =
-        error.response?.data?.message || error.message || "Submission failed";
-      alert("त्रुटि: " + msg);
+    } catch (err) {
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const payload = buildPayload();
+      const res = await axiosInstance.post("/api/forms/business-closed", payload);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print();
+        setForm(initialForm);
+        setRows([makeNewRow(1)]);
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bc-page">
-      <form className="bc-paper" onSubmit={handleSubmit}>
-        <div className="bc-letterhead">
-          <div className="bc-logo">
-            <img
-              src="./nepallogo.svg"
-              alt="Logo"
-            />
+    <form className="bc-container" onSubmit={handleSubmit}>
+      {/* --- Top Bar --- */}
+      <div className="bc-topbar">
+        व्यवसाय बन्द ।
+        <span className="bc-topbar-right">व्यवसाय &gt; व्यवसाय बन्द</span>
+      </div>
+
+      {/* --- Header / Letterhead --- */}
+      <div className="bc-letterhead">
+        <div className="bc-logo">
+          <img src={MUNICIPALITY.logoSrc} alt="Nepal Emblem" />
+        </div>
+        <div className="bc-head-text">
+          <div className="bc-head-main">{MUNICIPALITY.name}</div>
+          <div className="bc-head-ward">
+            {user?.role === "SUPERADMIN"
+              ? "सबै वडा कार्यालय"
+              : `${user?.ward || ""} नं. वडा कार्यालय`}
           </div>
-          <div className="bc-head-text">
-            <div className="bc-head-main">{MUNICIPALITY.name}</div>
-            <div className="bc-head-ward">
-              {MUNICIPALITY.wardNumber} नं. वडा कार्यालय
-            </div>
-            <div className="bc-head-sub">
-              {MUNICIPALITY.officeLine} <br /> {MUNICIPALITY.provinceLine}
-            </div>
-          </div>
-          <div className="bc-head-meta">
-            <div>
-              मिति :{" "}
-              <input
-                name="date"
-                value={form.date}
-                onChange={onChange}
-                className="bc-small-input"
-              />
-            </div>
-            <div className="bc-head-day">ने.सं.: ११४६ भाद्र, २ शनिवार</div>
+          <div className="bc-head-sub">
+            {MUNICIPALITY.officeLine} <br /> {MUNICIPALITY.provinceLine}
           </div>
         </div>
-
-        <div className="bc-ref-row">
-          <div className="bc-ref-block">
-            <label>पत्र संख्या :</label>
+        <div className="bc-head-meta">
+          <div>
+            मिति :{" "}
             <input
-              name="refLetterNo"
-              value={form.refLetterNo}
-              onChange={onChange}
+              readOnly
+              className="bc-small-input"
+              value={toNepaliDigits(form.date)}
             />
           </div>
-          <div className="bc-ref-block">
-            <label>चलानी नं. :</label>
-            <input
-              name="chalaniNo"
-              value={form.chalaniNo}
-              onChange={onChange}
-            />
-          </div>
+          <div className="bc-head-day">ने.सं.: ११४६ भाद्र, २ शनिवार</div>
         </div>
+      </div>
 
-        <div className="bc-subject-row">
-          <span className="bc-subject-label">विषयः</span>
-          <span className="bc-subject-text">व्यवसाय बन्द बारे ।</span>
+      {/* --- Ref Numbers --- */}
+      <div className="bc-ref-row">
+        <div className="bc-ref-block">
+          <label>पत्र संख्या :</label>
+          <input name="refLetterNo" value={form.refLetterNo} onChange={onChange} />
         </div>
-
-        <p className="bc-salutation">
-          श्री{" "}
-          <input
-            name="toOfficePerson"
-            value={form.toOfficePerson}
-            onChange={onChange}
-            placeholder="ज्युलाई नाम"
-          />{" "}
-          ज्यु,
-        </p>
-
-        <div className="bc-address-line">
-          <span>उपर्युक्त सम्बन्धमा</span>
-                    <select name="municipality" value={form.municipality} onChange={onChange}>
-            <option value={MUNICIPALITY.name}>{MUNICIPALITY.name}</option>
-          </select>
-          <span>नगरपालिका वडा नं</span>
-          <input
-            name="wardNo"
-            value={form.wardNo}
-            onChange={onChange}
-            className="bc-ward-input"
-          />
+        <div className="bc-ref-block">
+          <label>चलानी नं. :</label>
+          <input name="chalaniNo" value={form.chalaniNo} onChange={onChange} />
         </div>
+      </div>
 
-        <p className="bc-body-text">
-          <textarea
-            name="introText"
-            value={form.introText}
-            onChange={onChange}
-            rows="3"
-            placeholder="व्यवसाय बन्द सम्बन्धी छोटो व्यहोरा / कारण (optional)"
-            style={{ width: "100%" }}
-          />
-        </p>
+      {/* --- Subject --- */}
+      <div className="bc-subject-row">
+        <span className="bc-subject-label">विषयः</span>
+        <span className="bc-subject-text">व्यवसाय बन्द बारे ।</span>
+      </div>
 
-        <div className="bc-table-wrapper">
-          <table className="bc-table">
-            <thead>
-              <tr>
-                <th>क्र.स.</th>
-                <th>व्यवसायको प्रकार</th>
-                <th>व्यवसायको नाम</th>
-                <th>घर नं.</th>
-                <th>टोलको नाम</th>
-                <th>वडा नं.</th>
-                <th>कैफियत</th>
+      {/* --- Salutation --- */}
+      <p className="bc-salutation">
+        श्री{" "}
+        <input
+          name="toOfficePerson"
+          value={form.toOfficePerson}
+          onChange={onChange}
+          placeholder="ज्युलाई नाम"
+          className="bc-inline-input"
+        />{" "}
+        ज्यु,
+      </p>
+
+      {/* --- Address Line --- */}
+      <div className="bc-address-line">
+        <span>उपर्युक्त सम्बन्धमा</span>
+        <select name="municipality" value={form.municipality} onChange={onChange}>
+          <option value={MUNICIPALITY.name}>{MUNICIPALITY.name}</option>
+        </select>
+        <span>वडा नं.</span>
+        <input
+          name="wardNo"
+          value={form.wardNo}
+          onChange={onChange}
+          className="bc-ward-input"
+        />
+      </div>
+
+      {/* --- Body Text --- */}
+      <div className="bc-body-text">
+        <textarea
+          name="introText"
+          value={form.introText}
+          onChange={onChange}
+          rows="3"
+          placeholder="व्यवसाय बन्द सम्बन्धी छोटो व्यहोरा / कारण (optional)"
+        />
+      </div>
+
+      {/* --- Business Table --- */}
+      <div className="bc-table-wrapper">
+        <table className="bc-table">
+          <thead>
+            <tr>
+              <th>क्र.स.</th>
+              <th>व्यवसायको प्रकार</th>
+              <th>व्यवसायको नाम</th>
+              <th>घर नं.</th>
+              <th>टोलको नाम</th>
+              <th>वडा नं.</th>
+              <th>कैफियत</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={r.id}>
+                <td>{i + 1}</td>
+                <td><input name="type" value={r.type} onChange={(e) => onRowChange(i, e)} /></td>
+                <td><input name="name" value={r.name} onChange={(e) => onRowChange(i, e)} /></td>
+                <td><input name="houseNo" value={r.houseNo} onChange={(e) => onRowChange(i, e)} /></td>
+                <td><input name="tole" value={r.tole} onChange={(e) => onRowChange(i, e)} /></td>
+                <td><input name="wardNo" value={r.wardNo} onChange={(e) => onRowChange(i, e)} /></td>
+                <td><input name="remarks" value={r.remarks} onChange={(e) => onRowChange(i, e)} /></td>
               </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) => (
-                <tr key={r.id}>
-                  <td>{i + 1}</td>
-                  <td>
-                    <input
-                      name="type"
-                      value={r.type}
-                      onChange={(e) => onRowChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="name"
-                      value={r.name}
-                      onChange={(e) => onRowChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="houseNo"
-                      value={r.houseNo}
-                      onChange={(e) => onRowChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="tole"
-                      value={r.tole}
-                      onChange={(e) => onRowChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="wardNo"
-                      value={r.wardNo}
-                      onChange={(e) => onRowChange(i, e)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="remarks"
-                      value={r.remarks}
-                      onChange={(e) => onRowChange(i, e)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div style={{ marginTop: 8 }}>
-            <button type="button" onClick={addRow}>
-              Add row +
-            </button>
-          </div>
-        </div>
+            ))}
+          </tbody>
+        </table>
+        <button type="button" className="bc-add-row-btn" onClick={addRow}>
+          + पङ्क्ति थप्नुहोस्
+        </button>
+      </div>
 
-        <h3 className="bc-section-title">निवेदकको विवरण</h3>
-        <div className="bc-applicant-box">
-          <div className="bc-field">
-            <label>निवेदकको नाम *</label>
-            <input
-              name="applicantName"
-              value={form.applicantName}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <div className="bc-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input
-              name="applicantAddress"
-              value={form.applicantAddress}
-              onChange={onChange}
-            />
-          </div>
-          <div className="bc-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input
-              name="applicantCitizenship"
-              value={form.applicantCitizenship}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <div className="bc-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input
-              name="applicantPhone"
-              value={form.applicantPhone}
-              onChange={onChange}
-            />
-          </div>
-        </div>
+      {/* --- Applicant Details Box --- */}
+      <ApplicantDetailsNp formData={form} handleChange={onChange} />
 
-        <div className="bc-submit-row">
-          <button className="bc-submit-btn" type="submit" disabled={submitting}>
-            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-          </button>
-        </div>
-      </form>
+      {/* --- Footer Action --- */}
+      <div className="form-footer">
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
+      </div>
 
-      <footer className="bc-footer">
-        <footer className="bc-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
-      </footer>
-    </div>
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </div>
+    </form>
   );
 }

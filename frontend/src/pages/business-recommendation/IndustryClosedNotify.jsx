@@ -1,136 +1,126 @@
-import React, { useState } from "react";
+// IndustryClosedNotify.jsx
+import React, { useState, useEffect } from "react";
 import "./IndustryClosedNotify.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
+const toNepaliDigits = (str) => {
+  const map = { 0: "०", 1: "१", 2: "२", 3: "३", 4: "४", 5: "५", 6: "६", 7: "७", 8: "८", 9: "९" };
+  return String(str).replace(/[0-9]/g, (d) => map[d]);
+};
+
+const initialForm = {
+  date: new Date().toISOString().slice(0, 10),
+  to_line1: MUNICIPALITY.officeLine,
+  to_line2: MUNICIPALITY.name,
+  place_extra: "",
+  registered_date: "",
+  registered_municipality: MUNICIPALITY.name,
+  ward: "",
+  industry_name: "",
+  closure_from_date: "",
+  closure_to_date: "",
+  detailed_description: "",
+  attached_docs: "",
+  signature: "",
+  signer_name: "",
+  signer_position: "",
+  applicantName: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+};
 
 export default function IndustryClosedNotify() {
-  const [form, setForm] = useState({
-    date: new Date().toISOString().slice(0, 10),
-    to_line1: MUNICIPALITY.officeLine || "", // e.g. "नगर कार्यपालिकाको कार्यालय, ..."
-    to_line2: MUNICIPALITY.name || "", // e.g. "नागार्जुन नगरपालिका"
-    place_text: `${MUNICIPALITY.name}, ${MUNICIPALITY.city || ""}`, // e.g. "नागार्जुन, काठमाडौं"
-    place_extra: "",
-    registered_date: "",
-    registered_municipality: MUNICIPALITY.name || "",
-    ward: MUNICIPALITY.wardNumber || "",
-    industry_name: "",
-    shown_reason: "",
-    closure_from_date: "",
-    closure_to_date: "",
-    closure_effective_from: "",
-    closure_effective_to: "",
-    short_reason: "",
-    detailed_description: "",
-    attached_docs: "",
-    signature: "",
-    signer_name: "",
-    signer_position: "",
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizen_no: "",
-    applicant_phone: "",
-  });
+  const { user } = useAuth();
 
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [form, setForm] = useState(initialForm);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.ward && !form.ward) {
+      setForm((prev) => ({ ...prev, ward: user.ward }));
+    }
+  }, [user]);
 
   const update = (key, value) => setForm((s) => ({ ...s, [key]: value }));
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((s) => ({ ...s, [name]: value }));
+  };
+
+  const buildPayload = () => {
+    const payload = { ...form };
+    Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+    return payload;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submitting) return;
-    // minimal validation
-    if (!form.applicant_name?.trim()) {
-      alert("निवेदकको नाम आवश्यक छ");
-      return;
-    }
-    setSubmitting(true);
-    setMessage(null);
-
+    setLoading(true);
     try {
-      // prepare payload — keep shape matching forms.json columns
-      const payload = { ...form };
-
-      // normalize empty strings to null (optional)
-      Object.keys(payload).forEach((k) => {
-        if (payload[k] === "") payload[k] = null;
-      });
-
-      const res = await fetch("/api/forms/industry-closed-notify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `Server returned ${res.status}`);
+      const res = await axiosInstance.post("/api/forms/industry-closed-notify", buildPayload());
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialForm);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-
-      const data = await res.json();
-      setMessage({ type: "success", text: `सेभ भयो (id: ${data.id})` });
-      // reset optionally
-      setForm({
-        date: "",
-        to_line1: "",
-        to_line2: "",
-        place_text: "",
-        place_extra: "",
-        registered_date: "",
-        registered_municipality: "",
-        ward: "",
-        industry_name: "",
-        shown_reason: "",
-        closure_from_date: "",
-        closure_to_date: "",
-        closure_effective_from: "",
-        closure_effective_to: "",
-        short_reason: "",
-        detailed_description: "",
-        attached_docs: "",
-        signature: "",
-        signer_name: "",
-        signer_position: "",
-        applicant_name: "",
-        applicant_address: "",
-        applicant_citizen_no: "",
-        applicant_phone: "",
-      });
     } catch (err) {
-      setMessage({ type: "error", text: err.message });
+      setLoading(false);
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post("/api/forms/industry-closed-notify", buildPayload());
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print();
+        setForm(initialForm);
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="ucn-page">
-      <header className="ucn-topbar">
-        <div className="ucn-top-left">उद्योग बन्द भएको जानकारी पत्र ।</div>
-        <div className="ucn-top-right">
-          अवलोकन पृष्ठ / उद्योग बन्द भएको जानकारी पत्र
-        </div>
-      </header>
+      <div className="ucn-topbar">
+        उद्योग बन्द भएको जानकारी पत्र ।
+        <span className="ucn-top-right">उद्योग &gt; उद्योग बन्द भएको जानकारी पत्र</span>
+      </div>
 
       <form className="ucn-paper" onSubmit={handleSubmit}>
+
+        {/* --- Annex Heading --- */}
         <div className="ucn-annex">
           <div>अनुसूची–३३</div>
           <div>(नियम ९ संग सम्बन्धित)</div>
           <div className="ucn-annex-title">उद्योग बन्द भएको जानकारी पत्र</div>
         </div>
 
+        {/* --- Date --- */}
         <div className="ucn-date-row">
-          मिति :
+          मिति :{" "}
           <input
-            type="text"
+            readOnly
             className="ucn-date-input"
-            value={form.date}
-            onChange={(e) => update("date", e.target.value)}
-            placeholder="YYYY-MM-DD or Nepali date"
+            value={toNepaliDigits(form.date)}
           />
         </div>
 
+        {/* --- To Block --- */}
         <div className="ucn-to-block">
           <span>श्री</span>
           <input
@@ -141,9 +131,7 @@ export default function IndustryClosedNotify() {
           />
           <span>ज्यु,</span>
           <br />
-          <span>
-            {MUNICIPALITY.name}, {MUNICIPALITY.city || "काठमाडौं"}
-          </span>
+          <span>{MUNICIPALITY.name}, {MUNICIPALITY.city}</span>
           <input
             type="text"
             className="ucn-medium-input"
@@ -152,50 +140,50 @@ export default function IndustryClosedNotify() {
           />
         </div>
 
+        {/* --- Subject --- */}
         <div className="ucn-subject-row">
           <span className="ucn-subject-label">विषयः</span>
-          <span className="ucn-subject-text">
-            उद्योग बन्द भएको जानकारी सम्बन्धमा ।
-          </span>
+          <span className="ucn-subject-text">उद्योग बन्द भएको जानकारी सम्बन्धमा ।</span>
         </div>
 
+        {/* --- Body --- */}
         <p className="ucn-body">
-          उपरोक्त विषयमा उद्योग मिति
+          उपरोक्त विषयमा उद्योग मिति{" "}
           <input
             type="text"
             className="ucn-small-input"
             value={form.registered_date}
             onChange={(e) => update("registered_date", e.target.value)}
           />{" "}
-          मा दर्ता भई
+          मा दर्ता भई{" "}
           <input
             type="text"
             className="ucn-small-input"
-            value={form.registered_municipality || MUNICIPALITY.name}
+            value={form.registered_municipality}
             onChange={(e) => update("registered_municipality", e.target.value)}
           />{" "}
-          नगरपालिका वडा नं.
+          नगरपालिका वडा नं.{" "}
           <input
             type="text"
             className="ucn-tiny-input"
-            value={form.ward || MUNICIPALITY.wardNumber || ""}
+            value={form.ward}
             onChange={(e) => update("ward", e.target.value)}
           />{" "}
-          मा स्थापना भई संचालन गर्न गराइएको परेको यस
+          मा स्थापना भई संचालन गर्न गराइएको परेको यस{" "}
           <input
             type="text"
             className="ucn-medium-input"
             value={form.industry_name}
             onChange={(e) => update("industry_name", e.target.value)}
           />{" "}
-          उद्योग देखाएको कारणले मिति
+          उद्योग मिति{" "}
           <input
             type="text"
             className="ucn-small-input"
             value={form.closure_from_date}
             onChange={(e) => update("closure_from_date", e.target.value)}
           />{" "}
-          देखि अपरिहार्य कारणवश
+          देखि अपरिहार्य कारणवश{" "}
           <input
             type="text"
             className="ucn-small-input"
@@ -205,10 +193,9 @@ export default function IndustryClosedNotify() {
           देखि बन्द गरेको भनी बुझाई दिनुको लागि अनुरोध गर्दछु / गर्दछौं ।
         </p>
 
+        {/* --- Reasons List --- */}
         <div className="ucn-reasons">
-          <div className="ucn-reasons-title">
-            उद्योग बन्द हुने सम्भावित कारणहरू:
-          </div>
+          <div className="ucn-reasons-title">उद्योग बन्द हुने सम्भावित कारणहरू:</div>
           <ol>
             <li>आवश्यक कच्चा पदार्थ पाउन नसकेको।</li>
             <li>पूँजीको अभाव भएको।</li>
@@ -220,6 +207,7 @@ export default function IndustryClosedNotify() {
           </ol>
         </div>
 
+        {/* --- Description Textarea --- */}
         <div className="ucn-editor-wrapper">
           <div className="ucn-editor-toolbar">
             <button type="button">B</button>
@@ -238,22 +226,19 @@ export default function IndustryClosedNotify() {
           />
         </div>
 
+        {/* --- Docs + Signature --- */}
         <div className="ucn-bottom-grid">
           <div className="ucn-docs">
             <div className="ucn-docs-title">संलग्न कागजातः</div>
             <ol>
-              <li>
-                उद्योग बन्द हुने कारण / कारणहरू स्पष्ट हुने गरी तयार गरिएको
-                विस्तृत प्रतिवेदन।
-              </li>
-              <li>
-                नियमावलीको नियम ९ को उपनियम (३) मा उल्लेखित कागजातको विवरण।
-              </li>
+              <li>उद्योग बन्द हुने कारण / कारणहरू स्पष्ट हुने गरी तयार गरिएको विस्तृत प्रतिवेदन।</li>
+              <li>नियमावलीको नियम ९ को उपनियम (३) मा उल्लेखित कागजातको विवरण।</li>
             </ol>
             <div style={{ marginTop: 8 }}>
               <label>अन्य संलग्न: </label>
               <input
                 type="text"
+                className="ucn-medium-input"
                 value={form.attached_docs}
                 onChange={(e) => update("attached_docs", e.target.value)}
               />
@@ -264,89 +249,34 @@ export default function IndustryClosedNotify() {
             <div className="ucn-sign-caption">निवेदकको :</div>
             <div className="ucn-sign-field">
               <span>हस्ताक्षर :</span>
-              <input
-                type="text"
-                value={form.signature}
-                onChange={(e) => update("signature", e.target.value)}
-              />
+              <input type="text" value={form.signature} onChange={(e) => update("signature", e.target.value)} />
             </div>
             <div className="ucn-sign-field">
               <span>नाम, थर :</span>
-              <input
-                type="text"
-                value={form.signer_name}
-                onChange={(e) => update("signer_name", e.target.value)}
-              />
+              <input type="text" value={form.signer_name} onChange={(e) => update("signer_name", e.target.value)} />
             </div>
             <div className="ucn-sign-field">
               <span>पद :</span>
-              <input
-                type="text"
-                value={form.signer_position}
-                onChange={(e) => update("signer_position", e.target.value)}
-              />
+              <input type="text" value={form.signer_position} onChange={(e) => update("signer_position", e.target.value)} />
             </div>
           </div>
         </div>
 
-        <h3 className="ucn-section-title">निवेदकको विवरण</h3>
-        <div className="ucn-applicant-box">
-          <div className="ucn-field">
-            <label>निवेदकको नाम *</label>
-            <input
-              type="text"
-              value={form.applicant_name}
-              onChange={(e) => update("applicant_name", e.target.value)}
-            />
-          </div>
-          <div className="ucn-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input
-              type="text"
-              value={form.applicant_address}
-              onChange={(e) => update("applicant_address", e.target.value)}
-            />
-          </div>
-          <div className="ucn-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input
-              type="text"
-              value={form.applicant_citizen_no}
-              onChange={(e) => update("applicant_citizen_no", e.target.value)}
-            />
-          </div>
-          <div className="ucn-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input
-              type="text"
-              value={form.applicant_phone}
-              onChange={(e) => update("applicant_phone", e.target.value)}
-            />
-          </div>
-        </div>
+        {/* --- Applicant Details Box --- */}
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        <div className="ucn-submit-row">
-          <button
-            className="ucn-submit-btn"
-            type="submit"
-            disabled={submitting}
-          >
-            {submitting ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        {/* --- Footer Action --- */}
+        <div className="form-footer">
+          <button className="save-print-btn" type="button" onClick={handlePrint}>
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
-        {message && (
-          <div
-            className={`ucn-message ${
-              message.type === "error" ? "error" : "success"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
-      </form>
+        <div className="copyright-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
 
-      <footer className="ucn-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
+      </form>
     </div>
   );
 }

@@ -1,8 +1,10 @@
 // src/pages/application/BusinessRegistrationForm.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import "./BusinessRegistrationApplicationForm.css";
-import { MUNICIPALITY } from "../../config/municipalityConfig.js";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
@@ -62,8 +64,8 @@ const BusinessRegistrationApplicationForm = () => {
     if (!formData.businessNameNp?.trim())
       return "व्यवसायको नाम (नेपाली) आवश्यक छ";
     if (!formData.proprietorName?.trim()) return "प्रोप्राइटरको नाम आवश्यक छ";
-    if (!formData.applicant_name?.trim()) return "निवेदकको नाम आवश्यक छ";
-    if (!formData.applicant_phone?.trim()) return "फोन नम्बर आवश्यक छ";
+    if (!formData.applicantName?.trim()) return "निवेदकको नाम आवश्यक छ"; 
+    if (!formData.applicantPhone?.trim()) return "फोन नम्बर आवश्यक छ"; 
     return null;
   };
 
