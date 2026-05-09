@@ -1,5 +1,13 @@
-/* --- Main Container --- */
-.notice-list-container {
+/* ════════════════════════════════════════════════════
+   SuchanaDetailList.css
+   Reuses every coop-* class from
+   GovOrganizationRegRecommendation.css so the two
+   pages look identical.  Only adds the source-tab
+   bar and badge colours on top.
+════════════════════════════════════════════════════ */
+
+/* ── Page shell ── */
+.coop-page {
   width: 100%;
   min-height: 100vh;
   background-image: url("/papertexture1.jpg");
@@ -11,152 +19,273 @@
   flex-direction: column;
 }
 
-/* --- Header --- */
-.list-header {
+/* ── Source tab bar (sits above filter bar) ── */
+.sdl-source-bar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-}
-
-.list-header h2 {
-  margin: 0;
-  font-size: 1.4rem;
-  color: #000;
-  font-weight: bold;
-}
-
-.back-link-btn {
-  background: none;
-  border: none;
-  font-size: 0.9rem;
-  color: #333;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-/* --- Action Buttons --- */
-.action-buttons-row {
-  padding: 15px 30px;
-  display: flex;
-  gap: 10px;
-  background-color: #f0f3f6; /* Very light background for action bar */
-  border-bottom: 1px solid #ddd;
-}
-
-.action-btn {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    cursor: pointer;
-}
-.excel-btn { background-color: #5a7b94; }
-.add-record-btn { background-color: #2c5d8f; font-weight: bold; }
-.add-record-btn:hover { background-color: #1c4d7f; }
-
-/* --- Filter Bar --- */
-.search-filter-bar {
-  background-color: #1f2a38; /* Dark Navy background */
-  padding: 20px 30px;
-  display: flex;
-  align-items: flex-end; /* Align inputs to the bottom */
-  gap: 20px;
+  gap: 4px;
+  padding: 10px 20px 0;
+  background: #fff;
+  border-bottom: 2px solid #dde3ea;
   flex-wrap: wrap;
 }
 
-.filter-group {
+.sdl-source-btn {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 8px 14px 10px;
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  font-size: 0.88rem;
+  color: #555;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.sdl-source-btn:hover { color: #192236; }
+
+.sdl-source-btn.active {
+  color: #192236;
+  font-weight: 700;
+  border-bottom-color: #2980b9;
+}
+
+.sdl-count {
+  display: inline-block;
+  background: #e4e8ec;
+  color: #444;
+  font-size: 0.72rem;
+  border-radius: 10px;
+  padding: 1px 7px;
+  margin-left: 6px;
+  line-height: 1.5;
+}
+
+.sdl-source-btn.active .sdl-count {
+  background: #2980b9;
+  color: #fff;
+}
+
+/* ── Filter bar ── */
+.coop-filter-bar {
+  background: #192236;
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.coop-filters {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.coop-filter-group {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  gap: 4px;
 }
 
-.filter-input {
-  padding: 8px 12px;
+.coop-filter-group.wide { flex: 1; min-width: 200px; }
+
+.coop-filter-group label {
+  color: #aab7c4;
+  font-size: 0.78rem;
+}
+
+.coop-filter-group input {
+  padding: 7px 10px;
   border: none;
-  border-radius: 2px;
-  font-size: 0.9rem;
-  height: 38px;
+  border-radius: 3px;
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  font-size: 0.88rem;
+  height: 36px;
   box-sizing: border-box;
-  background-color: #fff;
+  background: #fff;
 }
 
-.input-label {
-    color: #aab7c4; 
-    font-size: 0.8rem;
-    margin-top: 5px;
-}
-
-.date-field { width: 180px; }
-
-/* Search Button */
-.search-icon-btn {
-  background-color: #2980b9; 
-  color: white;
+.coop-search-btn {
+  background: #2980b9;
+  color: #fff;
   border: none;
   border-radius: 4px;
-  width: 40px;
-  height: 38px;
-  font-size: 1.2rem;
+  width: 38px;
+  height: 36px;
+  font-size: 1.1rem;
   cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.coop-search-btn:hover { background: #1a6a9a; }
+
+/* ── Table wrapper ── */
+.coop-table-wrapper {
+  flex: 1;
+  padding: 24px 20px 0;
 }
 
-/* --- Table Styling --- */
-.table-container {
-  margin: 30px; /* Add margin around the table area */
+.coop-state-msg {
+  padding: 40px;
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.coop-error { color: #c0392b; }
+
+.coop-scroll {
   overflow-x: auto;
-  background-color: rgba(255,255,255,0.8); 
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-  flex-grow: 1;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  border-radius: 4px;
 }
 
-.notice-table {
+/* ── Table ── */
+.coop-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.85rem;
 }
 
-.notice-table th {
-  background-color: #1f2a38; /* Dark navy header */
-  color: white;
-  padding: 12px 8px;
+.coop-table th {
+  background: #192236;
+  color: #fff;
+  padding: 11px 10px;
   text-align: center;
-  font-weight: normal;
-  border-right: 1px solid #4a5a6a;
+  font-weight: 600;
   white-space: nowrap;
+  border-right: 1px solid #2c3e5a;
 }
-.notice-table th:last-child { border-right: none; }
+.coop-table th:last-child { border-right: none; }
 
-.notice-table td {
-  padding: 10px 8px;
+.coop-table td {
+  padding: 9px 10px;
   color: #333;
   vertical-align: middle;
   text-align: center;
-  border-bottom: 1px solid #ccc;
-  background-color: #f9f9f9; 
+  border-bottom: 1px solid #ddd;
 }
 
-.notice-table tr:hover td {
-  background-color: #f0f0f0;
+.coop-table tr.even-row td { background: #f9f9f9; }
+.coop-table tr.odd-row  td { background: #ffffff; }
+.coop-table tr:hover td { background: #edf4fb; }
+
+.coop-table td.ellipsis {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.eye-icon {
-  color: #2980b9;
+/* ── Badge colours ── */
+.sdl-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.sdl-badge--blue  { background: #d6eaf8; color: #1a5276; }
+.sdl-badge--green { background: #d5f5e3; color: #1e8449; }
+.sdl-badge--amber { background: #fdebd0; color: #935116; }
+
+/* ── Eye button ── */
+.eye-btn {
+  background: none;
+  border: none;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  padding: 3px 7px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.eye-btn:hover { background: #e8f4fd; }
+
+/* ── Utility ── */
+.center-cell { text-align: center !important; }
+
+/* ── Pending badge (kept for consistency) ── */
+.coop-pending-badge {
+  font-size: 0.78rem;
+  color: #8a6d3b;
+  background: #fcf8e3;
+  border: 1px solid #faebcc;
+  border-radius: 3px;
+  padding: 2px 8px;
 }
 
-/* --- Footer --- */
-.copyright-footer {
-  margin-top: auto;
+/* ── Bottom bar ── */
+.coop-bottom-bar {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 20px;
+}
+
+.coop-export-btn,
+.coop-print-btn {
+  padding: 7px 18px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.coop-export-btn { background: #5a7b94; color: #fff; }
+.coop-export-btn:hover { background: #4a6a82; }
+
+.coop-print-btn { background: #192236; color: #fff; }
+.coop-print-btn:hover { background: #0f1722; }
+
+/* ── Footer ── */
+.coop-footer {
   text-align: right;
-  padding: 15px 30px;
-  font-size: 0.85rem;
-  color: #666;
-  background-color: #fff;
+  padding: 12px 20px;
+  font-size: 0.82rem;
+  color: #888;
+  background: #fff;
   border-top: 1px solid #eee;
+}
+
+/* ── Print ── */
+@media print {
+  .sdl-source-bar,
+  .coop-filter-bar,
+  .coop-bottom-bar,
+  .coop-footer {
+    display: none !important;
+  }
+  .coop-table-wrapper { padding: 0; }
+  .coop-scroll { box-shadow: none; background: #fff; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .coop-table thead { display: none; }
+  .coop-table tr { display: block; margin-bottom: 12px; border: 1px solid #ddd; }
+  .coop-table td {
+    display: flex;
+    justify-content: space-between;
+    text-align: right;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 7px 12px;
+  }
+  .coop-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+    text-align: left;
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
 }

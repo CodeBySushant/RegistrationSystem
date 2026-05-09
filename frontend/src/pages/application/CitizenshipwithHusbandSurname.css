@@ -1,4 +1,8 @@
-/* Basic container styling */
+/* ================================================================
+   CitizenshipwithHusbandSurname.css
+   ================================================================ */
+
+/* ── Container ── */
 .citizenship-husband-container {
   width: 90%;
   max-width: 1000px;
@@ -6,23 +10,27 @@
   padding: 25px;
   border: 1px solid #ddd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Arial", sans-serif; /* Using a common font for Nepali */
+  font-family: "Arial", sans-serif;
   background-image: url("/papertexture1.jpg");
   background-repeat: repeat;
   background-size: auto;
   background-position: top left;
   box-sizing: border-box;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
-/* General Form Layout - RESPONSIVE FIX */
+/* ── Top row layout ── */
 .form-row {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap; /* Allows fields to stack on small screens */
+  flex-wrap: wrap;
   margin-bottom: 25px;
   padding-bottom: 15px;
   border-bottom: 1px dashed #ccc;
+  gap: 20px;
 }
+
 .form-group {
   display: flex;
   flex-direction: row;
@@ -33,123 +41,158 @@
   font-weight: bold;
   margin-right: 8px;
 }
-.form-group input {
-  width: 200px;
-  max-width: 100%; /* Allows shrinking */
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
 
-/* Header "To" Section */
+/* ── Addressee block ── */
 .header-to-group {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 .header-to-group h3 {
   font-size: 16px;
   font-weight: bold;
-  margin: 0 0 10px 0;
-}
-.header-to-group input {
-  font-family: inherit;
-  font-size: 16px;
-  padding: 4px 6px;
-  margin-bottom: 8px;
-  border: none;
-  border-bottom: 1px dotted #000;
-  background: transparent;
-  width: 250px;
-  max-width: 100%;
+  margin: 0 0 8px 0;
 }
 
-/* Date group */
-.date-group {
-  font-weight: bold;
-}
+/* ── Date ── */
+.date-group { font-weight: bold; }
 .date-group input {
   border: none;
   border-bottom: 1px dotted #000;
-  background: transparent;
+  /* FIX: was transparent — text invisible on print */
+  background-color: #fff;
+  color: #000;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 2px 6px;
+  outline: none;
 }
+.date-group input:focus { border-bottom-color: #3b7dd8; }
 
-/* Subject Line */
+/* ── Subject ── */
 .subject-line {
   text-align: center;
   margin: 25px 0;
   font-size: 16px;
 }
 
-/* Main Certificate Body Styling - RESPONSIVE FIX */
+/* ── Body paragraph ── */
 .certificate-body {
   line-height: 2.8;
-  font-size: 16px;
+  font-size: 15px;
   text-align: justify;
 }
-.certificate-body input[type="text"],
-.certificate-body select {
-  display: inline-block; /* Keeps fields inline with text */
-  vertical-align: baseline; /* Aligns them nicely */
-  padding: 4px 6px;
+
+/* ─────────────────────────────────────────────────
+   PrintField shared styles (screen)
+   pf-input  = editable <input>  shown on screen
+   pf-value  = plain <span>      shown in print mode
+───────────────────────────────────────────────── */
+.pf-input {
+  display: inline-block;
+  vertical-align: baseline;
+  padding: 2px 6px;
   font-family: inherit;
   font-size: 15px;
-  background-color: transparent;
+  color: #000;
+  /* FIX: was transparent — values invisible on print */
+  background-color: #fff;
   border: none;
-  border-bottom: 1px dotted #000;
-  margin: 0 5px;
-  width: 120px;
+  border-bottom: 1px dotted #555;
+  outline: none;
+  width: 150px;
   max-width: 100%;
   box-sizing: border-box;
+  transition: border-color 0.15s, background-color 0.15s;
 }
-.certificate-body select {
-  width: auto;
-  min-width: 80px;
+.pf-input:focus {
+  border-bottom-color: #3b7dd8;
+  background-color: #f0f7ff;
 }
-.certificate-body .short-input {
-  width: 80px;
+.pf-input.short       { width: 70px; }
+.pf-input.header-field {
+  font-size: 16px;
+  font-weight: bold;
+  width: 260px;
+  border-bottom: 1px dotted #000;
 }
 
-/* Left-aligned Signature Section */
-.signature-section-left {
-  margin-top: 30px;
-  float: left; /* Aligns block to the left */
-  width: 40%;
-  min-width: 300px;
+/* The span shown during print / isPrint mode */
+.pf-value {
+  display: inline-block;
+  vertical-align: baseline;
+  padding: 0 4px;
+  font-family: inherit;
+  font-size: 15px;
+  color: #000;
+  min-width: 60px;
+  border-bottom: 1px solid #000;
+  word-break: break-word;
 }
-.signature-section-left h4 {
-  font-size: 18px;
+.pf-value.short        { min-width: 40px; }
+.pf-value.header-field {
+  font-size: 16px;
   font-weight: bold;
-  margin-bottom: 15px;
+  min-width: 200px;
 }
 
-/* Re-using .form-group-column for signature inputs */
-.form-group-column {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-}
-.form-group-column label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.form-group-column input {
-  width: 350px;
-  max-width: 100%; /* Allows shrinking */
-  padding: 8px;
-  border: 1px solid #ccc;
+/* ── Applicant Details Box ── */
+.applicant-details-box {
+  border: 1px solid #ddd;
+  padding: 20px;
+  /* FIX: was rgba(255,255,255,0.4) semi-transparent — now solid white */
+  background-color: #ffffff;
+  margin-top: 20px;
   border-radius: 4px;
-  background-color: #fff;
-  box-sizing: border-box;
+}
+.applicant-details-box h3 {
+  color: #555;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
-/* Submit Button */
+.citizenship-husband-container .applicant-details-box .details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #000;
+  transition: border-color 0.15s;
+}
+.detail-input:focus { border-color: #3b7dd8; outline: none; }
+
+.bg-gray { background-color: #eef2f5; }
+
+/* ── Required star ── */
+.required { color: red; margin-left: 4px; }
+.req      { color: red; font-weight: bold; }
+
+/* ── Submit ── */
 .submit-area {
-  clear: both; /* Clears the float from the signature block */
+  clear: both;
   text-align: center;
   margin-top: 30px;
-  padding-top: 30px; /* Extra space above button */
+  padding-top: 30px;
 }
 .submit-btn {
   background-color: #343a40;
@@ -161,45 +204,76 @@
   font-size: 16px;
   font-weight: bold;
 }
-.submit-btn:hover {
-  background-color: #23272b;
-}
+.submit-btn:hover:not(:disabled) { background-color: #23272b; }
+.submit-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
 
-/* Applicants Details Container */
-.citizenship-husband-container .applicant-details-box .details-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 18px !important;
-}
-
-/* Control applicant input width */
-.citizenship-husband-container .applicant-details-box .detail-input {
-  max-width: 400px; /* adjust if needed: 480–550 */
-  width: 100%;
-}
-
-/* Red star */
-.required {
-  color: red;
-  margin-left: 4px;
-}
-
-.inline-input-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
+/* ── Misc helpers carried over ── */
+.inline-input-wrapper { position: relative; display: inline-block; }
 .input-required-star {
-  position: absolute;
-  left: 6px;
-  top: 50%;
+  position: absolute; left: 6px; top: 50%;
   transform: translateY(-50%);
-  color: red;
-  font-weight: bold;
-  pointer-events: none;
-  font-size: 14px;
+  color: red; font-weight: bold; pointer-events: none; font-size: 14px;
 }
+.inline-input-wrapper input { padding-left: 18px; }
 
-.inline-input-wrapper input {
-  padding-left: 18px;
+/* ================================================================
+   PRINT STYLES
+   PrintField already swaps to <span> before window.print() is
+   called (via isPrint state + useEffect + requestAnimationFrame),
+   so no input-color hacks are needed here — just layout cleanup.
+   ================================================================ */
+@media print {
+  body * { visibility: hidden; }
+
+  .citizenship-husband-container,
+  .citizenship-husband-container * { visibility: visible; }
+
+  .citizenship-husband-container {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%;
+    max-width: none;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 15px;
+    background: white !important;
+    background-image: none !important;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #000;
+  }
+
+  .submit-area { display: none !important; }
+
+  /* pf-value spans print cleanly */
+  .pf-value {
+    border-bottom: 1px solid #000 !important;
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  /* Fallback for any inputs NOT wrapped by PrintField
+     (e.g. inside ApplicantDetailsNp) */
+  input, select, textarea {
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #000 !important;
+    opacity: 1 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  input::placeholder, textarea::placeholder {
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+
+  .applicant-details-box {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    border: 1px solid #ccc !important;
+    background: white !important;
+  }
 }

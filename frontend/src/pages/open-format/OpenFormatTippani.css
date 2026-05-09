@@ -1,228 +1,228 @@
-/* --- Main Container --- */
+.tippani-outer-wrapper {
+  background-color: #f0f0f0;
+  padding: 20px 0;
+}
+
 .tippani-container {
   max-width: 950px;
   margin: 0 auto;
-  padding: 30px 50px;
+  padding: 50px 70px;
   background-image: url("/papertexture1.jpg");
   background-repeat: repeat;
   background-size: auto;
-  background-position: top left;
   font-family: 'Kalimati', 'Kokila', sans-serif;
   color: #000;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   position: relative;
 }
 
-/* --- Utility Classes --- */
-.bold-text { font-weight: bold; }
-.underline-text { text-decoration: underline; }
-.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: sub;}
-.red-mark { color: red; position: absolute; top: 0; left: 0; }
-.ml-20 { margin-left: 20px; }
-.center-text { text-align: center; }
-
-/* --- Top Bar --- */
-.top-bar-title {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #333;
-}
-
-.top-right-bread {
-  font-size: 0.9rem;
-  color: #777;
-  font-weight: normal;
-}
-
-/* --- Header Section --- */
+/* Header Section */
 .form-header-section {
   text-align: center;
-  margin-bottom: 20px;
   position: relative;
+  margin-bottom: 30px;
 }
 
 .header-logo img {
   position: absolute;
   left: 0;
   top: 0;
-  width: 80px;
+  width: 90px;
 }
 
-.header-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
+.municipality-name { color: #e74c3c; font-size: 1.8rem; margin: 0; font-weight: bold; }
 .ward-title { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
-.address-text, .province-text { color: #e74c3c; margin: 0; font-size: 1rem; }
-.certificate-title { font-size: 1.8rem; font-weight: bold; margin-top: 10px; }
+.address-text, .province-text { color: #e74c3c; font-size: 1.1rem; font-weight: bold; margin: 2px 0; }
+.certificate-title { font-size: 2.1rem; text-decoration: underline; margin-top: 15px; color: #e74c3c; }
 
-/* --- Meta Data --- */
-.meta-data-row {
+/* Breadcrumbs */
+.top-bar-title {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 25px;
+  font-weight: bold;
   font-size: 1rem;
+  color: #555;
 }
-.meta-left p, .meta-right p { margin: 5px 0; }
-.dotted-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; padding: 2px 5px; font-family: inherit; font-size: 1rem; }
-.small-input { width: 120px; }
 
-/* --- Addressee & Subject --- */
-.addressee-subject-section {
-    margin-bottom: 20px;
-    font-size: 1.05rem;
+/* Date Alignment */
+.date-section-row {
+  text-align: right;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  font-weight: bold;
 }
-.addressee-row { margin-bottom: 8px; display: flex; align-items: center; }
-.line-input { border: none; border-bottom: 1px dotted #000; background: transparent; outline: none; margin: 0 10px; padding: 0 5px; }
-.large-input { width: 350px; }
 
-.subject-block {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
+/* Form Elements */
+.dotted-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  outline: none;
+  padding: 0 5px;
+  font-size: 1.1rem;
+  font-family: inherit;
 }
-.subject-block label { margin-right: 10px; font-weight: bold; }
 
+.large-input { width: 300px; }
 
-/* --- Rich Text Editor Mock --- */
-.editor-area { margin-bottom: 10px; }
+.addressee-row, .subject-block {
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
 
+/* Editor Mockup */
 .rich-editor-mock {
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    background-color: #fff;
+  border: 1px solid #ccc;
+  background: #fff;
+  margin-bottom: 25px;
 }
+
 .editor-toolbar {
-    background-color: #f5f5f5;
-    padding: 5px 10px;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    font-family: sans-serif;
-    font-size: 0.9rem;
-}
-.editor-toolbar-2 {
-    background-color: #fff;
-    padding: 5px 10px;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    font-family: sans-serif;
-    font-size: 0.9rem;
-}
-
-.tool-btn {
-    cursor: pointer;
-    padding: 2px 5px;
-    border: 1px solid transparent;
-}
-.tool-btn:hover { border: 1px solid #ccc; background-color: #e0e0e0; border-radius: 2px; }
-.tool-sep { color: #ccc; }
-
-.editor-select {
-    border: 1px solid #ccc;
-    padding: 2px;
-    font-size: 0.9rem;
+  background: #f8f9fa;
+  padding: 8px 15px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #666;
 }
 
 .editor-textarea {
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 15px;
-    font-family: serif; 
-    font-size: 1rem;
-    resize: vertical;
-    box-sizing: border-box;
-    min-height: 200px;
-}
-.word-count {
-    padding: 5px 15px;
-    font-size: 0.75rem;
-    color: #999;
-    text-align: right;
-}
-
-/* --- Checkboxes --- */
-.checkbox-options {
-    margin-bottom: 30px;
-    display: flex;
-    align-items: flex-start;
-    gap: 40px;
-    padding-top: 10px;
-}
-.checkbox-options label {
-    font-weight: normal;
-    font-size: 0.95rem;
-}
-
-/* --- Signature Section --- */
-.signature-section {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 50px;
-  margin-bottom: 30px;
-}
-
-.signature-block { width: 220px; text-align: center; position: relative;}
-.signature-block .line-input {
-    width: 100%; margin-bottom: 5px; border: none; border-bottom: 1px dotted #000; outline: none; background: transparent;
-}
-.designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; }
-
-/* --- Applicant Details Box --- */
-.applicant-details-box {
-  border: 1px solid #ddd;
+  width: 100%;
+  min-height: 450px;
+  border: none;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.4);
-  margin-top: 20px;
-  border-radius: 4px;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  resize: vertical;
+  outline: none;
 }
 
-.applicant-details-box h3 {
-  color: #777;
-  font-size: 1.1rem;
-  margin: 0 0 15px 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
+/* Bottom Approval Grid */
+.checkbox-signature-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 40px;
 }
 
-.details-grid {
-  display: grid;
-  grid-template-columns: 1fr;
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
   gap: 15px;
 }
 
-.detail-group { display: flex; flex-direction: column; }
-.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
-.detail-input {
-  border: 1px solid #ddd;
-  padding: 8px;
-  border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: #eef2f5; 
-}
-
-/* --- Footer --- */
-.form-footer { text-align: center; margin-top: 40px; }
-.save-print-btn {
-  background-color: #2c3e50;
-  color: white;
-  padding: 10px 25px;
-  border: none;
-  border-radius: 4px;
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 1rem;
   cursor: pointer;
 }
-.save-print-btn:hover { background-color: #1a252f; }
-.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+
+.approver-block {
+  width: 280px;
+  text-align: right;
+}
+
+.certifier-label {
+  display: block;
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+}
+
+.full-width { width: 100%; }
+
+.designation-select {
+  width: 100%;
+  margin-top: 15px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+/* Inline required star placeholder */
+.inline-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.input-required-star {
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: red;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.inline-input-wrapper input {
+  padding-left: 20px;
+}
+
+/* Footer & Buttons */
+.form-footer { text-align: center; margin-top: 50px; }
+
+.save-print-btn {
+  background: #2c3e50;
+  color: white;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.save-print-btn:hover { background: #1a252f; }
+
+.status-msg { margin-top: 15px; text-align: center; font-weight: bold; }
+.error-text { color: #d32f2f; }
+.success-text { color: #388e3c; }
+
+.copyright-footer {
+  text-align: right;
+  font-size: 0.8rem;
+  margin-top: 50px;
+  color: #666;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+@media print {
+  body * { visibility: hidden; }
+  .tippani-container, .tippani-container * { visibility: visible; }
+  
+  .tippani-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px 40px;
+    background: white !important;
+    margin: 0;
+    box-shadow: none;
+  }
+  
+  .top-bar-title,
+  .form-footer,
+  .editor-toolbar .upgrade-btn {
+    display: none !important;
+  }
+  
+  .rich-editor-mock {
+    border: none !important;
+    background: transparent !important;
+  }
+  
+  .editor-textarea {
+    background: transparent !important;
+    border: none !important;
+  }
+}

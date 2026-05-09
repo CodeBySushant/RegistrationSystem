@@ -1,6 +1,11 @@
 // BoundaryRecommendation.jsx
 import React, { useState } from "react";
 import "./BoundaryRecommendation.css";
+import axios from "../../utils/axiosInstance";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
   letter_no: "२०८२/८३",
@@ -27,48 +32,51 @@ const initialState = {
 };
 
 const BoundaryRecommendation = () => {
-  const [form, setForm] = useState(initialState);
+  const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(null);
-    setError(null);
-
-    // Basic client-side validation: required fields
-    if (!form.applicant_name || !form.plot_number) {
-      setError("कृपया आवश्यक क्षेत्रहरू भर्नुहोस् (निवेदकको नाम र कित्ता नम्बर)।");
-      return;
-    }
-
     setLoading(true);
     try {
-      const res = await fetch("/api/forms/boundary-recommendation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || data.error || "सर्भर त्रुटि");
+      // backend URL - adjust if different
+      const res = await axios.post("/api/forms/boundary-recommendation", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState); // reset form on success
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-      setMessage(`रेकर्ड सफलतापूर्वक सेभ भयो (ID: ${data.id}).`);
-      // optional: keep the id or reset form
-      // setForm(initialState);
     } catch (err) {
-      setError(err.message || "अनजान त्रुटि भयो");
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.post("/api/forms/boundary-recommendation", form);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print(); // ✅ print first
+        setForm(initialState); // ✅ reset AFTER print
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="boundary-recommendation-container">
@@ -287,52 +295,7 @@ const BoundaryRecommendation = () => {
           </div>
         </div>
 
-        {/* --- Applicant Details Box --- */}
-        <div className="applicant-details-box">
-          <h3>निवेदकको विवरण</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>निवेदकको नाम</label>
-              <input
-                name="applicant_name"
-                type="text"
-                className="detail-input bg-gray"
-                value={form.applicant_name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको ठेगाना</label>
-              <input
-                name="applicant_address"
-                type="text"
-                className="detail-input bg-gray"
-                value={form.applicant_address}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको नागरिकता नं.</label>
-              <input
-                name="applicant_citizenship_no"
-                type="text"
-                className="detail-input bg-gray"
-                value={form.applicant_citizenship_no}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="detail-group">
-              <label>निवेदकको फोन नं.</label>
-              <input
-                name="applicant_phone"
-                type="text"
-                className="detail-input bg-gray"
-                value={form.applicant_phone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-        </div>
+      <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
         {/* optional notes */}
         <div style={{ marginTop: 12 }}>
@@ -347,20 +310,17 @@ const BoundaryRecommendation = () => {
           />
         </div>
 
-        {/* --- Footer Action --- */}
-        <div className="form-footer" style={{ marginTop: 16 }}>
-          <button className="save-print-btn" type="submit" disabled={loading}>
-            {loading ? "सेभ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-          </button>
-        </div>
+      {/* --- Footer Action --- */}
+      <div className="form-footer">
+        <button className="save-print-btn" type="button" onClick={handlePrint}>
+          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        </button>
+      </div>
 
-        {/* messages */}
-        {message && <div className="success-message" style={{ marginTop: 12 }}>{message}</div>}
-        {error && <div className="error-message" style={{ marginTop: 12 }}>{error}</div>}
+      <div className="copyright-footer">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+      </div>
 
-        <div className="copyright-footer" style={{ marginTop: 20 }}>
-          © सर्वाधिकार सुरक्षित नागार्जुन नगरपालिका
-        </div>
       </form>
     </div>
   );

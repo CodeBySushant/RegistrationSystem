@@ -1,10 +1,11 @@
 // src/pages/application/RequestforCertification.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import "./RequestforCertification.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
@@ -21,6 +22,10 @@ const initialState = {
   doc2Type: "शैक्षिक योग्यता",
   doc2Detail: "",
   variationDetail: "",
+  // FIX 1: sigName and sigMobile were missing from initialState
+  sigName: "",
+  sigMobile: "",
+  // ApplicantDetailsNp fields
   applicantName: "",
   applicantAddress: "",
   applicantCitizenship: "",
@@ -69,13 +74,13 @@ const RequestforCertification = () => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "/api/forms/request-for-certification";
-      const res = await axios.post(url, payload);
+      const res = await axios.post("/api/forms/request-for-certification", payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("रेकर्ड सफलतापूर्वक सेभ भयो। ID: " + (res.data?.id ?? ""));
-        setFormData(initialState);
-        setTimeout(() => window.print(), 150);
+        // FIX 2: print FIRST, then reset — so printed page is not blank
+        window.print();
+        setTimeout(() => setFormData(initialState), 500);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -230,9 +235,36 @@ const RequestforCertification = () => {
           />
         </div>
 
+        {/* FIX 5: sigName and sigMobile inputs were never rendered in JSX */}
+        <div className="signature-section-left">
+          <h4>निवेदकको विवरण</h4>
+          <div className="form-group-column">
+            <label>नाम : <span className="required">*</span></label>
+            <input
+              type="text"
+              name="sigName"
+              value={formData.sigName}
+              onChange={handleChange}
+              placeholder="पूरा नाम"
+              required
+            />
+          </div>
+          <div className="form-group-column">
+            <label>मोबाइल नं. : <span className="required">*</span></label>
+            <input
+              type="text"
+              name="sigMobile"
+              value={formData.sigMobile}
+              onChange={handleChange}
+              placeholder="मोबाइल नम्बर"
+              required
+            />
+          </div>
+        </div>
+
         {/* Applicants details */}
         <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
-        
+
         <div className="submit-area">
           <button type="submit" className="submit-btn" disabled={submitting}>
             {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}

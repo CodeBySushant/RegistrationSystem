@@ -1,44 +1,48 @@
-// src/components/CitizenshipCertificateCopy.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./CitizenshipCertificateCopy.css";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import { useAuth } from "../../context/AuthContext";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
 
-const FORM_KEY = "citizenship-proof-copy"; // <-- updated formKey
+const FORM_KEY = "citizenship-proof-copy";
 const API_URL = `/api/forms/${FORM_KEY}`;
 
 export default function CitizenshipCertificateCopy() {
+  const { user } = useAuth();
+
+  // 1 & 2. FIXED: Fully defined initial state matching the exact image fields
   const [form, setForm] = useState({
     letter_no: "२०८२/८३",
     reference_no: "",
-    date: new Date().toISOString().slice(0, 10), // yyyy-mm-dd
-    recipient_name: "",
-    recipient_address: "",
-    recipient_district: "काठमाडौँ",
-    municipality: "नागार्जुन",
-    ward_no: "1",
-    permanent_municipality: "",
-    permanent_ward: "",
-    applicant_relation_to: "",
+    date: new Date().toISOString().slice(0, 10),
+
+    // Addressee
+    recipient_office_type: "जिल्ला",
+    recipient_location: "",
+    
+    // Body paragraph
+    current_district: "काठमाडौँ",
+    current_local_unit: MUNICIPALITY?.name?.replace(" नगरपालिका", "") || "नागार्जुन",
+    current_local_unit_type: "नगरपालिका",
+    current_ward: "१",
+    
+    prev_district: "काठमाडौँ",
+    prev_local_unit_type: "",
+    prev_ward: "",
+    
+    applicant_name_body: "",
+    cit_no: "",
+    relation: "",
+    issue_district: "काठमाडौँ",
+    condition: "झुत्रो भएको",
+
+    // Signatory
+    signatory_name: "",
+    signatory_position: "",
+
+    // ApplicantDetailsNp footer
     applicant_name: "",
-    applicant_relation_title: "",
-    subject_prpn_no: "",
-    subject_issue_district: "",
-    subject_issue_date: "",
-    certificate_kind: "जन्म",
-    permanent_address: "",
-    temporary_address: "",
-    municipality_name: "",
-    ward_number: "",
-    tol: "",
-    father_name: "",
-    father_dob_bs: "",
-    father_relation: "",
-    mother_name: "",
-    mother_name_citizenship: "",
-    recommender_name: "",
-    recommender_position: "",
-    recommender_date: "",
-    applicant_name_footer: "",
-    applicant_address_footer: "",
+    applicant_address: "",
     applicant_citizenship_no: "",
     applicant_phone: "",
     notes: ""
@@ -47,11 +51,19 @@ export default function CitizenshipCertificateCopy() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
-  const update = (k) => (e) => setForm(s => ({ ...s, [k]: e.target.value }));
+  useEffect(() => {
+    if (user?.ward) {
+      setForm((prev) => ({ ...prev, current_ward: user.ward }));
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const validate = () => {
-    // minimal validation
-    if (!form.applicant_name && !form.applicant_name_footer) return "निवेदकको नाम आवश्यक छ।";
+    if (!form.applicant_name) return "तलको निवेदकको विवरणमा नाम आवश्यक छ।";
     if (!form.applicant_citizenship_no) return "नागरिकता नं. आवश्यक छ।";
     return null;
   };
@@ -59,29 +71,31 @@ export default function CitizenshipCertificateCopy() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
+
     const err = validate();
-    if (err) { setMessage({ type: "error", text: err }); return; }
+    if (err) {
+      setMessage({ type: "error", text: err });
+      return;
+    }
 
     setLoading(true);
     try {
-      // Send snake_case payload matching forms.json columns
-      const payload = { ...form };
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(form),
       });
 
       const ct = res.headers.get("content-type") || "";
       const body = ct.includes("application/json") ? await res.json() : await res.text();
 
       if (!res.ok) {
-        const info = typeof body === "object" ? (body.message || JSON.stringify(body)) : body;
+        const info = typeof body === "object" ? body.message || JSON.stringify(body) : body;
         throw new Error(info || `HTTP ${res.status}`);
       }
 
-      setMessage({ type: "success", text: `रेकर्ड सेभ भयो (id: ${body.id || "unknown"})` });
-      // optionally reset form: setForm({...}) if desired
+      setMessage({ type: "success", text: `रेकर्ड सफलतापूर्वक सेभ भयो` });
+      window.print();
     } catch (err) {
       console.error("submit error:", err);
       setMessage({ type: "error", text: err.message || "सेभ हुन सकेन" });
@@ -92,90 +106,132 @@ export default function CitizenshipCertificateCopy() {
 
   return (
     <form className="citizenship-copy-container" onSubmit={handleSubmit}>
-      <div className="top-bar-title">
-        नेपाली नागरिकताको प्रमाण पत्र प्रतिलिपि पाऊँ।
-        <span className="top-right-bread">नेपाली नागरिकता &gt; नागरिकता प्रमाण पत्र प्रतिलिपि</span>
+      {/* TOP BAR */}
+      <div className="top-bar-title hide-print">
+        नेपाली नागरिकताको प्रमाण-पत्र प्रतिलिपि पाऊँ।
+        <span className="top-right-bread">
+          नेपाली नागरिकता &gt; नेपाली नागरिकताको प्रमाण-पत्र प्रतिलिपि पाऊँ।
+        </span>
       </div>
 
+      {/* HEADER SECTION (Matching specific image design) */}
+      <div className="form-header-section">
+        <div className="header-logo">
+          <img src={MUNICIPALITY?.logoSrc || "/nepallogo.svg"} alt="Nepal Emblem" />
+        </div>
+        <div className="header-text">
+          <h1 className="municipality-name">{MUNICIPALITY?.name || "नागार्जुन नगरपालिका"}</h1>
+          <h2 className="ward-title">{user?.ward || "१"} नं. वडा कार्यालय</h2>
+          <p className="address-text">{MUNICIPALITY?.officeLine || "नागार्जुन, काठमाडौँ"}</p>
+          <p className="province-text">{MUNICIPALITY?.provinceLine || "बागमती प्रदेश, नेपाल"}</p>
+        </div>
+      </div>
+
+      {/* META DATA */}
       <div className="meta-data-row">
         <div className="meta-left">
           <p>पत्र संख्या : <span className="bold-text">{form.letter_no}</span></p>
-          <p>चलानी नं. : <input value={form.reference_no} onChange={update("reference_no")} className="dotted-input small-input" /></p>
+          <p>
+            चलानी नं. :
+            <input name="reference_no" value={form.reference_no} onChange={handleChange} className="dotted-input small-input" />
+          </p>
         </div>
-        <div className="meta-right">
-          <p>मिति : <input type="date" value={form.date} onChange={update("date")} className="dotted-input small-input" /></p>
+        <div className="meta-right text-right">
+          <p>
+            मिति :
+            <input type="date" name="date" value={form.date} onChange={handleChange} className="dotted-input" />
+          </p>
+          <p className="nepali-date-text">ने.सं - 1146 चौलागा, 24 शनिबार</p>
         </div>
       </div>
 
+      {/* ADDRESSEE */}
       <div className="addressee-section">
-        <div className="addressee-row">
-          <span>श्री</span>
-          <input value={form.recipient_name} onChange={update("recipient_name")} className="line-input medium-input" />
-          <span>,</span>
-          <input value={form.recipient_address} onChange={update("recipient_address")} className="line-input medium-input" />
-        </div>
-        <div className="addressee-row">
-          <span>जिल्ला प्रशासन कार्यालय ,</span>
-          <input value={form.recipient_district} onChange={update("recipient_district")} className="line-input medium-input" />
-        </div>
-      </div>
-
-      <div className="form-body">
-        <p className="body-paragraph">
-          उपरोक्त सम्बन्धमा जिल्ला <strong>{form.recipient_district}</strong> {form.municipality} वडा नं. {form.ward_no} मा स्थायी बसोबास गर्ने
-          <input value={form.applicant_name} onChange={update("applicant_name")} className="inline-box-input medium-box" placeholder="निवेदकको नाम" /> को नाति
-          <select value={form.applicant_relation_title} onChange={update("applicant_relation_title")} className="inline-select">
-            <option value="">-- छान्नुहोस् --</option>
-            <option>श्री</option>
-            <option>सुश्री</option>
-          </select>
-          <input value={form.applicant_relation_to} onChange={update("applicant_relation_to")} className="inline-box-input medium-box" placeholder="नाति/छोरा/छोरी" />
-          ले मेरो नागरिकताको प्रमाण पत्र <input value={form.subject_prpn_no} onChange={update("subject_prpn_no")} className="inline-box-input medium-box" placeholder="प्र.प.नं." />
-          सोको प्रतिलिपि पाउनुहुन सिफारिस पाऊँ भनि निवेदन दिनुभएको हुँदा निजलाई नागरिकता नियमानुसार उपलब्ध गराई दिनुहुन स्थायी बसोबास प्रमाणित साथ सिफारिस गरिएको व्यहोरा अनुरोध छ।
+        <p>
+          श्री <select name="recipient_office_type" className="inline-select" value={form.recipient_office_type} onChange={handleChange}>
+            <option value="जिल्ला">जिल्ला</option>
+            <option value="इलाका">इलाका</option>
+          </select> प्रशासन कार्यालय,
+        </p>
+        <p>
+          <span className="red">*</span>
+          <input name="recipient_location" value={form.recipient_location} onChange={handleChange} className="dotted-input medium-input" /> , काठमाडौँ ।
         </p>
       </div>
 
+      {/* SUBJECT */}
+      <div className="subject-section">
+        <p>विषय: <u>सिफारिस सम्बन्धमा ।</u></p>
+      </div>
+
+      {/* BODY PARAGRAPH */}
+      <div className="form-body">
+        <p className="body-paragraph">
+          उपरोक्त सम्बन्धमा जिल्ला काठमाडौँ 
+          <input name="current_local_unit" value={form.current_local_unit} onChange={handleChange} className="dotted-input medium-input bold-text" /> 
+          <input name="current_local_unit_type" value={form.current_local_unit_type} onChange={handleChange} className="dotted-input medium-input" /> 
+          वडा नं {form.current_ward} (साविक जिल्ला काठमाडौँ 
+          <select name="prev_local_unit_type" className="inline-select" value={form.prev_local_unit_type} onChange={handleChange}>
+            <option value=""></option>
+            <option value="गा.वि.स.">गा.वि.स.</option>
+            <option value="नगरपालिका">नगरपालिका</option>
+          </select> 
+          वडा नं <span className="red">*</span><input name="prev_ward" value={form.prev_ward} onChange={handleChange} className="dotted-input tiny-input" /> ) मा स्थायी रुपले बसोबास गरि बस्ने 
+          <span className="red">*</span><input name="applicant_name_body" value={form.applicant_name_body} onChange={handleChange} className="dotted-input long-input" /> ले 
+          <span className="red">*</span><input name="cit_no" value={form.cit_no} onChange={handleChange} className="dotted-input medium-input" /> नं. 
+          <span className="red">*</span><input name="relation" value={form.relation} onChange={handleChange} className="dotted-input small-input" /> नाताले जि.प्र.का. 
+          <input name="issue_district" value={form.issue_district} onChange={handleChange} className="dotted-input small-input" /> बाट नागरिकता प्रमाण पत्र प्राप्त गर्नु भएकोमा सो नागरिकता प्रमाणपत्र 
+          <select name="condition" className="inline-select" value={form.condition} onChange={handleChange}>
+            <option value="झुत्रो भएको">झुत्रो भएको</option>
+            <option value="हराएको">हराएको</option>
+          </select> ले निजलाई प्रतिलिपी नागरिकता नियमानुसार उपलब्ध गराइदिनु हुन स्थायी बसोबास प्रमाणित, साथ सिफारिस गरिएको व्यहोरा अनुरोध छ ।
+        </p>
+      </div>
+
+      {/* SIGNATURE SECTION */}
       <div className="signature-section">
         <div className="signature-block">
-          <input value={form.recommender_name} onChange={update("recommender_name")} className="line-input full-width-input" placeholder="सिफारिसकर्ता नाम" required />
-          <select value={form.recommender_position} onChange={update("recommender_position")} className="designation-select">
-            <option value="">पद छनौट गर्नुहोस्</option>
-            <option>वडा अध्यक्ष</option>
-            <option>वडा सचिव</option>
-            <option>कार्यवाहक वडा अध्यक्ष</option>
+          <span className="red-star">*</span>
+          <input
+            name="signatory_name"
+            value={form.signatory_name}
+            onChange={handleChange}
+            className="line-input full-width-input"
+          />
+          <select
+            name="signatory_position"
+            value={form.signatory_position}
+            onChange={handleChange}
+            className="designation-select"
+          >
+            <option value="">| पद छनौट गर्नुहोस् |</option>
+            <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+            <option value="वडा सचिव">वडा सचिव</option>
+            <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
           </select>
         </div>
       </div>
 
-      <div className="applicant-details-box">
-        <h3>निवेदकको विवरण</h3>
-        <div className="details-grid">
-          <div className="detail-group">
-            <label>निवेदकको नाम</label>
-            <input value={form.applicant_name_footer} onChange={update("applicant_name_footer")} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको ठेगाना</label>
-            <input value={form.applicant_address_footer} onChange={update("applicant_address_footer")} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको नागरिकता नं.</label>
-            <input value={form.applicant_citizenship_no} onChange={update("applicant_citizenship_no")} className="detail-input bg-gray" />
-          </div>
-          <div className="detail-group">
-            <label>निवेदकको फोन नं.</label>
-            <input value={form.applicant_phone} onChange={update("applicant_phone")} className="detail-input bg-gray" />
-          </div>
-        </div>
+      {/* APPLICANT DETAILS BOX (Bottom) */}
+      <div className="hide-print">
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
       </div>
 
-      <div className="form-footer">
+      {/* FOOTER ACTION */}
+      <div className="form-footer hide-print">
         <button className="save-print-btn" type="submit" disabled={loading}>
           {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
         </button>
+        {message && (
+          <div style={{ marginTop: 15, color: message.type === "error" ? "crimson" : "green", fontWeight: "bold" }}>
+            {message.text}
+          </div>
+        )}
       </div>
 
-      {message && <div style={{ marginTop: 10, color: message.type === "error" ? "crimson" : "green" }}>{message.text}</div>}
+      <div className="copyright-footer hide-print">
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY?.name || "नागार्जुन नगरपालिका"}
+      </div>
     </form>
   );
 }

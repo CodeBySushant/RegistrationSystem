@@ -1,205 +1,273 @@
-/* Basic container styling */
-.indigenous-cert-container {
+.indigenous-container {
   width: 90%;
   max-width: 1000px;
   margin: 20px auto;
   padding: 25px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Arial", sans-serif; /* Using a common font for Nepali */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Kalimati', 'Kokila', 'Arial', sans-serif;
   background-image: url("/papertexture1.jpg");
   background-repeat: repeat;
   background-size: auto;
   background-position: top left;
   box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-/* General Form Layout - RESPONSIVE FIX */
-.form-row {
+/* Header row */
+.header-row {
+  margin-bottom: 16px;
+}
+
+/* Title */
+.top-bar-title {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap; /* Allows fields to stack on small screens */
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 1px dashed #ccc;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #000;
 }
-.form-group {
+
+.top-right-bread {
+  font-size: 12px;
+  font-weight: normal;
+  color: #666;
+}
+
+/* Shree / Addressee Block */
+.shree-block {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px 0;
+}
+
+.shree-row {
   display: flex;
-  flex-direction: row;
   align-items: baseline;
-  margin-bottom: 10px;
-}
-.form-group label {
-  font-weight: bold;
-  margin-right: 8px;
-}
-.form-group input {
-  width: 200px;
-  max-width: 100%; /* Allows shrinking */
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  flex-wrap: wrap;
 }
 
-/* Header "To" Section */
-.header-to-group {
+.name-input {
+  width: 180px;
+}
+
+.stack-row {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
-.header-to-group h3 {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 10px 0;
-}
-.header-to-group input {
+
+.stack-input {
+  flex: 1;
+  height: 30px;
+  border: none;
+  border-bottom: 1px dotted #000;
+  /* FIX: white so value is visible on screen and in print */
+  background-color: #fff;
+  outline: none;
+  padding: 0 6px;
+  font-size: 14px;
   font-family: inherit;
-  font-size: 16px;
-  padding: 4px 6px;
-  margin-bottom: 8px;
-  border: none;
-  border-bottom: 1px dotted #000;
-  background: transparent;
-  width: 250px;
-  max-width: 100%;
+}
+.stack-input:focus {
+  border-bottom-color: #3b7dd8;
+  background-color: #f0f7ff;
 }
 
-/* Date group */
-.date-group {
+/* Date inline group */
+.form-group-inline {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  margin: 15px 0;
+  gap: 8px;
+}
+.form-group-inline label {
   font-weight: bold;
 }
-.date-group input {
+.form-group-inline input[type="date"] {
+  width: 160px;
   border: none;
   border-bottom: 1px dotted #000;
-  background: transparent;
+  background-color: #fff;
+  outline: none;
+  padding: 2px 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+.form-group-inline input[type="date"]:focus {
+  border-bottom-color: #3b7dd8;
 }
 
-/* Subject Line */
+/* Subject */
 .subject-line {
   text-align: center;
-  margin: 25px 0;
+  margin: 20px 0;
   font-size: 16px;
+  font-weight: bold;
 }
 
-/* Main Certificate Body Styling - RESPONSIVE FIX */
+/* Certificate Body */
 .certificate-body {
-  line-height: 2.8;
-  font-size: 16px;
-  text-align: justify;
-}
-.certificate-body input[type="text"],
-.certificate-body select {
-  display: inline-block; /* Keeps fields inline with text */
-  vertical-align: baseline; /* Aligns them nicely */
-  padding: 4px 6px;
-  font-family: inherit;
+  line-height: 2.6;
   font-size: 15px;
-  background-color: transparent;
+  text-align: justify;
+  margin-bottom: 25px;
+}
+
+/* Inline inputs — white background so values render in print */
+.inline-input {
   border: none;
   border-bottom: 1px dotted #000;
-  margin: 0 5px;
-  width: 120px;
-  max-width: 100%;
-  box-sizing: border-box;
+  background-color: #fff;
+  margin: 0 4px;
+  font-size: 14px;
+  font-family: inherit;
+  vertical-align: baseline;
+  outline: none;
+  padding: 1px 4px;
+  transition: background-color 0.15s, border-bottom-color 0.15s;
 }
-.certificate-body select {
+.inline-input:focus {
+  background-color: #f0f7ff;
+  border-bottom-color: #3b7dd8;
+}
+
+.inline-input.small  { width: 60px; }
+.inline-input.medium { width: 140px; }
+.inline-input.long   { width: 200px; }
+
+.inline-select {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background-color: #fff;
+  margin: 0 4px;
+  font-size: 14px;
+  font-family: inherit;
   width: auto;
   min-width: 80px;
+  outline: none;
+  cursor: pointer;
+  vertical-align: baseline;
 }
-.certificate-body .short-input {
-  width: 80px;
-}
+.inline-select:focus { border-bottom-color: #3b7dd8; }
 
-/* Left-aligned Signature Section */
-.signature-section-left {
-  margin-top: 30px;
-  float: left; /* Aligns block to the left */
-  width: 40%;
-  min-width: 300px;
-}
-.signature-section-left h4 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-/* Re-using .form-group-column for signature inputs */
-.form-group-column {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-}
-.form-group-column label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.form-group-column input {
-  width: 350px;
-  max-width: 100%; /* Allows shrinking */
-  padding: 8px;
-  border: 1px solid #ccc;
+/* Applicant Details Box */
+.applicant-details-box {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.6);
+  margin-top: 20px;
   border-radius: 4px;
-  background-color: #fff;
-  box-sizing: border-box;
+}
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.05rem;
+  margin: 0 0 14px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
-/* Submit Button */
+.indigenous-container .applicant-details-box .details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+.indigenous-container .applicant-details-box .detail-input {
+  max-width: 400px;
+  width: 100%;
+}
+
+.detail-group { display: flex; flex-direction: column; gap: 4px; }
+.detail-group label { font-size: 0.88rem; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: #fff;
+}
+.detail-input:focus { border-color: #aaa; outline: none; }
+.bg-gray { background-color: #eef2f5; }
+.required { color: red; margin-left: 2px; }
+
+/* Submit */
 .submit-area {
-  clear: both; /* Clears the float from the signature block */
   text-align: center;
-  margin-top: 30px;
-  padding-top: 30px; /* Extra space above button */
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
 }
 .submit-btn {
   background-color: #343a40;
   color: white;
-  padding: 12px 25px;
+  padding: 12px 30px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+  font-family: inherit;
 }
-.submit-btn:hover {
-  background-color: #23272b;
-}
+.submit-btn:hover:not(:disabled) { background-color: #23272b; }
+.submit-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
 
-/* Applicants Details Container */
-.indigenous-cert-container .applicant-details-box .details-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 18px !important;
-}
+/* ─── PRINT STYLES ─── */
+@media print {
+  body * { visibility: hidden; }
 
-/* Control applicant input width */
-.indigenous-cert-container .applicant-details-box .detail-input {
-  max-width: 400px; /* adjust if needed: 480–550 */
-  width: 100%;
-}
+  .indigenous-container,
+  .indigenous-container * { visibility: visible; }
 
-/* Red star */
-.required {
-  color: red;
-  margin-left: 4px;
-}
+  .indigenous-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 20px 40px;
+    background: white !important;
+    background-image: none !important;
+    font-size: 14px;
+    line-height: 1.6;
+  }
 
-.inline-input-wrapper {
-  position: relative;
-  display: inline-block;
-}
+  /* Hide UI-only elements */
+  .submit-area,
+  .top-right-bread { display: none !important; }
 
-.input-required-star {
-  position: absolute;
-  left: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: red;
-  font-weight: bold;
-  pointer-events: none;
-  font-size: 14px;
-}
+  /* All inputs render as plain text — no borders, white bg */
+  input,
+  select,
+  textarea {
+    background: white !important;
+    color: black !important;
+    -webkit-text-fill-color: black !important;
+    border: none !important;
+    border-bottom: 1px solid #000 !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
-.inline-input-wrapper input {
-  padding-left: 18px;
+  /* Applicant box stays readable */
+  .applicant-details-box {
+    border: 1px solid #aaa !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .detail-input {
+    border: 1px solid #999 !important;
+  }
 }

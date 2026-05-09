@@ -1,110 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./NewBusinessPannumber.css";
 
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
+const initialState = {
+  date: new Date().toISOString().slice(0, 10),
+  refLetterNo: "",
+  chalaniNo: "",
+  to_line1: "",
+  to_line2: "",
+  ward: "",
+  sabik_ward: "",
+  sabik_ward_no: "",
+  resident_name: "",
+  resident_from: "",
+  resident_to: "",
+  firm_name: "",
+  proprietor_name: "",
+  proprietor_citizen_no: "",
+  proprietor_address: "",
+  firm_address: "",
+  firm_capital: "",
+  firm_purpose: "",
+  notes: "",
+  sign_name: "",
+  sign_position: "",
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship: "",
+  applicant_phone: "",
+};
 
 export default function NewBusinessPannumber() {
-  const [form, setForm] = useState({
-    date: new Date().toISOString().slice(0, 10),
-    refLetterNo: "",
-    chalaniNo: "",
-    to_line1: "",
-    to_line2: "",
-    ward: "",
-    sabik_ward: "",
-    resident_name: "",
-    resident_from: "",
-    resident_to: "",
-    firm_name: "",
-    proprietor_name: "",
-    proprietor_citizen_no: "",
-    proprietor_address: "",
-    firm_address: "",
-    firm_capital: "",
-    firm_purpose: "",
-    notes: "",
-    sign_name: "",
-    sign_position: "",
-    applicant_name: "",
-    applicant_address: "",
-    applicant_citizenship: "",
-    applicant_phone: "",
-  });
+  const { user } = useAuth();
+  const [form, setForm] = useState(initialState);
+  const [loading, setLoading] = useState(false);
 
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState(null);
+  useEffect(() => {
+    if (user?.ward && !form.ward) {
+      setForm((prev) => ({ ...prev, ward: user.ward }));
+    }
+  }, [user]);
 
-  const update = (k, v) => setForm((s) => ({ ...s, [k]: v }));
-
-  const validate = () => {
-    if (!form.applicant_name?.trim()) return "निवेदकको नाम आवश्यक छ";
-    if (!form.applicant_citizenship?.trim()) return "नागरिकता नं आवश्यक छ";
-    return null;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const err = validate();
-    if (err) {
-      alert(err);
-      return;
-    }
-    setSubmitting(true);
-    setMessage(null);
+    setLoading(true);
 
     try {
-      const payload = { ...form };
-      // normalize empty strings to null to avoid column mismatch
-      Object.keys(payload).forEach((k) => {
-        if (payload[k] === "") payload[k] = null;
-      });
-
-      const res = await fetch("/api/forms/new-business-pannumber", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message || `Server returned ${res.status}`);
+      const res = await axiosInstance.post("/api/forms/new-business-pan", form);
+      setLoading(false);
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        setForm(initialState);
+      } else {
+        alert("Unexpected response: " + JSON.stringify(res.data));
       }
-
-      const data = await res.json();
-      setMessage({ type: "success", text: `सेभ भयो (id: ${data.id})` });
-
-      // optional reset
-      setForm({
-        date: "",
-        refLetterNo: "",
-        chalaniNo: "",
-        to_line1: "",
-        to_line2: "",
-        ward: "",
-        sabik_ward: "",
-        resident_name: "",
-        resident_from: "",
-        resident_to: "",
-        firm_name: "",
-        proprietor_name: "",
-        proprietor_citizen_no: "",
-        proprietor_address: "",
-        firm_address: "",
-        firm_capital: "",
-        firm_purpose: "",
-        notes: "",
-        sign_name: "",
-        sign_position: "",
-        applicant_name: "",
-        applicant_address: "",
-        applicant_citizenship: "",
-        applicant_phone: "",
-      });
     } catch (err) {
-      setMessage({ type: "error", text: err.message });
+      setLoading(false);
+      console.error("Submit error:", err.response || err.message || err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("Error: " + msg);
+    }
+  };
+
+  const handlePrint = async () => {
+    setLoading(true);
+
+    try {
+      const res = await axiosInstance.post("/api/forms/new-business-pan", form);
+
+      if (res.status === 201) {
+        alert("Form submitted successfully! ID: " + res.data.id);
+        window.print();
+        setForm(initialState);
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -118,15 +103,14 @@ export default function NewBusinessPannumber() {
       <form className="nbp-paper" onSubmit={handleSubmit}>
         <div className="nbp-letterhead">
           <div className="nbp-logo">
-            <img
-              alt="Emblem"
-              src="./nepallogo.svg"
-            />
+            <img alt="Emblem" src={MUNICIPALITY.logoSrc} />
           </div>
           <div className="nbp-head-text">
             <div className="nbp-head-main">{MUNICIPALITY.name}</div>
             <div className="nbp-head-ward">
-              वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
+              {user?.role === "SUPERADMIN"
+                ? "सबै वडा कार्यालय"
+                : `वडा नं. ${user?.ward || ""} वडा कार्यालय`}
             </div>
             <div className="nbp-head-sub">
               {MUNICIPALITY.officeLine}
@@ -140,7 +124,7 @@ export default function NewBusinessPannumber() {
               <input
                 name="date"
                 value={form.date}
-                onChange={(e) => update("date", e.target.value)}
+                onChange={handleChange}
                 className="nbp-small-input"
               />
             </div>
@@ -154,7 +138,7 @@ export default function NewBusinessPannumber() {
             <input
               name="refLetterNo"
               value={form.refLetterNo}
-              onChange={(e) => update("refLetterNo", e.target.value)}
+              onChange={handleChange}
             />
           </div>
           <div className="nbp-ref-block">
@@ -162,7 +146,7 @@ export default function NewBusinessPannumber() {
             <input
               name="chalaniNo"
               value={form.chalaniNo}
-              onChange={(e) => update("chalaniNo", e.target.value)}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -172,60 +156,61 @@ export default function NewBusinessPannumber() {
           <input
             name="to_line1"
             value={form.to_line1}
-            onChange={(e) => update("to_line1", e.target.value)}
+            onChange={handleChange}
             className="nbp-long-input"
           />
           <br />
           <input
             name="to_line2"
             value={form.to_line2}
-            onChange={(e) => update("to_line2", e.target.value)}
+            onChange={handleChange}
             className="nbp-long-input nbp-to-second"
           />
         </div>
 
         <p className="nbp-body">
-          उपर्युक्त सम्बन्धमा <span className="nbp-bold">{MUNICIPALITY.name}</span>
+          उपर्युक्त सम्बन्धमा{" "}
+          <span className="nbp-bold">{MUNICIPALITY.name}</span>
           वडा नं.{" "}
           <input
             name="ward"
             value={form.ward}
-            onChange={(e) => update("ward", e.target.value)}
+            onChange={handleChange}
             className="nbp-tiny-input"
           />
           (साबिक{" "}
           <input
             name="sabik_ward"
             value={form.sabik_ward}
-            onChange={(e) => update("sabik_ward", e.target.value)}
+            onChange={handleChange}
             className="nbp-small-input"
           />{" "}
           वडा नं.
           <input
-            name="ward"
-            value={form.ward}
-            onChange={(e) => update("ward", e.target.value)}
+            name="sabik_ward_no"
+            value={form.sabik_ward_no}
+            onChange={handleChange}
             className="nbp-tiny-input"
           />
           ) मा बस्ने श्री
           <input
             name="resident_name"
             value={form.resident_name}
-            onChange={(e) => update("resident_name", e.target.value)}
+            onChange={handleChange}
             className="nbp-medium-input"
           />{" "}
           ले मिति
           <input
             name="resident_from"
             value={form.resident_from}
-            onChange={(e) => update("resident_from", e.target.value)}
+            onChange={handleChange}
             className="nbp-small-input"
           />{" "}
           देखि
           <input
             name="resident_to"
             value={form.resident_to}
-            onChange={(e) => update("resident_to", e.target.value)}
+            onChange={handleChange}
             className="nbp-small-input"
           />{" "}
           सम्म व्यवसाय संचालन गर्दै आएको र उक्त व्यवसायको नाममा नयाँ स्थायी लेखा
@@ -241,7 +226,7 @@ export default function NewBusinessPannumber() {
             <input
               name="firm_name"
               value={form.firm_name}
-              onChange={(e) => update("firm_name", e.target.value)}
+              onChange={handleChange}
               className="nbp-wide-input"
             />
           </div>
@@ -250,7 +235,7 @@ export default function NewBusinessPannumber() {
             <input
               name="proprietor_name"
               value={form.proprietor_name}
-              onChange={(e) => update("proprietor_name", e.target.value)}
+              onChange={handleChange}
               className="nbp-wide-input"
             />
           </div>
@@ -259,7 +244,7 @@ export default function NewBusinessPannumber() {
             <input
               name="proprietor_citizen_no"
               value={form.proprietor_citizen_no}
-              onChange={(e) => update("proprietor_citizen_no", e.target.value)}
+              onChange={handleChange}
               className="nbp-medium-input"
             />
           </div>
@@ -268,7 +253,7 @@ export default function NewBusinessPannumber() {
             <input
               name="proprietor_address"
               value={form.proprietor_address}
-              onChange={(e) => update("proprietor_address", e.target.value)}
+              onChange={handleChange}
               className="nbp-wide-input"
             />
           </div>
@@ -277,7 +262,7 @@ export default function NewBusinessPannumber() {
             <input
               name="firm_address"
               value={form.firm_address}
-              onChange={(e) => update("firm_address", e.target.value)}
+              onChange={handleChange}
               className="nbp-wide-input"
             />
           </div>
@@ -286,7 +271,7 @@ export default function NewBusinessPannumber() {
             <input
               name="firm_capital"
               value={form.firm_capital}
-              onChange={(e) => update("firm_capital", e.target.value)}
+              onChange={handleChange}
               className="nbp-medium-input"
             />
           </div>
@@ -295,7 +280,7 @@ export default function NewBusinessPannumber() {
             <input
               name="firm_purpose"
               value={form.firm_purpose}
-              onChange={(e) => update("firm_purpose", e.target.value)}
+              onChange={handleChange}
               className="nbp-wide-input"
             />
           </div>
@@ -306,7 +291,7 @@ export default function NewBusinessPannumber() {
               name="notes"
               rows="3"
               value={form.notes}
-              onChange={(e) => update("notes", e.target.value)}
+              onChange={handleChange}
               className="nbp-textarea"
             />
           </div>
@@ -316,80 +301,35 @@ export default function NewBusinessPannumber() {
           <input
             name="sign_name"
             value={form.sign_name}
-            onChange={(e) => update("sign_name", e.target.value)}
+            onChange={handleChange}
             className="nbp-sign-name"
             placeholder="नाम, थर"
           />
           <select
+            name="sign_position"
             className="nbp-post-select"
             value={form.sign_position}
-            onChange={(e) => update("sign_position", e.target.value)}
+            onChange={handleChange}
           >
             <option value="">पद छनौट गर्नुहोस्</option>
-            <option>अध्यक्ष</option>
-            <option>सचिव</option>
-            <option>अधिकृत</option>
+            <option value="अध्यक्ष">अध्यक्ष</option>
+            <option value="सचिव">सचिव</option>
+            <option value="अधिकृत">अधिकृत</option>
           </select>
         </div>
 
-        <h3 className="nbp-section-title">निवेदकको विवरण</h3>
-        <div className="nbp-applicant-box">
-          <div className="nbp-field">
-            <label>निवेदकको नाम *</label>
-            <input
-              name="applicant_name"
-              value={form.applicant_name}
-              onChange={(e) => update("applicant_name", e.target.value)}
-            />
-          </div>
-          <div className="nbp-field">
-            <label>निवेदकको ठेगाना *</label>
-            <input
-              name="applicant_address"
-              value={form.applicant_address}
-              onChange={(e) => update("applicant_address", e.target.value)}
-            />
-          </div>
-          <div className="nbp-field">
-            <label>निवेदकको नागरिकता नं. *</label>
-            <input
-              name="applicant_citizenship"
-              value={form.applicant_citizenship}
-              onChange={(e) => update("applicant_citizenship", e.target.value)}
-            />
-          </div>
-          <div className="nbp-field">
-            <label>निवेदकको फोन नं. *</label>
-            <input
-              name="applicant_phone"
-              value={form.applicant_phone}
-              onChange={(e) => update("applicant_phone", e.target.value)}
-            />
-          </div>
-        </div>
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        <div className="nbp-submit-row">
-          <button
-            className="nbp-submit-btn"
-            type="submit"
-            disabled={submitting}
-          >
-            {submitting ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+        <div className="form-footer">
+          <button className="save-print-btn" type="button" onClick={handlePrint}>
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
-        {message && (
-          <div
-            className={`nbp-message ${
-              message.type === "error" ? "error" : "success"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
+        <div className="copyright-footer">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
       </form>
-
-      <footer className="nbp-footer">© सर्वाधिकार सुरक्षित {MUNICIPALITY.name}</footer>
     </div>
   );
 }

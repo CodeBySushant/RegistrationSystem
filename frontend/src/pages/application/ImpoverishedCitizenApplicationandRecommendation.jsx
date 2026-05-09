@@ -1,11 +1,52 @@
 // src/pages/application/ImpoverishedCitizenApplicationandRecommendation.jsx
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import axios from "../../utils/axiosInstance";
 import "./ImpoverishedCitizenApplicationandRecommendation.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+// FIX: removed unused `useAuth` import
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+
+// ─────────────────────────────────────────────────────────────────
+// PrintField MUST be at MODULE SCOPE — not inside the component.
+// If defined inside, React creates a new component type on every
+// render → input unmounts each keystroke → 1-char typing bug.
+// ─────────────────────────────────────────────────────────────────
+
+const PrintField = ({ value, isPrint, className = "", name, onChange, type = "text", ...rest }) => {
+  if (isPrint) {
+    return <span className={`pf-value ${className}`}>{value || ""}</span>;
+  }
+  return (
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`pf-input ${className}`}
+      {...rest}
+    />
+  );
+};
+
+const PrintSelect = ({ value, isPrint, className = "", name, onChange, children }) => {
+  if (isPrint) {
+    return <span className={`pf-value ${className}`}>{value || ""}</span>;
+  }
+  return (
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`pf-select ${className}`}
+    >
+      {children}
+    </select>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────
 
 const initialState = {
   headerTo: "श्रीमान् अध्यक्षज्यु",
@@ -61,9 +102,12 @@ const initialState = {
 const initialLand = [{ id: 1, description: "", location: "" }];
 
 const ImpoverishedCitizenApplicationandRecommendation = () => {
-  const [formData, setFormData] = useState(initialState);
+  const [formData, setFormData]       = useState(initialState);
   const [landDetails, setLandDetails] = useState(initialLand);
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting]   = useState(false);
+  // FIX: isPrint drives print-mode rendering so window.print()
+  // always sees real <span> values — not blank transparent inputs
+  const [isPrint, setIsPrint]         = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,29 +131,24 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
   };
 
   const validate = (fd, lands) => {
-    if (!fd.patientName?.trim()) return "patientName is required";
-    if (!fd.permPalika?.trim()) return "permPalika is required";
-    if (!fd.tempPalika?.trim()) return "tempPalika is required";
-    if (!fd.applicantName?.trim()) return "applicantName is required";
+    if (!fd.patientName?.trim()) return "बिरामीको नाम आवश्यक छ";
+    if (!fd.permPalika?.trim())  return "स्थायी पालिका आवश्यक छ";
+    if (!fd.tempPalika?.trim())  return "अस्थायी पालिका आवश्यक छ";
+    if (!fd.applicantName?.trim()) return "निवेदकको नाम आवश्यक छ";
 
-    // phone checks (basic)
     const phoneRegex = /^[0-9+\-\s]{6,20}$/;
-    if (
-      fd.applicantSigPhone &&
-      !phoneRegex.test(String(fd.applicantSigPhone))
-    ) {
-      return "applicantSigPhone (invalid)";
+    if (fd.applicantSigPhone && !phoneRegex.test(String(fd.applicantSigPhone))) {
+      return "निवेदकको फोन नम्बर अमान्य छ";
     }
     if (fd.applicantPhone && !phoneRegex.test(String(fd.applicantPhone))) {
-      return "applicantPhone (invalid)";
+      return "सम्पर्क फोन नम्बर अमान्य छ";
     }
 
-    // require at least one complete land row OR allow empty rows but ensure no half-filled rows
     for (let i = 0; i < lands.length; i++) {
       const desc = lands[i].description?.trim();
-      const loc = lands[i].location?.trim();
+      const loc  = lands[i].location?.trim();
       if ((desc && !loc) || (!desc && loc)) {
-        return `complete both description and location for land row ${i + 1}`;
+        return `जग्गा पङ्क्ति ${i + 1} मा क्षेत्रफल र स्थान दुवै भर्नुहोस्`;
       }
     }
     return null;
@@ -127,25 +166,22 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
 
     setSubmitting(true);
     try {
-      // build payload and normalize empty strings -> null
       const payload = { ...formData };
       Object.keys(payload).forEach((k) => {
         if (payload[k] === "") payload[k] = null;
       });
-
-      // attach landDetails as JSON string (controller expects table_rows / stringified)
       payload.landDetails = JSON.stringify(landDetails);
 
-      const url = "/api/forms/impoverished-citizen-application";
-      const res = await axios.post(url, payload);
+      const res = await axios.post("/api/forms/impoverished-citizen-application", payload);
 
       if (res.status === 201 || res.status === 200) {
-        alert("Saved successfully. ID: " + (res.data?.id ?? ""));
-        setFormData(initialState);
-        setLandDetails(initialLand);
-        setTimeout(() => window.print(), 150);
+        alert("सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
+        // FIX: do NOT reset form here — data must stay so isPrint
+        // renders correct <span> values before print fires.
+        // Reset happens in useEffect after printing.
+        setIsPrint(true);
       } else {
-        alert("Unexpected response: " + JSON.stringify(res.data));
+        alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
     } catch (error) {
       console.error("Submit error:", error);
@@ -157,150 +193,202 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
     }
   };
 
+  // FIX: requestAnimationFrame guarantees React has finished
+  // painting span-based layout before print dialog opens.
+  // setTimeout(150) is an unreliable race condition.
+  useEffect(() => {
+    if (!isPrint) return;
+    const id = requestAnimationFrame(() => {
+      window.print();
+      // Reset after print dialog closes
+      setFormData(initialState);
+      setLandDetails(initialLand);
+      setIsPrint(false);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isPrint]);
+
   return (
     <div className="impoverished-container">
       <form onSubmit={handleSubmit}>
-        {/* reusable Nepali header */}
+
+        {/* ── Municipal Header ── */}
         <div className="header-row">
           <MunicipalityHeader showLogo />
         </div>
 
-        {/* keep header inputs for manual override if needed */}
+        {/* ── Header meta (addressee) ── */}
         <div className="top-meta-row">
           <div className="form-group-inline header-inputs">
-            <input
-              type="text"
+            {/* FIX: was plain <input> with transparent bg → PrintField */}
+            <PrintField
               name="headerTo"
               value={formData.headerTo}
               onChange={handleChange}
+              isPrint={isPrint}
+              className="header-field"
             />
-            <input
-              type="text"
+            <PrintField
               name="headerOffice"
               value={formData.headerOffice}
               onChange={handleChange}
+              isPrint={isPrint}
+              className="header-field"
             />
           </div>
         </div>
 
-        {/* --------------------------- */}
-        {/* paste your full form JSX here (kept minimal below for brevity) */}
-        {/* --------------------------- */}
-
-        {/* Section 1 */}
+        {/* ── Section 1: बिरामीको विवरण ── */}
         <fieldset className="form-section">
           <legend>१. बिरामीको विवरण</legend>
           <div className="form-grid">
+
             <div className="form-group">
-              <label>नाम:</label>
-              <input
-                type="text"
+              <label>नाम: <span className="req">*</span></label>
+              <PrintField
                 name="patientName"
                 value={formData.patientName}
                 onChange={handleChange}
+                isPrint={isPrint}
                 required
               />
             </div>
+
             <div className="form-group">
               <label>उमेर:</label>
-              <input
-                type="text"
+              <PrintField
                 name="age"
                 value={formData.age}
                 onChange={handleChange}
+                isPrint={isPrint}
+                className="short"
               />
             </div>
+
             <div className="form-group">
               <label>लिङ्ग:</label>
-              <select
+              <PrintSelect
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
+                isPrint={isPrint}
               >
                 <option>पुरुष</option>
                 <option>महिला</option>
                 <option>अन्य</option>
-              </select>
+              </PrintSelect>
             </div>
 
             <div className="form-group">
               <label>स्थायी जिल्ला:</label>
-              <input
-                type="text"
+              <PrintField
                 name="permJilla"
                 value={formData.permJilla}
                 onChange={handleChange}
+                isPrint={isPrint}
               />
             </div>
             <div className="form-group">
-              <label>स्थायी पालिका:</label>
-              <input
-                type="text"
+              <label>स्थायी पालिका: <span className="req">*</span></label>
+              <PrintField
                 name="permPalika"
                 value={formData.permPalika}
                 onChange={handleChange}
+                isPrint={isPrint}
+                required
               />
             </div>
             <div className="form-group">
               <label>स्थायी वडा:</label>
-              <input
-                type="text"
+              <PrintField
                 name="permWarda"
                 value={formData.permWarda}
                 onChange={handleChange}
+                isPrint={isPrint}
+                className="short"
               />
             </div>
 
             <div className="form-group">
               <label>अस्थायी जिल्ला:</label>
-              <input
-                type="text"
+              <PrintField
                 name="tempJilla"
                 value={formData.tempJilla}
                 onChange={handleChange}
+                isPrint={isPrint}
               />
             </div>
             <div className="form-group">
-              <label>अस्थायी पालिका:</label>
-              <input
-                type="text"
+              <label>अस्थायी पालिका: <span className="req">*</span></label>
+              <PrintField
                 name="tempPalika"
                 value={formData.tempPalika}
                 onChange={handleChange}
+                isPrint={isPrint}
+                required
               />
             </div>
             <div className="form-group">
               <label>अस्थायी वडा:</label>
-              <input
-                type="text"
+              <PrintField
                 name="tempWarda"
                 value={formData.tempWarda}
                 onChange={handleChange}
+                isPrint={isPrint}
+                className="short"
               />
             </div>
 
             <div className="form-group">
               <label>जात:</label>
-              <input
-                type="text"
+              <PrintField
                 name="ethnicity"
                 value={formData.ethnicity}
                 onChange={handleChange}
+                isPrint={isPrint}
               />
             </div>
             <div className="form-group">
               <label>परिवार संख्या:</label>
-              <input
-                type="text"
+              <PrintField
                 name="familySize"
                 value={formData.familySize}
                 onChange={handleChange}
+                isPrint={isPrint}
+                className="short"
+              />
+            </div>
+
+          </div>
+        </fieldset>
+
+        {/* ── Section 2: आय स्रोत ── */}
+        <fieldset className="form-section">
+          <legend>२. आय स्रोत र मासिक आम्दानी</legend>
+          <div className="form-grid">
+            <div className="form-group">
+              <label>आय स्रोत:</label>
+              <PrintField
+                name="incomeSource"
+                value={formData.incomeSource}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+            <div className="form-group">
+              <label>मासिक आम्दानी:</label>
+              <PrintField
+                name="monthlyIncome"
+                value={formData.monthlyIncome}
+                onChange={handleChange}
+                isPrint={isPrint}
+                className="short"
               />
             </div>
           </div>
         </fieldset>
 
-        {/* Land table */}
+        {/* ── Section 3: Land table ── */}
         <fieldset className="form-section">
           <legend>३. नगद जग्गा (अचल र चलन सम्पत्ति):</legend>
           <div className="table-wrapper">
@@ -310,7 +398,7 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
                   <th>क्र.स.</th>
                   <th>क्षेत्रफल</th>
                   <th>भूमिस स्थान</th>
-                  <th></th>
+                  {!isPrint && <th></th>}
                 </tr>
               </thead>
               <tbody>
@@ -318,32 +406,36 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
                   <tr key={item.id}>
                     <td>{index + 1}</td>
                     <td>
-                      <input
-                        type="text"
-                        name="description"
-                        value={item.description}
-                        onChange={(e) => handleLandChange(index, e)}
-                      />
+                      {isPrint
+                        ? <span className="pf-value">{item.description}</span>
+                        : <input
+                            type="text"
+                            name="description"
+                            value={item.description}
+                            onChange={(e) => handleLandChange(index, e)}
+                          />
+                      }
                     </td>
                     <td>
-                      <input
-                        type="text"
-                        name="location"
-                        value={item.location}
-                        onChange={(e) => handleLandChange(index, e)}
-                      />
+                      {isPrint
+                        ? <span className="pf-value">{item.location}</span>
+                        : <input
+                            type="text"
+                            name="location"
+                            value={item.location}
+                            onChange={(e) => handleLandChange(index, e)}
+                          />
+                      }
                     </td>
-                    <td className="action-cell">
-                      {index === landDetails.length - 1 && (
-                        <button
-                          type="button"
-                          onClick={addLandRow}
-                          className="add-btn"
-                        >
-                          +
-                        </button>
-                      )}
-                    </td>
+                    {!isPrint && (
+                      <td className="action-cell">
+                        {index === landDetails.length - 1 && (
+                          <button type="button" onClick={addLandRow} className="add-btn">
+                            +
+                          </button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -351,86 +443,170 @@ const ImpoverishedCitizenApplicationandRecommendation = () => {
           </div>
         </fieldset>
 
-        {/* Bank, health, recommender, signatures (keep your original inputs if you prefer) */}
+        {/* ── Section 4: Bank ── */}
         <fieldset className="form-section">
-          <legend>बैंक विवरण</legend>
-          <div className="form-group">
-            <label>बैंकको नाम:</label>
-            <input
-              type="text"
-              name="bankName"
-              value={formData.bankName}
-              onChange={handleChange}
-            />
+          <legend>४. बैंक विवरण</legend>
+          <div className="form-grid">
+            <div className="form-group">
+              <label>बैंकको नाम:</label>
+              <PrintField
+                name="bankName"
+                value={formData.bankName}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+            <div className="form-group">
+              <label>शाखा:</label>
+              <PrintField
+                name="bankBranch"
+                value={formData.bankBranch}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+            <div className="form-group">
+              <label>खाता नं.:</label>
+              <PrintField
+                name="accountNo"
+                value={formData.accountNo}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
           </div>
+        </fieldset>
+
+        {/* ── Section 5: Health ── */}
+        <fieldset className="form-section">
+          <legend>५. स्वास्थ्य अवस्था</legend>
           <div className="form-group">
-            <label>शाखा:</label>
-            <input
-              type="text"
-              name="bankBranch"
-              value={formData.bankBranch}
+            <label>रोगको किसिम:</label>
+            <PrintField
+              name="healthStatus"
+              value={formData.healthStatus}
               onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>खाता नं.:</label>
-            <input
-              type="text"
-              name="accountNo"
-              value={formData.accountNo}
-              onChange={handleChange}
+              isPrint={isPrint}
             />
           </div>
         </fieldset>
 
+        {/* ── Section 7: Recommender relation ── */}
+        <fieldset className="form-section">
+          <legend>७. सिफारिसकर्ताको विवरण</legend>
+          <div className="form-group">
+            <label>सम्बन्ध:</label>
+            <PrintField
+              name="recommenderRelation"
+              value={formData.recommenderRelation}
+              onChange={handleChange}
+              isPrint={isPrint}
+            />
+          </div>
+        </fieldset>
+
+        {/* ── Applicant Signature ── */}
         <fieldset className="form-section">
           <legend>निवेदक हस्ताक्षर</legend>
-          <div className="form-group-column">
-            <label>नाम:</label>
-            <input
-              type="text"
-              name="applicantSigName"
-              value={formData.applicantSigName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group-column">
-            <label>ठेगाना:</label>
-            <input
-              type="text"
-              name="applicantSigAddress"
-              value={formData.applicantSigAddress}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group-column">
-            <label>मिति:</label>
-            <input
-              type="text"
-              name="applicantSigDate"
-              value={formData.applicantSigDate}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group-column">
-            <label>फोन:</label>
-            <input
-              type="text"
-              name="applicantSigPhone"
-              value={formData.applicantSigPhone}
-              onChange={handleChange}
-            />
+          <div className="form-grid">
+            <div className="form-group">
+              <label>नाम:</label>
+              <PrintField
+                name="applicantSigName"
+                value={formData.applicantSigName}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+            <div className="form-group">
+              <label>ठेगाना:</label>
+              <PrintField
+                name="applicantSigAddress"
+                value={formData.applicantSigAddress}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+            <div className="form-group">
+              <label>मिति:</label>
+              <PrintField
+                name="applicantSigDate"
+                value={formData.applicantSigDate}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+            <div className="form-group">
+              <label>फोन:</label>
+              <PrintField
+                name="applicantSigPhone"
+                value={formData.applicantSigPhone}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
           </div>
         </fieldset>
 
-        {/* Applicants details */}
+        {/* ── Recommender ── */}
+        <fieldset className="form-section">
+          <legend>सिफारिस गर्नेको विवरण</legend>
+          <div className="form-grid">
+            <div className="form-group">
+              <label>नाम:</label>
+              <PrintField
+                name="recName"
+                value={formData.recName}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+            <div className="form-group">
+              <label>पद:</label>
+              <PrintSelect
+                name="recPosition"
+                value={formData.recPosition}
+                onChange={handleChange}
+                isPrint={isPrint}
+              >
+                <option>पद छनोट गर्नुहोस्</option>
+                <option>वडा अध्यक्ष</option>
+                <option>वडा सचिव</option>
+                <option>वडा सदस्य</option>
+              </PrintSelect>
+            </div>
+            <div className="form-group">
+              <label>मिति:</label>
+              <PrintField
+                name="recDate"
+                value={formData.recDate}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+            <div className="form-group">
+              <label>कार्यालय छाप:</label>
+              <PrintField
+                name="recOfficeStamp"
+                value={formData.recOfficeStamp}
+                onChange={handleChange}
+                isPrint={isPrint}
+              />
+            </div>
+          </div>
+        </fieldset>
+
+        {/* ── Applicant Details (footer box) ── */}
         <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
-        <div className="submit-area">
-          <button type="submit" className="submit-btn" disabled={submitting}>
-            {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-          </button>
-        </div>
+        {/* ── Submit (hidden in print mode) ── */}
+        {!isPrint && (
+          <div className="submit-area">
+            <button type="submit" className="submit-btn" disabled={submitting}>
+              {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

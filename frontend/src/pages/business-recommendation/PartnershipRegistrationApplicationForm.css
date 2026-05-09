@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: "Mangal", "Roboto", "Segoe UI", sans-serif;
+  font-family: 'Kalimati', 'Kokila', sans-serif;
   background: #d6d7da;
 }
 
@@ -10,7 +10,7 @@ body {
   flex-direction: column;
 }
 
-/* Top bar */
+/* === TOP BAR === */
 .praf-topbar {
   background-color: #111827;
   color: #ffffff;
@@ -19,126 +19,164 @@ body {
   justify-content: space-between;
   font-size: 14px;
 }
+.praf-top-left { font-weight: 600; }
+.praf-top-right { opacity: 0.9; }
 
-.praf-top-left {
-  font-weight: 600;
-}
-
-.praf-top-right {
-  opacity: 0.9;
-}
-
-/* Paper */
+/* === PAPER — matches reference exactly === */
 .praf-paper {
-  margin: 0 24px 20px;
-  padding: 28px 40px 40px;
-  /* background: url("https://i.ibb.co/hLDWQn3/paper-texture.jpg"); */
-  background-size: 280px 280px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 30px 50px;
+  background-image: url("/papertexture1.jpg");
+  background-repeat: repeat;
+  background-size: auto;
+  background-position: top left;
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  color: #000;
+  position: relative;
 }
 
-/* Title + date */
+/* === LETTERHEAD — matches reference .form-header-section === */
+.praf-letterhead {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.praf-logo img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 80px;
+}
+
+.praf-head-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.praf-head-main {
+  color: #e74c3c;
+  font-size: 2.2rem;
+  margin: 0;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.praf-head-ward {
+  color: #e74c3c;
+  font-size: 2.5rem;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.praf-head-sub {
+  color: #e74c3c;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* All inputs/selects/textareas white */
+.praf-paper input,
+.praf-paper select,
+.praf-paper textarea {
+  background-color: #ffffff;
+}
+
+/* === TITLE + DATE === */
 .praf-main-title {
   text-align: center;
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 20px 0 8px;
 }
 
 .praf-date-row {
   text-align: right;
-  font-size: 14px;
+  font-size: 1rem;
+  margin-bottom: 10px;
 }
 
 .praf-date-input {
   width: 120px;
   padding: 4px 6px;
-  border: 1px solid #c1c1c1;
+  border: none;
+  border-bottom: 1px dotted #000;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
 }
 
-/* To block */
+/* === TO BLOCK === */
 .praf-to-block {
   margin-top: 16px;
-  font-size: 14px;
+  font-size: 1.05rem;
+  line-height: 2.2;
 }
 
 .praf-long-input {
   width: 260px;
-  padding: 4px 6px;
-  border: 1px solid #c1c1c1;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  background: #fff;
   margin-left: 6px;
+  border-radius: 3px;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+  vertical-align: middle;
 }
 
 .praf-to-second {
   margin-top: 6px;
 }
 
-/* Subject */
-.praf-subject-row {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-}
-
-.praf-sub-label {
-  font-weight: 600;
-  margin-right: 6px;
-}
-
-.praf-subject-text {
-  text-decoration: underline;
-}
-
-/* Body */
-.praf-body {
-  margin-top: 14px;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* Sections */
+/* === SECTIONS === */
 .praf-section {
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .praf-subtitle {
-  font-size: 15px;
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-/* Field rows */
+/* === FIELD ROWS === */
 .praf-field-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  font-size: 14px;
-  margin-top: 6px;
+  font-size: 1rem;
+  margin-top: 10px;
 }
 
 .praf-field-row input,
 .praf-field-row select {
-  padding: 4px 6px;
-  border: 1px solid #c1c1c1;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
 }
 
 /* Width helpers */
-.praf-small-input { width: 80px; }
+.praf-small-input  { width: 80px; }
 .praf-medium-input { width: 160px; }
-.praf-wide-input { flex: 1; min-width: 230px; }
+.praf-wide-input   { flex: 1; min-width: 230px; }
+.praf-select       { min-width: 90px; }
 
-.praf-select {
-  min-width: 80px;
-}
-
-/* Tables */
+/* === PARTNERS TABLE === */
 .praf-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
-  margin-top: 6px;
+  font-size: 0.95rem;
+  margin-top: 8px;
 }
 
 .praf-table th,
@@ -151,6 +189,7 @@ body {
 .praf-table th {
   background-color: #f0f0f0;
   text-align: center;
+  font-weight: 600;
 }
 
 .praf-table td input {
@@ -158,78 +197,96 @@ body {
   border: none;
   padding: 3px 4px;
   outline: none;
+  background: #fff;
+  font-family: inherit;
+  font-size: inherit;
 }
 
-/* Add button */
-.praf-add-btn {
-  background-color: #1276d1;
+.praf-table td button {
+  padding: 2px 8px;
+  margin: 0 2px;
+  cursor: pointer;
+  border: 1px solid #c1c1c1;
+  border-radius: 3px;
+  background: #f0f0f0;
+}
+
+/* === APPLICANT DETAILS BOX — matches reference === */
+.applicant-details-box {
+  border: 2px solid #999 !important;
+  padding: 20px;
+  background-color: transparent !important;
+  margin-top: 20px;
+  border-radius: 4px;
+}
+
+.applicant-details-box h3 {
+  color: #777;
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.details-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+.bg-gray { background-color: #eef2f5; }
+
+/* === FOOTER === */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn {
+  background-color: #2c3e50;
+  color: white;
+  padding: 10px 25px;
   border: none;
-  color: #ffffff;
-  padding: 3px 8px;
-  border-radius: 2px;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
 }
-
-/* Note section */
-.praf-note-section {
-  border-top: 1px dashed #b7b7b7;
+.save-print-btn:hover { background-color: #1a252f; }
+.copyright-footer {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
   padding-top: 10px;
 }
 
-.praf-note-text {
-  margin-top: 4px;
-  font-size: 14px;
-}
+/* === PRINT STYLES === */
+@media print {
+  body * { visibility: hidden; }
 
-/* Bullet list for deed section */
-.praf-points {
-  font-size: 14px;
-  margin: 6px 0 0;
-  padding-left: 20px;
-}
+  .praf-paper,
+  .praf-paper * { visibility: visible; }
 
-/* Applicant box */
-.praf-applicant-box {
-  border: 1px solid #d3d3d3;
-  padding: 16px;
-  max-width: 360px;
-  margin-top: 6px;
-}
+  .praf-topbar,
+  .form-footer { display: none; }
 
-.praf-field {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-}
-
-.praf-field label {
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.praf-field input {
-  padding: 6px 8px;
-  border: 1px solid #c1c1c1;
-}
-
-/* Submit */
-.praf-submit-row {
-  margin-top: 22px;
-  text-align: center;
-}
-
-.praf-submit-btn {
-  background-color: #222222;
-  color: #ffffff;
-  border: none;
-  padding: 8px 22px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* Footer */
-.praf-footer {
-  text-align: right;
-  padding: 10px 24px 18px;
-  font-size: 13px;
+  .praf-paper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 20px 40px;
+    background: white;
+  }
 }

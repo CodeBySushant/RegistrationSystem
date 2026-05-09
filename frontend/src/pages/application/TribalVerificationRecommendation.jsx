@@ -1,10 +1,11 @@
 // src/pages/appeal/TribalVerificationRecommendation.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import "./TribalVerificationRecommendation.css";
 
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const initialState = {
@@ -17,12 +18,14 @@ const initialState = {
   municipality2: MUNICIPALITY?.name || "",
   wardNo2: MUNICIPALITY?.wardNumber || "१",
   residentTitle: "श्री",
+  // FIX 5: residentName was missing from initialState
+  residentName: "",
   relation: "बाबु",
   guardianTitle: "श्री",
   guardianName: "",
   tribeCategory: "आदिवासी जनजाती",
   tribeName: "",
-  mainContent: "महोदय,\nउपलब्ध गराई पाउन यो निवेदन पेश गरेको छु ।",
+  mainContent: "",
   applicantNameSignature: "",
   applicantAddressSignature: "",
   applicantName: "",
@@ -43,14 +46,15 @@ const TribalVerificationRecommendation = () => {
   };
 
   const validate = (fd) => {
-    if (!fd.guardianName?.trim()) return "नाम भर्नुहोस् (guardianName)";
-    if (!fd.tribeName?.trim()) return "जाति नाम भर्नुहोस् (tribeName)";
+    if (!fd.guardianName?.trim()) return "नाम भर्नुहोस्";
+    if (!fd.tribeName?.trim()) return "जाति नाम भर्नुहोस्";
+    if (!fd.applicantNameSignature?.trim()) return "निवेदकको नाम (दस्तखत) भर्नुहोस्";
+    if (!fd.applicantAddressSignature?.trim()) return "निवेदकको ठेगाना (दस्तखत) भर्नुहोस्";
     if (!fd.applicantName?.trim()) return "निवेदकको नाम भर्नुहोस्";
     if (!fd.applicantAddress?.trim()) return "निवेदकको ठेगाना भर्नुहोस्";
     if (!fd.applicantCitizenship?.trim()) return "नागरिकता नं. भर्नुहोस्";
     if (!fd.applicantPhone?.trim()) return "सम्पर्क नं. भर्नुहोस्";
-    if (!phoneRegex.test(String(fd.applicantPhone)))
-      return "सम्पर्क नं. अमान्य छ";
+    if (!phoneRegex.test(String(fd.applicantPhone))) return "सम्पर्क नं. अमान्य छ";
     return null;
   };
 
@@ -67,18 +71,17 @@ const TribalVerificationRecommendation = () => {
     setSubmitting(true);
     try {
       const payload = { ...formData };
-      // normalize empty strings -> null
       Object.keys(payload).forEach((k) => {
         if (payload[k] === "") payload[k] = null;
       });
 
-      const url = "/api/forms/tribal-verification-recommendation";
-      const res = await axios.post(url, payload);
+      const res = await axios.post("/api/forms/tribal-verification-recommendation", payload);
 
       if (res.status === 201 || res.status === 200) {
         alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
-        setFormData(initialState);
-        setTimeout(() => window.print(), 150);
+        // FIX 1: print FIRST, then reset — so the printed page is not blank
+        window.print();
+        setTimeout(() => setFormData(initialState), 500);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -188,7 +191,15 @@ const TribalVerificationRecommendation = () => {
             <option>सुश्री</option>
             <option>श्रीमती</option>
           </select>
-          ( को
+          {/* FIX 5: residentName input now bound to state */}
+          <input
+            type="text"
+            name="residentName"
+            placeholder="निवासीको नाम"
+            value={formData.residentName}
+            onChange={handleChange}
+          />
+          को
           <select
             name="relation"
             value={formData.relation}
@@ -207,7 +218,6 @@ const TribalVerificationRecommendation = () => {
             <option>सुश्री</option>
             <option>श्रीमती</option>
           </select>
-          )
           <input
             type="text"
             name="guardianName"
@@ -235,16 +245,15 @@ const TribalVerificationRecommendation = () => {
           जाती भएको व्यहोरा सिफारिस उपलब्ध गराई पाउन यो निवेदन पेश गरेको छु ।
         </p>
 
+        {/* FIX 4: removed misleading fake editor toolbar; replaced with plain textarea */}
         <div className="form-group-column rich-text-area">
-          <label>निवेदन व्यहोरा:</label>
-          <div className="editor-toolbar-placeholder">
-            [BIU S A ... Styles Format]
-          </div>
+          <label>निवेदन व्यहोरा (थप विवरण):</label>
           <textarea
             name="mainContent"
             value={formData.mainContent}
             onChange={handleChange}
-            rows="6"
+            rows="5"
+            placeholder="थप विवरण यहाँ लेख्नुहोस् (वैकल्पिक)"
           />
         </div>
 
@@ -252,7 +261,7 @@ const TribalVerificationRecommendation = () => {
           <p className="signature-label">निवेदक / निवेदिका</p>
           <div className="signature-fields">
             <div className="form-group-inline">
-              <label>नाम, थर : *</label>
+              <label>नाम, थर : <span className="required">*</span></label>
               <input
                 type="text"
                 name="applicantNameSignature"
@@ -262,7 +271,7 @@ const TribalVerificationRecommendation = () => {
               />
             </div>
             <div className="form-group-inline">
-              <label>ठेगाना : *</label>
+              <label>ठेगाना : <span className="required">*</span></label>
               <input
                 type="text"
                 name="applicantAddressSignature"
