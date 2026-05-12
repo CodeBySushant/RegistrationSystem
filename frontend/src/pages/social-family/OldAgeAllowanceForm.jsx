@@ -1,79 +1,217 @@
-import React, { useState } from 'react';
-import './OldAgeAllowanceForm.css';
-
+import React, { useState } from "react";
 import axios from "../../utils/axiosInstance";
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
+import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
-import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-/* Safe API base resolver for CRA, Vite and window fallback */
-const getApiBase = () => {
-  try {
-    if (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE) {
-      return process.env.REACT_APP_API_BASE;
+/* ─────────────────────────────────────────────────────────────────────────────
+   Styles (merged from OldAgeAllowanceForm.css)
+   All classes prefixed with "oaa-" to avoid global collisions.
+───────────────────────────────────────────────────────────────────────────── */
+const STYLES = `
+  /* ── Container ── */
+  .oaa-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 30px 50px;
+    background-image: url("/papertexture1.jpg");
+    background-repeat: repeat;
+    background-size: auto;
+    background-position: top left;
+    font-family: 'Kalimati', 'Kokila', sans-serif;
+    color: #000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  /* ── Utility ── */
+  .oaa-bold      { font-weight: bold; }
+  .oaa-underline { text-decoration: underline; }
+  .oaa-red       { color: red; font-weight: bold; margin-left: 2px; }
+  .oaa-center    { text-align: center; }
+  .oaa-pt-20     { padding-top: 20px; }
+
+  /* ── Top Bar ── */
+  .oaa-top-bar {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  .oaa-breadcrumb { font-size: 0.9rem; color: #777; }
+
+  /* ── Header ── */
+  .oaa-header { text-align: center; margin-bottom: 30px; }
+  .oaa-main-title { font-size: 1.8rem; margin: 0; font-weight: bold; }
+  .oaa-sub-title  { font-size: 1rem; margin: 5px 0 0 0; font-weight: normal; }
+
+  /* ── Salutation / Date / Ward ── */
+  .oaa-salutation-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+  .oaa-ward-row { margin-bottom: 20px; font-size: 1.1rem; }
+
+  /* ── Input styles ── */
+  .oaa-input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .oaa-input-group label {
+    margin-right: 5px;
+    white-space: nowrap;
+  }
+  .oaa-line-input {
+    border: none;
+    border-bottom: 1px solid #000;
+    background: transparent;
+    outline: none;
+    padding: 2px 5px;
+    font-family: inherit;
+    font-size: 1rem;
+    margin-left: 5px;
+  }
+  .oaa-small-input  { width: 60px;  text-align: center; }
+  .oaa-medium-input { width: 150px; }
+  .oaa-full-width   { width: 100%; }
+  .oaa-tiny-input   { width: 100px; }
+
+  .oaa-styled-select {
+    border: 1px solid #ccc;
+    padding: 5px;
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+    margin-left: 10px;
+    background: #fff;
+  }
+
+  /* ── Subject ── */
+  .oaa-subject-section {
+    text-align: center;
+    margin: 30px 0;
+    font-size: 1.2rem;
+  }
+
+  /* ── Body ── */
+  .oaa-body {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    text-align: justify;
+    margin-bottom: 30px;
+  }
+  .oaa-body-paragraph { margin-top: 10px; }
+
+  /* ── Target group ── */
+  .oaa-target-group {
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ── Applicant section ── */
+  .oaa-section-title { font-size: 1.4rem; margin-bottom: 20px; }
+  .oaa-applicant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .oaa-grid-column {
+    display: flex;
+    flex-direction: column;
+  }
+  .oaa-grid-column .oaa-input-group { justify-content: flex-start; }
+  .oaa-grid-column .oaa-input-group label { min-width: 90px; }
+
+  /* ── Footer ── */
+  .oaa-footer { text-align: center; margin-top: 40px; }
+  .oaa-save-print-btn {
+    background-color: #2c3e50;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .oaa-save-print-btn:hover:not(:disabled) { background-color: #1a252f; }
+  .oaa-save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .oaa-copyright {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 50px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body * { visibility: hidden; }
+    .oaa-container, .oaa-container * { visibility: visible; }
+    .oaa-container {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      margin: 0;
+      padding: 20px 40px;
+      background: white !important;
+      background-image: none !important;
+      box-shadow: none;
     }
-  } catch (e) { /* ignore */ }
+    .oaa-top-bar, .oaa-footer { display: none !important; }
+  }
+`;
 
-  try {
-    const meta = Function('return import.meta')();
-    if (meta && meta.env && meta.env.VITE_API_BASE) return meta.env.VITE_API_BASE;
-  } catch (e) { /* ignore */ }
-
-  if (typeof window !== 'undefined' && window.__API_BASE) return window.__API_BASE;
-  return '';
+/* ─────────────────────────────────────────────────────────────────────────────
+   Initial State
+───────────────────────────────────────────────────────────────────────────── */
+const initialState = {
+  municipality:       "नागार्जुन नगरपालिका",
+  ward_no:            "",
+  date_bs:            "२०८२-०८-०५",
+  subject:            "नाम दर्ता सम्बन्धमा",
+  target_group:       "जेष्ठ नागरिक (अन्य)",
+  applicant_name:     "",
+  father_name:        "",
+  mother_name:        "",
+  address:            "",
+  npr_no:             "",
+  npr_issue_district: "",
+  gender:             "पुरुष",
+  dob_bs:             "२०८२-०८-०५",
+  age_reach_date:     "",
 };
 
-const API_URL = `${getApiBase().replace(/\/$/, '')}/api/forms/old-age-allowance`;
-
-const timestampNow = () => {
-  const d = new Date();
-  const pad = (n) => n.toString().padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-};
-
-const emptyState = {
-  municipality: 'नागार्जुन नगरपालिका',
-  ward_no: '',
-  date_bs: '२०८२-०८-०५',
-  subject: 'नाम दर्ता सम्बन्धमा',
-  target_group: 'जेष्ठ नागरिक (अन्य)',
-
-  // applicant details
-  applicant_name: '',
-  father_name: '',
-  mother_name: '',
-  address: '',
-  npr_no: '',
-  npr_issue_district: '',
-  gender: 'पुरुष',
-  dob_bs: '२०८२-०८-०५',
-  age_reach_date: '',
-
-  municipality_name: 'नागार्जुन नगरपालिका',
-  ward_title: '१ नं. वडा कार्यालय'
-};
-
+/* ─────────────────────────────────────────────────────────────────────────────
+   Component
+───────────────────────────────────────────────────────────────────────────── */
 const OldAgeAllowanceForm = () => {
+  // FIX: original called useWardForm + setField without importing either.
   const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
+  /* ── Submit ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // backend URL - adjust if different
       const res = await axios.post("/api/forms/old-age-allowance", form);
-      setLoading(false);
       if (res.status === 201) {
         alert("Form submitted successfully! ID: " + res.data.id);
-        setForm(initialState); // reset form on success
+        setForm(initialState);
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
     } catch (err) {
-      setLoading(false);
       console.error("Submit error:", err.response || err.message || err);
       const msg =
         err.response?.data?.message ||
@@ -81,153 +219,272 @@ const OldAgeAllowanceForm = () => {
         err.message ||
         "Submission failed";
       alert("Error: " + msg);
+    } finally {
+      setLoading(false);
     }
   };
 
+  /* ── Save → Print → Reset ── */
   const handlePrint = async () => {
     setLoading(true);
     try {
       const res = await axios.post("/api/forms/old-age-allowance", form);
       if (res.status === 201) {
         alert("Form submitted successfully! ID: " + res.data.id);
-        window.print(); // ✅ print first
-        setForm(initialState); // ✅ reset AFTER print
+        window.print();
+        setForm(initialState);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Print error:", err.response || err.message || err);
+      alert("Error saving before print.");
     } finally {
       setLoading(false);
     }
   };
 
-
+  /* ─────────────────────────────────────────────────────────────────────────
+     Render
+  ───────────────────────────────────────────────────────────────────────── */
   return (
-    <form className="old-age-allowance-container" onSubmit={handleSubmit}>
-      {/* --- Top Bar --- */}
-      <div className="top-bar-title">
-        वृद्धा भत्ताको निवेदन
-        <span className="top-right-bread">सामाजिक / पारिवारिक &gt; वृद्धा भत्ताको निवेदन</span>
-      </div>
+    <>
+      <style>{STYLES}</style>
 
-      {/* --- Header Section --- */}
-      <div className="form-header-section">
-        <h1 className="main-title">वृद्धा भत्ताको निवेदन ।</h1>
-        <h2 className="sub-title">(दफा ६ को उपदफा ३ सँग सम्बन्धित)</h2>
-      </div>
+      <form className="oaa-container" onSubmit={handleSubmit}>
 
-      {/* --- Salutation & Date --- */}
-      <div className="salutation-row">
-        <div className="salutation-left">
-          <p className="bold-text">श्री अध्यक्ष ज्यू,</p>
-          <div className="input-group">
-            <label htmlFor="municipality">नागार्जुन नगरपालिका</label>
-            <span className="red">*</span>
-            <input id="municipality" value={form.municipality} onChange={e => setField('municipality', e.target.value)} type="text" className="line-input medium-input" />
-          </div>
+        {/* ── Top Bar ── */}
+        <div className="oaa-top-bar">
+          वृद्धा भत्ताको निवेदन
+          <span className="oaa-breadcrumb">
+            सामाजिक / पारिवारिक &gt; वृद्धा भत्ताको निवेदन
+          </span>
         </div>
-        <div className="salutation-right">
-          <p>मिति : <input value={form.date_bs} onChange={e => setField('date_bs', e.target.value)} className="line-input tiny-input" /></p>
+
+        {/* ── Header ── */}
+        <div className="oaa-header">
+          <h1 className="oaa-main-title">वृद्धा भत्ताको निवेदन ।</h1>
+          <h2 className="oaa-sub-title">(दफा ६ को उपदफा ३ सँग सम्बन्धित)</h2>
         </div>
-      </div>
 
-      <div className="ward-row">
-        <div className="input-group">
-            <label htmlFor="wardNo" style={{marginLeft: '200px'}}>वडा नं</label>
-            <span className="red">*</span>
-            <input id="wardNo" value={form.ward_no} onChange={e => setField('ward_no', e.target.value)} type="text" className="line-input small-input" />
-        </div>
-      </div>
-
-      {/* --- Subject --- */}
-      <div className="subject-section">
-        <p>विषय: <span className="underline-text bold-text"><input value={form.subject} onChange={e => setField('subject', e.target.value)} className="line-input" /></span></p>
-      </div>
-
-      {/* --- Main Body --- */}
-      <div className="form-body">
-        <p>महोदय,</p>
-        <p className="body-paragraph">
-          उपरोक्त विषयमा सामाजिक सुरक्षा भत्ता पाउनका लागि नयाँ नाम दर्ता गरिदिनुहुन देहायका विवरण सहित यो दरखास्त पेश गरेको छु। मैले राज्य कोषबाट मासिक पारिश्रमिक, पेन्सन वा यस्तै प्रकारका कुनै अन्य सुविधा पाएको छैन। व्यहोरा ठीक साँचो हो, झुठो ठहरे प्रचलित कानुन बमोजिम सहुँला बुझाउँला।
-        </p>
-      </div>
-
-      {/* --- Target Group --- */}
-      <div className="target-group-section">
-        <label htmlFor="targetGroup">लक्षित समूह:</label>
-        <select id="targetGroup" value={form.target_group} onChange={e => setField('target_group', e.target.value)} className="styled-select">
-          <option>जेष्ठ नागरिक (दलित)</option>
-          <option>जेष्ठ नागरिक (अन्य)</option>
-          <option>एकल महिला</option>
-          <option>विधवा</option>
-          <option>पूर्ण अपाङ्गता</option>
-          <option>अति अशक्त अपाङ्गता</option>
-          <option>लोपोन्मुख आदिवासी/जनजाति</option>
-          <option>बालबालिका</option>
-        </select>
-      </div>
-
-      {/* --- Applicant Details Section --- */}
-      <div className="applicant-section">
-        <h3 className="section-title center-text">निवेदक</h3>
-        <div className="applicant-grid">
-          <div className="grid-column">
-            <div className="input-group">
-              <label>नाम, थर: <span className="red">*</span></label>
-              <input value={form.applicant_name} onChange={e => setField('applicant_name', e.target.value)} type="text" className="line-input full-width" />
-            </div>
-            <div className="input-group">
-              <label>बाबुको नाम: <span className="red">*</span></label>
-              <input value={form.father_name} onChange={e => setField('father_name', e.target.value)} type="text" className="line-input full-width" />
-            </div>
-            <div className="input-group">
-              <label>ठेगाना: <span className="red">*</span></label>
-              <input value={form.address} onChange={e => setField('address', e.target.value)} type="text" className="line-input full-width" />
-            </div>
-            <div className="input-group">
-              <label>ना.प्र.नं.: <span className="red">*</span></label>
-              <input value={form.npr_no} onChange={e => setField('npr_no', e.target.value)} type="text" className="line-input full-width" />
-            </div>
-            <div className="input-group">
-              <label>जारी जिल्ला: <span className="red">*</span></label>
-              <input value={form.npr_issue_district} onChange={e => setField('npr_issue_district', e.target.value)} type="text" className="line-input full-width" />
+        {/* ── Salutation + Date ── */}
+        <div className="oaa-salutation-row">
+          <div className="oaa-salutation-left">
+            <p className="oaa-bold">श्री अध्यक्ष ज्यू,</p>
+            <div className="oaa-input-group">
+              <label>{MUNICIPALITY.name}</label>
+              <span className="oaa-red">*</span>
+              <input
+                name="municipality"
+                value={form.municipality}
+                onChange={handleChange}
+                type="text"
+                className="oaa-line-input oaa-medium-input"
+              />
             </div>
           </div>
+          <div className="oaa-salutation-right">
+            <p>
+              मिति :
+              <input
+                name="date_bs"
+                value={form.date_bs}
+                onChange={handleChange}
+                className="oaa-line-input oaa-tiny-input"
+              />
+            </p>
+          </div>
+        </div>
 
-          <div className="grid-column">
-            <div className="input-group">
-              <label>लिङ्ग: <span className="red">*</span></label>
-              <select value={form.gender} onChange={e => setField('gender', e.target.value)} className="styled-select full-width">
-                <option>पुरुष</option>
-                <option>महिला</option>
-                <option>अन्य</option>
-              </select>
+        {/* ── Ward ── */}
+        <div className="oaa-ward-row">
+          <div className="oaa-input-group">
+            <label style={{ marginLeft: "200px" }}>वडा नं</label>
+            <span className="oaa-red">*</span>
+            <input
+              name="ward_no"
+              value={form.ward_no}
+              onChange={handleChange}
+              type="text"
+              className="oaa-line-input oaa-small-input"
+            />
+          </div>
+        </div>
+
+        {/* ── Subject ── */}
+        <div className="oaa-subject-section">
+          <p>
+            विषय:{" "}
+            <span className="oaa-underline oaa-bold">
+              <input
+                name="subject"
+                value={form.subject}
+                onChange={handleChange}
+                className="oaa-line-input"
+              />
+            </span>
+          </p>
+        </div>
+
+        {/* ── Body ── */}
+        <div className="oaa-body">
+          <p>महोदय,</p>
+          <p className="oaa-body-paragraph">
+            उपरोक्त विषयमा सामाजिक सुरक्षा भत्ता पाउनका लागि नयाँ नाम दर्ता
+            गरिदिनुहुन देहायका विवरण सहित यो दरखास्त पेश गरेको छु। मैले राज्य
+            कोषबाट मासिक पारिश्रमिक, पेन्सन वा यस्तै प्रकारका कुनै अन्य सुविधा
+            पाएको छैन। व्यहोरा ठीक साँचो हो, झुठो ठहरे प्रचलित कानुन बमोजिम
+            सहुँला बुझाउँला।
+          </p>
+        </div>
+
+        {/* ── Target Group ── */}
+        <div className="oaa-target-group">
+          <label htmlFor="targetGroup">लक्षित समूह:</label>
+          <select
+            id="targetGroup"
+            name="target_group"
+            value={form.target_group}
+            onChange={handleChange}
+            className="oaa-styled-select"
+          >
+            <option value="जेष्ठ नागरिक (दलित)">जेष्ठ नागरिक (दलित)</option>
+            <option value="जेष्ठ नागरिक (अन्य)">जेष्ठ नागरिक (अन्य)</option>
+            <option value="एकल महिला">एकल महिला</option>
+            <option value="विधवा">विधवा</option>
+            <option value="पूर्ण अपाङ्गता">पूर्ण अपाङ्गता</option>
+            <option value="अति अशक्त अपाङ्गता">अति अशक्त अपाङ्गता</option>
+            <option value="लोपोन्मुख आदिवासी/जनजाति">लोपोन्मुख आदिवासी/जनजाति</option>
+            <option value="बालबालिका">बालबालिका</option>
+          </select>
+        </div>
+
+        {/* ── Applicant Details ── */}
+        <div className="oaa-applicant-section">
+          <h3 className="oaa-section-title oaa-center">निवेदक</h3>
+          <div className="oaa-applicant-grid">
+            {/* Left column */}
+            <div className="oaa-grid-column">
+              <div className="oaa-input-group">
+                <label>नाम, थर: <span className="oaa-red">*</span></label>
+                <input
+                  name="applicant_name"
+                  value={form.applicant_name}
+                  onChange={handleChange}
+                  type="text"
+                  className="oaa-line-input oaa-full-width"
+                />
+              </div>
+              <div className="oaa-input-group">
+                <label>बाबुको नाम: <span className="oaa-red">*</span></label>
+                <input
+                  name="father_name"
+                  value={form.father_name}
+                  onChange={handleChange}
+                  type="text"
+                  className="oaa-line-input oaa-full-width"
+                />
+              </div>
+              <div className="oaa-input-group">
+                <label>ठेगाना: <span className="oaa-red">*</span></label>
+                <input
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                  type="text"
+                  className="oaa-line-input oaa-full-width"
+                />
+              </div>
+              <div className="oaa-input-group">
+                <label>ना.प्र.नं.: <span className="oaa-red">*</span></label>
+                <input
+                  name="npr_no"
+                  value={form.npr_no}
+                  onChange={handleChange}
+                  type="text"
+                  className="oaa-line-input oaa-full-width"
+                />
+              </div>
+              <div className="oaa-input-group">
+                <label>जारी जिल्ला: <span className="oaa-red">*</span></label>
+                <input
+                  name="npr_issue_district"
+                  value={form.npr_issue_district}
+                  onChange={handleChange}
+                  type="text"
+                  className="oaa-line-input oaa-full-width"
+                />
+              </div>
             </div>
-            <div className="input-group">
-              <label>आमाको नाम: <span className="red">*</span></label>
-              <input value={form.mother_name} onChange={e => setField('mother_name', e.target.value)} type="text" className="line-input full-width" />
-            </div>
-            <div className="input-group pt-20">
-              <label>जन्ममिति: <span className="bold-text"><input value={form.dob_bs} onChange={e => setField('dob_bs', e.target.value)} className="line-input" /></span></label>
-            </div>
-            <div className="input-group">
-              <label>जेष्ठ नागरिकको हकमा उमेर पुग्ने मिति:</label>
-              <input value={form.age_reach_date} onChange={e => setField('age_reach_date', e.target.value)} type="text" className="line-input full-width" />
+
+            {/* Right column */}
+            <div className="oaa-grid-column">
+              <div className="oaa-input-group">
+                <label>लिङ्ग: <span className="oaa-red">*</span></label>
+                <select
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleChange}
+                  className="oaa-styled-select oaa-full-width"
+                >
+                  <option value="पुरुष">पुरुष</option>
+                  <option value="महिला">महिला</option>
+                  <option value="अन्य">अन्य</option>
+                </select>
+              </div>
+              <div className="oaa-input-group">
+                <label>आमाको नाम: <span className="oaa-red">*</span></label>
+                <input
+                  name="mother_name"
+                  value={form.mother_name}
+                  onChange={handleChange}
+                  type="text"
+                  className="oaa-line-input oaa-full-width"
+                />
+              </div>
+              <div className="oaa-input-group oaa-pt-20">
+                <label>
+                  जन्ममिति:{" "}
+                  <span className="oaa-bold">
+                    <input
+                      name="dob_bs"
+                      value={form.dob_bs}
+                      onChange={handleChange}
+                      className="oaa-line-input"
+                    />
+                  </span>
+                </label>
+              </div>
+              <div className="oaa-input-group">
+                <label>जेष्ठ नागरिकको हकमा उमेर पुग्ने मिति:</label>
+                <input
+                  name="age_reach_date"
+                  value={form.age_reach_date}
+                  onChange={handleChange}
+                  type="text"
+                  className="oaa-line-input oaa-full-width"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* --- Footer Action --- */}
-      <div className="form-footer">
-        <button className="save-print-btn" type="button" onClick={handlePrint}>
-          {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-        </button>
-      </div>
+        {/* ── Footer ── */}
+        <div className="oaa-footer">
+          <button
+            className="oaa-save-print-btn"
+            type="button"
+            onClick={handlePrint}
+            disabled={loading}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
+        </div>
 
-      <div className="copyright-footer">
-        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
-      </div>
-    </form>
+        <div className="oaa-copyright">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
+
+      </form>
+    </>
   );
 };
 
