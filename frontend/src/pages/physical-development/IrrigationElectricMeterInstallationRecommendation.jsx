@@ -1,12 +1,190 @@
-// IrrigationElectricMeterInstallationRecommendation.jsx
-import React, { useState } from 'react';
-import './IrrigationElectricMeterInstallationRecommendation.css';
+// IrrigationElectricMeterInstallationRecommendation.jsx — merged (JSX + CSS, no external .css needed)
+import React, { useState, useEffect, useRef } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
-import MunicipalityHeader from '../../components/MunicipalityHeader.jsx';
 import { MUNICIPALITY } from '../../config/municipalityConfig';
 import { useAuth } from '../../context/AuthContext';
 import ApplicantDetailsNp from '../../components/ApplicantDetailsNp';
 
+/* ─────────────────────────────────────────────
+   INLINE STYLES  (replaces IrrigationElectricMeterInstallationRecommendation.css — unchanged)
+   ───────────────────────────────────────────── */
+const STYLES = `
+/* --- Main Container --- */
+.irrigation-meter-container {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 30px 50px;
+  background-image: url("/papertexture1.jpg");
+  background-repeat: repeat;
+  background-size: auto;
+  background-position: top left;
+  font-family: 'Kalimati', 'Kokila', sans-serif;
+  color: #000;
+  position: relative;
+}
+
+/* --- Utility Classes --- */
+.bold-text { font-weight: bold; }
+.underline-text { text-decoration: underline; }
+.red { color: red; font-weight: bold; margin-left: 2px; vertical-align: sub; }
+.red-mark { color: red; position: absolute; top: 0; left: 0; }
+.bg-gray-text { background-color: #eee; padding: 2px 5px; border-radius: 3px; margin: 0 5px; }
+
+/* --- Top Bar --- */
+.top-bar-title {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+.top-right-bread { font-size: 0.9rem; color: #777; font-weight: normal; }
+
+/* --- Header Section --- */
+.form-header-section { text-align: center; margin-bottom: 20px; position: relative; }
+.header-logo img { position: absolute; left: 0; top: 0; width: 80px; }
+.header-text { display: flex; flex-direction: column; align-items: center; }
+.municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
+.ward-title { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
+.address-text, .province-text { color: #e74c3c; margin: 0; font-size: 1rem; }
+
+/* --- Meta Data --- */
+.meta-data-row { display: flex; justify-content: space-between; margin-top: 20px; font-size: 1rem; }
+.meta-left p, .meta-right p { margin: 5px 0; }
+
+.dotted-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background-color: #ffffff;
+  outline: none;
+  padding: 2px 5px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+.small-input { width: 120px; }
+
+/* --- Subject --- */
+.subject-section { text-align: center; margin: 30px 0; font-size: 1.1rem; font-weight: bold; }
+
+/* --- Addressee --- */
+.addressee-section { margin-bottom: 20px; font-size: 1.05rem; }
+.addressee-row { margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+
+.line-input {
+  border: none;
+  border-bottom: 1px dotted #000;
+  background-color: #ffffff;
+  outline: none;
+  padding: 2px 5px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+.line-input.input-error { border-bottom-color: crimson; }
+.medium-input { width: 200px; }
+
+/* --- Body --- */
+.form-body { font-size: 1.05rem; line-height: 2.6; text-align: justify; margin-bottom: 30px; }
+
+.inline-box-input {
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 3px;
+  margin: 0 5px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  display: inline-block;
+  vertical-align: middle;
+}
+.inline-box-input.input-error { border-color: crimson; }
+
+.inline-select {
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  padding: 4px;
+  border-radius: 3px;
+  margin: 0 5px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.tiny-box { width: 40px; text-align: center; }
+.small-box { width: 100px; }
+.medium-box { width: 160px; }
+.long-box { width: 250px; }
+
+/* --- Tapashil (Boundaries) Section --- */
+.tapashil-section { margin-bottom: 30px; }
+.tapashil-section h4 { margin-bottom: 10px; }
+.boundary-list { display: flex; flex-direction: column; gap: 10px; }
+.boundary-item { display: flex; align-items: center; gap: 8px; }
+.boundary-item label { min-width: 70px; font-weight: bold; }
+.long-input { width: 300px; }
+
+/* --- Error --- */
+.error { color: crimson; font-size: 0.82rem; margin-top: 2px; display: block; }
+
+/* --- Signature Section --- */
+.signature-section { display: flex; justify-content: flex-end; margin-top: 50px; margin-bottom: 30px; }
+.signature-block { width: 220px; text-align: center; position: relative; }
+.signature-block .line-input { width: 100%; margin-bottom: 5px; }
+.signature-line { border-bottom: 1px solid #ccc; margin-bottom: 5px; width: 100%; }
+.full-width-input { width: 100%; }
+.designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background-color: #ffffff; font-family: inherit; }
+
+/* --- Applicant Details Box --- */
+.applicant-details-box { border: 1px solid #ddd; padding: 20px; background-color: #ffffff; margin-top: 20px; border-radius: 4px; }
+.applicant-details-box h3 { color: #777; font-size: 1.1rem; margin: 0 0 15px 0; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+.details-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.detail-group { display: flex; flex-direction: column; }
+.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+.detail-input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+/* --- Footer --- */
+.form-footer { text-align: center; margin-top: 40px; }
+.save-print-btn { background-color: #2c3e50; color: white; padding: 10px 25px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+.save-print-btn:hover { background-color: #1a252f; }
+.save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.copyright-footer { text-align: right; font-size: 0.8rem; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+
+/* --- Print Utilities --- */
+.print-only { display: none; }
+
+@media print {
+  body * { visibility: hidden; }
+  .irrigation-meter-container,
+  .irrigation-meter-container * { visibility: visible; }
+  .irrigation-meter-container {
+    position: absolute; left: 0; top: 0;
+    width: 100%; max-width: 100%;
+    padding: 20px 40px;
+    background: white;
+  }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  .inline-box-input, .dotted-input, .line-input, .detail-input {
+    background: transparent !important;
+    border-color: #999;
+  }
+}
+`;
+
+/* ─────────────────────────────────────────────
+   CONSTANTS
+   ───────────────────────────────────────────── */
 const FORM_KEY = 'irrigation-electric-meter-installation-recommendation';
 const API_URL = `/api/forms/${FORM_KEY}`;
 
@@ -21,7 +199,7 @@ const initialForm = {
   sabik_local_body_name: '',
   sabik_local_body_type: '',
   sabik_ward_no: '',
-  ward_no: '',
+  ward_no: '',          // only used when user?.ward is absent (non-auth fallback)
   applicant_name_body: '',
   district_type: '',
   current_sabik_ward_no: '',
@@ -42,6 +220,9 @@ const initialForm = {
   applicant_phone: '',
 };
 
+/* ─────────────────────────────────────────────
+   COMPONENT
+   ───────────────────────────────────────────── */
 const IrrigationElectricMeterInstallationRecommendation = () => {
   const { user } = useAuth();
   const [form, setForm] = useState(initialForm);
@@ -49,15 +230,54 @@ const IrrigationElectricMeterInstallationRecommendation = () => {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
 
+  // FIX: printDataRef snapshot pattern — replaces setTimeout + immediate reset
+  // which blanked the form before window.print() finished rendering
+  const [readyToPrint, setReadyToPrint] = useState(false);
+  const printDataRef = useRef(null);
+
+  /* Inject styles once on mount */
+  useEffect(() => {
+    const id = 'irrigation-electric-meter-installation-recommendation-styles';
+    if (document.getElementById(id)) return;
+    const tag = document.createElement('style');
+    tag.id = id;
+    tag.textContent = STYLES;
+    document.head.appendChild(tag);
+    return () => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    };
+  }, []);
+
+  /* Trigger print after snapshot DOM commit */
+  useEffect(() => {
+    if (!readyToPrint) return;
+    const onAfterPrint = () => {
+      setReadyToPrint(false);
+      printDataRef.current = null;
+      setForm({ ...initialForm, date_ad: todayIso() });
+    };
+    window.addEventListener('afterprint', onAfterPrint);
+    window.print();
+    return () => window.removeEventListener('afterprint', onAfterPrint);
+  }, [readyToPrint]);
+
+  /* ── Handlers ── */
   const handle = (k) => (e) => {
     setForm((prev) => ({ ...prev, [k]: e.target.value }));
     if (errors[k]) setErrors((prev) => ({ ...prev, [k]: null }));
   };
 
-  const handleApplicantChange = (fields) => {
-    setForm((prev) => ({ ...prev, ...fields }));
+  // FIX: ApplicantDetailsNp expects handleChange(e) with e.target.name/value —
+  // old code passed values/onChange(fields) which didn't match the component's API.
+  // handleApplicantChange(fields) was defined but unreachable with that prop signature.
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: null }));
   };
 
+  /* ── Validation ── */
   const validate = () => {
     const err = {};
     if (!form.sabik_ward_no.trim()) err.sabik_ward_no = 'आवश्यक छ';
@@ -74,6 +294,7 @@ const IrrigationElectricMeterInstallationRecommendation = () => {
     return err;
   };
 
+  /* ── Submit ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
@@ -92,8 +313,10 @@ const IrrigationElectricMeterInstallationRecommendation = () => {
       const res = await axiosInstance.post(API_URL, payload);
       const savedId = res.data?.id || 'unknown';
       setMessage({ type: 'success', text: `रेकर्ड सफलतापूर्वक सेभ भयो (id: ${savedId})` });
-      setTimeout(() => window.print(), 300);
-      setForm({ ...initialForm, date_ad: todayIso() });
+
+      // FIX: freeze snapshot then trigger print — form resets only after afterprint fires
+      printDataRef.current = { ...form };
+      setReadyToPrint(true);
     } catch (error) {
       const info = error.response?.data?.message || error.message || 'Failed to save';
       setMessage({ type: 'error', text: `Error: ${info}` });
@@ -103,6 +326,7 @@ const IrrigationElectricMeterInstallationRecommendation = () => {
     }
   };
 
+  // ward_no: auth context takes priority; falls back to manual form.ward_no entry
   const wardDisplay = user?.ward || form.ward_no || '—';
 
   return (
@@ -227,6 +451,7 @@ const IrrigationElectricMeterInstallationRecommendation = () => {
             &nbsp;भै हाल&nbsp;
             <span className="bg-gray-text">{MUNICIPALITY.name}</span>
             &nbsp;वडा नं.&nbsp;
+            {/* ward_no input: read-only when auth provides it; editable as fallback */}
             <input
               type="text"
               className="inline-box-input tiny-box"
@@ -365,15 +590,10 @@ const IrrigationElectricMeterInstallationRecommendation = () => {
         </div>
 
         {/* --- Applicant Details via ApplicantDetailsNp --- */}
+        {/* FIX: correct props — formData + handleChange(e) not values + onChange(fields) */}
         <ApplicantDetailsNp
-          values={{
-            applicant_name: form.applicant_name,
-            applicant_address: form.applicant_address,
-            applicant_citizenship_no: form.applicant_citizenship_no,
-            applicant_phone: form.applicant_phone,
-          }}
-          onChange={handleApplicantChange}
-          errors={{ applicant_name: errors.applicant_name }}
+          formData={form}
+          handleChange={handleChange}
         />
 
         {/* --- Footer Action --- */}
