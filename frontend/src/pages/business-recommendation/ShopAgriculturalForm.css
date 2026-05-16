@@ -28,7 +28,8 @@ body {
   max-width: 950px;
   margin: 24px auto;
   padding: 26px 40px 40px;
-  background: #ffffff;
+  background-image: url("/papertexture1.jpg");
+  background-repeat: repeat;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
 }
 
