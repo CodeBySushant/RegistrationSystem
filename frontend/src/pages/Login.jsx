@@ -47,7 +47,7 @@ const Login = () => {
         <hr className="mb-6 border-gray-300" />
 
         <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
-          गुनासो रिर्पोटिङ सिस्टम
+          वडा कार्यालय व्यवस्थापन प्रणाली
         </h2>
 
         {/* ---- Form ---- */}

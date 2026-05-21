@@ -1,15 +1,15 @@
 export const MUNICIPALITY = {
 // Nepali
   name: " तिलाठी कोईलाडी गाउँपालिका",
-  officeLine: "नगर कार्यपालिकाको कार्यालय, काठमाडौं",
-  provinceLine: "बागमती प्रदेश, नेपाल",
-  city: "काठमाडौँ",
-  district: "काठमाडौँ",
+  officeLine: "गाउँ कार्यपालिकाको कार्यालय, सिराहा",
+  provinceLine: "मधेश प्रदेश, नेपाल",
+  city: "सिराहा",
+  district: "सिराहा",
 
 // English
-  englishMunicipality: "Tilathi Koiladi Nagarpalika",
-  englishDistrict: "Tilathi",
-  englishProvince: "Bagmati Province",
+  englishMunicipality: "Tilathi Koiladi Gaunpalika",
+  englishDistrict: "Siraha",
+  englishProvince: "Madhesh Province, Nepal",
 
   logoSrc: "/nepallogo.svg",
 };

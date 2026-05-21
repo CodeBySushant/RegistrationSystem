@@ -64,7 +64,6 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true };
     } catch (err) {
-      logout();
       return { success: false, message: err.message };
     }
   };

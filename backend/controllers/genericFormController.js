@@ -6,13 +6,13 @@ const hooks = {};
 
 // Per-table ward column mapping — null means no ward isolation for that table
 const WARD_COLUMN_MAP = {
-  AllowanceForm:                       "ward",
-  BusinessIndustryRegistrationForm:    "ward_no",
-  BusinessRegistrationCertificate:     "wardNo",
+  AllowanceForm: "ward",
+  BusinessIndustryRegistrationForm: "ward_no",
+  BusinessRegistrationCertificate: "wardNo",
   BusinessIndustryRegistrationNewList: null,
-  BusinessRegistrationRenewLeft:       null,
-  BusinessRegRenewCompleted:           null,
-  DailyWorkPerformanceList:            null,
+  BusinessRegistrationRenewLeft: null,
+  BusinessRegRenewCompleted: null,
+  DailyWorkPerformanceList: null,
 };
 
 function getWardColumn(tableName) {
@@ -35,12 +35,16 @@ exports.createRecord = (req, res) => {
     const payload = { ...req.body };
 
     // Remove auto-managed columns so DB defaults apply
-    ["created_at", "updated_at", "created_by"].forEach((k) => delete payload[k]);
+    ["created_at", "updated_at", "created_by"].forEach(
+      (k) => delete payload[k],
+    );
 
     // Stringify any nested objects/arrays (skip Date instances)
     Object.keys(payload).forEach((k) => {
       const v = payload[k];
-      if (v && typeof v === "object" && !(v instanceof Date)) {
+      if (v instanceof Date) {
+        payload[k] = v.toISOString().slice(0, 10); // format as YYYY-MM-DD
+      } else if (v && typeof v === "object") {
         try {
           payload[k] = JSON.stringify(v);
         } catch {
@@ -70,7 +74,7 @@ exports.createRecord = (req, res) => {
       const h = hooks[formKey];
       if (h && typeof h.afterInsert === "function") {
         Promise.resolve(h.afterInsert(id, payload)).catch((hookErr) =>
-          console.error("hook error", hookErr)
+          console.error("hook error", hookErr),
         );
       }
 
@@ -103,7 +107,9 @@ exports.getAll = (req, res) => {
 
     model.customQuery(sql, params, (err, rows) => {
       if (err)
-        return res.status(500).json({ error: err.code, message: err.sqlMessage });
+        return res
+          .status(500)
+          .json({ error: err.code, message: err.sqlMessage });
       res.json(rows);
     });
   } catch (e) {
@@ -172,7 +178,9 @@ exports.update = (req, res) => {
     const model = getModelForKey(formKey);
     model.customQuery(sql, params, (err, result) => {
       if (err)
-        return res.status(500).json({ error: err.code, message: err.sqlMessage });
+        return res
+          .status(500)
+          .json({ error: err.code, message: err.sqlMessage });
       if (result.affectedRows === 0)
         return res.status(403).json({ error: "Forbidden or not found" });
       res.json({ affectedRows: result.affectedRows });

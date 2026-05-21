@@ -100,7 +100,7 @@ const WEEKLY_PIE_OPTIONS = {
 const Dashboard = () => {
   // 🔹 start with all values = 0; icons/labels from CARD_META
   const [dashboardCards, setDashboardCards] = useState(
-    CARD_META.map((card) => ({ ...card, value: 0 }))
+    CARD_META.map((card) => ({ ...card, value: 0 })),
   );
 
   // 🔹 yearly stats only from API (no static numbers)
@@ -126,7 +126,7 @@ const Dashboard = () => {
             prev.map((card) => {
               const fromApi = data.cards.find((c) => c.label === card.label);
               return fromApi ? { ...card, value: fromApi.value } : card;
-            })
+            }),
           );
         }
 
@@ -148,13 +148,20 @@ const Dashboard = () => {
   }, []);
 
   // pie chart data derived from *current* dashboardCards (DB-driven)
-  const weeklyPieData = useMemo(
-    () => [
+  const weeklyPieData = useMemo(() => {
+    const hasData = dashboardCards.some((c) => c.value > 0);
+    if (!hasData)
+      return [
+        ["service", "score"],
+        ["कुनै डाटा छैन", 1],
+      ];
+    return [
       ["service", "score"],
-      ...dashboardCards.map((item) => [item.label, item.value]),
-    ],
-    [dashboardCards]
-  );
+      ...dashboardCards
+        .filter((c) => c.value > 0)
+        .map((c) => [c.label, c.value]),
+    ];
+  }, [dashboardCards]);
 
   // bar height scaling based on DB values
   const maxYearlyValue = useMemo(
@@ -162,7 +169,7 @@ const Dashboard = () => {
       yearlyStats.length > 0
         ? Math.max(...yearlyStats.map((s) => s.value), 1)
         : 1,
-    [yearlyStats]
+    [yearlyStats],
   );
 
   return (

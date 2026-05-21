@@ -5019,7 +5019,11 @@ ALTER TABLE admins MODIFY COLUMN role ENUM('SUPERADMIN', 'ADMIN') DEFAULT 'ADMIN
 UPDATE admins SET role = 'SUPERADMIN' WHERE role = 'superadmin';
 UPDATE admins SET role = 'ADMIN' WHERE role = 'admin';
 
+ALTER TABLE admins ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+UPDATE admins SET is_active = TRUE;
+
 SELECT username, role FROM admins;
+
 
 INSERT INTO BusinessIndustryRegistrationForm (full_name) VALUES ("Test 1");
 INSERT INTO BusinessIndustryRegistrationNewList (businessName) VALUES ("Biz 1");
@@ -5027,9 +5031,6 @@ INSERT INTO BusinessRegistrationCertificate (fullName) VALUES ("Cert 1");
 INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 1");
 INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 2");
 INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 3");
-INSERT INTO BusinessRegRenewCompleted (businessName) VALUES ("Renew 4");
-
-
 
 SELECT * FROM DomesticAnimalInsuranceClaimRecommendation where id=4;
 SELECT * FROM DomesticAnimalMaternityNutritionAllowance where id=1;

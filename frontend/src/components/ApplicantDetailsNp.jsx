@@ -1,4 +1,12 @@
 const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
+  // Detect which naming convention this form uses
+  const nameKey = 'applicantName' in formData ? 'applicantName' : 'applicant_name';
+  const addressKey = 'applicantAddress' in formData ? 'applicantAddress' : 'applicant_address';
+  const citizenKey = 'applicantCitizenship' in formData
+    ? 'applicantCitizenship'
+    : 'applicant_citizenship_no';
+  const phoneKey = 'applicantPhone' in formData ? 'applicantPhone' : 'applicant_phone';
+
   return (
     <div className="applicant-details-box">
       <h3>निवेदकको विवरण</h3>
@@ -6,10 +14,10 @@ const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
         <div className="detail-group">
           <label>निवेदकको नाम<span className="required">*</span></label>
           <input
-            name="applicantName"
+            name={nameKey}
             type="text"
             className="detail-input bg-gray"
-            value={formData.applicantName ?? formData.applicant_name ?? ""}
+            value={formData[nameKey] ?? ""}
             onChange={handleChange}
             required
           />
@@ -17,10 +25,10 @@ const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
         <div className="detail-group">
           <label>निवेदकको ठेगाना<span className="required">*</span></label>
           <input
-            name="applicantAddress"
+            name={addressKey}
             type="text"
             className="detail-input bg-gray"
-            value={formData.applicantAddress ?? formData.applicant_address ?? ""}
+            value={formData[addressKey] ?? ""}
             onChange={handleChange}
             required
           />
@@ -28,10 +36,10 @@ const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
         <div className="detail-group">
           <label>निवेदकको नागरिकता नं.<span className="required">*</span></label>
           <input
-            name="applicantCitizenship"
+            name={citizenKey}
             type="text"
             className="detail-input bg-gray"
-            value={formData.applicantCitizenship ?? formData.applicant_citizenship_no ?? ""}
+            value={formData[citizenKey] ?? ""}
             onChange={handleChange}
             required
           />
@@ -39,10 +47,10 @@ const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
         <div className="detail-group">
           <label>निवेदकको फोन नं.<span className="required">*</span></label>
           <input
-            name="applicantPhone"
+            name={phoneKey}
             type="text"
             className="detail-input bg-gray"
-            value={formData.applicantPhone ?? formData.applicant_phone ?? ""}
+            value={formData[phoneKey] ?? ""}
             onChange={handleChange}
             required
           />

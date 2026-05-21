@@ -6,7 +6,7 @@ export const useWardForm = (initialState) => {
 
   const [form, setForm] = useState(() => ({
     ...initialState,
-    ward_no: user?.ward || "",
+    ward_no: user?.role === "SUPERADMIN" ? "" : user?.ward || "",
   }));
 
   // 🔁 Update ward if user changes (logout/login)
@@ -20,10 +20,10 @@ export const useWardForm = (initialState) => {
   }, [user]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
