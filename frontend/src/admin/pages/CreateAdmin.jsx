@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const CreateAdmin = () => {
   const { token, user } = useAuth();
   const [form, setForm] = useState({
@@ -19,7 +21,7 @@ const CreateAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/admin/create-admin", {
+    const res = await fetch(`${API}/api/admin/create-admin`, {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",

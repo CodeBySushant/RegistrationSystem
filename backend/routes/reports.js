@@ -16,12 +16,6 @@ router.get(
 
     const { role, ward_number } = req.admin;
 
-    // 🔐 Ward isolation
-    if (role === "ADMIN") {
-      where += " AND ward_number = ?";
-      params.push(ward_number);
-    }
-
     // 🔍 Filters
     if (from) {
       where += " AND created_at >= ?";

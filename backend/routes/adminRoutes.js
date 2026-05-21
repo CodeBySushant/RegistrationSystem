@@ -55,30 +55,32 @@ router.post("/login", (req, res) => {
 router.post("/create-admin", adminAuth(["SUPERADMIN"]), (req, res) => {
   const { name, email, phone, ward_number, position, username, password, role } = req.body;
 
+  if (!name || !username || !password || !email) {
+    return res.status(400).json({ success: false, message: "name, email, username and password are required" });
+  }
+  if (password.length < 6) {
+    return res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
+  }
+
   const finalRole = (role || "ADMIN").toUpperCase();
   const finalWard = finalRole === "SUPERADMIN" ? null : ward_number;
 
-  const hashedPassword = bcrypt.hashSync(password, 10);
-
-  const sql = `
-    INSERT INTO admins
-    (name, email, phone, ward_number, position, username, password, role)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  pool.query(
-    sql,
-    [name, email, phone, finalWard, position, username, hashedPassword, finalRole],
-    (err) => {
-      if (err) {
-        return res.status(400).json({
-          success: false,
-          message: "Username or Email already exists",
-        });
+  bcrypt.hash(password, 10).then((hashedPassword) => {
+    const sql = `
+      INSERT INTO admins (name, email, phone, ward_number, position, username, password, role)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    pool.query(
+      sql,
+      [name, email, phone, finalWard, position, username, hashedPassword, finalRole],
+      (err) => {
+        if (err) {
+          return res.status(400).json({ success: false, message: "Username or Email already exists" });
+        }
+        res.json({ success: true, message: "Admin created successfully" });
       }
-      res.json({ success: true, message: "Admin created successfully" });
-    },
-  );
+    );
+  });
 });
 
 // ---------------- GET ALL ADMINS (SUPERADMIN ONLY) ----------------
@@ -95,6 +97,9 @@ router.get("/all-admins", adminAuth(["SUPERADMIN"]), (req, res) => {
 
 // ---------------- DELETE ADMIN (SUPERADMIN ONLY) ----------------
 router.delete("/delete/:id", adminAuth(["SUPERADMIN"]), (req, res) => {
+  if (parseInt(req.params.id) === req.admin.id) {
+    return res.status(400).json({ success: false, message: "Cannot delete your own account" });
+  }
   pool.query("DELETE FROM admins WHERE id = ?", [req.params.id], (err) => {
     if (err)
       return res.status(500).json({ success: false, message: "DB error" });

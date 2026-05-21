@@ -3842,10 +3842,7 @@
       "applicant_footer_address",
       "applicant_footer_citizenship_no",
       "applicant_footer_phone",
-      "notes",
-      "created_by",
-      "created_at",
-      "updated_at"
+      "notes"
     ]
   },
 
@@ -3880,10 +3877,7 @@
       "applicant_footer_address",
       "applicant_footer_citizenship_no",
       "applicant_footer_phone",
-      "notes",
-      "created_by",
-      "created_at",
-      "updated_at"
+      "notes"
     ]
   },
 
@@ -4295,8 +4289,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4321,9 +4314,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4353,9 +4344,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4397,9 +4386,7 @@
       "recommender_designation",
       "recommender_office_seal",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4443,9 +4430,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4488,9 +4473,7 @@
       "signatory_designation",
       "signatory_name",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4521,9 +4504,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4545,9 +4526,7 @@
       "dob_bs",
       "age_reach_date",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4575,9 +4554,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4604,9 +4581,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4639,9 +4614,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4670,9 +4643,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4702,9 +4673,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4727,9 +4696,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4762,9 +4729,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   },
 
@@ -4789,9 +4754,7 @@
       "applicant_citizenship_no",
       "applicant_phone",
       "municipality_name",
-      "ward_title",
-      "created_at",
-      "updated_at"
+      "ward_title"
     ]
   }
 }

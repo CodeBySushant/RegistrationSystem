@@ -4,6 +4,10 @@ const router = express.Router();
 const db = require("../config/db");
 const adminAuth = require("../middleware/adminAuth");
 
+router.get("/", (req, res) => {
+  res.json({ message: "Certificates route" });
+});
+
 // GET /api/certificates/cards?from=...&to=...&name=...&type=...&cardNo=...&page=1&pageSize=10
 router.get(
   "/cards",

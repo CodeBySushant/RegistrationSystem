@@ -68,7 +68,7 @@ const AdminDashboard = () => {
   const catNames = Object.keys(categories);
   const catValues = Object.values(categories);
   const topCat = catNames[catValues.indexOf(Math.max(...catValues))] || "—";
-  const topCatCount = Math.max(...catValues) || 0;
+  const topCatCount = catValues.length > 0 ? Math.max(...catValues) : 0;
 
   const barData = {
     labels: catNames,

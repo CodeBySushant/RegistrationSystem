@@ -1,4 +1,4 @@
-const ApplicantDetailsEn = ({ formData, handleChange }) => {
+const ApplicantDetailsEn = ({ formData = {}, handleChange }) => {
   return (
     <div className="applicant-details-box">
       <h3>Applicant Details</h3>

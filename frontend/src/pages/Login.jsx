@@ -18,7 +18,7 @@ const Login = () => {
     const result = await login(username, password);
 
     if (result.success) {
-      navigate("/dashboard");
+      navigate("/home");
     } else {
       setError(result.message || "Invalid admin credentials");
     }

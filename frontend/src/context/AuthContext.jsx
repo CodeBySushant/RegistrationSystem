@@ -17,6 +17,21 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem("user");
 
     if (storedToken && storedUser) {
+      // Check if JWT is expired before restoring session
+      try {
+        const payload = JSON.parse(atob(storedToken.split(".")[1]));
+        if (payload.exp * 1000 < Date.now()) {
+          // Token expired — clear and stay logged out
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          return;
+        }
+      } catch {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        return;
+      }
+
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
@@ -63,7 +78,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, token, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

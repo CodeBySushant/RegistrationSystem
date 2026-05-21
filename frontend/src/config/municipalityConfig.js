@@ -4,6 +4,7 @@ export const MUNICIPALITY = {
   officeLine: "नगर कार्यपालिकाको कार्यालय, काठमाडौं",
   provinceLine: "बागमती प्रदेश, नेपाल",
   city: "काठमाडौँ",
+  district: "काठमाडौँ",
 
 // English
   englishMunicipality: "Tilathi Koiladi Nagarpalika",

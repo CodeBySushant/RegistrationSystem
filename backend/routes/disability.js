@@ -19,12 +19,6 @@ router.get(
 
     const { role, ward_number } = req.admin;
 
-    // 🔐 Ward isolation
-    if (role === "ADMIN") {
-      where += " AND ward_number = ?";
-      params.push(ward_number);
-    }
-
     // 🔍 Search
     if (q) {
       where += " AND (name LIKE ? OR invoice LIKE ?)";
