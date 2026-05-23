@@ -1,6 +1,7 @@
 // backend/controllers/genericFormController.js
-const createModel = require("../models/modelFactory");
+const db = require("../config/db");
 const forms = require("../forms.json");
+const createModel = require("../models/modelFactory");
 
 const hooks = {};
 
@@ -34,16 +35,14 @@ exports.createRecord = (req, res) => {
 
     const payload = { ...req.body };
 
-    // Remove auto-managed columns so DB defaults apply
     ["created_at", "updated_at", "created_by"].forEach(
       (k) => delete payload[k],
     );
 
-    // Stringify any nested objects/arrays (skip Date instances)
     Object.keys(payload).forEach((k) => {
       const v = payload[k];
       if (v instanceof Date) {
-        payload[k] = v.toISOString().slice(0, 10); // format as YYYY-MM-DD
+        payload[k] = v.toISOString().slice(0, 10);
       } else if (v && typeof v === "object") {
         try {
           payload[k] = JSON.stringify(v);
@@ -53,7 +52,6 @@ exports.createRecord = (req, res) => {
       }
     });
 
-    // Ensure all declared columns are present in payload
     if (Array.isArray(meta.columns)) {
       meta.columns.forEach((col) => {
         if (!(col in payload)) payload[col] = null;
@@ -71,12 +69,46 @@ exports.createRecord = (req, res) => {
 
       const id = result?.insertId ?? null;
 
-      const h = hooks[formKey];
-      if (h && typeof h.afterInsert === "function") {
-        Promise.resolve(h.afterInsert(id, payload)).catch((hookErr) =>
-          console.error("hook error", hookErr),
-        );
-      }
+      // ── Log to submissions table ──
+      const category = meta.category || "Other";
+      const subCategory = meta.subCategory || formKey;
+      const summary =
+        payload.applicant_name ||
+        payload.applicantName ||
+        payload.full_name ||
+        payload.fullName ||
+        payload.residentName ||
+        payload.resident_name ||
+        payload.sigName ||
+        payload.applicant_name_footer ||
+        "";
+
+      const wardNo =
+        payload.ward_no ||
+        payload.wardNo ||
+        payload.ward ||
+        req.admin?.ward_number ||
+        null;
+
+      db.query(
+        `INSERT INTO submissions 
+         (form_key, category, sub_category, summary, description) 
+         VALUES (?, ?, ?, ?, ?)`,
+        [
+          formKey,
+          category,
+          subCategory,
+          String(summary).slice(0, 500),
+          JSON.stringify({
+            id,
+            ward: wardNo,
+            submittedBy: req.admin?.id || null,
+          }),
+        ],
+        (subErr) => {
+          if (subErr) console.error("submissions log error:", subErr);
+        },
+      );
 
       res.status(201).json({ id });
     });

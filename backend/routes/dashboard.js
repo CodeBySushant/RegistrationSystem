@@ -104,6 +104,65 @@ router.get(
   },
 );
 
+// GET /api/daily-submissions?date=2082-08-06&ward=1
+router.get(
+  "/daily-submissions",
+  adminAuth(["ADMIN", "SUPERADMIN"]),
+  (req, res) => {
+    const { role, ward_number } = req.admin;
+
+    // Default to today if no date provided
+    const dateFilter = req.query.date || null;
+    const wardFilter = req.query.ward || null;
+
+    let sql = `
+      SELECT 
+        id,
+        form_key,
+        category,
+        sub_category,
+        summary,
+        description,
+        DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at
+      FROM submissions
+      WHERE 1=1
+    `;
+    const params = [];
+
+    // Ward isolation for ADMIN role
+    if (role === "ADMIN") {
+      sql += ` AND JSON_UNQUOTE(JSON_EXTRACT(description, '$.ward')) = ?`;
+      params.push(String(ward_number));
+    }
+
+    // Date filter
+    if (dateFilter) {
+      sql += ` AND DATE(created_at) = ?`;
+      params.push(dateFilter);
+    } else {
+      // Default: today only
+      sql += ` AND DATE(created_at) = CURDATE()`;
+    }
+
+    // Optional ward filter for SUPERADMIN
+    if (role === "SUPERADMIN" && wardFilter) {
+      sql += ` AND JSON_UNQUOTE(JSON_EXTRACT(description, '$.ward')) = ?`;
+      params.push(String(wardFilter));
+    }
+
+    sql += ` ORDER BY created_at DESC LIMIT 500`;
+
+    db.query(sql, params, (err, rows) => {
+      if (err) {
+        console.error("daily-submissions error:", err);
+        return res
+          .status(500)
+          .json({ error: err.code, message: err.sqlMessage });
+      }
+      res.json(rows);
+    });
+  },
+);
 // ─── ADMIN DASHBOARD ROUTES ───────────────────────────────────
 
 // GET /api/admin-dashboard/category-counts

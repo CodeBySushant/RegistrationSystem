@@ -1,6 +1,8 @@
 {
   "domestic-animal": {
     "table": "DomesticAnimalInsuranceClaimRecommendation",
+    "category": "Animal Husbandry",
+    "subCategory": "पशु बिमा पाउँ",
     "columns": [
       "chalan_no",
       "subject",
@@ -30,6 +32,8 @@
 
   "animal-maternity-allowance": {
     "table": "DomesticAnimalMaternityNutritionAllowance",
+    "category": "Animal Husbandry",
+    "subCategory": "गाई / भैंसी सुत्केरी पोषण भत्ता",
     "columns": [
       "chalan_no",
       "subject",
@@ -55,6 +59,8 @@
 
   "allowance-form": {
     "table": "AllowanceForm",
+    "category": "Official & Planning",
+    "subCategory": "वृद्ध भत्ताको निवेदन",
     "columns": [
       "nagarpalika",
       "ward",
@@ -83,6 +89,8 @@
 
   "indigenous-certification": {
     "table": "IndigenousNationalityCertification",
+    "category": "Official & Planning",
+    "subCategory": "आदिवासी प्रमाणित सिफारिस",
     "columns": [
       "date",
       "headerDistrict",
@@ -102,6 +110,8 @@
 
   "khas-arya-certification": {
     "table": "KhasAryaCasteCertification",
+    "category": "Official & Planning",
+    "subCategory": "खस आर्य जाति प्रमाणित",
     "columns": [
       "date",
       "headerDistrict",
@@ -121,6 +131,8 @@
 
   "business-deregistration": {
     "table": "BusinessDeregistration",
+    "category": "Business & Industry",
+    "subCategory": "फर्म खारेजी",
     "columns": [
       "headerTo",
       "headerMunicipality",
@@ -145,6 +157,8 @@
 
   "business-registration": {
     "table": "BusinessRegistration",
+    "category": "Business & Industry",
+    "subCategory": "व्यवसाय दर्ता दरखास्त फारम",
     "columns": [
       "businessNameNp",
       "businessNameEn",
@@ -186,8 +200,11 @@
       "wardNo"
     ]
   },
+
   "citizenship-husband-surname": {
     "table": "CitizenshipWithHusbandSurname",
+    "category": "Citizenship",
+    "subCategory": "पतिको वतन कायम नागरिकताको प्रतिलिपि",
     "columns": [
       "date",
       "districtOffice",
@@ -205,6 +222,8 @@
 
   "citizenship-remove-husband": {
     "table": "CitizenshipWithoutHusbandSurname",
+    "category": "Citizenship",
+    "subCategory": "पतिको नाम थर वतन कायम नागरिकताको प्रतिलिपि",
     "columns": [
       "date",
       "districtOffice",
@@ -225,6 +244,8 @@
 
   "dalit-caste-certification": {
     "table": "DalitCasteCertification",
+    "category": "Official & Planning",
+    "subCategory": "दलित जाति प्रमाणित",
     "columns": [
       "date",
       "headerDistrict",
@@ -244,6 +265,8 @@
 
   "impoverished-citizen-application": {
     "table": "ImpoverishedCitizenApplicationRecommendation",
+    "category": "Official & Planning",
+    "subCategory": "विपन्न नागरिक आवेदन तथा सिफारिस",
     "columns": [
       "headerTo",
       "headerOffice",
@@ -283,6 +306,8 @@
 
   "land-boundary-verification": {
     "table": "LandBoundaryVerification",
+    "category": "House & Land",
+    "subCategory": "जग्गाको साँध सिमाङ्कन",
     "columns": [
       "date",
       "headerTo",
@@ -320,6 +345,8 @@
 
   "request-for-certification": {
     "table": "RequestForCertification",
+    "category": "Official & Planning",
+    "subCategory": "नागरिकता प्रमाणपत्र शैक्षिक योग्यताको फरक",
     "columns": [
       "date",
       "headerDistrict",
@@ -343,6 +370,8 @@
 
   "request-for-certification-mf": {
     "table": "RequestForCertificationMotherFather",
+    "category": "Official & Planning",
+    "subCategory": "नागरिकता प्रमाणपत्र बुवा/आमाको नागरिकतामा फरक",
     "columns": [
       "date",
       "headerDistrict",
@@ -363,6 +392,8 @@
 
   "tribal-verification-recommendation": {
     "table": "TribalVerificationRecommendation",
+    "category": "Official & Planning",
+    "subCategory": "आदिवासी प्रमाणित सिफारिस",
     "columns": [
       "date",
       "headerTo",
@@ -390,6 +421,8 @@
 
   "bulk-loan-recommendation": {
     "table": "BulkLoanRecommendation",
+    "category": "Association & Organization",
+    "subCategory": "थोक कर्जा सिफारिस",
     "columns": [
       "date",
       "patraSankhya",
@@ -413,6 +446,8 @@
 
   "club-registration": {
     "table": "ClubRegistration",
+    "category": "Association & Organization",
+    "subCategory": "क्लब दर्ता सिफारिस",
     "columns": [
       "date",
       "patraSankhya",
@@ -436,6 +471,8 @@
 
   "committee-registration": {
     "table": "CommitteeRegistration",
+    "category": "Association & Organization",
+    "subCategory": "समिति दर्ता सिफारिस",
     "columns": [
       "date",
       "patraSankhya",
@@ -458,6 +495,8 @@
 
   "new-bank-account-recommendation": {
     "table": "NewBankAccountRecommendation",
+    "category": "Association & Organization",
+    "subCategory": "खाता खोली दिने",
     "columns": [
       "date",
       "patraSankhya",
@@ -482,6 +521,8 @@
 
   "new-organization-registration": {
     "table": "NewOrganizationRegistration",
+    "category": "Association & Organization",
+    "subCategory": "संस्था दर्ता",
     "columns": [
       "date",
       "patraSankhya",
@@ -506,6 +547,8 @@
 
   "non-profit-org-registration-certificate": {
     "table": "NonProfitOrgRegCertificate",
+    "category": "Association & Organization",
+    "subCategory": "गैर नाफामुलुक संस्था दर्ता",
     "columns": [
       "fiscalYear",
       "date",
@@ -536,6 +579,8 @@
 
   "old-non-profit-org-certificate": {
     "table": "OldNonProfitOrgCertificate",
+    "category": "Association & Organization",
+    "subCategory": "गैर नाफामुलुक संस्था दर्ता पुरानो",
     "columns": [
       "fiscalYear",
       "date",
@@ -565,6 +610,8 @@
 
   "organization-registered": {
     "table": "OrganizationRegistered",
+    "category": "Association & Organization",
+    "subCategory": "संस्था दर्ता गरिएको",
     "columns": [
       "localityType",
       "wardNo",
@@ -587,6 +634,8 @@
 
   "organization-registration-punishment": {
     "table": "OrganizationRegistrationPunishment",
+    "category": "Association & Organization",
+    "subCategory": "सजाय पाए नपाएको",
     "columns": [
       "date",
       "refLetterNo",
@@ -606,6 +655,8 @@
 
   "organization-registration-recommendation": {
     "table": "OrganizationRegistrationRecommendation",
+    "category": "Association & Organization",
+    "subCategory": "घरेलु तथा साना उद्योग दर्ता",
     "columns": [
       "date",
       "refLetterNo",
@@ -639,6 +690,8 @@
 
   "organization-renew-recommendation": {
     "table": "OrganizationRenewRecommendation",
+    "category": "Association & Organization",
+    "subCategory": "संस्था नबिकरण सिफारिस",
     "columns": [
       "date",
       "refLetterNo",
@@ -662,6 +715,8 @@
 
   "social-organization-renew": {
     "table": "SocialOrganizationRenew",
+    "category": "Association & Organization",
+    "subCategory": "सामाजिक संस्था नविकरण",
     "columns": [
       "date",
       "refLetterNo",
@@ -685,6 +740,8 @@
 
   "business-closed": {
     "table": "BusinessClosed",
+    "category": "Business & Industry",
+    "subCategory": "व्यवसाय बन्द",
     "columns": [
       "date",
       "refLetterNo",
@@ -703,6 +760,8 @@
 
   "business-extension-pan": {
     "table": "BusinessExtensionPannumber",
+    "category": "Business & Industry",
+    "subCategory": "कारोबार थप स्थायी लेखा नं",
     "columns": [
       "date",
       "refLetterNo",
@@ -727,6 +786,8 @@
 
   "business-reg-summary": {
     "table": "BusinessRegSummary",
+    "category": "Business & Industry",
+    "subCategory": "व्यवसाय दर्ताको विवरण पठाइदिने बारे",
     "columns": [
       "date",
       "refLetterNo",
@@ -746,6 +807,8 @@
 
   "industry-change": {
     "table": "industry_change",
+    "category": "Business & Industry",
+    "subCategory": "उद्योगको क्षमता परिवर्तन",
     "columns": [
       "date",
       "to_line1",
@@ -768,6 +831,8 @@
 
   "industry-closed-notify": {
     "table": "IndustryClosedNotify",
+    "category": "Business & Industry",
+    "subCategory": "उद्योग बन्द भएको जानकारी पत्र",
     "columns": [
       "date",
       "to_line1",
@@ -796,6 +861,8 @@
 
   "industry-form-cancellation": {
     "table": "IndustryFormCancellation",
+    "category": "Business & Industry",
+    "subCategory": "उद्योगको दर्ता खारेजी",
     "columns": [
       "date",
       "to_line1",
@@ -822,6 +889,8 @@
 
   "industry-period-summary": {
     "table": "IndustryPeriodSummary",
+    "category": "Business & Industry",
+    "subCategory": "उद्योग आवधिक विवरण",
     "columns": [
       "industry_name",
       "industry_address",
@@ -853,6 +922,8 @@
 
   "industry-registration-recommendation": {
     "table": "IndustryRegistrationRecommendation",
+    "category": "Business & Industry",
+    "subCategory": "उद्योग दर्ता सिफारिस",
     "columns": [
       "date",
       "refLetterNo",
@@ -884,6 +955,8 @@
 
   "industry-transfer-acceptance-letter": {
     "table": "IndustryTransferAcceptanceLetter",
+    "category": "Business & Industry",
+    "subCategory": "उद्योग स्थान्तरण स्वीकृति पत्र",
     "columns": [
       "date",
       "to_line1",
@@ -909,6 +982,8 @@
 
   "industry-transfer-acceptance-req": {
     "table": "IndustryTransferAcceptanceReq",
+    "category": "Business & Industry",
+    "subCategory": "उद्योग स्थानन्तरण स्वीकृति अनुरोध",
     "columns": [
       "date",
       "to_line1",
@@ -936,6 +1011,8 @@
 
   "new-business-pannumber": {
     "table": "NewBusinessPannumber",
+    "category": "Business & Industry",
+    "subCategory": "नयाँ स्थायी लेखा नं",
     "columns": [
       "date",
       "refLetterNo",
@@ -966,6 +1043,8 @@
 
   "partnership-registration-application-form": {
     "table": "PartnershipRegistrationApplicationForm",
+    "category": "Business & Industry",
+    "subCategory": "साझेदारी दर्ता आवेदन",
     "columns": [
       "date",
       "to_line1",
@@ -1002,6 +1081,8 @@
 
   "shop-agricultural-form": {
     "table": "ShopAgriculturalForm",
+    "category": "Business & Industry",
+    "subCategory": "पसल कृषि पक्षी फर्म/दर्ता मुचुल्का",
     "columns": [
       "province",
       "district",
@@ -1035,6 +1116,8 @@
 
   "shop-registration-form": {
     "table": "ShopRegistrationForm",
+    "category": "Business & Industry",
+    "subCategory": "पसल तथा फर्म दर्ता सिफारिस",
     "columns": [
       "date",
       "refLetterNo",
@@ -1069,6 +1152,8 @@
 
   "tax-clear-certificate": {
     "table": "TaxClearanceCertificate",
+    "category": "Business & Industry",
+    "subCategory": "कर चुक्ता प्रमाणपत्र",
     "columns": [
       "date",
       "refLetterNo",
@@ -1088,45 +1173,38 @@
 
   "business-industry-registration-form": {
     "table": "BusinessIndustryRegistrationForm",
+    "category": "Business & Industry",
+    "subCategory": "व्यवसाय दर्ता (नयाँ)",
     "columns": [
       "registration_no",
       "certificate_date",
       "copy_flag",
-
       "full_name",
       "citizenship_no",
       "citizenship_issue_date",
       "citizenship_issue_district",
-
       "municipality",
       "ward_no",
       "tole",
       "residence_district",
-
       "father_name",
       "spouse_name",
-
       "business_name",
       "business_kind",
       "business_nature",
       "business_road",
-
       "business_address_line",
       "business_address_district",
       "business_address_ward",
       "business_address_tole",
-
       "phone",
       "mobile",
       "email",
-
       "pan_vat",
       "website",
-
       "objective",
       "other_registration_no",
       "other_registration_office",
-
       "landlord_name",
       "landlord_cit_no",
       "landlord_issue_date",
@@ -1137,23 +1215,19 @@
       "landlord_ward",
       "landlord_tole",
       "landlord_phone",
-
       "authorized_capital",
       "current_capital",
       "issued_capital",
       "fixed_capital",
       "paidup_capital",
       "total_capital",
-
       "kaifiyat",
       "declaration_text",
-
       "issuing_signature",
       "issuing_name",
       "issuing_post",
       "issuing_seal",
       "issuing_date",
-
       "applicant_name",
       "applicant_address",
       "applicant_citizenship",
@@ -1163,6 +1237,8 @@
 
   "business-industry-registration-new-list": {
     "table": "BusinessIndustryRegistrationNewList",
+    "category": "Business & Industry",
+    "subCategory": "व्यवसाय दर्ता सूची",
     "columns": [
       "sn",
       "regDate",
@@ -1180,11 +1256,12 @@
 
   "business-registration-certificate": {
     "table": "BusinessRegistrationCertificate",
+    "category": "Business & Industry",
+    "subCategory": "व्यवसाय दर्ता (पुरानो)",
     "columns": [
       "registrationNo",
       "fiscalYear",
       "certificateDate",
-
       "fullName",
       "citizenshipNo",
       "issuedDate",
@@ -1193,10 +1270,8 @@
       "wardNo",
       "tole",
       "district",
-
       "fatherName",
       "spouseName",
-
       "businessName",
       "businessType",
       "businessNature",
@@ -1206,17 +1281,14 @@
       "businessMunicipality",
       "businessWard",
       "businessTole",
-
       "phone",
       "mobile",
       "email",
       "panVatNo",
       "website",
-
       "objective",
       "otherRegNo",
       "otherOffice",
-
       "landlordName",
       "landlordCitizenship",
       "landlordIssueDate",
@@ -1226,21 +1298,17 @@
       "landlordWard",
       "landlordTole",
       "landlordPhone",
-
       "authorizedCapital",
       "currentCapital",
       "issuedCapital",
       "fixedCapital",
       "paidCapital",
       "totalCapital",
-
       "remarks",
-
       "applicantName",
       "applicantAddress",
       "applicantCitizenship",
       "applicantPhone",
-
       "isClosed",
       "closeReason"
     ]
@@ -1248,6 +1316,8 @@
 
   "business-registration-renew-left": {
     "table": "BusinessRegistrationRenewLeft",
+    "category": "Business & Industry",
+    "subCategory": "व्यवसाय दर्ता नविकरण वाकि सूची",
     "columns": [
       "sn",
       "regDate",
@@ -1263,6 +1333,8 @@
 
   "business-reg-renew-completed": {
     "table": "BusinessRegRenewCompleted",
+    "category": "Business & Industry",
+    "subCategory": "व्यवसाय दर्ता नविकरण भइसकेको सूची",
     "columns": [
       "sn",
       "regDate",
@@ -1281,6 +1353,8 @@
 
   "daily-work-performance-list": {
     "table": "DailyWorkPerformanceList",
+    "category": "Official & Planning",
+    "subCategory": "दैनिक कार्य सम्पादन",
     "columns": [
       "report_date",
       "total_forms",
@@ -1293,6 +1367,8 @@
 
   "advance-payment-request": {
     "table": "AdvancePaymentRequest",
+    "category": "Economic",
+    "subCategory": "पेश्की अनुरोध सिफारिस",
     "columns": [
       "date",
       "letter_no",
@@ -1318,6 +1394,8 @@
 
   "bank-account-for-social-security": {
     "table": "BankAccountForSocialSecurity",
+    "category": "Economic",
+    "subCategory": "सामाजिक सुरक्षाको बैंक खाता",
     "columns": [
       "date",
       "letter_no",
@@ -1343,6 +1421,8 @@
 
   "fixed-asset-valuation": {
     "table": "FixedAssetValuation",
+    "category": "Economic",
+    "subCategory": "अचल सम्पत्ति मुल्यांकन",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -1375,6 +1455,8 @@
 
   "lekha-parikshyan": {
     "table": "lekha_parikshyan",
+    "category": "Economic",
+    "subCategory": "लेखा परीक्षण",
     "columns": [
       "chalani_no",
       "subject_to",
@@ -1401,6 +1483,8 @@
 
   "new-beneficiary-account": {
     "table": "new_beneficiary_account",
+    "category": "Economic",
+    "subCategory": "नयाँ लाभग्राहीको खाता खोल्न",
     "columns": [
       "chalani_no",
       "subject_to",
@@ -1423,6 +1507,8 @@
 
   "req-for-help-in-health": {
     "table": "req_for_help_in_health",
+    "category": "Economic",
+    "subCategory": "उपचारमा आर्थिक सहायता सिफारिस",
     "columns": [
       "chalani_no",
       "letter_no",
@@ -1451,6 +1537,8 @@
 
   "social-security-payment-closure": {
     "table": "social_security_payment_closure",
+    "category": "Economic",
+    "subCategory": "सामाजिक सुरक्षा भत्ता रकम भुक्तानी गरि खाता बन्द",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -1482,13 +1570,15 @@
 
   "social-security-via-guardian": {
     "table": "social_security_via_guardian",
+    "category": "Economic",
+    "subCategory": "संरक्षक मार्फत सामाजिक सुरक्षा भत्ता",
     "columns": [
       "letter_no",
       "chalani_no",
       "date",
       "addressee_line1",
       "addressee_line2",
-      "applicant_name",
+      "body_person_name",
       "ward_chairman_name",
       "beneficiary_name",
       "guardian_relation",
@@ -1505,16 +1595,18 @@
       "grd_account_no",
       "signature_name",
       "designation",
-      "applicant_box_name",
-      "applicant_box_address",
-      "applicant_box_citizenship",
-      "applicant_box_phone",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship",
+      "applicant_phone",
       "notes"
     ]
   },
 
   "work-planning-completed": {
     "table": "WorkPlanningCompleted",
+    "category": "Economic",
+    "subCategory": "कार्य योजना पूरा भयो सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -1525,22 +1617,24 @@
       "ward_no",
       "fiscal_year",
       "project_name",
-      "applicant_name",
+      "project_applicant_name",
       "inspection_date",
       "inspection_findings",
       "technical_evaluation",
       "signature_name",
       "designation",
-      "applicant_box_name",
-      "applicant_box_address",
-      "applicant_box_citizenship",
-      "applicant_box_phone",
+      "applicant_name",
+      "applicant_address",
+      "applicant_citizenship",
+      "applicant_phone",
       "notes"
     ]
   },
 
   "backward-community-recommendation": {
     "table": "BackwardCommunityRecommendation",
+    "category": "Official & Planning",
+    "subCategory": "विपन्नता सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -1564,6 +1658,8 @@
 
   "new-class-recommendation": {
     "table": "NewClassRecommendation",
+    "category": "Official & Planning",
+    "subCategory": "कक्षा थप सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -1589,6 +1685,8 @@
 
   "scholarship-recommendation": {
     "table": "ScholarshipRecommendation",
+    "category": "Official & Planning",
+    "subCategory": "छात्रवृत्ति सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -1613,8 +1711,9 @@
   },
 
   "address-verification": {
-    "title": "Address Verification",
     "table": "address_verification",
+    "category": "English Format",
+    "subCategory": "Address Verification",
     "columns": [
       "letterNo",
       "refNo",
@@ -1634,8 +1733,9 @@
   },
 
   "annual-income-certificate": {
-    "title": "Annual Income Certificate",
     "table": "annual_income_certificate",
+    "category": "English Format",
+    "subCategory": "Annual Income Certificate",
     "columns": [
       "letterNo",
       "refNo",
@@ -1667,8 +1767,9 @@
   },
 
   "birthdate-verification": {
-    "title": "Birth Date Verification",
     "table": "birthdate_verification",
+    "category": "English Format",
+    "subCategory": "Birth Date Verification",
     "columns": [
       "letterNo",
       "refNo",
@@ -1705,8 +1806,9 @@
   },
 
   "certificate-of-occupation": {
-    "title": "Certificate Of Occupation",
     "table": "certificate_of_occupation",
+    "category": "English Format",
+    "subCategory": "Certification of Occupation",
     "columns": [
       "letterNo",
       "refNo",
@@ -1734,8 +1836,9 @@
   },
 
   "digital-verification": {
-    "title": "Digital Verification Certificate",
     "table": "digital_verification",
+    "category": "English Format",
+    "subCategory": "Digital Verification",
     "columns": [
       "letterNo",
       "refNo",
@@ -1770,8 +1873,9 @@
   },
 
   "economic-status": {
-    "title": "Economic Status Verification",
     "table": "economic_status",
+    "category": "English Format",
+    "subCategory": "Economic Status",
     "columns": [
       "letterNo",
       "refNo",
@@ -1804,8 +1908,9 @@
   },
 
   "marriage-certificate-english": {
-    "title": "Marriage Certificate (English)",
     "table": "marriage_certificate_english",
+    "category": "English Format",
+    "subCategory": "Marriage Certificate (English)",
     "columns": [
       "letterNo",
       "refNo",
@@ -1844,8 +1949,9 @@
   },
 
   "occupation-verification": {
-    "title": "Occupation Verification",
     "table": "occupation_verification",
+    "category": "English Format",
+    "subCategory": "Occupation Verification",
     "columns": [
       "letterNo",
       "refNo",
@@ -1874,8 +1980,9 @@
   },
 
   "power-of-attorney": {
-    "title": "Power Of Attorney",
     "table": "power_of_attorney",
+    "category": "English Format",
+    "subCategory": "Power of Attorney",
     "columns": [
       "letterNo",
       "refNo",
@@ -1897,8 +2004,9 @@
   },
 
   "property-valuation-report": {
-    "title": "Property Valuation Report",
     "table": "property_valuation_report",
+    "category": "English Format",
+    "subCategory": "Property Valuation Report",
     "columns": [
       "letterNo",
       "refNo",
@@ -1930,40 +2038,33 @@
   },
 
   "relationship-verification": {
-    "title": "Relationship Verification (English)",
     "table": "relationship_verification",
+    "category": "English Format",
+    "subCategory": "Relationship Verification",
     "columns": [
       "letterNo",
       "refNo",
       "date",
-
       "mainPersonTitle",
       "mainPersonName",
       "relation",
-
       "grandTitle",
       "grandsName",
-
       "fatherTitle",
       "fatherName",
       "motherRelation",
       "motherTitle",
       "motherName",
-
       "residencyType",
       "municipality",
       "ward_number",
       "district1",
       "country1",
-
       "prevWardNo",
       "prevDistrict",
       "prevCountry",
-
       "table_rows",
-
       "designation",
-
       "applicantName",
       "applicantAddress",
       "applicantCitizenship",
@@ -1972,8 +2073,9 @@
   },
 
   "same-person-certificate": {
-    "title": "Same Person Certificate",
     "table": "same_person_certificate",
+    "category": "English Format",
+    "subCategory": "Same Person Certificate",
     "columns": [
       "letterNo",
       "refNo",
@@ -2016,8 +2118,9 @@
   },
 
   "scholarship-verification": {
-    "title": "Scholarship Verification",
     "table": "scholarship_verification",
+    "category": "English Format",
+    "subCategory": "Scholarship Verification",
     "columns": [
       "letterNo",
       "refNo",
@@ -2046,8 +2149,9 @@
   },
 
   "tax-clear-basic": {
-    "title": "Tax Clear Basic",
     "table": "tax_clear_basic",
+    "category": "English Format",
+    "subCategory": "Tax Clear Basic",
     "columns": [
       "letterNo",
       "refNo",
@@ -2068,8 +2172,9 @@
   },
 
   "tax-clearance-certificate": {
-    "title": "Tax Clearance Certificate",
     "table": "tax_clearance_certificate",
+    "category": "English Format",
+    "subCategory": "Tax Clearance Certificate",
     "columns": [
       "letterNo",
       "refNo",
@@ -2089,8 +2194,9 @@
   },
 
   "unmarried-verification": {
-    "title": "Unmarried Verification",
     "table": "unmarried_verification",
+    "category": "English Format",
+    "subCategory": "Unmarried Verification",
     "columns": [
       "letterNo",
       "refNo",
@@ -2123,8 +2229,9 @@
   },
 
   "address-verification-new": {
-    "title": "Address Verification (New)",
     "table": "address_verification_new",
+    "category": "English Format",
+    "subCategory": "Address Verification New",
     "columns": [
       "letterNo",
       "refNo",
@@ -2155,16 +2262,16 @@
 
   "annual-income-verification-new": {
     "table": "annual_income_verification_new",
+    "category": "English Format",
+    "subCategory": "Annual Income Verification New",
     "columns": [
       "letterNo",
       "refNo",
       "date",
-
       "applicantNameBody",
       "relation",
       "guardianTitle",
       "guardianName",
-
       "municipality",
       "wardNo",
       "prevAddress",
@@ -2172,26 +2279,25 @@
       "district",
       "province",
       "country",
-
       "totalAnnualIncome",
       "totalAnnualIncomeWords",
-
       "currency",
       "usdRate",
       "equivalentCurrency",
       "equivalentCurrencyWords",
-
       "designation",
       "applicantName",
       "applicantAddress",
       "applicantCitizenship",
       "applicantPhone",
-
       "table_rows"
     ]
   },
+
   "birth-certificate-new": {
     "table": "birth_certificate_new",
+    "category": "English Format",
+    "subCategory": "Birth Certification New",
     "columns": [
       "letterNo",
       "refNo",
@@ -2233,6 +2339,8 @@
 
   "occupation-verification-new": {
     "table": "occupation_verification_new",
+    "category": "English Format",
+    "subCategory": "Occupation Verification New",
     "columns": [
       "letterNo",
       "refNo",
@@ -2261,6 +2369,8 @@
 
   "surname-verification-after-marriage": {
     "table": "surname_verification_after_marriage",
+    "category": "English Format",
+    "subCategory": "Surname Verification After Marriage",
     "columns": [
       "letterNo",
       "refNo",
@@ -2292,6 +2402,8 @@
 
   "surname-verification-certificate-new": {
     "table": "surname_verification_certificate_new",
+    "category": "English Format",
+    "subCategory": "Surname Verification Certificate",
     "columns": [
       "letterNo",
       "refNo",
@@ -2316,6 +2428,8 @@
 
   "tax-clearance-new-format": {
     "table": "tax_clearance_new_format",
+    "category": "English Format",
+    "subCategory": "Tax Clearance New Format",
     "columns": [
       "letterNo",
       "refNo",
@@ -2343,6 +2457,8 @@
 
   "verify-revised-emblem": {
     "table": "verify_revised_emblem",
+    "category": "English Format",
+    "subCategory": "Verify Revised Emblem New",
     "columns": [
       "letterNo",
       "refNo",
@@ -2369,6 +2485,8 @@
 
   "gov-organization-registration": {
     "table": "gov_organization_registration",
+    "category": "Association & Organization",
+    "subCategory": "सहकारी संस्था दर्ता सिफारिस",
     "columns": [
       "date",
       "letterNo",
@@ -2395,6 +2513,8 @@
 
   "gov-organization-registration-rejected": {
     "table": "gov_organization_registration_rejected",
+    "category": "Association & Organization",
+    "subCategory": "सहकारी संस्था दर्ता अस्वीकृत",
     "columns": [
       "sn",
       "regDate",
@@ -2406,12 +2526,13 @@
       "entryFee",
       "rejectReason",
       "notes"
-    ],
-    "title": "Gov Organization Registration Rejected"
+    ]
   },
 
   "boundary-recommendation": {
     "table": "boundary_recommendations",
+    "category": "House & Land",
+    "subCategory": "चौहद्दी सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2439,6 +2560,8 @@
 
   "char-killa-reloaded": {
     "table": "char_killa_reloaded",
+    "category": "House & Land",
+    "subCategory": "चार किल्ला खुलाई सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2464,6 +2587,8 @@
 
   "ghar-kayam-new-format": {
     "table": "ghar_kayam_new_format",
+    "category": "House & Land",
+    "subCategory": "घर कायम New Format",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2490,6 +2615,8 @@
 
   "governmental-land-utilization-recommendation": {
     "table": "governmental_land_utilization_recommendation",
+    "category": "House & Land",
+    "subCategory": "जोत भोग चलनको सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2526,6 +2653,8 @@
 
   "house-construction-completed-certificate": {
     "table": "house_construction_completed_certificate",
+    "category": "House & Land",
+    "subCategory": "भुकम्प प्रतिरोधि घर निर्माण सम्पन्न प्रमाणपत्र",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2553,6 +2682,8 @@
 
   "house-destroyed-recommendation": {
     "table": "house_destroyed_recommendation",
+    "category": "House & Land",
+    "subCategory": "घर पाताल भएको सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2576,6 +2707,8 @@
 
   "house-maintain-recommendation": {
     "table": "house_maintain_recommendation",
+    "category": "House & Land",
+    "subCategory": "घर कायम सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2602,6 +2735,8 @@
 
   "house-road-verification": {
     "table": "house_road_verification",
+    "category": "House & Land",
+    "subCategory": "घरबाटो प्रमाणित",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2626,6 +2761,8 @@
 
   "house-verification-recommendation": {
     "table": "house_verification_recommendation",
+    "category": "House & Land",
+    "subCategory": "घर जनाउने सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2653,6 +2790,8 @@
 
   "kitta-kat-recommendation": {
     "table": "kitta_kat_recommendation",
+    "category": "House & Land",
+    "subCategory": "कित्ताकाट सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2689,6 +2828,8 @@
 
   "land-classification-recommendation": {
     "table": "land_classification_recommendation",
+    "category": "House & Land",
+    "subCategory": "जग्गा वर्गीकरण",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2708,6 +2849,8 @@
 
   "land-consolidation-recommendation": {
     "table": "land_consolidation_recommendation",
+    "category": "House & Land",
+    "subCategory": "जग्गा एकिकृत सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2730,6 +2873,8 @@
 
   "onsite-inspection-recommendation": {
     "table": "onsite_inspection_recommendation",
+    "category": "House & Land",
+    "subCategory": "स्थलगत निरीक्षण",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2756,6 +2901,8 @@
 
   "partial-house-construction-completed-certificate": {
     "table": "partial_house_construction_completed_certificate",
+    "category": "House & Land",
+    "subCategory": "आंशिक / पूर्ण घर निर्माण सम्पन्न प्रमाणपत्र",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2783,6 +2930,8 @@
 
   "peski-anurodh-sifaris": {
     "table": "peski_anurodh_sifaris",
+    "category": "House & Land",
+    "subCategory": "चार किल्ला सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2806,6 +2955,8 @@
 
   "property-owner-certificate-copy-recommendation": {
     "table": "property_owner_certificate_copy_recommendation",
+    "category": "House & Land",
+    "subCategory": "लालपुर्जाको प्रतिलिपि सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2833,6 +2984,8 @@
 
   "property-owner-certificate-house-maintain-recommendation": {
     "table": "property_owner_certificate_house_maintain_recommendation",
+    "category": "House & Land",
+    "subCategory": "जग्गाधनी प्रमाण पुर्जामा घर कायम सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2855,6 +3008,8 @@
 
   "property-ownership-transfer-kitani": {
     "table": "property_ownership_transfer_kitani",
+    "category": "House & Land",
+    "subCategory": "घर जग्गा नामसारी सिफारिस (किटानी)",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2890,6 +3045,8 @@
 
   "property-ownership-transfer-recommendation": {
     "table": "property_ownership_transfer_recommendation",
+    "category": "House & Land",
+    "subCategory": "घर जग्गा नामसारी सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2915,6 +3072,8 @@
 
   "property-verification-recommendation": {
     "table": "property_verification_recommendation",
+    "category": "House & Land",
+    "subCategory": "सम्पत्ति प्रमाणीकरण सिफारिस",
     "columns": [
       "letter_no",
       "chalani_no",
@@ -2949,6 +3108,8 @@
 
   "bhawan-nirman-sampanna": {
     "table": "bhawan_nirman_sampanna",
+    "category": "House & Land",
+    "subCategory": "भवन निर्माण प्रमाण–पत्र",
     "columns": [
       "date_nep",
       "owner_name",
@@ -3005,6 +3166,8 @@
 
   "consumer-committee-registrations": {
     "table": "consumer_committee_registrations",
+    "category": "Official & Planning",
+    "subCategory": "उपभोक्ता संग दर्ता प्रमाणपत्र सूची",
     "columns": [
       "sn",
       "reg_no",
@@ -3019,6 +3182,8 @@
 
   "d-class-construction-business-license": {
     "table": "dclass_construction_business_licenses",
+    "category": "Official & Planning",
+    "subCategory": "घ वर्गको निर्माण व्यवसाय इजाजत पत्र",
     "columns": [
       "license_no",
       "fiscal_year",
@@ -3040,6 +3205,8 @@
 
   "drinking-water-committee-registration": {
     "table": "drinking_water_committees",
+    "category": "Official & Planning",
+    "subCategory": "खानेपानी उपभोक्ता संस्था दर्ता प्रमाण पत्र",
     "columns": [
       "reg_no",
       "reg_date",
@@ -3069,6 +3236,8 @@
 
   "farmer-group-committee-registration": {
     "table": "farmer_group_committees",
+    "category": "Official & Planning",
+    "subCategory": "कृषक समूह/समिति दर्ता प्रमाण–पत्र",
     "columns": [
       "reg_date",
       "reg_no",
@@ -3091,6 +3260,8 @@
 
   "passbook-construction-work": {
     "table": "passbook_construction_works",
+    "category": "Official & Planning",
+    "subCategory": "निर्माण कार्य को पासबुक",
     "columns": [
       "reg_date",
       "business_name",
@@ -3105,6 +3276,8 @@
 
   "passport-recommendation": {
     "table": "passport_recommendations",
+    "category": "Citizenship",
+    "subCategory": "राहदानी प्रमाण पत्र",
     "columns": [
       "letter_no",
       "ref_no",
@@ -3133,6 +3306,8 @@
 
   "citizenship-angkrit": {
     "table": "citizenship_angkrits",
+    "category": "Citizenship",
+    "subCategory": "नेपाली अंगीकृत नागरिकता",
     "columns": [
       "reg_no",
       "reg_date",
@@ -3159,6 +3334,8 @@
 
   "citizenship-certificate-recommendation": {
     "table": "citizenship_certificate_recommendations",
+    "category": "Citizenship",
+    "subCategory": "नागरिकता प्रमाणपत्र सिफारिस",
     "columns": [
       "full_name_np",
       "full_name_en",
@@ -3202,6 +3379,8 @@
 
   "citizenship-certificate-copy": {
     "table": "citizenship_certificate_copies",
+    "category": "Citizenship",
+    "subCategory": "नागरिकताको प्रमाण-पत्र प्रतिलिपि",
     "columns": [
       "prpn_no",
       "issue_district",
@@ -3246,6 +3425,8 @@
 
   "citizenship-mujulka": {
     "table": "citizenship_mujulkas",
+    "category": "Citizenship",
+    "subCategory": "नागरिकताको लागि मुचुल्का",
     "columns": [
       "municipality",
       "district",
@@ -3269,6 +3450,8 @@
 
   "citizenship-proof-copy": {
     "table": "citizenship_proof_copy_requests",
+    "category": "Citizenship",
+    "subCategory": "नागरिकता प्रतिलिपि सिफारिस",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3310,6 +3493,8 @@
 
   "citizenship-recommendation": {
     "table": "citizenship_recommendations",
+    "category": "Citizenship",
+    "subCategory": "नागरिकता सिफारिस",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3344,6 +3529,8 @@
 
   "citizenship-recommendation-husband": {
     "table": "citizenship_recommendation_husband_details",
+    "category": "Citizenship",
+    "subCategory": "पतिको नाममा नेपाली नागरिकताको प्रमाण-पत्र",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3376,6 +3563,8 @@
 
   "sthalagat-sarjimin-mujulka": {
     "table": "sthalagat_sarjimin_mujulkas",
+    "category": "Citizenship",
+    "subCategory": "स्थलगत सर्जमिन मुचुल्का",
     "columns": [
       "letter_date",
       "district",
@@ -3400,6 +3589,8 @@
 
   "acting-ward-officer-assigned": {
     "table": "acting_ward_officer_assigned_records",
+    "category": "Official & Planning",
+    "subCategory": "कार्यवाहक तोकिएको सिफारिस",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3423,6 +3614,8 @@
 
   "inter-local-transfer-recommendation": {
     "table": "inter_local_transfer_recommendations",
+    "category": "Official & Planning",
+    "subCategory": "अन्तर स्थानीय सरुवा",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3456,6 +3649,8 @@
 
   "ramana-patra": {
     "table": "ramana_patras",
+    "category": "Official & Planning",
+    "subCategory": "रमाना पत्र",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3485,6 +3680,8 @@
 
   "notice-details-list": {
     "table": "notice_details",
+    "category": "Official & Planning",
+    "subCategory": "सूचना विवरण सूची",
     "columns": [
       "notice_no",
       "issue_date",
@@ -3498,6 +3695,8 @@
 
   "open-format-nepali": {
     "table": "open_format_documents",
+    "category": "Official & Planning",
+    "subCategory": "नेपाली भाषामा",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3520,6 +3719,8 @@
 
   "nepali-language": {
     "table": "nepali_language_recommendations",
+    "category": "Citizenship",
+    "subCategory": "नेपाली भाषामा (नागरिकता)",
     "columns": [
       "applicant_full_name",
       "issued_date_ad",
@@ -3550,6 +3751,8 @@
 
   "open-application": {
     "table": "open_applications",
+    "category": "Official & Planning",
+    "subCategory": "खुल्ला निवेदन",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3569,6 +3772,8 @@
 
   "open-format-tippani": {
     "table": "open_format_tippani",
+    "category": "Official & Planning",
+    "subCategory": "टिप्पणी",
     "columns": [
       "date",
       "addressee",
@@ -3587,6 +3792,8 @@
 
   "partial-information": {
     "table": "partial_information",
+    "category": "Citizenship",
+    "subCategory": "सूचना अध्यावधिक",
     "columns": [
       "full_name_np",
       "full_name_en",
@@ -3633,6 +3840,8 @@
 
   "different-dob-certification": {
     "table": "different_dob_certification",
+    "category": "Official & Planning",
+    "subCategory": "फरक फरक जन्म मिति प्रमाणित",
     "columns": [
       "municipality",
       "previous_unit_type",
@@ -3653,6 +3862,8 @@
 
   "different-english-spelling-certification": {
     "table": "different_english_spelling_certification",
+    "category": "Official & Planning",
+    "subCategory": "फरक फरक अंग्रेजी हिज्जे प्रमाणित",
     "columns": [
       "municipality",
       "previous_unit_type",
@@ -3673,6 +3884,8 @@
 
   "different-name-certification": {
     "table": "different_name_certification",
+    "category": "Official & Planning",
+    "subCategory": "फरक फरक नाम र थर सिफारिस",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3695,6 +3908,8 @@
 
   "leave-request-application": {
     "table": "leave_request_application",
+    "category": "Official & Planning",
+    "subCategory": "बिदाको निवेदन",
     "columns": [
       "letter_no",
       "date_bs",
@@ -3712,6 +3927,8 @@
 
   "electricity-capacity-increase": {
     "table": "electricity_capacity_increase",
+    "category": "Physical Development",
+    "subCategory": "विद्युत् क्षमता बढाउन सिफारिस",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3735,6 +3952,8 @@
 
   "electricity-installation": {
     "table": "electricity_installation",
+    "category": "Physical Development",
+    "subCategory": "नयाँ बिजुली जडान सिफारिस",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3782,6 +4001,8 @@
 
   "electricity-installation-recommendation": {
     "table": "electricity_installation_recommendation",
+    "category": "Physical Development",
+    "subCategory": "बिजुली जडान सिफारिस",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3810,6 +4031,8 @@
 
   "free-electricity-connection": {
     "table": "free_electricity_connection_recommendation",
+    "category": "Physical Development",
+    "subCategory": "निशुल्क विद्युत् जडान",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3848,6 +4071,8 @@
 
   "irrigation-electric-meter": {
     "table": "irrigation_electric_meter_installation_recommendation",
+    "category": "Physical Development",
+    "subCategory": "ससिचार विद्युत् मिटर जडान सिफारिस",
     "columns": [
       "letter_no",
       "reference_no",
@@ -3883,6 +4108,8 @@
 
   "land-kittakat-for-road": {
     "table": "land_kittakat_for_road",
+    "category": "Physical Development",
+    "subCategory": "सडक सिफारिसको लागि भूमि कित्ताकाट",
     "columns": [
       "chalan_no",
       "date_nepali",
@@ -3911,6 +4138,8 @@
 
   "road-excavation-approval": {
     "table": "road_excavation_approval",
+    "category": "Physical Development",
+    "subCategory": "सडक खन्ने स्वीकृतिको सिफारिस",
     "columns": [
       "chalan_no",
       "date_nepali",
@@ -3933,6 +4162,8 @@
 
   "road-maintain-recommendation": {
     "table": "road_maintain_recommendation",
+    "category": "Physical Development",
+    "subCategory": "नेपाल सरकारको नाममा बाटो कायम सिफारिस",
     "columns": [
       "chalan_no",
       "date_nepali",
@@ -3959,6 +4190,8 @@
 
   "tap-installation-recommendation": {
     "table": "tap_installation_recommendation",
+    "category": "Physical Development",
+    "subCategory": "धारा जडान सिफारिस",
     "columns": [
       "chalan_no",
       "date_nepali",
@@ -3984,6 +4217,8 @@
 
   "agreement-of-plan": {
     "table": "agreement_of_plan",
+    "category": "Official & Planning",
+    "subCategory": "योजना सम्झौताकॊ सिफारिस",
     "columns": [
       "project_code_or_id",
       "implement_unit",
@@ -4007,6 +4242,8 @@
 
   "withdrawal-fund-recommendation": {
     "table": "withdrawal_fund_recommendation",
+    "category": "Official & Planning",
+    "subCategory": "रकम निकाशाको सिफारिस",
     "columns": [
       "project_code_or_id",
       "requested_amount",
@@ -4025,6 +4262,8 @@
 
   "behavior-recommendation": {
     "table": "behavior_recommendations",
+    "category": "Social & Family",
+    "subCategory": "चालचलन सिफारिस",
     "columns": [
       "chalani_no",
       "municipality",
@@ -4044,6 +4283,8 @@
 
   "beneficiary-allowance-transfer": {
     "table": "beneficiary_allowance_transfers",
+    "category": "Social & Family",
+    "subCategory": "लाभग्राहीको लगत स्थानान्तरण",
     "columns": [
       "chalani_no",
       "fiscal_year_from",
@@ -4059,6 +4300,8 @@
 
   "birth-settlement-recommendation": {
     "table": "birth_settlement_recommendations",
+    "category": "Social & Family",
+    "subCategory": "जन्म / बसोबास प्रमाणित",
     "columns": [
       "chalani_no",
       "municipality",
@@ -4075,6 +4318,8 @@
 
   "birth-verification-nepali": {
     "table": "birth_verifications_nepali",
+    "category": "Social & Family",
+    "subCategory": "जन्म मिति प्रमाणित",
     "columns": [
       "chalani_no",
       "municipality",
@@ -4090,6 +4335,8 @@
 
   "demised-heir-recommendation": {
     "table": "demised_heir_recommendations",
+    "category": "Social & Family",
+    "subCategory": "मृतकका हकदारको सिफारिस",
     "columns": [
       "chalani_no",
       "municipality",
@@ -4105,6 +4352,8 @@
 
   "demised-security-allowance-to-heir": {
     "table": "demised_security_allowance_to_heir",
+    "category": "Social & Family",
+    "subCategory": "मृतकको सामाजिक सुरक्षा भत्ता हकदारलाई",
     "columns": [
       "chalani_no",
       "addressee_name",
@@ -4120,6 +4369,8 @@
 
   "destitute-recommendation": {
     "table": "destitute_recommendations",
+    "category": "Social & Family",
+    "subCategory": "विपन्न सिफारिस",
     "columns": [
       "chalani_no",
       "municipality_display",
@@ -4133,6 +4384,8 @@
 
   "disability-identity-card-recommendation": {
     "table": "disability_identity_card_recommendations",
+    "category": "Social & Family",
+    "subCategory": "अपांग परिचय पत्र सिफारिस",
     "columns": [
       "chalani_no",
       "addressee",
@@ -4147,6 +4400,8 @@
 
   "disable-identity-card-renew": {
     "table": "disable_identity_card_renew",
+    "category": "Social & Family",
+    "subCategory": "परिचय पत्र नविकरण",
     "columns": [
       "chalani_no",
       "certificate_type",
@@ -4170,6 +4425,8 @@
 
   "electricity-connection-recommendation": {
     "table": "electricity_connection_recommendation",
+    "category": "Social & Family",
+    "subCategory": "निशुल्क विद्युत् जडान सिफारिस",
     "columns": [
       "chalani_no",
       "addressee_company",
@@ -4203,6 +4460,8 @@
 
   "ethnic-identity-recommendation": {
     "table": "ethnic_identity_recommendation",
+    "category": "Social & Family",
+    "subCategory": "जातीय पहिचान सिफारिस",
     "columns": [
       "chalani_no",
       "addressee_office",
@@ -4230,6 +4489,8 @@
 
   "free-health-insurance-request": {
     "table": "free_health_insurance_requests",
+    "category": "Social & Family",
+    "subCategory": "निशुल्क स्वास्थ्य बिमा",
     "columns": [
       "chalani_no",
       "fiscal_year",
@@ -4245,6 +4506,8 @@
 
   "income-source-certification": {
     "table": "income_source_certifications",
+    "category": "Social & Family",
+    "subCategory": "आय श्रोत प्रमाणित",
     "columns": [
       "chalani_no",
       "residence_district",
@@ -4264,6 +4527,8 @@
 
   "internal-migration-recommendation": {
     "table": "internal_migration_recommendation",
+    "category": "Social & Family",
+    "subCategory": "आन्तरिक बसाईँसराई सिफारिस",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4295,6 +4560,8 @@
 
   "jestha-nagarik-sifaris-wada": {
     "table": "jestha_nagarik_sifaris_wada",
+    "category": "Social & Family",
+    "subCategory": "जेष्ठ नागरिक सिफारिस",
     "columns": [
       "chalani_no",
       "date",
@@ -4320,6 +4587,8 @@
 
   "marriage-certificate": {
     "table": "marriage_certificate",
+    "category": "Social & Family",
+    "subCategory": "विवाह प्रमाणित",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4350,6 +4619,8 @@
 
   "minor-identity-card": {
     "table": "minor_identity_card",
+    "category": "Social & Family",
+    "subCategory": "नाबालक परिचय पत्र",
     "columns": [
       "chalani_no",
       "date",
@@ -4392,6 +4663,8 @@
 
   "minor-identity-card-recommendation": {
     "table": "minor_identity_card_recommendation",
+    "category": "Social & Family",
+    "subCategory": "नाबालक परिचयपत्रको अनुसूची",
     "columns": [
       "chalani_no",
       "date",
@@ -4436,6 +4709,8 @@
 
   "new-birth-verification": {
     "table": "birth_verification",
+    "category": "Social & Family",
+    "subCategory": "जन्म प्रमाणिकरण",
     "columns": [
       "letter_no",
       "ref_no",
@@ -4479,6 +4754,8 @@
 
   "no-second-marriage-recommendation": {
     "table": "no_second_marriage_recommendation",
+    "category": "Social & Family",
+    "subCategory": "दोश्रो विवाह नगरेको सिफारिस",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4510,6 +4787,8 @@
 
   "old-age-allowance": {
     "table": "old_age_allowance_applications",
+    "category": "Social & Family",
+    "subCategory": "पारिवारिक विवरण",
     "columns": [
       "municipality",
       "ward_no",
@@ -4532,6 +4811,8 @@
 
   "permanent-residence-recommendation": {
     "table": "permanent_residence_recommendation",
+    "category": "Social & Family",
+    "subCategory": "स्थायी बसोवास सिफारिस",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4560,6 +4841,8 @@
 
   "relationship-verification_form": {
     "table": "relationship_verification_form",
+    "category": "Social & Family",
+    "subCategory": "नाता प्रमाणित प्रमाण पत्र",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4587,6 +4870,8 @@
 
   "relation-temporary-residence": {
     "table": "relation_temporary_residence",
+    "category": "Social & Family",
+    "subCategory": "नाता प्रमाणित",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4620,6 +4905,8 @@
 
   "social-security-allowance-recommendation": {
     "table": "social_security_allowance_recommendation",
+    "category": "Social & Family",
+    "subCategory": "सामाजिक सुरक्षा भत्ता",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4649,6 +4936,8 @@
 
   "temporary-residence-recommendation": {
     "table": "temporary_residence_recommendation",
+    "category": "Social & Family",
+    "subCategory": "अस्थायी बसोवास सिफारिस",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4679,6 +4968,8 @@
 
   "three-generation-certificate": {
     "table": "three_generation_certificate",
+    "category": "Social & Family",
+    "subCategory": "तीन पुस्ते प्रमाणित",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4702,6 +4993,8 @@
 
   "tribal-recommendation": {
     "table": "tribal_recommendation",
+    "category": "Social & Family",
+    "subCategory": "आदिवासी सिफारिस",
     "columns": [
       "reference_no",
       "chalani_no",
@@ -4735,6 +5028,8 @@
 
   "unmarried-verification_form": {
     "table": "unmarried_verification_form",
+    "category": "Social & Family",
+    "subCategory": "अविवाहित प्रमाणित",
     "columns": [
       "reference_no",
       "chalani_no",
