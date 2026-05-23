@@ -1,18 +1,28 @@
 const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
-  // Detect which naming convention this form uses
-  const nameKey = 'applicantName' in formData ? 'applicantName' : 'applicant_name';
-  const addressKey = 'applicantAddress' in formData ? 'applicantAddress' : 'applicant_address';
-  const citizenKey = 'applicantCitizenship' in formData
-    ? 'applicantCitizenship'
-    : 'applicant_citizenship_no';
-  const phoneKey = 'applicantPhone' in formData ? 'applicantPhone' : 'applicant_phone';
+  const nameKey =
+    "applicantName" in formData ? "applicantName" : "applicant_name";
+
+  const addressKey =
+    "applicantAddress" in formData ? "applicantAddress" : "applicant_address";
+    
+  const citizenKey =
+    "applicantCitizenship" in formData
+      ? "applicantCitizenship"
+      : "applicant_citizenship_no" in formData
+        ? "applicant_citizenship_no"
+        : "applicant_citizenship";
+
+  const phoneKey =
+    "applicantPhone" in formData ? "applicantPhone" : "applicant_phone";
 
   return (
     <div className="applicant-details-box">
       <h3>निवेदकको विवरण</h3>
       <div className="details-grid">
         <div className="detail-group">
-          <label>निवेदकको नाम<span className="required">*</span></label>
+          <label>
+            निवेदकको नाम<span className="required">*</span>
+          </label>
           <input
             name={nameKey}
             type="text"
@@ -22,8 +32,11 @@ const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
             required
           />
         </div>
+
         <div className="detail-group">
-          <label>निवेदकको ठेगाना<span className="required">*</span></label>
+          <label>
+            निवेदकको ठेगाना<span className="required">*</span>
+          </label>
           <input
             name={addressKey}
             type="text"
@@ -33,8 +46,11 @@ const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
             required
           />
         </div>
+
         <div className="detail-group">
-          <label>निवेदकको नागरिकता नं.<span className="required">*</span></label>
+          <label>
+            निवेदकको नागरिकता नं.<span className="required">*</span>
+          </label>
           <input
             name={citizenKey}
             type="text"
@@ -44,8 +60,11 @@ const ApplicantDetailsNp = ({ formData = {}, handleChange }) => {
             required
           />
         </div>
+
         <div className="detail-group">
-          <label>निवेदकको फोन नं.<span className="required">*</span></label>
+          <label>
+            निवेदकको फोन नं.<span className="required">*</span>
+          </label>
           <input
             name={phoneKey}
             type="text"

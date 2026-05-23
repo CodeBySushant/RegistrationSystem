@@ -240,22 +240,28 @@ const STYLES = `
 /* ─────────────────────────────────────────────────────────────────────────────
    Initial State
 ───────────────────────────────────────────────────────────────────────────── */
+// Update initialState:
 const initialState = {
-  chalani_no:             "",
-  addressee_office:       "",
-  addressee_ward:         "",
-  plan_name:              "",
-  applicant_person_name:  "",
-  inspection_result:      "",
-  signer_name:            "",
-  signer_designation:     "",
-  // ApplicantDetailsNp fields
-  applicant_name:            "",
-  applicant_address:         "",
-  applicant_citizenship_no:  "",
-  applicant_cit_issued_date: "",
-  applicant_nid_no:          "",
-  applicant_phone:           "",
+  letter_no: "",
+  chalani_no: "",
+  date: "",
+  addressee_line1: "",
+  addressee_line2: "",
+  municipality: "",
+  ward_no: "",
+  fiscal_year: "",
+  project_name: "",
+  project_applicant_name: "",
+  inspection_date: "",
+  inspection_findings: "",
+  technical_evaluation: "",
+  signature_name: "",
+  designation: "",
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship: "",
+  applicant_phone: "",
+  notes: "",
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -266,44 +272,22 @@ const WorkPlanningCompleted = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  /* ── Submit ── */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async (shouldPrint = false) => {
     setLoading(true);
     try {
       const res = await axios.post("/api/forms/work-planning-completed", form);
       if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
+        alert("सफलतापूर्वक सुरक्षित भयो! ID: " + res.data.id);
+        if (shouldPrint) window.print();
         setForm(initialState);
-      } else {
-        alert("Unexpected response: " + JSON.stringify(res.data));
       }
     } catch (err) {
-      console.error("Submit error:", err.response || err.message || err);
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
         err.message ||
         "Submission failed";
-      alert("Error: " + msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /* ── Save → Print → Reset ── */
-  const handlePrint = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post("/api/forms/work-planning-completed", form);
-      if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
-        window.print();
-        setForm(initialState);
-      }
-    } catch (err) {
-      console.error("Print error:", err.response || err.message || err);
-      alert("Error saving before print.");
+      alert("त्रुटि: " + msg);
     } finally {
       setLoading(false);
     }
@@ -344,7 +328,9 @@ const WorkPlanningCompleted = () => {
       {/* ── Meta ── */}
       <div className="wpc-meta-row">
         <div className="wpc-meta-left">
-          <p>पत्र संख्या : <span className="wpc-bold">२०८२/८३</span></p>
+          <p>
+            पत्र संख्या : <span className="wpc-bold">२०८२/८३</span>
+          </p>
           <p>
             चलानी नं. :{" "}
             <input
@@ -356,14 +342,18 @@ const WorkPlanningCompleted = () => {
           </p>
         </div>
         <div className="wpc-meta-right">
-          <p>मिति : <span className="wpc-bold">२०८२-०८-०६</span></p>
+          <p>
+            मिति : <span className="wpc-bold">२०८२-०८-०६</span>
+          </p>
           <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
         </div>
       </div>
 
       {/* ── Subject ── */}
       <div className="wpc-subject-section">
-        <p>विषय: <span className="wpc-underline">सिफारिस गरिएको वारे ।</span></p>
+        <p>
+          विषय: <span className="wpc-underline">सिफारिस गरिएको वारे ।</span>
+        </p>
       </div>
 
       {/* ── Addressee ── */}
@@ -397,8 +387,10 @@ const WorkPlanningCompleted = () => {
         <p>
           उपरोक्त सम्बन्धमा{" "}
           <span className="wpc-highlight">{MUNICIPALITY.name}</span>{" "}
-          <span className="wpc-highlight">वडा नं {user?.ward || MUNICIPALITY.wardNumber}</span>
-          {" "}मा आ.व. <span className="wpc-highlight">२०८२/८३</span> मा संचालित
+          <span className="wpc-highlight">
+            वडा नं {user?.ward || MUNICIPALITY.wardNumber}
+          </span>{" "}
+          मा आ.व. <span className="wpc-highlight">२०८२/८३</span> मा संचालित
           <input
             name="plan_name"
             value={form.plan_name}
@@ -465,7 +457,7 @@ const WorkPlanningCompleted = () => {
         <button
           className="wpc-save-print-btn"
           type="button"
-          onClick={handlePrint}
+          onClick={() => handleSave(true)}
           disabled={loading}
         >
           {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}

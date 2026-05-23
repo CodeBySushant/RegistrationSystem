@@ -1,22 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import axiosInstance from '../../utils/axiosInstance';
 import { MUNICIPALITY } from "../../config/municipalityConfig";
-import {
-  getFreshSubmissions,
-  deleteSubmission,
-  timeLeftLabel,
-} from '../../utils/submissionTracker';
 
-/* ─────────────────────────────────────────────
-   CONSTANT — must be at module scope BEFORE
-   the component, not after. Defining it after
-   the component causes a ReferenceError because
-   `const` is not hoisted with its value.
-───────────────────────────────────────────── */
-const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
-
-/* ─────────────────────────────────────────────
-   STYLES  (prefix: dwpl-)
-───────────────────────────────────────────── */
 const styles = `
 .dwpl-container {
   max-width: 1200px;
@@ -25,12 +10,10 @@ const styles = `
   background-image: url("/papertexture1.jpg");
   background-repeat: repeat;
   background-size: auto;
-  background-position: top left;
   font-family: 'Kalimati', 'Kokila', sans-serif;
   color: #333;
   min-height: 100vh;
 }
-
 .dwpl-top-bar-header {
   display: flex;
   justify-content: space-between;
@@ -45,7 +28,6 @@ const styles = `
   margin: 0;
   color: #2c3e50;
 }
-
 .dwpl-back-button {
   background: none;
   border: none;
@@ -55,14 +37,14 @@ const styles = `
   padding: 5px 10px;
 }
 .dwpl-back-button:hover { color: #000; }
-
 .dwpl-actions-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-
 .dwpl-excel-export-btn {
   background-color: #5a7b94;
   color: white;
@@ -74,7 +56,6 @@ const styles = `
   font-family: inherit;
 }
 .dwpl-excel-export-btn:hover { background-color: #4a6b84; }
-
 .dwpl-search-filter-bar {
   display: flex;
   background-color: #1a252f;
@@ -82,13 +63,12 @@ const styles = `
   border-radius: 4px;
   margin-bottom: 20px;
   align-items: center;
-}
-.dwpl-date-input-group {
-  flex-grow: 1;
-  margin-right: 20px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .dwpl-filter-input {
-  width: 100%;
+  flex: 1;
+  min-width: 160px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -97,7 +77,6 @@ const styles = `
   box-sizing: border-box;
   font-family: inherit;
 }
-
 .dwpl-search-btn {
   background-color: #3498db;
   color: white;
@@ -108,9 +87,7 @@ const styles = `
   cursor: pointer;
 }
 .dwpl-search-btn:hover { background-color: #2980b9; }
-
 .dwpl-reset-btn {
-  margin-left: 8px;
   background: #aaa;
   color: white;
   border: none;
@@ -121,14 +98,12 @@ const styles = `
   font-size: 1rem;
 }
 .dwpl-reset-btn:hover { background: #888; }
-
 .dwpl-data-table-container {
   background-color: #fff;
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
 .dwpl-performance-table {
   width: 100%;
   border-collapse: collapse;
@@ -148,7 +123,6 @@ const styles = `
   color: #333;
 }
 .dwpl-performance-table tr:hover { background-color: #f9f9f9; }
-
 .dwpl-copyright-footer {
   text-align: right;
   font-size: 0.8rem;
@@ -157,15 +131,11 @@ const styles = `
   padding-top: 10px;
   border-top: 1px solid #ddd;
 }
-
-/* ── Print ── */
 @media print {
   .dwpl-top-bar-header,
   .dwpl-actions-bar,
   .dwpl-search-filter-bar { display: none !important; }
 }
-
-/* ── Responsive ── */
 @media (max-width: 768px) {
   .dwpl-container { padding: 10px; }
   .dwpl-performance-table th,
@@ -173,64 +143,73 @@ const styles = `
 }
 `;
 
-/* ─────────────────────────────────────────────
-   COMPONENT
-───────────────────────────────────────────── */
 const DailyWorkPerformanceList = ({ setActiveLink }) => {
-  const [data, setData]         = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [data, setData]           = useState([]);
+  const [filtered, setFiltered]   = useState([]);
   const [searchText, setSearchText] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState('');
 
-  const reload = useCallback(() => {
-    const fresh = getFreshSubmissions();
-    fresh.sort((a, b) => b._submittedAt - a._submittedAt);
-    setData(fresh);
-    setFiltered(fresh);
+  const load = useCallback(async (date = '') => {
+    setLoading(true);
+    setError('');
+    try {
+      const params = date ? `?date=${date}` : '';
+      const res = await axiosInstance.get(`/api/daily-submissions${params}`);
+      const rows = res.data || [];
+      setData(rows);
+      setFiltered(rows);
+    } catch (err) {
+      console.error('daily-submissions fetch error:', err);
+      setError('डाटा लोड गर्न समस्या भयो।');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // Load on mount
-  useEffect(() => { reload(); }, [reload]);
+  useEffect(() => { load(); }, [load]);
 
-  // Auto-refresh every 60 s so expired rows disappear in real time
+  // Auto-refresh every 60 seconds
   useEffect(() => {
-    const interval = setInterval(reload, 60_000);
+    const interval = setInterval(() => load(dateFilter), 60_000);
     return () => clearInterval(interval);
-  }, [reload]);
+  }, [load, dateFilter]);
 
   const handleSearch = () => {
     if (!searchText.trim()) { setFiltered(data); return; }
     const lower = searchText.toLowerCase();
     setFiltered(
       data.filter(item =>
-        (item.formName || '').toLowerCase().includes(lower) ||
-        Object.values(item).some(v =>
-          String(v).toLowerCase().includes(lower)
-        )
+        (item.sub_category || '').toLowerCase().includes(lower) ||
+        (item.category || '').toLowerCase().includes(lower) ||
+        (item.summary || '').toLowerCase().includes(lower) ||
+        (item.form_key || '').toLowerCase().includes(lower)
       )
     );
   };
 
   const handleReset = () => {
     setSearchText('');
+    setDateFilter('');
     setFiltered(data);
+    load('');
   };
 
-  const handleDelete = (id) => {
-    if (!window.confirm('के तपाईं यो रेकर्ड मेटाउन चाहनुहुन्छ?')) return;
-    deleteSubmission(id);
-    reload();
+  const handleDateSearch = () => {
+    load(dateFilter);
   };
 
   const handleExcelExport = () => {
     if (!filtered.length) { alert('निर्यात गर्न कुनै तथ्याङ्क छैन।'); return; }
-    const skip = new Set(['id', '_submittedAt']);
-    const allKeys = [
-      ...new Set(filtered.flatMap(r => Object.keys(r).filter(k => !skip.has(k))))
-    ];
-    const header = ['पेश गरिएको समय', ...allKeys];
-    const rows = filtered.map(r => [
-      new Date(r._submittedAt).toLocaleString('ne-NP'),
-      ...allKeys.map(k => r[k] ?? ''),
+    const header = ['#', 'फारमको नाम', 'श्रेणी', 'पेश गरिएको समय', 'आवेदकको नाम'];
+    const rows = filtered.map((r, i) => [
+      i + 1,
+      r.sub_category || r.form_key || '',
+      r.category || '',
+      r.created_at || '',
+      r.summary || '',
     ]);
     const csv = [header, ...rows]
       .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
@@ -247,10 +226,9 @@ const DailyWorkPerformanceList = ({ setActiveLink }) => {
   return (
     <>
       <style>{styles}</style>
-
       <div className="dwpl-container">
 
-        {/* ── Header ── */}
+        {/* Header */}
         <div className="dwpl-top-bar-header">
           <h1>दैनिक कार्य सम्पादनका सूचीहरू</h1>
           <button
@@ -261,7 +239,7 @@ const DailyWorkPerformanceList = ({ setActiveLink }) => {
           </button>
         </div>
 
-        {/* ── Info banner ── */}
+        {/* Info banner */}
         <div style={{
           background: '#e8f4fd',
           border: '1px solid #bee3f8',
@@ -271,11 +249,11 @@ const DailyWorkPerformanceList = ({ setActiveLink }) => {
           fontSize: '0.9rem',
           color: '#2c5282',
         }}>
-          📋 यहाँ आजको पेश गरिएका सबै फारमहरू देखिन्छन्।
-          पेश गरेको <strong>२४ घण्टापछि</strong> स्वतः हट्नेछ।
+          📋 यहाँ पेश गरिएका सबै फारमहरू देखिन्छन्।
+          डाटा सर्भरबाट लोड हुन्छ — सबै कम्प्युटरमा देखिन्छ।
         </div>
 
-        {/* ── Actions ── */}
+        {/* Actions */}
         <div className="dwpl-actions-bar">
           <button className="dwpl-excel-export-btn" onClick={handleExcelExport}>
             📥 एक्सेल निर्यात
@@ -285,45 +263,67 @@ const DailyWorkPerformanceList = ({ setActiveLink }) => {
           </span>
         </div>
 
-        {/* ── Search ── */}
+        {/* Search + Date filter */}
         <div className="dwpl-search-filter-bar">
-          <div className="dwpl-date-input-group">
-            <input
-              type="text"
-              placeholder="फारमको नाम वा विवरणले खोज्नुहोस्..."
-              className="dwpl-filter-input"
-              value={searchText}
-              onChange={e => setSearchText(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
-          <button className="dwpl-search-btn" onClick={handleSearch}>🔍</button>
+          <input
+            type="text"
+            placeholder="फारमको नाम वा विवरणले खोज्नुहोस्..."
+            className="dwpl-filter-input"
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSearch()}
+          />
+          <input
+            type="date"
+            className="dwpl-filter-input"
+            style={{ maxWidth: 180 }}
+            value={dateFilter}
+            onChange={e => setDateFilter(e.target.value)}
+          />
+          <button className="dwpl-search-btn" onClick={() => { handleSearch(); handleDateSearch(); }}>
+            🔍
+          </button>
           <button className="dwpl-reset-btn" onClick={handleReset}>
             ✕ रिसेट
           </button>
         </div>
 
-        {/* ── Table ── */}
+        {/* Error */}
+        {error && (
+          <div style={{
+            background: '#fff5f5',
+            border: '1px solid #fed7d7',
+            borderRadius: 4,
+            padding: '10px 16px',
+            marginBottom: 16,
+            color: '#c53030',
+          }}>
+            {error}
+          </div>
+        )}
+
+        {/* Table */}
         <div className="dwpl-data-table-container">
           <table className="dwpl-performance-table">
             <thead>
               <tr>
                 <th style={{ width: 40 }}>#</th>
                 <th>फारमको नाम</th>
+                <th>श्रेणी</th>
                 <th>पेश गरिएको समय</th>
                 <th>आवेदकको नाम</th>
-                <th>मुख्य विवरण</th>
-                <th style={{ width: 110 }}>समय बाँकी</th>
-                <th style={{ width: 100 }}>मेटाउनुहोस्</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td
-                    colSpan="7"
-                    style={{ textAlign: 'center', padding: 32, color: '#888' }}
-                  >
+                  <td colSpan="5" style={{ textAlign: 'center', padding: 32, color: '#888' }}>
+                    लोड हुँदैछ...
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: 'center', padding: 32, color: '#888' }}>
                     <div style={{ fontSize: '2rem', marginBottom: 8 }}>📭</div>
                     <div>अहिलेसम्म कुनै फारम पेश गरिएको छैन।</div>
                     <div style={{ fontSize: '0.85rem', marginTop: 4 }}>
@@ -331,82 +331,23 @@ const DailyWorkPerformanceList = ({ setActiveLink }) => {
                     </div>
                   </td>
                 </tr>
-              ) : filtered.map((item, idx) => {
-                const skip = new Set([
-                  'id', '_submittedAt', 'formName',
-                  'applicantName', 'applicant_name',
-                ]);
-                const detailPairs = Object.entries(item)
-                  .filter(([k]) => !skip.has(k))
-                  .slice(0, 4);
-
-                const applicantName =
-                  item.applicantName       ||
-                  item.applicant_name      ||
-                  item['आवेदकको_नाम']      ||
-                  '—';
-
-                const submittedTime =
-                  new Date(item._submittedAt).toLocaleString('ne-NP');
-                const remaining =
-                  TWENTY_FOUR_HOURS - (Date.now() - item._submittedAt);
-                const isExpiringSoon = remaining < 2 * 60 * 60 * 1000;
-
-                return (
-                  <tr
-                    key={item.id}
-                    style={isExpiringSoon ? { background: '#fff8f0' } : {}}
-                  >
-                    <td style={{ textAlign: 'center', color: '#888' }}>
-                      {idx + 1}
-                    </td>
-                    <td style={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                      {item.formName || '—'}
-                    </td>
-                    <td style={{ fontSize: '0.82rem', color: '#555' }}>
-                      {submittedTime}
-                    </td>
-                    <td style={{ fontSize: '0.88rem' }}>
-                      {applicantName}
-                    </td>
-                    <td style={{ fontSize: '0.82rem', color: '#444' }}>
-                      {detailPairs.length > 0
-                        ? detailPairs.map(([k, v]) => (
-                            <div key={k}>
-                              <span style={{ color: '#888' }}>{k}:</span>{' '}
-                              <strong>{String(v).slice(0, 40)}</strong>
-                            </div>
-                          ))
-                        : '—'
-                      }
-                    </td>
-                    <td style={{
-                      fontSize: '0.78rem',
-                      color: isExpiringSoon ? '#e53e3e' : '#718096',
-                      fontWeight: isExpiringSoon ? 'bold' : 'normal',
-                      whiteSpace: 'nowrap',
-                    }}>
-                      {timeLeftLabel(item._submittedAt)}
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        style={{
-                          color: 'white',
-                          background: '#e53e3e',
-                          border: 'none',
-                          borderRadius: 4,
-                          padding: '4px 10px',
-                          cursor: 'pointer',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        मेटाउनुहोस्
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              ) : filtered.map((item, idx) => (
+                <tr key={item.id}>
+                  <td style={{ textAlign: 'center', color: '#888' }}>{idx + 1}</td>
+                  <td style={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    {item.sub_category || item.form_key || '—'}
+                  </td>
+                  <td style={{ fontSize: '0.85rem', color: '#555' }}>
+                    {item.category || '—'}
+                  </td>
+                  <td style={{ fontSize: '0.82rem', color: '#555' }}>
+                    {item.created_at || '—'}
+                  </td>
+                  <td style={{ fontSize: '0.88rem' }}>
+                    {item.summary || '—'}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

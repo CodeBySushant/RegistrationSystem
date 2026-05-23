@@ -8,38 +8,35 @@ import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
    INITIAL STATE — matches forms.json columns
    for "social-security-via-guardian"
 ───────────────────────────────────────────── */
-const INITIAL_STATE = {
-  letter_no:                  "२०८२/८३",
-  chalani_no:                 "",
-  date:                       "२०८२-०८-०६",
-  addressee_line1:            "",
-  addressee_line2:            "",
-  // Body
-  applicant_request_name:     "",
-  ward_chairperson_name:      "",
-  beneficiary_name:           "",
-  guardian_relation:          "",
-  guardian_name:              "",
-  // Beneficiary details
-  ben_name:                   "",
-  ben_issue_district:         "",
-  ben_issue_date:             "२०८२-०८-०६",
-  ben_citizenship_no:         "",
-  ben_account_no:             "",
-  // Guardian details
-  grd_name:                   "",
-  grd_issue_district:         "",
-  grd_issue_date:             "२०८२-०८-०६",
-  grd_citizenship_no:         "",
-  grd_account_no:             "",
-  // Signature
-  signature_name:             "",
-  designation:                "",
-  // Footer applicant details
-  applicant_name:             "",
-  applicant_address:          "",
-  applicant_citizenship:      "",
-  applicant_phone:            "",
+// Update initialState:
+const initialState = {
+  letter_no: "",
+  chalani_no: "",
+  date: "",
+  addressee_line1: "",
+  addressee_line2: "",
+  body_person_name: "", // renamed from applicant_name
+  ward_chairman_name: "",
+  beneficiary_name: "",
+  guardian_relation: "",
+  guardian_name: "",
+  ben_name: "",
+  ben_issue_district: "",
+  ben_issue_date: "",
+  ben_citizenship_no: "",
+  ben_account_no: "",
+  grd_name: "",
+  grd_issue_district: "",
+  grd_issue_date: "",
+  grd_citizenship_no: "",
+  grd_account_no: "",
+  signature_name: "",
+  designation: "",
+  applicant_name: "", // footer box — now standard name
+  applicant_address: "",
+  applicant_citizenship: "",
+  applicant_phone: "",
+  notes: "",
 };
 
 /* ─────────────────────────────────────────────
@@ -305,7 +302,7 @@ const styles = `
    COMPONENT
 ───────────────────────────────────────────── */
 const SocialSecurityViaGuardian = () => {
-  const [form, setForm] = useState(INITIAL_STATE);
+  const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
@@ -315,13 +312,14 @@ const SocialSecurityViaGuardian = () => {
   };
 
   const validate = () => {
-    if (!form.addressee_line1?.trim())         return "प्राप्तकर्ताको नाम आवश्यक छ";
-    if (!form.applicant_request_name?.trim())  return "निवेदकको नाम आवश्यक छ";
-    if (!form.ward_chairperson_name?.trim())   return "वडा अध्यक्षको नाम आवश्यक छ";
-    if (!form.beneficiary_name?.trim())        return "लाभग्राहीको नाम आवश्यक छ";
-    if (!form.guardian_name?.trim())           return "संरक्षकको नाम आवश्यक छ";
-    if (!form.applicant_name?.trim())          return "निवेदकको नाम आवश्यक छ (तलको बक्स)";
-    if (!form.applicant_phone?.trim())         return "फोन नम्बर आवश्यक छ";
+    if (!form.addressee_line1?.trim()) return "प्राप्तकर्ताको नाम आवश्यक छ";
+    if (!form.body_person_name?.trim()) return "निवेदकको नाम आवश्यक छ";
+    if (!form.ward_chairman_name?.trim()) return "वडा अध्यक्षको नाम आवश्यक छ";
+    if (!form.beneficiary_name?.trim()) return "लाभग्राहीको नाम आवश्यक छ";
+    if (!form.guardian_name?.trim()) return "संरक्षकको नाम आवश्यक छ";
+    if (!form.applicant_name?.trim())
+      return "निवेदकको नाम आवश्यक छ (तलको बक्स)";
+    if (!form.applicant_phone?.trim()) return "फोन नम्बर आवश्यक छ";
     return null;
   };
 
@@ -330,7 +328,10 @@ const SocialSecurityViaGuardian = () => {
     if (loading) return;
 
     const err = validate();
-    if (err) { alert("कृपया आवश्यक क्षेत्र भर्नुहोस्: " + err); return; }
+    if (err) {
+      alert("कृपया आवश्यक क्षेत्र भर्नुहोस्: " + err);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -365,17 +366,17 @@ const SocialSecurityViaGuardian = () => {
 
   // Adapter for ApplicantDetailsNp (camelCase)
   const footerForm = {
-    applicantName:        form.applicant_name,
-    applicantAddress:     form.applicant_address,
+    applicantName: form.applicant_name,
+    applicantAddress: form.applicant_address,
     applicantCitizenship: form.applicant_citizenship,
-    applicantPhone:       form.applicant_phone,
+    applicantPhone: form.applicant_phone,
   };
   const handleFooterChange = (e) => {
     const map = {
-      applicantName:        "applicant_name",
-      applicantAddress:     "applicant_address",
+      applicantName: "applicant_name",
+      applicantAddress: "applicant_address",
       applicantCitizenship: "applicant_citizenship",
-      applicantPhone:       "applicant_phone",
+      applicantPhone: "applicant_phone",
     };
     const key = map[e.target.name] || e.target.name;
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
@@ -387,12 +388,12 @@ const SocialSecurityViaGuardian = () => {
 
       <div className="ssvg-container">
         <form onSubmit={handleSubmit}>
-
           {/* ── Top bar ── */}
           <div className="ssvg-top-bar-title">
             संरक्षक मार्फत सामाजिक सुरक्षा भत्ता उपलब्ध गराउने सम्बन्धमा ।
             <span className="ssvg-top-right-bread">
-              आर्थिक &gt; संरक्षक मार्फत सामाजिक सुरक्षा भत्ता उपलब्ध गराउने सम्बन्धमा ।
+              आर्थिक &gt; संरक्षक मार्फत सामाजिक सुरक्षा भत्ता उपलब्ध गराउने
+              सम्बन्धमा ।
             </span>
           </div>
 
@@ -404,7 +405,9 @@ const SocialSecurityViaGuardian = () => {
             <div className="ssvg-header-text">
               <h1 className="ssvg-municipality-name">{MUNICIPALITY.name}</h1>
               <h2 className="ssvg-ward-title">
-                {MUNICIPALITY.wardNumber} नं. वडा कार्यालय
+                {user?.role === "SUPERADMIN"
+                  ? "सबै वडा कार्यालय"
+                  : `${user?.ward || " "} नं. वडा कार्यालय`}
               </h2>
               <p className="ssvg-address-text">{MUNICIPALITY.officeLine}</p>
               <p className="ssvg-province-text">{MUNICIPALITY.provinceLine}</p>
@@ -414,15 +417,18 @@ const SocialSecurityViaGuardian = () => {
           {/* ── Meta ── */}
           <div className="ssvg-meta-data-row">
             <div className="ssvg-meta-left">
-              <p>पत्र संख्या : <span className="ssvg-bold-text">
-                <input
-                  type="text"
-                  name="letter_no"
-                  value={form.letter_no}
-                  onChange={handleChange}
-                  className="ssvg-dotted-input ssvg-small-input"
-                />
-              </span></p>
+              <p>
+                पत्र संख्या :{" "}
+                <span className="ssvg-bold-text">
+                  <input
+                    type="text"
+                    name="letter_no"
+                    value={form.letter_no}
+                    onChange={handleChange}
+                    className="ssvg-dotted-input ssvg-small-input"
+                  />
+                </span>
+              </p>
               <p>
                 चलानी नं. :{" "}
                 <input
@@ -435,15 +441,18 @@ const SocialSecurityViaGuardian = () => {
               </p>
             </div>
             <div className="ssvg-meta-right">
-              <p>मिति : <span className="ssvg-bold-text">
-                <input
-                  type="text"
-                  name="date"
-                  value={form.date}
-                  onChange={handleChange}
-                  className="ssvg-dotted-input ssvg-small-input"
-                />
-              </span></p>
+              <p>
+                मिति :{" "}
+                <span className="ssvg-bold-text">
+                  <input
+                    type="text"
+                    name="date"
+                    value={form.date}
+                    onChange={handleChange}
+                    className="ssvg-dotted-input ssvg-small-input"
+                  />
+                </span>
+              </p>
               <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
             </div>
           </div>
@@ -488,10 +497,10 @@ const SocialSecurityViaGuardian = () => {
             <p>
               उपरोक्त सम्बन्धमा निवेदक श्री{" "}
               <input
-                name="applicant_request_name"
+                name="body_person_name"
                 type="text"
                 className="ssvg-inline-input ssvg-long-box"
-                value={form.applicant_request_name}
+                value={form.body_person_name}
                 onChange={handleChange}
                 required
               />{" "}
@@ -499,10 +508,10 @@ const SocialSecurityViaGuardian = () => {
               सही साँचो रहेको बुझिएकोले पछी आईपर्न सम्पूर्ण कानूनी र आर्थिक
               जवाफदेहिता म वडा अध्यक्ष{" "}
               <input
-                name="ward_chairperson_name"
+                name="ward_chairman_name"
                 type="text"
                 className="ssvg-inline-input ssvg-medium-box"
-                value={form.ward_chairperson_name}
+                value={form.ward_chairman_name}
                 onChange={handleChange}
                 required
               />{" "}
@@ -560,7 +569,9 @@ const SocialSecurityViaGuardian = () => {
               </div>
               <div className="ssvg-form-group-row"></div>
               <div className="ssvg-form-group-row">
-                <label>जारी जिल्ला : <span className="ssvg-red">*</span></label>
+                <label>
+                  जारी जिल्ला : <span className="ssvg-red">*</span>
+                </label>
                 <input
                   name="ben_issue_district"
                   type="text"
@@ -580,7 +591,9 @@ const SocialSecurityViaGuardian = () => {
                 />
               </div>
               <div className="ssvg-form-group-row">
-                <label>ना.प्र. नं. : <span className="ssvg-red">*</span></label>
+                <label>
+                  ना.प्र. नं. : <span className="ssvg-red">*</span>
+                </label>
                 <input
                   name="ben_citizenship_no"
                   type="text"
@@ -591,7 +604,9 @@ const SocialSecurityViaGuardian = () => {
               </div>
               <div className="ssvg-form-group-row"></div>
               <div className="ssvg-form-group-row">
-                <label>खाता नम्बर : <span className="ssvg-red">*</span></label>
+                <label>
+                  खाता नम्बर : <span className="ssvg-red">*</span>
+                </label>
                 <input
                   name="ben_account_no"
                   type="text"
@@ -621,7 +636,9 @@ const SocialSecurityViaGuardian = () => {
               </div>
               <div className="ssvg-form-group-row"></div>
               <div className="ssvg-form-group-row">
-                <label>जारी जिल्ला : <span className="ssvg-red">*</span></label>
+                <label>
+                  जारी जिल्ला : <span className="ssvg-red">*</span>
+                </label>
                 <input
                   name="grd_issue_district"
                   type="text"
@@ -641,7 +658,9 @@ const SocialSecurityViaGuardian = () => {
                 />
               </div>
               <div className="ssvg-form-group-row">
-                <label>ना.प्र. नं. : <span className="ssvg-red">*</span></label>
+                <label>
+                  ना.प्र. नं. : <span className="ssvg-red">*</span>
+                </label>
                 <input
                   name="grd_citizenship_no"
                   type="text"
@@ -652,7 +671,9 @@ const SocialSecurityViaGuardian = () => {
               </div>
               <div className="ssvg-form-group-row"></div>
               <div className="ssvg-form-group-row">
-                <label>खाता नम्बर : <span className="ssvg-red">*</span></label>
+                <label>
+                  खाता नम्बर : <span className="ssvg-red">*</span>
+                </label>
                 <input
                   name="grd_account_no"
                   type="text"
@@ -693,10 +714,7 @@ const SocialSecurityViaGuardian = () => {
           </div>
 
           {/* ── Applicant details ── */}
-          <ApplicantDetailsNp
-            formData={footerForm}
-            handleChange={handleFooterChange}
-          />
+          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
           {/* ── Submit ── */}
           <div className="ssvg-footer">
@@ -712,7 +730,6 @@ const SocialSecurityViaGuardian = () => {
           <div className="ssvg-copyright-footer">
             © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
           </div>
-
         </form>
       </div>
     </>

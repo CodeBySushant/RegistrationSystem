@@ -1529,6 +1529,19 @@ CREATE TABLE IF NOT EXISTS social_security_payment_closure (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Step 1: Rename the existing body applicant_name to body_person_name first
+ALTER TABLE social_security_via_guardian
+  CHANGE COLUMN applicant_name applicant_name_temp VARCHAR(255);
+-- Step 2: Now rename all _box_ columns to standard names
+ALTER TABLE social_security_via_guardian
+  CHANGE COLUMN applicant_box_name        applicant_name        VARCHAR(255),
+  CHANGE COLUMN applicant_box_address     applicant_address     VARCHAR(255),
+  CHANGE COLUMN applicant_box_citizenship applicant_citizenship VARCHAR(128),
+  CHANGE COLUMN applicant_box_phone       applicant_phone       VARCHAR(64);
+-- Step 3: Rename the temp column to its proper descriptive name
+ALTER TABLE social_security_via_guardian
+  CHANGE COLUMN applicant_name_temp body_person_name VARCHAR(255);
+
 CREATE TABLE IF NOT EXISTS WorkPlanningCompleted (
   id INT AUTO_INCREMENT PRIMARY KEY,
   -- meta
@@ -1558,6 +1571,19 @@ CREATE TABLE IF NOT EXISTS WorkPlanningCompleted (
   notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Step 1: Rename the existing body applicant_name first
+ALTER TABLE WorkPlanningCompleted
+  CHANGE COLUMN applicant_name applicant_name_temp VARCHAR(255);
+-- Step 2: Now rename all _box_ columns to standard names
+ALTER TABLE WorkPlanningCompleted
+  CHANGE COLUMN applicant_box_name        applicant_name        VARCHAR(255),
+  CHANGE COLUMN applicant_box_address     applicant_address     VARCHAR(512),
+  CHANGE COLUMN applicant_box_citizenship applicant_citizenship VARCHAR(128),
+  CHANGE COLUMN applicant_box_phone       applicant_phone       VARCHAR(64);
+-- Step 3: Rename temp to proper descriptive name
+ALTER TABLE WorkPlanningCompleted
+  CHANGE COLUMN applicant_name_temp project_applicant_name VARCHAR(255);
 
 -- pages/educational
 CREATE TABLE IF NOT EXISTS BackwardCommunityRecommendation (
