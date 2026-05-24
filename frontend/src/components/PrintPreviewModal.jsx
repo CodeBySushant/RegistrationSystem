@@ -60,23 +60,29 @@ const PrintPreviewModal = ({ row, onClose }) => {
   return (
     <div className="pp-overlay" onClick={onClose}>
       <div className="pp-modal" onClick={(e) => e.stopPropagation()}>
-
         {/* Modal top bar */}
         <div className="pp-topbar">
           <span>सहकारी संस्था दर्ता — प्रिन्ट पूर्वावलोकन</span>
           <div className="pp-topbar-actions">
-            <button className="pp-print-btn" onClick={handlePrint}>🖨 प्रिन्ट गर्नुहोस्</button>
-            <button className="pp-close-btn" onClick={onClose}>✕</button>
+            <button className="pp-print-btn" onClick={handlePrint}>
+              🖨 प्रिन्ट गर्नुहोस्
+            </button>
+            <button className="pp-close-btn" onClick={onClose}>
+              ✕
+            </button>
           </div>
         </div>
 
         {/* Printable content */}
         <div className="pp-scroll">
           <div className="pp-paper" ref={printRef}>
-
             {/* Letterhead */}
             <div className="print-header">
-              <img className="print-logo" src="/nepallogo.svg" alt="Nepal Emblem" />
+              <img
+                className="print-logo"
+                src="/nepallogo.svg"
+                alt="Nepal Emblem"
+              />
               <div className="municipality-name">{MUNICIPALITY.name}</div>
               <div className="ward-title">
                 {user?.role === "SUPERADMIN"
@@ -95,12 +101,11 @@ const PrintPreviewModal = ({ row, onClose }) => {
 
             {/* Addressee */}
             <div className="top-info">
-              श्री दर्ता गर्ने अधिकारी{" "}
-              <span className="dotted-line">{row.officerName || ""}</span>{" "}
-              ज्यू,
+              श्री दर्ता गर्ने अधिकारी
+              <span className="dotted-line">{MUNICIPALITY.name}</span> ज्यू,
               <br />
-              <span className="dotted-line">{row.municipalityName || ""}</span>{" "}
-              , नगर कार्यपालिकाको कार्यालय
+              <span className="dotted-line">{MUNICIPALITY.name}</span>,{" "}
+              {MUNICIPALITY.officeLine}
               <br />
               <span className="dotted-line">{row.letterNo || ""}</span>{" "}
               &nbsp;&nbsp;
@@ -113,10 +118,12 @@ const PrintPreviewModal = ({ row, onClose }) => {
             {/* Body paragraph */}
             <div className="paragraph">
               महोदय,
-              <br /><br />
-              हामी देहायका व्यक्तिगत दर्ता भएको सहकारी संस्था दर्ता गरी पाउन निवेदन
-              गर्दछौं। उद्देश्यअनुसार संस्थाले संचालन गर्न कार्यक्रमको योजना र
-              प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी पेश गरेको छ।
+              <br />
+              <br />
+              हामी देहायका व्यक्तिगत दर्ता भएको सहकारी संस्था दर्ता गरी पाउन
+              निवेदन गर्दछौं। उद्देश्यअनुसार संस्थाले संचालन गर्न कार्यक्रमको
+              योजना र प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी
+              पेश गरेको छ।
             </div>
 
             {/* Institution details */}
@@ -164,7 +171,9 @@ const PrintPreviewModal = ({ row, onClose }) => {
               <span className="field-value">{row.totalShareCapital || ""}</span>
             </div>
             <div className="field-row">
-              <span className="field-label">(ञ) प्राप्त प्रवेश शुल्कको रकमः</span>
+              <span className="field-label">
+                (ञ) प्राप्त प्रवेश शुल्कको रकमः
+              </span>
               <span className="field-value">{row.entranceFee || ""}</span>
             </div>
 
@@ -177,11 +186,15 @@ const PrintPreviewModal = ({ row, onClose }) => {
               </div>
               <div className="field-row">
                 <span className="field-label">ठेगाना:</span>
-                <span className="field-value">{row.applicantAddress || ""}</span>
+                <span className="field-value">
+                  {row.applicantAddress || ""}
+                </span>
               </div>
               <div className="field-row">
                 <span className="field-label">नागरिकता नं.:</span>
-                <span className="field-value">{row.applicantCitizenship || ""}</span>
+                <span className="field-value">
+                  {row.applicantCitizenship || ""}
+                </span>
               </div>
               <div className="field-row">
                 <span className="field-label">फोन:</span>
@@ -200,14 +213,25 @@ const PrintPreviewModal = ({ row, onClose }) => {
             )}
 
             {/* Signature area */}
-            <div style={{ marginTop: 48, display: "flex", justifyContent: "flex-end" }}>
+            <div
+              style={{
+                marginTop: 48,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
               <div style={{ textAlign: "center", minWidth: 180 }}>
-                <div style={{ borderTop: "1px solid #000", paddingTop: 6, fontSize: "0.9rem" }}>
+                <div
+                  style={{
+                    borderTop: "1px solid #000",
+                    paddingTop: 6,
+                    fontSize: "0.9rem",
+                  }}
+                >
                   दस्तखत / छाप
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
