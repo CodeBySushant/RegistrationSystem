@@ -1,6 +1,6 @@
 # dependencies
 node_modules/
-
+backend/.env*
 # IDE files
 .vscode/
 .idea/
