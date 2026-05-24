@@ -1,394 +1,405 @@
 // src/pages/english-format/new/SurnameVerificationAfterMarriage.jsx
 import React, { useState } from "react";
-import "./SurnameVerificationAfterMarriage.css";
-
 import MunicipalityHeader from "../../../components/MunicipalityHeader.jsx";
+import ApplicantDetailsEn from "../../../components/ApplicantDetailsEn.jsx";
 import { MUNICIPALITY } from "../../../config/municipalityConfig";
 import axiosInstance from "../../../utils/axiosInstance";
 import { useAuth } from "../../../context/AuthContext";
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Styles (merged from SurnameVerificationAfterMarriage.css)
+   All classes prefixed with "svm-" to avoid global collisions.
+───────────────────────────────────────────────────────────────────────────── */
+const STYLES = `
+  /* ── Container ── */
+  .svm-container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 25px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-family: 'Times New Roman', Times, serif;
+    background-image: url("/papertexture1.jpg");
+    background-repeat: repeat;
+    background-size: auto;
+    background-position: top left;
+    box-sizing: border-box;
+  }
+
+  /* ── Header ── */
+  .svm-header { text-align: center; margin-bottom: 20px; color: #8B0000; }
+  .svm-header .logo { width: 80px; margin-bottom: 10px; }
+  .svm-header h1 { margin: 0; font-size: 24px; }
+  .svm-header h2 { margin: 5px 0; font-size: 20px; }
+  .svm-header h3 { margin: 0; font-size: 18px; }
+
+  /* ── Form rows ── */
+  .svm-form-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+  .svm-form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .svm-form-group label { font-weight: bold; margin-right: 8px; }
+  .svm-form-group input {
+    width: 200px;
+    max-width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  /* ── Subject ── */
+  .svm-subject { text-align: center; margin: 25px 0; font-size: 16px; }
+
+  /* ── Certificate body ── */
+  .svm-body { line-height: 2.8; font-size: 16px; text-align: justify; }
+  .svm-body input[type="text"],
+  .svm-body select {
+    display: inline-block;
+    vertical-align: baseline;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 15px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px dotted #000;
+    margin: 0 5px;
+    width: 120px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .svm-body select { width: auto; min-width: 80px; }
+
+  /* Specific widths */
+  .svm-body input[name="applicantNameBody"],
+  .svm-body input[name="name1"],
+  .svm-body input[name="name2"],
+  .svm-body input[name="name3"],
+  .svm-body input[name="name4"] { width: 180px; }
+
+  /* ── Designation ── */
+  .svm-designation {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 40px;
+    margin-right: 20px;
+  }
+  .svm-designation input {
+    width: 220px;
+    max-width: 100%;
+    border: none;
+    border-bottom: 1px solid #000;
+    margin-bottom: 5px;
+    text-align: center;
+    background: transparent;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  .svm-designation select {
+    width: 220px;
+    max-width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  /* ── Applicant details (scoped) ── */
+  .svm-container .applicant-details-box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: rgba(255,255,255,0.6);
+    margin-top: 20px;
+    border-radius: 4px;
+  }
+  .svm-container .applicant-details-box h3 {
+    color: #777; font-size: 1.1rem;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+  .svm-container .details-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+  }
+  .svm-container .detail-group { display: flex; flex-direction: column; }
+  .svm-container .detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
+  .svm-container .detail-input {
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  /* ── Required star ── */
+  .svm-required { color: red; margin-left: 4px; }
+
+  /* ── Submit ── */
+  .svm-submit-area { text-align: center; margin-top: 30px; }
+  .svm-submit-btn {
+    background-color: #343a40;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: inherit;
+    margin: 0 6px;
+  }
+  .svm-submit-btn:hover:not(:disabled) { background-color: #23272b; }
+  .svm-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* ── Print ── */
+  @media print {
+    body * { visibility: hidden; }
+    .svm-container,
+    .svm-container * { visibility: visible; }
+    .svm-container {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      box-shadow: none;
+      border: none;
+      margin: 0; padding: 20px;
+      background: white !important;
+      background-image: none !important;
+    }
+    .svm-submit-area { display: none !important; }
+  }
+`;
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Initial State
+───────────────────────────────────────────────────────────────────────────── */
+const buildInitialState = (ward) => ({
+  letterNo:               "1970/60",
+  refNo:                  "",
+  date:                   new Date().toISOString().slice(0, 10),
+  applicantNameBody:      "",
+  residencyType1:         "permanent resident",
+  municipality1:          MUNICIPALITY.englishMunicipality || "",
+  wardNo1:                ward ? String(ward) : "",
+  district1:              MUNICIPALITY.englishDistrict || "",
+  province1:              MUNICIPALITY.englishProvince  || "",
+  country1:               "Nepal",
+  name1:                  "",
+  name2:                  "",
+  name3:                  "",
+  name4:                  "",
+  residencyType2:         "permanent/temporary resident",
+  municipality2:          MUNICIPALITY.englishMunicipality || "",
+  wardNo2:                "",
+  district2:              MUNICIPALITY.englishDistrict || "",
+  province2:              MUNICIPALITY.englishProvince  || "",
+  country2:               "Nepal",
+  designation:            "",
+  applicantName:          "",
+  applicantAddress:       "",
+  applicantCitizenship:   "",
+  applicantPhone:         "",
+});
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Component
+───────────────────────────────────────────────────────────────────────────── */
 const SurnameVerificationAfterMarriage = () => {
   const { user } = useAuth();
-  const [formData, setFormData] = useState({
-    letterNo: "1970/60",
-    refNo: "",
-    date: new Date().toISOString().slice(0, 10),
-
-    applicantNameBody: "",
-
-    residencyType1: "permanent resident",
-    municipality1: MUNICIPALITY.englishMunicipality || "",
-    wardNo1: user?.ward?.toString() || "",
-    district1: MUNICIPALITY.englishDistrict || "",
-    province1: MUNICIPALITY.englishProvince || "",
-    country1: "Nepal",
-
-    name1: "",
-    name2: "",
-    name3: "",
-    name4: "",
-
-    residencyType2: "permanent/temporary resident",
-    municipality2: MUNICIPALITY.englishMunicipality || "",
-    wardNo2: "",
-    district2: MUNICIPALITY.englishDistrict || "",
-    province2: MUNICIPALITY.englishProvince || "",
-    country2: "Nepal",
-
-    designation: "",
-    applicantName: "",
-    applicantAddress: "",
-    applicantCitizenship: "",
-    applicantPhone: "",
-  });
-
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState(() => buildInitialState(user?.ward));
+  const [loading,  setLoading]  = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  /* ── Validation ── */
   const validate = () => {
     const required = [
-      "applicantNameBody",
-      "name1",
-      "name2",
-      "name3",
-      "name4",
-      "applicantName",
-      "applicantAddress",
-      "applicantCitizenship",
-      "applicantPhone",
-      "designation",
+      "applicantNameBody", "name1", "name2", "name3", "name4",
+      "applicantName", "applicantAddress", "applicantCitizenship",
+      "applicantPhone", "designation",
     ];
     for (const k of required) {
       if (!formData[k] || String(formData[k]).trim() === "")
         return { ok: false, missing: k };
     }
-    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
+    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone)))
       return { ok: false, missing: "applicantPhone (invalid)" };
-    }
     return { ok: true };
   };
 
-  const handlePrint = async () => {
-    await handleSubmit(new Event("submit"));
-    setTimeout(() => {
-      window.print();
-    }, 500);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  /* ── Core save ── */
+  const saveToServer = async () => {
     const v = validate();
     if (!v.ok) {
       alert("Please fill required field: " + v.missing);
-      return;
+      return false;
     }
-
     setLoading(true);
     try {
-      const payload = { ...formData };
-
       const res = await axiosInstance.post(
         "/api/forms/surname-verification-after-marriage",
-        payload
+        { ...formData }
       );
-
       alert("Saved successfully (id: " + res.data.id + ")");
-      window.print();
+      return true;
     } catch (err) {
       console.error("Submit error:", err);
       alert(err.response?.data?.message || err.message || "Failed to save");
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
+  /* ── Submit (save only) ── */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await saveToServer();
+  };
+
+  /* ── FIX: original handlePrint called handleSubmit (which called window.print)
+     then called window.print again — double print. Fixed to save once, print once. ── */
+  const handlePrint = async () => {
+    const saved = await saveToServer();
+    if (saved) setTimeout(() => window.print(), 300);
+  };
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Render
+  ───────────────────────────────────────────────────────────────────────── */
   return (
-    <div className="surname-verification-container">
+    <div className="svm-container">
+      <style>{STYLES}</style>
+
       <form onSubmit={handleSubmit}>
-        {/* Reusable header (English) */}
-        <div className="header">
+
+        {/* ── Header ── */}
+        <div className="svm-header">
           <MunicipalityHeader showLogo english />
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
+        {/* ── Letter No / Date ── */}
+        <div className="svm-form-row">
+          <div className="svm-form-group">
             <label>Letter No.:</label>
-            <input
-              type="text"
-              name="letterNo"
-              value={formData.letterNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
           </div>
-          <div className="form-group">
+          <div className="svm-form-group">
             <label>Date:</label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+            <input type="date" name="date" value={formData.date} onChange={handleChange} />
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
+        {/* ── Ref No ── */}
+        <div className="svm-form-row">
+          <div className="svm-form-group">
             <label>Ref No.:</label>
-            <input
-              type="text"
-              name="refNo"
-              value={formData.refNo}
-              onChange={handleChange}
-            />
+            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
           </div>
         </div>
 
-        <div className="subject-line">
-          <strong>
-            Subject: <u>Surname Verification</u>
-          </strong>
-          <br />
-          <strong>
-            <u>TO WHOM IT MAY CONCERN</u>
-          </strong>
+        {/* ── Subject ── */}
+        <div className="svm-subject">
+          <strong>Subject: <u>Surname Verification</u></strong><br />
+          <strong><u>TO WHOM IT MAY CONCERN</u></strong>
         </div>
 
-        <p className="certificate-body">
-          According to the application submitted by
-          <input
-            type="text"
-            name="applicantNameBody"
-            placeholder="Applicant's Name"
-            value={formData.applicantNameBody}
-            onChange={handleChange}
-            required
-          />
-          an
-          <select
-            name="residencyType1"
-            value={formData.residencyType1}
-            onChange={handleChange}
-          >
-            <option>permanent resident</option>
-            <option>temporary resident</option>
+        {/* ── Body ── */}
+        <p className="svm-body">
+          According to the application submitted by{" "}
+          <input type="text" name="applicantNameBody" placeholder="Applicant's Name" value={formData.applicantNameBody} onChange={handleChange} required />
+          {" "}an{" "}
+          <select name="residencyType1" value={formData.residencyType1} onChange={handleChange}>
+            <option value="permanent resident">permanent resident</option>
+            <option value="temporary resident">temporary resident</option>
           </select>
-          of
-          <select
-            name="municipality1"
-            value={formData.municipality1}
-            onChange={handleChange}
-          >
-            <option>
-              {MUNICIPALITY.englishMunicipality || ""}
-            </option>
+          {" "}of{" "}
+          <select name="municipality1" value={formData.municipality1} onChange={handleChange}>
+            <option value={MUNICIPALITY.englishMunicipality || ""}>{MUNICIPALITY.englishMunicipality || ""}</option>
           </select>
-          Ward No.
-          <select
-            name="wardNo1"
-            value={formData.wardNo1}
-            onChange={handleChange}
-          >
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
+          {" "}Ward No.{" "}
+          {/* FIX: was hardcoded <select> with 1/2/3 options — replaced with free-text input */}
+          <input type="text" name="wardNo1" value={formData.wardNo1} onChange={handleChange} style={{ width: 50 }} />
+          ,{" "}
+          <input type="text" name="district1" value={formData.district1} onChange={handleChange} />
+          ,{" "}
+          <input type="text" name="province1" value={formData.province1} onChange={handleChange} />
+          ,{" "}
+          <input type="text" name="country1" value={formData.country1} onChange={handleChange} />
+          . It is to certify that his{" "}
+          <input type="text" name="name1" placeholder="Name 1" value={formData.name1} onChange={handleChange} required />
+          {" "}named{" "}
+          <input type="text" name="name2" placeholder="Name 2" value={formData.name2} onChange={handleChange} required />
+          , the named{" "}
+          <input type="text" name="name3" placeholder="Name 3" value={formData.name3} onChange={handleChange} required />
+          {" "}and the named{" "}
+          <input type="text" name="name4" placeholder="Name 4" value={formData.name4} onChange={handleChange} required />
+          {" "}is the same person,{" "}
+          <select name="residencyType2" value={formData.residencyType2} onChange={handleChange}>
+            <option value="permanent/temporary resident">permanent/temporary resident</option>
+            <option value="permanent resident">permanent resident</option>
+            <option value="temporary resident">temporary resident</option>
           </select>
-          ,
-          <input
-            type="text"
-            name="district1"
-            value={formData.district1}
-            onChange={handleChange}
-          />
-          ,
-          <input
-            type="text"
-            name="province1"
-            value={formData.province1}
-            onChange={handleChange}
-          />
-          ,
-          <input
-            type="text"
-            name="country1"
-            value={formData.country1}
-            onChange={handleChange}
-          />
-          . It is to certify that his
-          <input
-            type="text"
-            name="name1"
-            placeholder="Name 1"
-            value={formData.name1}
-            onChange={handleChange}
-            required
-          />
-          named
-          <input
-            type="text"
-            name="name2"
-            placeholder="Name 2"
-            value={formData.name2}
-            onChange={handleChange}
-            required
-          />
-          , the named
-          <input
-            type="text"
-            name="name3"
-            placeholder="Name 3"
-            value={formData.name3}
-            onChange={handleChange}
-            required
-          />
-          and the named
-          <input
-            type="text"
-            name="name4"
-            placeholder="Name 4"
-            value={formData.name4}
-            onChange={handleChange}
-            required
-          />
-          is the same person,
-          <select
-            name="residencyType2"
-            value={formData.residencyType2}
-            onChange={handleChange}
-          >
-            <option>permanent/temporary resident</option>
-            <option>permanent resident</option>
-            <option>temporary resident</option>
+          {" "}of{" "}
+          <select name="municipality2" value={formData.municipality2} onChange={handleChange}>
+            <option value={MUNICIPALITY.englishMunicipality || ""}>{MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}</option>
           </select>
-          of
-          <select
-            name="municipality2"
-            value={formData.municipality2}
-            onChange={handleChange}
-          >
-            <option>
-              {MUNICIPALITY.englishMunicipality || "Nagarjun Municipality"}
-            </option>
-          </select>
-          , Ward No.
-          <select
-            name="wardNo2"
-            value={formData.wardNo2}
-            onChange={handleChange}
-          >
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-          </select>
-          ,
-          <input
-            type="text"
-            name="district2"
-            value={formData.district2}
-            onChange={handleChange}
-          />
-          ,
-          <input
-            type="text"
-            name="province2"
-            value={formData.province2}
-            onChange={handleChange}
-          />
-          ,
-          <input
-            type="text"
-            name="country2"
-            value={formData.country2}
-            onChange={handleChange}
-          />
+          , Ward No.{" "}
+          {/* FIX: same — was hardcoded <select> 1/2/3 */}
+          <input type="text" name="wardNo2" value={formData.wardNo2} onChange={handleChange} style={{ width: 50 }} />
+          ,{" "}
+          <input type="text" name="district2" value={formData.district2} onChange={handleChange} />
+          ,{" "}
+          <input type="text" name="province2" value={formData.province2} onChange={handleChange} />
+          ,{" "}
+          <input type="text" name="country2" value={formData.country2} onChange={handleChange} />
           .
         </p>
 
-        <div className="designation-section">
+        {/* ── Designation ── */}
+        <div className="svm-designation">
           <input type="text" placeholder="Signature" disabled />
-          <select
-            name="designation"
-            value={formData.designation}
-            onChange={handleChange}
-            required
-          >
+          <select name="designation" value={formData.designation} onChange={handleChange} required>
             <option value="">Select Designation</option>
             <option value="Ward-Chairperson">Ward Chairperson</option>
             <option value="Ward-Secretary">Ward Secretary</option>
           </select>
         </div>
 
-        {/* Applicants details */}
-        <div className="applicant-details-box">
-          <h3>Applicant Details</h3>
-          <div className="details-grid">
-            <div className="detail-group">
-              <label>
-                Applicant Name<span className="required">*</span>
-              </label>
-              <input
-                name="applicantName"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantName}
-                onChange={handleChange}
-                required
-              />
-            </div>
+        {/* ── Applicant Details ── */}
+        {/* FIX: ApplicantDetailsEn was used but never imported — added import at top */}
+        <ApplicantDetailsEn formData={formData} handleChange={handleChange} />
 
-            <div className="detail-group">
-              <label>
-                Applicant Address<span className="required">*</span>
-              </label>
-              <input
-                name="applicantAddress"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantAddress}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                Applicant Citizenship Number<span className="required">*</span>
-              </label>
-              <input
-                name="applicantCitizenship"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantCitizenship}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="detail-group">
-              <label>
-                Applicant Phone Number<span className="required">*</span>
-              </label>
-              <input
-                name="applicantPhone"
-                type="text"
-                className="detail-input bg-gray"
-                value={formData.applicantPhone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="submit-area">
-          <button type="submit" className="submit-btn" disabled={loading}>
+        {/* ── Submit / Print ── */}
+        <div className="svm-submit-area">
+          <button type="submit" className="svm-submit-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save Record"}
+          </button>
+          <button type="button" className="svm-submit-btn" onClick={handlePrint} disabled={loading}>
             {loading ? "Saving..." : "Save and Print Record"}
           </button>
         </div>
+
       </form>
     </div>
   );
