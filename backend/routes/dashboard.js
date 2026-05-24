@@ -5,13 +5,14 @@ const adminAuth = require("../middleware/adminAuth");
 
 const router = express.Router();
 
+// ── Correct column names matching actual DB schema ──
 const WARD_COLUMN_MAP = {
-  BusinessIndustryRegistrationForm: "ward_no",
-  BusinessIndustryRegistrationNewList: null,
-  BusinessRegistrationCertificate: "ward_no",
-  BusinessRegistrationRenewLeft: null,
-  BusinessRegRenewCompleted: null,
-  DailyWorkPerformanceList: null,
+  BusinessIndustryRegistrationForm:    "ward_no",  // schema: ward_no ✓
+  BusinessIndustryRegistrationNewList: null,        // no ward column
+  BusinessRegistrationCertificate:     "wardNo",   // schema: wardNo ✓ (was wrong before)
+  BusinessRegistrationRenewLeft:       null,
+  BusinessRegRenewCompleted:           null,
+  DailyWorkPerformanceList:            null,
 };
 
 const CARD_GROUPS = [
@@ -24,11 +25,11 @@ const CARD_GROUPS = [
     ],
   },
   {
-    label: "व्यवसाय दर्ता नविकरण वाकि सूची",
+    label: "व्यवसाय नविकरण गर्न बाँकी",
     tables: ["BusinessRegistrationRenewLeft"],
   },
   {
-    label: "व्यवसाय दर्ता नविकरण भइसकेको सूची",
+    label: "व्यवसाय नविकरण भइसकेको",
     tables: ["BusinessRegRenewCompleted"],
   },
   {
@@ -37,25 +38,33 @@ const CARD_GROUPS = [
   },
 ];
 
-// 🔢 Count rows with ward isolation
+// ── Yearly stats tables — these exist and have created_at ──
+const YEARLY_TABLES = [
+  { label: "व्यवसाय दर्ता",        table: "BusinessIndustryRegistrationForm" },
+  { label: "नागरिकता",             table: "citizenship_certificate_recommendations" },
+  { label: "घर / जग्गा",           table: "boundary_recommendations" },
+  { label: "सामाजिक सुरक्षा",      table: "social_security_allowance_recommendation" },
+  { label: "वृद्ध भत्ता",           table: "AllowanceForm" },
+  { label: "सहकारी संस्था",        table: "gov_organization_registration" },
+  { label: "भौतिक निर्माण",        table: "tap_installation_recommendation" },
+  { label: "English Format",       table: "address_verification" },
+];
+
+// ── Count rows with optional ward isolation ──
 function getCountForTable(table, role, ward_number) {
   return new Promise((resolve) => {
     let sql = `SELECT COUNT(*) AS count FROM \`${table}\``;
     const params = [];
 
     const wardColumn = WARD_COLUMN_MAP[table];
-
     if (role === "ADMIN" && wardColumn) {
-      sql += ` WHERE ${wardColumn} = ?`;
+      sql += ` WHERE \`${wardColumn}\` = ?`;
       params.push(ward_number);
     }
 
     db.query(sql, params, (err, rows) => {
       if (err) {
-        console.error(
-          `⚠️ Error counting table ${table}:`,
-          err.code || err.message,
-        );
+        console.error(`⚠️ Error counting table ${table}:`, err.code || err.message);
         return resolve(0);
       }
       resolve(rows[0]?.count || 0);
@@ -63,21 +72,37 @@ function getCountForTable(table, role, ward_number) {
   });
 }
 
-// 🔢 Sum counts for a group of tables
+// ── Sum counts for a group of tables ──
 async function getTotalForTables(tables, role, ward_number) {
   let total = 0;
-
   for (const table of tables) {
     const count = await getCountForTable(table, role, ward_number);
     total += count;
   }
-
   return total;
 }
 
-/**
- * Route: GET /api/dashboard-stats
- */
+// ── Count yearly rows for a single table ──
+function getYearlyCount(table) {
+  return new Promise((resolve) => {
+    const sql = `
+      SELECT COUNT(*) AS count 
+      FROM \`${table}\` 
+      WHERE YEAR(created_at) = YEAR(CURDATE())
+    `;
+    db.query(sql, [], (err, rows) => {
+      if (err) {
+        console.error(`⚠️ Yearly count error for ${table}:`, err.code || err.message);
+        return resolve(0);
+      }
+      resolve(rows[0]?.count || 0);
+    });
+  });
+}
+
+// ────────────────────────────────────────────────────────────────
+// GET /api/dashboard-stats
+// ────────────────────────────────────────────────────────────────
 router.get(
   "/dashboard-stats",
   adminAuth(["ADMIN", "SUPERADMIN"]),
@@ -85,33 +110,39 @@ router.get(
     try {
       const { role, ward_number } = req.admin;
 
+      // Cards
       const cards = await Promise.all(
         CARD_GROUPS.map(async (group) => {
-          const value = await getTotalForTables(
-            group.tables,
-            role,
-            ward_number,
-          );
+          const value = await getTotalForTables(group.tables, role, ward_number);
           return { label: group.label, value };
-        }),
+        })
       );
 
-      res.json({ cards });
+      // Yearly stats
+      const yearlyStats = await Promise.all(
+        YEARLY_TABLES.map(async ({ label, table }) => {
+          const value = await getYearlyCount(table);
+          return { label, value };
+        })
+      );
+
+      res.json({ cards, yearlyStats });
+
     } catch (error) {
       console.error("Dashboard error:", error);
       res.status(500).json({ message: "Dashboard error" });
     }
-  },
+  }
 );
 
-// GET /api/daily-submissions?date=2082-08-06&ward=1
+// ────────────────────────────────────────────────────────────────
+// GET /api/daily-submissions
+// ────────────────────────────────────────────────────────────────
 router.get(
   "/daily-submissions",
   adminAuth(["ADMIN", "SUPERADMIN"]),
   (req, res) => {
     const { role, ward_number } = req.admin;
-
-    // Default to today if no date provided
     const dateFilter = req.query.date || null;
     const wardFilter = req.query.ward || null;
 
@@ -129,22 +160,18 @@ router.get(
     `;
     const params = [];
 
-    // Ward isolation for ADMIN role
     if (role === "ADMIN") {
       sql += ` AND JSON_UNQUOTE(JSON_EXTRACT(description, '$.ward')) = ?`;
       params.push(String(ward_number));
     }
 
-    // Date filter
     if (dateFilter) {
       sql += ` AND DATE(created_at) = ?`;
       params.push(dateFilter);
     } else {
-      // Default: today only
       sql += ` AND DATE(created_at) = CURDATE()`;
     }
 
-    // Optional ward filter for SUPERADMIN
     if (role === "SUPERADMIN" && wardFilter) {
       sql += ` AND JSON_UNQUOTE(JSON_EXTRACT(description, '$.ward')) = ?`;
       params.push(String(wardFilter));
@@ -155,22 +182,20 @@ router.get(
     db.query(sql, params, (err, rows) => {
       if (err) {
         console.error("daily-submissions error:", err);
-        return res
-          .status(500)
-          .json({ error: err.code, message: err.sqlMessage });
+        return res.status(500).json({ error: err.code, message: err.sqlMessage });
       }
       res.json(rows);
     });
-  },
+  }
 );
-// ─── ADMIN DASHBOARD ROUTES ───────────────────────────────────
 
+// ────────────────────────────────────────────────────────────────
 // GET /api/admin-dashboard/category-counts
+// ────────────────────────────────────────────────────────────────
 router.get(
   "/admin-dashboard/category-counts",
   adminAuth(["SUPERADMIN", "ADMIN"]),
   async (req, res) => {
-    const { role, ward_number } = req.admin;
 
     const CATEGORY_TABLES = {
       "Social & Family": [
@@ -204,7 +229,7 @@ router.get(
         "tribal_recommendation",
         "unmarried_verification_form",
       ],
-      Citizenship: [
+      "Citizenship": [
         "citizenship_angkrits",
         "citizenship_certificate_recommendations",
         "citizenship_certificate_copies",
@@ -322,7 +347,7 @@ router.get(
         "DomesticAnimalInsuranceClaimRecommendation",
         "DomesticAnimalMaternityNutritionAllowance",
       ],
-      Economic: [
+      "Economic": [
         "AdvancePaymentRequest",
         "BankAccountForSocialSecurity",
         "FixedAssetValuation",
@@ -371,12 +396,14 @@ router.get(
 
     async function countTable(table) {
       return new Promise((resolve) => {
-        // try ward_number column first, fallback to no filter
-        const sql = `SELECT COUNT(*) AS count FROM \`${table}\``;
-        db.query(sql, [], (err, rows) => {
-          if (err) return resolve(0);
-          resolve(rows[0]?.count || 0);
-        });
+        db.query(
+          `SELECT COUNT(*) AS count FROM \`${table}\``,
+          [],
+          (err, rows) => {
+            if (err) return resolve(0);
+            resolve(rows[0]?.count || 0);
+          }
+        );
       });
     }
 
@@ -387,8 +414,7 @@ router.get(
       for (const [category, tables] of Object.entries(CATEGORY_TABLES)) {
         let catTotal = 0;
         for (const table of tables) {
-          const count = await countTable(table);
-          catTotal += count;
+          catTotal += await countTable(table);
         }
         results[category] = catTotal;
         grandTotal += catTotal;
@@ -399,31 +425,36 @@ router.get(
       console.error("Admin dashboard error:", err);
       res.status(500).json({ error: "Dashboard error" });
     }
-  },
+  }
 );
 
+// ────────────────────────────────────────────────────────────────
 // GET /api/admin-dashboard/ward-counts
+// ────────────────────────────────────────────────────────────────
 router.get(
   "/admin-dashboard/ward-counts",
   adminAuth(["SUPERADMIN"]),
   (req, res) => {
     const sql = `
-  SELECT ward_number, COUNT(*) as count FROM (
-    SELECT ward AS ward_number FROM AllowanceForm WHERE ward IS NOT NULL
-    UNION ALL
-    SELECT ward_no AS ward_number FROM BusinessIndustryRegistrationForm WHERE ward_no IS NOT NULL
-    UNION ALL
-    SELECT wardNo AS ward_number FROM BusinessRegistrationCertificate WHERE wardNo IS NOT NULL
-  ) t
-  GROUP BY ward_number
-  ORDER BY count DESC
-  LIMIT 10
-`;
+      SELECT ward_number, COUNT(*) as count FROM (
+        SELECT ward     AS ward_number FROM AllowanceForm                   WHERE ward     IS NOT NULL
+        UNION ALL
+        SELECT ward_no  AS ward_number FROM BusinessIndustryRegistrationForm WHERE ward_no  IS NOT NULL
+        UNION ALL
+        SELECT wardNo   AS ward_number FROM BusinessRegistrationCertificate  WHERE wardNo   IS NOT NULL
+      ) t
+      GROUP BY ward_number
+      ORDER BY count DESC
+      LIMIT 10
+    `;
     db.query(sql, [], (err, results) => {
-      if (err) return res.json([]);
+      if (err) {
+        console.error("ward-counts error:", err);
+        return res.json([]);
+      }
       res.json(results);
     });
-  },
+  }
 );
 
 module.exports = router;

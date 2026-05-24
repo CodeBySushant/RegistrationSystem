@@ -11,38 +11,8 @@ import {
 } from "lucide-react";
 import { Chart } from "react-google-charts";
 
-// 🔹 Only meta info here: label, icon, color, linkText (NO real values)
+// ── Card metadata — labels must match what backend returns ──
 const CARD_META = [
-  {
-    label: "दर्ता",
-    icon: FileText,
-    color: "text-orange-600 bg-orange-100",
-    linkText: "दर्ता किताब मा जानुहोस् →",
-  },
-  {
-    label: "चलानी",
-    icon: FileText,
-    color: "text-green-600 bg-green-100",
-    linkText: "चलानी किताब मा जानुहोस् →",
-  },
-  {
-    label: "सूचना",
-    icon: Bell,
-    color: "text-red-600 bg-red-100",
-    linkText: "सूचनाको सूचीमा जानुहोस् →",
-  },
-  {
-    label: "सिफारिस",
-    icon: FileText,
-    color: "text-cyan-600 bg-cyan-100",
-    linkText: "सिफारिस किताब मा जानुहोस् →",
-  },
-  {
-    label: "अनुसूची",
-    icon: ClipboardList,
-    color: "text-yellow-600 bg-yellow-100",
-    linkText: "अनुसूची दर्तामा जानुहोस् →",
-  },
   {
     label: "व्यवसाय दर्ता",
     icon: Briefcase,
@@ -62,77 +32,123 @@ const CARD_META = [
     linkText: "व्यवसाय नविकरण भइसकेको सूचीमा जानुहोस् →",
   },
   {
-    label: "प्रमाण पत्र",
-    icon: GraduationCap,
+    label: "दैनिक कार्य सम्पादन",
+    icon: ClipboardList,
     color: "text-green-600 bg-green-100",
-    linkText: "प्रमाण पत्र सूचीमा जानुहोस् →",
+    linkText: "दैनिक कार्य सूचीमा जानुहोस् →",
   },
 ];
 
-const DashboardCard = ({ label, value, icon: Icon, color, linkText }) => {
-  return (
-    <div className="bg-white p-4 rounded-xl shadow-lg transition-transform hover:shadow-xl hover:scale-[1.01] duration-300 flex flex-col justify-between">
-      <div className="flex justify-between items-start mb-4">
-        <h3 className="text-lg font-semibold text-gray-700">{label}</h3>
-        <div className={`p-2 rounded-lg ${color}`}>
-          <Icon className="w-5 h-5" />
-        </div>
+const DashboardCard = ({ label, value, icon: Icon, color, linkText }) => (
+  <div className="bg-white p-5 rounded-xl shadow-md hover:shadow-xl hover:scale-[1.01] transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+    <div className="flex justify-between items-start mb-3">
+      <h3 className="text-base font-semibold text-gray-700 leading-tight pr-2">
+        {label}
+      </h3>
+
+      <div className={`p-2 rounded-lg flex-shrink-0 ${color}`}>
+        <Icon className="w-5 h-5" />
       </div>
-      <div className="text-4xl font-extrabold text-gray-800 mb-2">{value}</div>
-      <a
-        href="#"
-        onClick={(e) => e.preventDefault()}
-        className="text-sm text-indigo-600 hover:text-indigo-800 font-medium mt-2"
-      >
-        {linkText}
-      </a>
     </div>
-  );
+
+    <div className="text-4xl font-extrabold text-gray-800 mb-2">
+      {value}
+    </div>
+
+    <a
+      href="#"
+      onClick={(e) => e.preventDefault()}
+      className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+    >
+      {linkText}
+    </a>
+  </div>
+);
+
+// ── Stat card for category breakdown ──
+const CategoryCard = ({ label, value, color }) => (
+  <div className="bg-white rounded-lg shadow p-4 flex items-center gap-4">
+    <div
+      className="w-3 h-12 rounded-full flex-shrink-0"
+      style={{ backgroundColor: color }}
+    />
+    <div>
+      <div className="text-xs text-gray-500 leading-tight">{label}</div>
+      <div className="text-2xl font-bold text-gray-800">{value}</div>
+    </div>
+  </div>
+);
+
+const CATEGORY_COLORS = {
+  "Social & Family":          "#8b5cf6",
+  "Citizenship":              "#ec4899",
+  "Business & Industry":      "#f59e0b",
+  "House & Land":             "#10b981",
+  "Association & Organization":"#3b82f6",
+  "English Format":           "#06b6d4",
+  "Physical Development":     "#f97316",
+  "Animal Husbandry":         "#84cc16",
+  "Economic":                 "#6366f1",
+  "Official & Planning":      "#ef4444",
 };
 
-const WEEKLY_PIE_OPTIONS = {
-  title: "यस साताको रेकर्डहरू",
+const PIE_OPTIONS = {
   pieHole: 0.4,
-  legend: { position: "right" },
-  chartArea: { width: "80%", height: "80%" },
+  legend: { position: "right", textStyle: { fontSize: 11 } },
+  chartArea: { width: "75%", height: "80%" },
+  tooltip: { trigger: "both" },
+};
+
+const BAR_OPTIONS = {
+  legend: { position: "none" },
+  chartArea: { width: "75%", height: "70%" },
+  hAxis: { minValue: 0, textStyle: { fontSize: 10 } },
+  vAxis: { textStyle: { fontSize: 10 } },
+  colors: ["#6366f1"],
 };
 
 const Dashboard = () => {
-  // 🔹 start with all values = 0; icons/labels from CARD_META
   const [dashboardCards, setDashboardCards] = useState(
-    CARD_META.map((card) => ({ ...card, value: 0 })),
+    CARD_META.map((card) => ({ ...card, value: 0 }))
   );
+  const [yearlyStats, setYearlyStats]       = useState([]);
+  const [categoryStats, setCategoryStats]   = useState({});
+  const [grandTotal, setGrandTotal]         = useState(0);
+  const [loading, setLoading]               = useState(true);
+  const [error, setError]                   = useState(null);
 
-  // 🔹 yearly stats only from API (no static numbers)
-  const [yearlyStats, setYearlyStats] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // 🔁 Fetch from backend: /api/dashboard-stats
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchAll = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get("/api/dashboard-stats");
-        if (res.status !== 200) {
-          throw new Error("Failed to load dashboard stats");
-        }
-        const data = res.data;
 
-        // cards from DB: update values, keep icons/colors/linkText from META
-        if (Array.isArray(data.cards)) {
+        // Fetch both endpoints in parallel
+        const [statsRes, categoryRes] = await Promise.all([
+          axiosInstance.get("/api/dashboard-stats"),
+          axiosInstance.get("/api/admin-dashboard/category-counts"),
+        ]);
+
+        // ── Cards ──
+        if (Array.isArray(statsRes.data.cards)) {
           setDashboardCards((prev) =>
             prev.map((card) => {
-              const fromApi = data.cards.find((c) => c.label === card.label);
+              const fromApi = statsRes.data.cards.find(
+                (c) => c.label === card.label
+              );
               return fromApi ? { ...card, value: fromApi.value } : card;
-            }),
+            })
           );
         }
 
-        // yearly stats directly from API
-        if (Array.isArray(data.yearlyStats)) {
-          setYearlyStats(data.yearlyStats);
+        // ── Yearly stats ──
+        if (Array.isArray(statsRes.data.yearlyStats)) {
+          setYearlyStats(statsRes.data.yearlyStats);
+        }
+
+        // ── Category counts ──
+        if (categoryRes.data.categories) {
+          setCategoryStats(categoryRes.data.categories);
+          setGrandTotal(categoryRes.data.grandTotal || 0);
         }
 
         setError(null);
@@ -144,148 +160,184 @@ const Dashboard = () => {
       }
     };
 
-    fetchStats();
+    fetchAll();
   }, []);
 
-  // pie chart data derived from *current* dashboardCards (DB-driven)
-  const weeklyPieData = useMemo(() => {
-    const hasData = dashboardCards.some((c) => c.value > 0);
-    if (!hasData)
-      return [
-        ["service", "score"],
-        ["कुनै डाटा छैन", 1],
-      ];
+  // ── Pie chart data from category stats ──
+  const pieData = useMemo(() => {
+    const entries = Object.entries(categoryStats).filter(([, v]) => v > 0);
+    if (!entries.length)
+      return [["श्रेणी", "संख्या"], ["कुनै डाटा छैन", 1]];
     return [
-      ["service", "score"],
-      ...dashboardCards
-        .filter((c) => c.value > 0)
-        .map((c) => [c.label, c.value]),
+      ["श्रेणी", "संख्या"],
+      ...entries.map(([label, value]) => [label, value]),
     ];
-  }, [dashboardCards]);
+  }, [categoryStats]);
 
-  // bar height scaling based on DB values
-  const maxYearlyValue = useMemo(
-    () =>
-      yearlyStats.length > 0
-        ? Math.max(...yearlyStats.map((s) => s.value), 1)
-        : 1,
-    [yearlyStats],
+  // ── Bar chart data from yearly stats ──
+  const barData = useMemo(() => {
+    if (!yearlyStats.length)
+      return [["सेवा", "संख्या"], ["कुनै डाटा छैन", 0]];
+    return [
+      ["सेवा", "संख्या"],
+      ...yearlyStats.map((s) => [s.label, s.value]),
+    ];
+  }, [yearlyStats]);
+
+  const maxYearly = useMemo(
+    () => Math.max(...yearlyStats.map((s) => s.value), 1),
+    [yearlyStats]
   );
 
   return (
-    <div className="p-4 sm:p-8 space-y-8">
-      <div className="flex justify-between items-center border-b pb-4">
-        {loading && (
-          <span className="text-xs text-gray-500">डाटा लोड हुँदैछ...</span>
-        )}
-        {error && <span className="text-xs text-red-500">{error}</span>}
+    <div className="p-4 sm:p-6 space-y-6 max-w-screen-2xl mx-auto">
+
+      {/* ── Status bar ── */}
+      <div className="flex justify-between items-center border-b pb-3">
+        <h1 className="text-xl font-bold text-gray-800">ड्यासबोर्ड</h1>
+        <div className="flex items-center gap-3">
+          {loading && (
+            <span className="text-xs text-gray-400 animate-pulse">
+              लोड हुँदैछ...
+            </span>
+          )}
+          {error && (
+            <span className="text-xs text-red-500 bg-red-50 px-2 py-1 rounded">
+              {error}
+            </span>
+          )}
+          {!loading && !error && (
+            <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+              जम्मा: {grandTotal.toLocaleString()} रेकर्डहरू
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Top cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* ── Top cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {dashboardCards.map((card, index) => (
           <DashboardCard key={index} {...card} />
         ))}
       </div>
 
-      {/* Charts section: Weekly + Yearly side by side, Breakdown full width */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-6">
-        {/* Weekly pie chart */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            यस साताको रेकर्डहरू (Weekly Record)
-          </h3>
-          <div className="relative w-full h-64 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-            <Chart
-              chartType="PieChart"
-              width="100%"
-              height="230px"
-              data={weeklyPieData}
-              options={WEEKLY_PIE_OPTIONS}
-              loader={
-                <div className="text-gray-400 text-sm">Loading chart…</div>
-              }
-            />
-          </div>
-        </div>
+      {/* ── Charts row ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* Yearly record */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            यस आर्थिक वर्षको रेकर्डहरू (Yearly Record)
+        {/* Pie chart — category breakdown */}
+        <div className="bg-white p-5 rounded-xl shadow-md">
+          <h3 className="text-base font-semibold text-gray-700 mb-1">
+            श्रेणी अनुसार कुल रेकर्डहरू
           </h3>
-          <div className="w-full h-64 bg-gray-50 border border-gray-200 flex items-end justify-around rounded-lg">
-            {yearlyStats.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  height: `${(item.value / maxYearlyValue) * 100}%`,
-                }}
-                className="w-8 bg-indigo-400 hover:bg-indigo-500 transition-all duration-300 rounded-t-sm flex items-end justify-center"
-                title={`${item.label}: ${item.value}`}
-              >
-                <span className="text-[10px] text-white mb-1">
-                  {item.value}
-                </span>
+          <p className="text-xs text-gray-400 mb-3">
+            सबै समयको डाटा
+          </p>
+          <div className="h-64">
+            {loading ? (
+              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                लोड हुँदैछ...
               </div>
-            ))}
-          </div>
-          <div className="text-xs text-center text-gray-500 mt-2">
-            व्यवसाय, निवेदन, सिफारिस...
-          </div>
-        </div>
-
-        {/* Breakdown full width under both on large screens */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            यस आर्थिक वर्षको सिफारिस रेकर्डहरू (Service Category Breakdown)
-          </h3>
-
-          <div className="flex flex-col md:flex-row items-center justify-around h-80">
-            {/* 🔹 Bar Chart (Dynamic from database) */}
-            <div className="w-full md:w-2/3 h-full flex items-center justify-center">
+            ) : (
               <Chart
-                chartType="BarChart"
+                chartType="PieChart"
                 width="100%"
                 height="100%"
-                data={[
-                  ["service", "count"],
-                  ...yearlyStats.map((item) => [item.label, item.value]),
-                ]}
-                options={{
-                  legend: { position: "none" },
-                  chartArea: { width: "80%", height: "70%" },
-                  hAxis: { minValue: 0 },
-                }}
+                data={pieData}
+                options={PIE_OPTIONS}
+                loader={
+                  <div className="text-gray-400 text-sm text-center pt-20">
+                    चार्ट लोड हुँदैछ...
+                  </div>
+                }
               />
-            </div>
+            )}
+          </div>
+        </div>
 
-            {/* 🔹 Legend (same as before) */}
-            <div className="mt-4 md:mt-0 md:ml-8 text-sm space-y-2">
-              <div className="flex items-center">
-                <span className="w-3 h-3 rounded-full bg-purple-500 mr-2" />
-                नेपाली नागरिकता
+        {/* Bar chart — yearly stats */}
+        <div className="bg-white p-5 rounded-xl shadow-md">
+          <h3 className="text-base font-semibold text-gray-700 mb-1">
+            यस आर्थिक वर्षको रेकर्डहरू
+          </h3>
+          <p className="text-xs text-gray-400 mb-3">
+            चालु आर्थिक वर्ष मात्र
+          </p>
+          <div className="h-64">
+            {loading ? (
+              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                लोड हुँदैछ...
               </div>
-              <div className="flex items-center">
-                <span className="w-3 h-3 rounded-full bg-pink-500 mr-2" />
-                घर / जग्गा जमिन
+            ) : yearlyStats.every((s) => s.value === 0) ? (
+              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                यस वर्ष कुनै रेकर्ड छैन
               </div>
-              <div className="flex items-center">
-                <span className="w-3 h-3 rounded-full bg-blue-500 mr-2" />
-                संघ / संस्था
+            ) : (
+              // Custom bar chart — more readable than Google Charts for small values
+              <div className="h-full flex items-end justify-around gap-1 px-2 pb-2">
+                {yearlyStats.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col items-center flex-1 min-w-0"
+                  >
+                    <span className="text-[9px] text-gray-600 mb-1 font-medium">
+                      {item.value}
+                    </span>
+                    <div
+                      className="w-full bg-indigo-400 hover:bg-indigo-500 transition-colors rounded-t cursor-default"
+                      style={{
+                        height: `${Math.max(
+                          (item.value / maxYearly) * 180,
+                          item.value > 0 ? 4 : 0
+                        )}px`,
+                      }}
+                      title={`${item.label}: ${item.value}`}
+                    />
+                    <span
+                      className="text-[8px] text-gray-500 mt-1 text-center leading-tight"
+                      style={{
+                        maxWidth: "100%",
+                        overflow: "hidden",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center">
-                <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2" />
-                व्यवसाय दर्ता
-              </div>
-              <div className="flex items-center">
-                <span className="w-3 h-3 rounded-full bg-red-500 mr-2" />
-                अन्य
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* ── Category breakdown cards ── */}
+      <div className="bg-white p-5 rounded-xl shadow-md">
+        <h3 className="text-base font-semibold text-gray-700 mb-1">
+          श्रेणी अनुसार विवरण
+        </h3>
+        <p className="text-xs text-gray-400 mb-4">
+          सबै श्रेणीका कुल रेकर्डहरू
+        </p>
+        {loading ? (
+          <div className="text-center text-gray-400 py-8 text-sm">
+            लोड हुँदैछ...
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {Object.entries(categoryStats).map(([label, value]) => (
+              <CategoryCard
+                key={label}
+                label={label}
+                value={value.toLocaleString()}
+                color={CATEGORY_COLORS[label] || "#94a3b8"}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };
