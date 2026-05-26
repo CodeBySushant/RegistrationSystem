@@ -1,4 +1,20 @@
 const ApplicantDetailsEn = ({ formData = {}, handleChange }) => {
+  const nameKey =
+    "applicantName" in formData ? "applicantName" : "applicant_name";
+
+  const addressKey =
+    "applicantAddress" in formData ? "applicantAddress" : "applicant_address";
+
+  const citizenKey =
+    "applicantCitizenship" in formData
+      ? "applicantCitizenship"
+      : "applicant_citizenship_no" in formData
+        ? "applicant_citizenship_no"
+        : "applicant_citizenship";
+
+  const phoneKey =
+    "applicantPhone" in formData ? "applicantPhone" : "applicant_phone";
+    
   return (
     <div className="applicant-details-box">
       <h3>Applicant Details</h3>
