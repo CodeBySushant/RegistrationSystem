@@ -36,14 +36,6 @@ const STYLES = `
   }
   .daic-breadcrumb { font-size: 0.9rem; color: #777; font-weight: normal; }
 
-  .daic-header { text-align: center; margin-bottom: 20px; position: relative; min-height: 100px; }
-  .daic-header-logo img { position: absolute; left: 0; top: 0; width: 80px; }
-  .daic-header-text { display: flex; flex-direction: column; align-items: center; }
-  .daic-municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
-  .daic-ward-title        { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
-  .daic-address-text,
-  .daic-province-text     { color: #e74c3c; margin: 0; font-size: 1rem; }
-
   .daic-meta-row { display: flex; justify-content: space-between; margin-top: 20px; font-size: 1rem; }
   .daic-meta-left p, .daic-meta-right p { margin: 5px 0; }
   .daic-dotted-input {
@@ -186,7 +178,14 @@ const STYLES = `
 
 /* ── Print-only value display ── */
 /* In screen mode shows an input, in print mode shows plain text */
-const PrintField = ({ name, value, onChange, className = "", required = false, type = "text" }) => (
+const PrintField = ({
+  name,
+  value,
+  onChange,
+  className = "",
+  required = false,
+  type = "text",
+}) => (
   <>
     {/* Screen: editable input */}
     <input
@@ -215,7 +214,7 @@ const PrintField = ({ name, value, onChange, className = "", required = false, t
 const initialState = {
   chalan_no: "",
   subject: "सिफारिस सम्बन्धमा",
-  addressee_line1: "",           // fixed: was applicant_name — causes clash
+  addressee_line1: "", // fixed: was applicant_name — causes clash
   addressee_line2: "",
   municipality_name: MUNICIPALITY.name,
   municipality_city: MUNICIPALITY.city,
@@ -294,9 +293,10 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
 
   /* ── Clean print — opens isolated print window with only the form ── */
   const handleCleanPrint = () => {
-    const wardTitle = user?.role === "SUPERADMIN"
-      ? "सबै वडा कार्यालय"
-      : `${user?.ward || ""} नं. वडा कार्यालय`;
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
 
     const content = `
       <!DOCTYPE html>
@@ -437,7 +437,10 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
 
       <form
         className="daic-container"
-        onSubmit={(e) => { e.preventDefault(); handleSave(false); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
       >
         {/* ── Top Bar ── */}
         <div className="daic-top-bar">
@@ -446,19 +449,16 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
         </div>
 
         {/* ── Header ── */}
-        <div className="daic-header" id="daic-print-area">
-          <div className="daic-header-logo">
-            <img src="/nepallogo.svg" alt="Nepal Emblem" />
-          </div>
-          <div className="daic-header-text">
-            <MunicipalityHeader />
-          </div>
+        <div className="daic-header">
+          <MunicipalityHeader />
         </div>
 
         {/* ── Meta ── */}
         <div className="daic-meta-row">
           <div className="daic-meta-left">
-            <p>पत्र संख्या : <span className="daic-bold">२०८२/८३</span></p>
+            <p>
+              पत्र संख्या : <span className="daic-bold">२०८२/८३</span>
+            </p>
             <p>
               चलानी नं. :
               <input
@@ -471,14 +471,18 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             </p>
           </div>
           <div className="daic-meta-right">
-            <p>मिति : <span className="daic-bold">२०८२-०८-०६</span></p>
+            <p>
+              मिति : <span className="daic-bold">२०८२-०८-०६</span>
+            </p>
             <p>ने.सं - 1146 पोहेलाथ्व, 1 आइतबार</p>
           </div>
         </div>
 
         {/* ── Subject ── */}
         <div className="daic-subject">
-          <p>विषय: <span className="daic-underline">{form.subject}</span></p>
+          <p>
+            विषय: <span className="daic-underline">{form.subject}</span>
+          </p>
         </div>
 
         {/* ── Addressee — fixed field name ── */}
@@ -682,7 +686,9 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
               <option value="">पद छनौट गर्नुहोस्</option>
               <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
               <option value="वडा सचिव">वडा सचिव</option>
-              <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
+              <option value="कार्यवाहक वडा अध्यक्ष">
+                कार्यवाहक वडा अध्यक्ष
+              </option>
             </select>
           </div>
         </div>
