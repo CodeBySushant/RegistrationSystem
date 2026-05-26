@@ -1,6 +1,7 @@
 // LeaveRequestApplication.jsx
 import React, { useState } from "react";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Styles (merged from LeaveRequestApplication.css)
@@ -48,12 +49,6 @@ const STYLES = `
     position: relative;
     min-height: 90px;
   }
-  .lra-header-logo img { position: absolute; left: 0; top: 0; width: 78px; }
-  .lra-header-text { display: flex; flex-direction: column; align-items: center; }
-  .lra-municipality-name { font-size: 2.1rem; margin: 0; font-weight: bold; line-height: 1.2; }
-  .lra-ward-title        { font-size: 1.7rem; margin: 4px 0; font-weight: normal; }
-  .lra-address-text      { margin: 0; font-size: 1.1rem; }
-  .lra-form-main-title   { margin-top: 10px; font-size: 1.4rem; font-weight: bold; }
 
   /* ── Meta row ── */
   .lra-meta-row {
@@ -433,17 +428,7 @@ const LeaveRequestApplication = ({ employees = [] }) => {
         </div>
 
         {/* ── Header ── */}
-        <div className="lra-header">
-          <div className="lra-header-logo">
-            <img src={MUNICIPALITY.logoSrc} alt="Nepal Government Logo" />
-          </div>
-          <div className="lra-header-text">
-            <h1 className="lra-municipality-name lra-red">{MUNICIPALITY.name}</h1>
-            <h2 className="lra-ward-title lra-red">{MUNICIPALITY.officeLine}</h2>
-            <p className="lra-address-text lra-red">{MUNICIPALITY.provinceLine}</p>
-            <h3 className="lra-form-main-title lra-red">बिदाको निवेदन</h3>
-          </div>
-        </div>
+        <MunicipalityHeader formTitle="बिदाको निवेदन" />
 
         {/* ── Meta row ── */}
         <div className="lra-meta-row">

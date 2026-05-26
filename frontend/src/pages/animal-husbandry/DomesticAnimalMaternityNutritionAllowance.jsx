@@ -1,9 +1,11 @@
 // DomesticAnimalMaternityNutritionAllowance.jsx
 import React, { useState, useEffect } from "react";
 import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Styles (merged from DomesticAnimalMaternityNutritionAllowance.css)
@@ -40,15 +42,6 @@ const STYLES = `
     color: #333;
   }
   .damn-breadcrumb { font-size: 0.9rem; color: #777; font-weight: normal; }
-
-  /* --- Header --- */
-  .damn-header { text-align: center; margin-bottom: 20px; position: relative; }
-  .damn-header-logo img { position: absolute; left: 0; top: 0; width: 80px; }
-  .damn-header-text { display: flex; flex-direction: column; align-items: center; }
-  .damn-municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
-  .damn-ward-title        { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
-  .damn-address-text,
-  .damn-province-text     { color: #e74c3c; margin: 0; font-size: 1rem; }
 
   /* --- Meta --- */
   .damn-meta-row { display: flex; justify-content: space-between; margin-top: 20px; font-size: 1rem; }
@@ -136,19 +129,6 @@ const STYLES = `
   }
   .damn-designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; font-family: inherit; }
 
-  /* --- Applicant Details overrides --- */
-  .damn-container .applicant-details-box {
-    border: 2px solid #999 !important;
-    background-color: transparent !important;
-    padding: 20px;
-    margin-top: 20px;
-    border-radius: 4px;
-  }
-  .damn-container .applicant-details-box .details-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 18px !important;
-  }
   .damn-container .applicant-details-box .detail-input {
     max-width: 400px;
     width: 100%;
@@ -175,32 +155,24 @@ const STYLES = `
     border-top: 1px solid #eee;
     padding-top: 10px;
   }
-
-  /* --- Print --- */
-  @media print {
-    body * { visibility: hidden; }
-    .damn-container,
-    .damn-container * { visibility: visible; }
-    .damn-container {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 0;
-      background: white;
-    }
-    .damn-top-bar,
-    .damn-footer { display: none !important; }
-  }
 `;
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Helpers
 ───────────────────────────────────────────────────────────────────────────── */
 const toNepaliDigits = (str) => {
-  const map = { 0:"०",1:"१",2:"२",3:"३",4:"४",5:"५",6:"६",7:"७",8:"८",9:"९" };
+  const map = {
+    0: "०",
+    1: "१",
+    2: "२",
+    3: "३",
+    4: "४",
+    5: "५",
+    6: "६",
+    7: "७",
+    8: "८",
+    9: "९",
+  };
   return str.replace(/[0-9]/g, (d) => map[d]);
 };
 
@@ -223,10 +195,10 @@ const initialState = {
   animal_count: 1,
   signer_name: "",
   signer_designation: "",
-  applicantName: "",
-  applicantAddress: "",
-  applicantCitizenship: "",
-  applicantPhone: "",
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship_no: "",
+  applicant_phone: "",
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -234,70 +206,186 @@ const initialState = {
 ───────────────────────────────────────────────────────────────────────────── */
 const DomesticAnimalMaternityNutritionAllowance = () => {
   const { user } = useAuth();
-  const [form, setForm]     = useState(initialState);
+  const { form, setForm } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
-
-  /* Auto-fill ward from logged-in user */
-  useEffect(() => {
-    if (user?.ward && !form.ward_no) {
-      setForm((prev) => ({ ...prev, ward_no: user.ward }));
-    }
-  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "animal_count" ? (value === "" ? "" : Number(value)) : value,
+      [name]:
+        name === "animal_count" ? (value === "" ? "" : Number(value)) : value,
     }));
   };
 
-  /* ── Submit ── */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async (shouldPrint = false) => {
+    if (!form.resident_name?.trim()) {
+      alert("निवासीको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.signer_name?.trim()) {
+      alert("हस्ताक्षरकर्ताको नाम आवश्यक छ");
+      return;
+    }
+
     setLoading(true);
     try {
       const payload = { ...form };
-      // convert empty strings → null so model factory treats them correctly
       Object.keys(payload).forEach((k) => {
         if (payload[k] === "") payload[k] = null;
       });
-      const res = await axios.post("/api/forms/animal-maternity-allowance", payload);
+
+      const res = await axios.post(
+        "/api/forms/animal-maternity-allowance",
+        payload,
+      );
       if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
+        if (shouldPrint) {
+          handleCleanPrint();
+        } else {
+          alert("सफलतापूर्वक सुरक्षित भयो! ID: " + res.data.id);
+        }
         setForm(initialState);
-      } else {
-        alert("Unexpected response: " + JSON.stringify(res.data));
       }
     } catch (err) {
-      console.error("Submit error:", err.response || err.message || err);
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
         err.message ||
         "Submission failed";
-      alert("Error: " + msg);
+      alert("त्रुटि: " + msg);
     } finally {
       setLoading(false);
     }
   };
 
-  /* ── Save + Print ── */
-  const handlePrint = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post("/api/forms/animal-maternity-allowance", form);
-      if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
-        window.print();
-        setForm(initialState);
-      }
-    } catch (err) {
-      console.error("Print error:", err.response || err.message || err);
-      alert("Error saving before print.");
-    } finally {
-      setLoading(false);
-    }
+  // clean form after submit
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
+
+    const content = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <title>गाई / भैंसी सुत्केरी पोषण भत्ता</title>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+          font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+          color: #000;
+          background: white;
+          padding: 15mm 20mm;
+          font-size: 11pt;
+          line-height: 1.8;
+        }
+        .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+        .logo { position: absolute; left: 0; top: 0; width: 70px; }
+        .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+        .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+        .addr { color: #c0392b; font-size: 10pt; }
+        .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+        .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+        .addressee { margin-bottom: 16px; font-size: 11pt; }
+        .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 24px; }
+        .value { font-weight: bold; padding: 0 4px; display: inline-block; min-width: 60px; }
+        .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
+        .sig-block { width: 200px; text-align: center; }
+        .sig-line { border-top: 1px solid #000; padding-top: 6px; margin-bottom: 4px; }
+        .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+        .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+        .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+        .field-label { min-width: 160px; font-weight: 600; }
+        .field-val { flex: 1; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+        <div class="mun-name">${MUNICIPALITY.name}</div>
+        <div class="ward-title">${wardTitle}</div>
+        <div class="addr">${MUNICIPALITY.officeLine}</div>
+        <div class="addr">${MUNICIPALITY.provinceLine}</div>
+      </div>
+
+      <div class="meta">
+        <div>
+          <div>पत्र संख्या : <strong>२०८२/८३</strong></div>
+          <div>चलानी नं. : <span class="value">${form.chalan_no || ""}</span></div>
+        </div>
+        <div style="text-align:right">
+          <div>मिति : <strong>${form.issue_date || ""}</strong></div>
+        </div>
+      </div>
+
+      <div class="subject">विषय: ${form.subject}</div>
+
+      <div class="addressee">
+        श्री पशु सेवा शाखा,<br/>
+        <span class="value">${form.municipality_name_header || ""}</span> ।
+      </div>
+
+      <div class="body-text">
+        प्रस्तुत विषयमा यस नगर कार्यपालिकाबाट पारित "गाई/भैंसी सुत्केरी पोषण
+        भत्ता, ब्याडको बोका व्यवस्थापन र भ्याक्सिनेसन कार्यक्रम कार्यान्वयन
+        विधि, २०७४" अनुसार जिल्ला
+        <span class="value">${form.municipality_city || ""}</span>
+        <span class="value">${form.municipality_name_body || ""}</span>
+        वडा नं. <span class="value">${form.ward_no || ""}</span>
+        बस्ने
+        <span class="value">${form.resident_name || ""}</span>
+        को निजकै घरमा विगत
+        <span class="value">${form.duration_value || ""}</span>
+        <span class="value">${form.duration_unit || ""}</span>
+        देखि पालन पोषण हुँदै आएको गाई / भैंसी मिति
+        <span class="value">${form.calving_date || ""}</span>
+        मा सुत्केरी भएकोले कार्यविधि अनुसार निजले पाउने सुत्केरी पोषण भत्ता
+        उपलब्ध गरि दिनु हुन अनुरोध छ ।
+      </div>
+
+      <div class="signature">
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div>${form.signer_name || ""}</div>
+          <div>${form.signer_designation || ""}</div>
+        </div>
+      </div>
+
+      <div class="applicant-box">
+        <div class="applicant-title">निवेदकको विवरण</div>
+        <div class="field-row">
+          <span class="field-label">नाम:</span>
+          <span class="field-val">${form.applicant_name || ""}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">ठेगाना:</span>
+          <span class="field-val">${form.applicant_address || ""}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">नागरिकता नं.:</span>
+          <span class="field-val">${form.applicant_citizenship_no || ""}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">फोन:</span>
+          <span class="field-val">${form.applicant_phone || ""}</span>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -307,8 +395,13 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
     <>
       <style>{STYLES}</style>
 
-      <form className="damn-container" onSubmit={handleSubmit}>
-
+      <form
+        className="damn-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+      >
         {/* ── Top Bar ── */}
         <div className="damn-top-bar">
           गाई / भैंसी सुत्केरी पोषण भत्ता ।
@@ -319,19 +412,7 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
 
         {/* ── Header ── */}
         <div className="damn-header">
-          <div className="damn-header-logo">
-            <img src="/nepallogo.svg" alt="Nepal Emblem" />
-          </div>
-          <div className="damn-header-text">
-            <h1 className="damn-municipality-name">{MUNICIPALITY.name}</h1>
-            <h2 className="damn-ward-title">
-              {user?.role === "SUPERADMIN"
-                ? "सबै वडा कार्यालय"
-                : `${user?.ward || " "} नं. वडा कार्यालय`}
-            </h2>
-            <p className="damn-address-text">{MUNICIPALITY.officeLine}</p>
-            <p className="damn-province-text">{MUNICIPALITY.provinceLine}</p>
-          </div>
+          <MunicipalityHeader />
         </div>
 
         {/* ── Meta ── */}
@@ -484,7 +565,9 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
               <option value="">पद छनौट गर्नुहोस्</option>
               <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
               <option value="वडा सचिव">वडा सचिव</option>
-              <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
+              <option value="कार्यवाहक वडा अध्यक्ष">
+                कार्यवाहक वडा अध्यक्ष
+              </option>
             </select>
           </div>
         </div>
@@ -495,19 +578,27 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         {/* ── Footer ── */}
         <div className="damn-footer">
           <button
+            type="submit"
             className="damn-save-print-btn"
-            type="button"
-            onClick={handlePrint}
             disabled={loading}
+            style={{ marginRight: 12, backgroundColor: "#2c3e50" }}
           >
-            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="damn-save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
         <div className="damn-copyright">
           © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
         </div>
-
       </form>
     </>
   );

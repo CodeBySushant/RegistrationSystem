@@ -1,9 +1,11 @@
 // src/pages/MRP/PassportRecommendation.jsx
 import React, { useState } from "react";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
-import axios from "../../utils/axiosInstance";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const FORM_KEY = "passport-recommendation";
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -56,21 +58,6 @@ const styles = `
   margin-left: 2px;
   font-size: 0.95rem;
 }
-
-/* ── Header ── */
-.pr-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 16px;
-  text-align: center;
-}
-.pr-logo { width: 72px; height: auto; flex-shrink: 0; }
-.pr-header-text { display: flex; flex-direction: column; gap: 2px; }
-.pr-muni-name  { color: #c0392b; font-size: 1.85rem; font-weight: 700; line-height: 1.2; }
-.pr-ward-name  { color: #c0392b; font-size: 1.5rem;  font-weight: 700; }
-.pr-address    { color: #c0392b; font-size: 0.9rem; }
 
 /* ── Divider ── */
 .pr-divider {
@@ -186,43 +173,6 @@ const styles = `
 }
 .pr-select:focus { outline: none; border-color: #2563eb; }
 
-/* ── ApplicantDetailsNp box ── */
-.applicant-details-box {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 20px;
-  margin-top: 20px;
-  background-color: rgba(255,255,255,0.5);
-}
-.applicant-details-box h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #555;
-  margin: 0 0 14px 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
-}
-.details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
-.detail-group { display: flex; flex-direction: column; gap: 5px; }
-.detail-group label { font-size: 0.88rem; font-weight: 600; color: #333; }
-.detail-input {
-  padding: 8px 10px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  font-family: inherit;
-  font-size: 0.9rem;
-  color: #111;
-  width: 100%;
-  box-sizing: border-box;
-  transition: border-color 0.15s;
-}
-.detail-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
-}
-.detail-input.bg-gray { background-color: #f3f5f7; }
-
 /* ── Notes ── */
 .pr-notes-group { display: flex; flex-direction: column; gap: 5px; margin-top: 16px; }
 .pr-notes-group label { font-size: 0.88rem; font-weight: 600; color: #333; }
@@ -273,7 +223,6 @@ const styles = `
 /* ── Responsive ── */
 @media (max-width: 700px) {
   .passport-rec-container { padding: 20px 14px; }
-  .pr-header { flex-direction: column; gap: 10px; }
   .pr-meta-row { flex-direction: column; gap: 10px; }
   .details-grid { grid-template-columns: 1fr; }
   .pr-body-paragraph { line-height: 3.2; }
@@ -334,64 +283,57 @@ const INITIAL_FORM_DATA = (user) => ({
 
 const validate = (formData) => {
   const required = [
-    ["headerDistrict",    "हेडर जिल्ला आवश्यक छ।"],
-    ["mainDistrict",      "जिल्ला आवश्यक छ।"],
-    ["currentMunicipality","नगरपालिका आवश्यक छ।"],
-    ["residentDistrict",  "बासिन्दाको जिल्ला आवश्यक छ।"],
-    ["citizenIssueDate",  "नागरिकता जारी मिति आवश्यक छ।"],
-    ["citizenNo",         "नागरिकता नं. आवश्यक छ।"],
-    ["applicantName",     "निवेदकको नाम आवश्यक छ।"],
-    ["designation",       "पद छनोट गर्नुहोस्।"],
-    ["applicantAddress",  "निवेदकको ठेगाना आवश्यक छ।"],
+    ["headerDistrict",      "हेडर जिल्ला आवश्यक छ।"],
+    ["mainDistrict",        "जिल्ला आवश्यक छ।"],
+    ["currentMunicipality", "नगरपालिका आवश्यक छ।"],
+    ["residentDistrict",    "बासिन्दाको जिल्ला आवश्यक छ।"],
+    ["citizenIssueDate",    "नागरिकता जारी मिति आवश्यक छ।"],
+    ["citizenNo",           "नागरिकता नं. आवश्यक छ।"],
+    ["applicantName",       "निवेदकको नाम आवश्यक छ।"],
+    ["designation",         "पद छनोट गर्नुहोस्।"],
+    ["applicantAddress",    "निवेदकको ठेगाना आवश्यक छ।"],
     ["applicantCitizenship","नागरिकता नं. आवश्यक छ।"],
-    ["applicantPhone",    "फोन नं. आवश्यक छ।"],
+    ["applicantPhone",      "फोन नं. आवश्यक छ।"],
   ];
   for (const [field, msg] of required) {
     if (!formData[field]?.toString().trim()) return msg;
   }
-  // currentWardNo checked separately since it can be a number
   if (!formData.currentWardNo?.toString().trim()) return "हालको वडा नं. आवश्यक छ।";
   return null;
 };
 
 const toPayload = (data) => ({
-  letter_no:           data.letterNo           || null,
-  ref_no:              data.refNo              || null,
-  date_of_letter:      data.dateOfLetter       || null,
-  day_text:            data.dayText            || null,
-  header_to:           data.headerTo           || null,
-  header_district:     data.headerDistrict     || null,
-  main_district:       data.mainDistrict       || null,
-  prev_location_type:  data.prevLocationType   || null,
-  prev_ward_no:        data.prevWardNo         || null,
-  current_municipality:data.currentMunicipality|| null,
-  current_ward_no:     data.currentWardNo      || null,
+  letter_no:            data.letterNo           || null,
+  ref_no:               data.refNo              || null,
+  date_of_letter:       data.dateOfLetter       || null,
+  day_text:             data.dayText            || null,
+  header_to:            data.headerTo           || null,
+  header_district:      data.headerDistrict     || null,
+  main_district:        data.mainDistrict       || null,
+  prev_location_type:   data.prevLocationType   || null,
+  prev_ward_no:         data.prevWardNo         || null,
+  current_municipality: data.currentMunicipality|| null,
+  current_ward_no:      data.currentWardNo      || null,
   resident_address_type:data.residentAddressType|| null,
-  resident_district:   data.residentDistrict   || null,
-  citizen_issue_date:  data.citizenIssueDate   || null,
-  citizen_no:          data.citizenNo          || null,
-  applicant_name:      data.applicantName      || null,
-  designation:         data.designation        || null,
-  applicant_address:   data.applicantAddress   || null,
+  resident_district:    data.residentDistrict   || null,
+  citizen_issue_date:   data.citizenIssueDate   || null,
+  citizen_no:           data.citizenNo          || null,
+  applicant_name:       data.applicantName      || null,
+  designation:          data.designation        || null,
+  applicant_address:    data.applicantAddress   || null,
   applicant_citizenship:data.applicantCitizenship|| null,
-  applicant_phone:     data.applicantPhone     || null,
-  notes:               data.notes              || null,
+  applicant_phone:      data.applicantPhone     || null,
+  notes:                data.notes              || null,
 });
 
 /* ─────────────────────────── Component ─────────────────────────── */
 const PassportRecommendation = () => {
   const { user } = useAuth();
 
-  const wardLabel =
-    user?.role === "SUPERADMIN"
-      ? "सबै वडा कार्यालय"
-      : `${user?.ward || MUNICIPALITY.wardNumber || "१"} नं. वडा कार्यालय`;
-
   const [formData, setFormData] = useState(() => INITIAL_FORM_DATA(user));
   const [loading, setLoading]   = useState(false);
-  const [toast, setToast]       = useState(null); // { type: 'success'|'error', text: string }
+  const [toast, setToast]       = useState(null);
 
-  /* helpers */
   const showToast = (type, text) => {
     setToast({ type, text });
     setTimeout(() => setToast(null), type === "success" ? 3000 : 5000);
@@ -402,7 +344,6 @@ const PassportRecommendation = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  /* submit */
   const handleSaveAndPrint = async (e) => {
     e.preventDefault();
     setToast(null);
@@ -424,15 +365,13 @@ const PassportRecommendation = () => {
     }
   };
 
-  /* ── render ── */
   return (
     <>
-      {/* Inject styles once */}
       <style>{styles}</style>
 
       <form className="passport-rec-container" onSubmit={handleSaveAndPrint}>
 
-        {/* Toast */}
+        {/* ── Toast ── */}
         {toast && (
           <div className={`pr-toast pr-toast--${toast.type}`}>
             <span>{toast.type === "success" ? "✔" : "✖"}</span>
@@ -440,20 +379,12 @@ const PassportRecommendation = () => {
           </div>
         )}
 
-        {/* Municipality Header */}
-        <div className="pr-header">
-          <img src={MUNICIPALITY.logoSrc} alt="Nepal Emblem" className="pr-logo" />
-          <div className="pr-header-text">
-            <div className="pr-muni-name">{MUNICIPALITY.name}</div>
-            <div className="pr-ward-name">{wardLabel}</div>
-            <div className="pr-address">{MUNICIPALITY.officeLine}</div>
-            <div className="pr-address">{MUNICIPALITY.provinceLine}</div>
-          </div>
-        </div>
+        {/* ── Municipality Header ── (replaces manual pr-header block) */}
+        <MunicipalityHeader />
 
         <div className="pr-divider" />
 
-        {/* Meta row */}
+        {/* ── Meta row ── */}
         <div className="pr-meta-row">
           <div className="pr-field-inline">
             <label>पत्र संख्या :</label>
@@ -480,7 +411,7 @@ const PassportRecommendation = () => {
           />
         </div>
 
-        {/* Addressee */}
+        {/* ── Addressee ── */}
         <div className="pr-addressee">
           <input
             type="text"
@@ -502,130 +433,63 @@ const PassportRecommendation = () => {
           </div>
         </div>
 
-        {/* Body paragraph */}
+        {/* ── Body paragraph ── */}
         <div className="pr-body-paragraph">
           <span>जिल्ला</span>
           <span className="pr-inline-wrap">
-            <input
-              type="text"
-              name="mainDistrict"
-              value={formData.mainDistrict}
-              onChange={handleChange}
-              className="pr-inline-input"
-            />
+            <input type="text" name="mainDistrict" value={formData.mainDistrict} onChange={handleChange} className="pr-inline-input" />
             <span className="pr-required">*</span>
           </span>
 
           <span>(</span>
-          <input
-            type="text"
-            name="prevLocationType"
-            value={formData.prevLocationType}
-            onChange={handleChange}
-            className="pr-inline-input pr-short"
-          />
+          <input type="text" name="prevLocationType" value={formData.prevLocationType} onChange={handleChange} className="pr-inline-input pr-short" />
           <span>)</span>
 
-          <input
-            type="text"
-            name="prevWardNo"
-            placeholder="साविक वडा"
-            value={formData.prevWardNo}
-            onChange={handleChange}
-            className="pr-inline-input pr-short"
-          />
+          <input type="text" name="prevWardNo" placeholder="साविक वडा" value={formData.prevWardNo} onChange={handleChange} className="pr-inline-input pr-short" />
 
           <span>हाल वडा नं.</span>
-          <input
-            type="text"
-            name="currentWardNo"
-            value={formData.currentWardNo}
-            onChange={handleChange}
-            className="pr-inline-input pr-xshort"
-          />
+          <input type="text" name="currentWardNo" value={formData.currentWardNo} onChange={handleChange} className="pr-inline-input pr-xshort" />
 
           <span>हाल</span>
           <span className="pr-inline-wrap">
-            <input
-              type="text"
-              name="currentMunicipality"
-              value={formData.currentMunicipality}
-              onChange={handleChange}
-              className="pr-inline-input pr-long"
-            />
+            <input type="text" name="currentMunicipality" value={formData.currentMunicipality} onChange={handleChange} className="pr-inline-input pr-long" />
             <span className="pr-required">*</span>
           </span>
 
           <span>स्थायी/अस्थायी :</span>
-          <input
-            type="text"
-            name="residentAddressType"
-            value={formData.residentAddressType}
-            onChange={handleChange}
-            className="pr-inline-input pr-short"
-          />
+          <input type="text" name="residentAddressType" value={formData.residentAddressType} onChange={handleChange} className="pr-inline-input pr-short" />
 
           <span>जिल्ला</span>
           <span className="pr-inline-wrap">
-            <input
-              type="text"
-              name="residentDistrict"
-              value={formData.residentDistrict}
-              onChange={handleChange}
-              className="pr-inline-input"
-              placeholder="जिल्ला"
-            />
+            <input type="text" name="residentDistrict" value={formData.residentDistrict} onChange={handleChange} className="pr-inline-input" placeholder="जिल्ला" />
             <span className="pr-required">*</span>
           </span>
 
           <span>नागरिकता जारी मिति :</span>
           <span className="pr-inline-wrap">
-            <input
-              type="date"
-              name="citizenIssueDate"
-              value={formData.citizenIssueDate}
-              onChange={handleChange}
-              className="pr-inline-input pr-date"
-            />
+            <input type="date" name="citizenIssueDate" value={formData.citizenIssueDate} onChange={handleChange} className="pr-inline-input pr-date" />
             <span className="pr-required">*</span>
           </span>
 
           <span>नागरिकता नं. :</span>
           <span className="pr-inline-wrap">
-            <input
-              type="text"
-              name="citizenNo"
-              value={formData.citizenNo}
-              onChange={handleChange}
-              className="pr-inline-input"
-            />
+            <input type="text" name="citizenNo" value={formData.citizenNo} onChange={handleChange} className="pr-inline-input" />
             <span className="pr-required">*</span>
           </span>
 
           <span>निवेदक :</span>
           <span className="pr-inline-wrap">
-            <input
-              type="text"
-              name="applicantName"
-              value={formData.applicantName}
-              onChange={handleChange}
-              className="pr-inline-input pr-long"
-            />
+            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} className="pr-inline-input pr-long" />
             <span className="pr-required">*</span>
           </span>
           <span>को राहदानी सिफारिस गरिन्छ।</span>
         </div>
 
-        {/* Signature / Designation */}
+        {/* ── Signature ── */}
         <div className="pr-signature-section">
           <div className="pr-signature-line">हस्ताक्षर</div>
           <div className="pr-field-inline">
-            <select
-              name="designation"
-              value={formData.designation}
-              onChange={handleChange}
-              className="pr-select"
-            >
+            <select name="designation" value={formData.designation} onChange={handleChange} className="pr-select">
               <option value="">पद छनोट गर्नुहोस्</option>
               <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
               <option value="वडा सचिव">वडा सचिव</option>
@@ -634,21 +498,16 @@ const PassportRecommendation = () => {
           </div>
         </div>
 
-        {/* Applicant Details (shared component) */}
+        {/* ── Applicant Details ── */}
         <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
-        {/* Notes */}
+        {/* ── Notes ── */}
         <div className="pr-notes-group">
           <label>कैफियत / टिप्पणी</label>
-          <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            rows={3}
-          />
+          <textarea name="notes" value={formData.notes} onChange={handleChange} rows={3} />
         </div>
 
-        {/* Submit */}
+        {/* ── Submit ── */}
         <div className="form-footer">
           <button type="submit" disabled={loading} className="save-print-btn">
             {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
