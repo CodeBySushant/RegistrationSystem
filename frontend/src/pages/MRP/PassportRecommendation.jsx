@@ -1,5 +1,5 @@
 // src/pages/MRP/PassportRecommendation.jsx
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "../../utils/axiosInstance";
 import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
@@ -27,30 +27,6 @@ const styles = `
   box-sizing: border-box;
 }
 
-/* ── Toast ── */
-.pr-toast {
-  position: fixed;
-  top: 20px;
-  right: 24px;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-size: 0.92rem;
-  font-family: "Mangal", "Noto Sans Devanagari", sans-serif;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-  animation: pr-toast-in 0.25s ease;
-  max-width: 360px;
-}
-.pr-toast--success { background: #1a7f3c; color: #fff; }
-.pr-toast--error   { background: #c0392b; color: #fff; }
-@keyframes pr-toast-in {
-  from { opacity: 0; transform: translateY(-12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 /* ── Required star ── */
 .pr-required, .required {
   color: #c0392b;
@@ -69,11 +45,14 @@ const styles = `
 /* ── Meta row ── */
 .pr-meta-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px 32px;
-  margin-bottom: 14px;
-  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 1rem;
 }
+.pr-meta-left,
+.pr-meta-right { display: flex; flex-direction: column; gap: 6px; }
+.pr-meta-right { text-align: right; align-items: flex-end; }
 
 /* ── Inline field ── */
 .pr-field-inline { display: flex; align-items: center; gap: 6px; }
@@ -230,7 +209,6 @@ const styles = `
   .pr-inline-input.pr-long,
   .pr-inline-input.pr-date { width: 100px; }
   .pr-signature-section { align-items: flex-start; margin-right: 0; }
-  .pr-toast { right: 12px; left: 12px; max-width: none; }
 }
 
 /* ── Print ── */
@@ -250,165 +228,320 @@ const styles = `
   }
   .form-footer,
   .copyright-footer,
-  .pr-toast,
   .pr-required,
-  .required { display: none !important; }
+  .required,
+  .applicant-details-box { display: none !important; }
 }
 `;
 
-/* ─────────────────────────── Helpers ─────────────────────────── */
-const INITIAL_FORM_DATA = (user) => ({
-  letterNo: "२०८२/८३",
-  refNo: "",
-  dateOfLetter: new Date().toISOString().slice(0, 10),
-  dayText: "",
-  headerTo: "श्री ईलाका प्रशासन कार्यालय,",
-  headerDistrict: MUNICIPALITY.city || "",
-  mainDistrict: MUNICIPALITY.city || "",
-  prevLocationType: "साबिक",
-  prevWardNo: "",
+/* ─────────────────────────── Initial State ─────────────────────────── */
+const initialState = {
+  letterNo:            "२०८२/८३",
+  refNo:               "",
+  dateOfLetter:        new Date().toISOString().slice(0, 10),
+  dayText:             "",
+  headerTo:            "श्री ईलाका प्रशासन कार्यालय,",
+  headerDistrict:      MUNICIPALITY.city || "",
+  mainDistrict:        MUNICIPALITY.city || "",
+  prevLocationType:    "साबिक",
+  prevWardNo:          "",
   currentMunicipality: MUNICIPALITY.name || "",
-  currentWardNo: user?.ward || "1",
+  currentWardNo:       "",   // populated by useWardForm via ward_no — kept separate below
   residentAddressType: "स्थायी",
-  residentDistrict: "",
-  citizenIssueDate: "",
-  citizenNo: "",
-  applicantName: "",
-  designation: "",
-  applicantAddress: "",
-  applicantCitizenship: "",
-  applicantPhone: "",
-  notes: "",
-});
-
-const validate = (formData) => {
-  const required = [
-    ["headerDistrict",      "हेडर जिल्ला आवश्यक छ।"],
-    ["mainDistrict",        "जिल्ला आवश्यक छ।"],
-    ["currentMunicipality", "नगरपालिका आवश्यक छ।"],
-    ["residentDistrict",    "बासिन्दाको जिल्ला आवश्यक छ।"],
-    ["citizenIssueDate",    "नागरिकता जारी मिति आवश्यक छ।"],
-    ["citizenNo",           "नागरिकता नं. आवश्यक छ।"],
-    ["applicantName",       "निवेदकको नाम आवश्यक छ।"],
-    ["designation",         "पद छनोट गर्नुहोस्।"],
-    ["applicantAddress",    "निवेदकको ठेगाना आवश्यक छ।"],
-    ["applicantCitizenship","नागरिकता नं. आवश्यक छ।"],
-    ["applicantPhone",      "फोन नं. आवश्यक छ।"],
-  ];
-  for (const [field, msg] of required) {
-    if (!formData[field]?.toString().trim()) return msg;
-  }
-  if (!formData.currentWardNo?.toString().trim()) return "हालको वडा नं. आवश्यक छ।";
-  return null;
+  residentDistrict:    "",
+  citizenIssueDate:    "",
+  citizenNo:           "",
+  applicantName:       "",
+  designation:         "",
+  applicantAddress:    "",
+  applicantCitizenship:"",
+  applicantPhone:      "",
+  notes:               "",
 };
-
-const toPayload = (data) => ({
-  letter_no:            data.letterNo           || null,
-  ref_no:               data.refNo              || null,
-  date_of_letter:       data.dateOfLetter       || null,
-  day_text:             data.dayText            || null,
-  header_to:            data.headerTo           || null,
-  header_district:      data.headerDistrict     || null,
-  main_district:        data.mainDistrict       || null,
-  prev_location_type:   data.prevLocationType   || null,
-  prev_ward_no:         data.prevWardNo         || null,
-  current_municipality: data.currentMunicipality|| null,
-  current_ward_no:      data.currentWardNo      || null,
-  resident_address_type:data.residentAddressType|| null,
-  resident_district:    data.residentDistrict   || null,
-  citizen_issue_date:   data.citizenIssueDate   || null,
-  citizen_no:           data.citizenNo          || null,
-  applicant_name:       data.applicantName      || null,
-  designation:          data.designation        || null,
-  applicant_address:    data.applicantAddress   || null,
-  applicant_citizenship:data.applicantCitizenship|| null,
-  applicant_phone:      data.applicantPhone     || null,
-  notes:                data.notes              || null,
-});
 
 /* ─────────────────────────── Component ─────────────────────────── */
 const PassportRecommendation = () => {
   const { user } = useAuth();
+  const { form, setForm, handleChange } = useWardForm(initialState);
+  const [loading, setLoading] = useState(false);
+  const printRef = useRef();
 
-  const [formData, setFormData] = useState(() => INITIAL_FORM_DATA(user));
-  const [loading, setLoading]   = useState(false);
-  const [toast, setToast]       = useState(null);
-
-  const showToast = (type, text) => {
-    setToast({ type, text });
-    setTimeout(() => setToast(null), type === "success" ? 3000 : 5000);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSaveAndPrint = async (e) => {
-    e.preventDefault();
-    setToast(null);
-
-    const err = validate(formData);
-    if (err) { showToast("error", err); return; }
+  /* ── Single save function — mirrors DomesticAnimal pattern ── */
+  const handleSave = async (shouldPrint = false) => {
+    // Validation — alert style, consistent with DomesticAnimal
+    if (!form.headerDistrict?.trim()) {
+      alert("हेडर जिल्ला आवश्यक छ।");
+      return;
+    }
+    if (!form.mainDistrict?.trim()) {
+      alert("जिल्ला आवश्यक छ।");
+      return;
+    }
+    if (!form.currentMunicipality?.trim()) {
+      alert("नगरपालिका/गाउँपालिका आवश्यक छ।");
+      return;
+    }
+    if (!form.residentDistrict?.trim()) {
+      alert("बासिन्दाको जिल्ला आवश्यक छ।");
+      return;
+    }
+    if (!form.citizenIssueDate?.trim()) {
+      alert("नागरिकता जारी मिति आवश्यक छ।");
+      return;
+    }
+    if (!form.citizenNo?.trim()) {
+      alert("नागरिकता नं. आवश्यक छ।");
+      return;
+    }
+    if (!form.applicantName?.trim()) {
+      alert("निवेदकको नाम आवश्यक छ।");
+      return;
+    }
+    if (!form.designation?.trim()) {
+      alert("पद छनोट गर्नुहोस्।");
+      return;
+    }
+    if (!form.applicantAddress?.trim()) {
+      alert("निवेदकको ठेगाना आवश्यक छ।");
+      return;
+    }
+    if (!form.applicantCitizenship?.trim()) {
+      alert("निवेदकको नागरिकता नं. आवश्यक छ।");
+      return;
+    }
+    if (!form.applicantPhone?.trim()) {
+      alert("फोन नं. आवश्यक छ।");
+      return;
+    }
 
     setLoading(true);
     try {
-      const res = await axios.post(API_URL, toPayload(formData));
-      showToast("success", `सफलतापूर्वक सेभ भयो (id: ${res.data?.id ?? "unknown"})`);
-      setTimeout(() => window.print(), 300);
+      const payload = {
+        letter_no:             form.letterNo            || null,
+        ref_no:                form.refNo               || null,
+        date_of_letter:        form.dateOfLetter        || null,
+        day_text:              form.dayText             || null,
+        header_to:             form.headerTo            || null,
+        header_district:       form.headerDistrict      || null,
+        main_district:         form.mainDistrict        || null,
+        prev_location_type:    form.prevLocationType    || null,
+        prev_ward_no:          form.prevWardNo          || null,
+        current_municipality:  form.currentMunicipality || null,
+        current_ward_no:       form.ward_no             || null,
+        resident_address_type: form.residentAddressType || null,
+        resident_district:     form.residentDistrict    || null,
+        citizen_issue_date:    form.citizenIssueDate    || null,
+        citizen_no:            form.citizenNo           || null,
+        applicant_name:        form.applicantName       || null,
+        designation:           form.designation         || null,
+        applicant_address:     form.applicantAddress    || null,
+        applicant_citizenship: form.applicantCitizenship|| null,
+        applicant_phone:       form.applicantPhone      || null,
+        notes:                 form.notes               || null,
+      };
+
+      const res = await axios.post(API_URL, payload);
+      if (res.status === 201) {
+        if (shouldPrint) {
+          handleCleanPrint();
+        } else {
+          alert("सफलतापूर्वक सुरक्षित भयो! ID: " + res.data.id);
+        }
+        setForm(initialState);
+      }
     } catch (err) {
-      const info = err.response?.data?.message || err.message || "सेभ गर्न असफल भयो।";
-      showToast("error", info);
-      console.error("submit error:", err);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      alert("त्रुटि: " + msg);
     } finally {
       setLoading(false);
     }
   };
 
+  /* ── Clean isolated print window — mirrors DomesticAnimal pattern ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>राहदानी सिफारिस</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Mangal', 'Noto Sans Devanagari', 'Kalimati', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name  { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .divider { border: none; border-top: 2px solid #bbb; margin: 12px 0 16px; }
+          .meta { display: flex; justify-content: space-between; margin: 12px 0 16px; font-size: 10pt; }
+          .addressee { margin-bottom: 16px; font-size: 11pt; font-weight: 600; }
+          .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 24px; }
+          .value { font-weight: bold; padding: 0 4px; display: inline-block; min-width: 50px; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
+          .sig-block { width: 220px; text-align: center; }
+          .sig-line { border-top: 1px dotted #555; padding-top: 6px; margin-bottom: 4px; font-size: 9pt; color: #555; }
+          .notes-box { margin-top: 16px; font-size: 10pt; }
+          .notes-label { font-weight: 600; margin-bottom: 4px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+          .field-val { flex: 1; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine}</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <strong>${form.letterNo || ""}</strong></div>
+            <div>चलानी नं. : <strong>${form.refNo || ""}</strong></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <strong>${form.dateOfLetter || ""}</strong></div>
+            <div>ने.सं : <strong>${form.dayText || ""}</strong></div>
+          </div>
+        </div>
+
+        ${form.dayText ? `` : ""}
+
+        <div class="addressee">
+          ${form.headerTo || ""}<br/>
+          <span class="value">${form.headerDistrict || ""}</span>
+        </div>
+
+        <div class="body-text">
+          जिल्ला <span class="value">${form.mainDistrict || ""}</span>
+          (<span class="value">${form.prevLocationType || ""}</span>)
+          <span class="value">${form.prevWardNo || ""}</span>
+          हाल वडा नं. <span class="value">${form.ward_no || ""}</span>
+          हाल <span class="value">${form.currentMunicipality || ""}</span>
+          ${form.residentAddressType || ""} जिल्ला
+          <span class="value">${form.residentDistrict || ""}</span>
+          नागरिकता जारी मिति : <span class="value">${form.citizenIssueDate || ""}</span>
+          नागरिकता नं. : <span class="value">${form.citizenNo || ""}</span>
+          निवेदक : <span class="value">${form.applicantName || ""}</span>
+          को राहदानी सिफारिस गरिन्छ।
+        </div>
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line">हस्ताक्षर</div>
+            <div>${form.designation || ""}</div>
+          </div>
+        </div>
+
+        ${form.notes ? `
+        <div class="notes-box">
+          <div class="notes-label">कैफियत / टिप्पणी :</div>
+          <div>${form.notes}</div>
+        </div>` : ""}
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row">
+            <span class="field-label">नाम:</span>
+            <span class="field-val">${form.applicantName || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">ठेगाना:</span>
+            <span class="field-val">${form.applicantAddress || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">नागरिकता नं.:</span>
+            <span class="field-val">${form.applicantCitizenship || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">फोन:</span>
+            <span class="field-val">${form.applicantPhone || ""}</span>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
+  /* ─────────────────────────── Render ─────────────────────────── */
   return (
     <>
       <style>{styles}</style>
 
-      <form className="passport-rec-container" onSubmit={handleSaveAndPrint}>
-
-        {/* ── Toast ── */}
-        {toast && (
-          <div className={`pr-toast pr-toast--${toast.type}`}>
-            <span>{toast.type === "success" ? "✔" : "✖"}</span>
-            {toast.text}
-          </div>
-        )}
-
-        {/* ── Municipality Header ── (replaces manual pr-header block) */}
+      <form
+        className="passport-rec-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+      >
+        {/* ── Municipality Header ── */}
         <MunicipalityHeader />
 
         <div className="pr-divider" />
 
-        {/* ── Meta row ── */}
+        {/* ── Meta row — left: पत्र संख्या + चलानी नं., right: मिति + नेपाली दिन ── */}
         <div className="pr-meta-row">
-          <div className="pr-field-inline">
-            <label>पत्र संख्या :</label>
-            <input type="text" name="letterNo" value={formData.letterNo} onChange={handleChange} />
+          <div className="pr-meta-left">
+            <div className="pr-field-inline">
+              <label>पत्र संख्या :</label>
+              <input type="text" name="letterNo" value={form.letterNo} onChange={handleChange} />
+            </div>
+            <div className="pr-field-inline">
+              <label>चलानी नं. :</label>
+              <input type="text" name="refNo" value={form.refNo} onChange={handleChange} />
+            </div>
           </div>
-          <div className="pr-field-inline">
-            <label>चलानी नं. :</label>
-            <input type="text" name="refNo" value={formData.refNo} onChange={handleChange} />
+          <div className="pr-meta-right">
+            <div className="pr-field-inline">
+              <label>मिति :</label>
+              <input type="date" name="dateOfLetter" value={form.dateOfLetter} onChange={handleChange} />
+            </div>
+            <div className="pr-field-inline">
+              <label>ने.सं :</label>
+              <input
+                type="text"
+                name="dayText"
+                value={form.dayText}
+                onChange={handleChange}
+                style={{ width: 200 }}
+                placeholder="जस्तै: १४६ थिंलागा, ३० शनिबार"
+              />
+            </div>
           </div>
-          <div className="pr-field-inline">
-            <label>मिति :</label>
-            <input type="date" name="dateOfLetter" value={formData.dateOfLetter} onChange={handleChange} />
-          </div>
-        </div>
-
-        <div className="pr-field-inline" style={{ marginBottom: 12 }}>
-          <label>नेपाली दिन/विवरण :</label>
-          <input
-            type="text"
-            name="dayText"
-            value={formData.dayText}
-            onChange={handleChange}
-            style={{ width: 260 }}
-          />
         </div>
 
         {/* ── Addressee ── */}
@@ -416,7 +549,7 @@ const PassportRecommendation = () => {
           <input
             type="text"
             name="headerTo"
-            value={formData.headerTo}
+            value={form.headerTo}
             onChange={handleChange}
             className="pr-addressee-line"
           />
@@ -424,7 +557,7 @@ const PassportRecommendation = () => {
             <input
               type="text"
               name="headerDistrict"
-              value={formData.headerDistrict}
+              value={form.headerDistrict}
               onChange={handleChange}
               className="pr-addressee-line"
               placeholder="जिल्ला"
@@ -437,49 +570,55 @@ const PassportRecommendation = () => {
         <div className="pr-body-paragraph">
           <span>जिल्ला</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="mainDistrict" value={formData.mainDistrict} onChange={handleChange} className="pr-inline-input" />
+            <input type="text" name="mainDistrict" value={form.mainDistrict} onChange={handleChange} className="pr-inline-input" />
             <span className="pr-required">*</span>
           </span>
 
           <span>(</span>
-          <input type="text" name="prevLocationType" value={formData.prevLocationType} onChange={handleChange} className="pr-inline-input pr-short" />
+          <input type="text" name="prevLocationType" value={form.prevLocationType} onChange={handleChange} className="pr-inline-input pr-short" />
           <span>)</span>
 
-          <input type="text" name="prevWardNo" placeholder="साविक वडा" value={formData.prevWardNo} onChange={handleChange} className="pr-inline-input pr-short" />
+          <input type="text" name="prevWardNo" placeholder="साविक वडा" value={form.prevWardNo} onChange={handleChange} className="pr-inline-input pr-short" />
 
           <span>हाल वडा नं.</span>
-          <input type="text" name="currentWardNo" value={formData.currentWardNo} onChange={handleChange} className="pr-inline-input pr-xshort" />
+          <input
+            type="text"
+            name="ward_no"
+            value={form.ward_no}
+            onChange={handleChange}
+            className="pr-inline-input pr-xshort"
+          />
 
           <span>हाल</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="currentMunicipality" value={formData.currentMunicipality} onChange={handleChange} className="pr-inline-input pr-long" />
+            <input type="text" name="currentMunicipality" value={form.currentMunicipality} onChange={handleChange} className="pr-inline-input pr-long" />
             <span className="pr-required">*</span>
           </span>
 
           <span>स्थायी/अस्थायी :</span>
-          <input type="text" name="residentAddressType" value={formData.residentAddressType} onChange={handleChange} className="pr-inline-input pr-short" />
+          <input type="text" name="residentAddressType" value={form.residentAddressType} onChange={handleChange} className="pr-inline-input pr-short" />
 
           <span>जिल्ला</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="residentDistrict" value={formData.residentDistrict} onChange={handleChange} className="pr-inline-input" placeholder="जिल्ला" />
+            <input type="text" name="residentDistrict" value={form.residentDistrict} onChange={handleChange} className="pr-inline-input" placeholder="जिल्ला" />
             <span className="pr-required">*</span>
           </span>
 
           <span>नागरिकता जारी मिति :</span>
           <span className="pr-inline-wrap">
-            <input type="date" name="citizenIssueDate" value={formData.citizenIssueDate} onChange={handleChange} className="pr-inline-input pr-date" />
+            <input type="date" name="citizenIssueDate" value={form.citizenIssueDate} onChange={handleChange} className="pr-inline-input pr-date" />
             <span className="pr-required">*</span>
           </span>
 
           <span>नागरिकता नं. :</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="citizenNo" value={formData.citizenNo} onChange={handleChange} className="pr-inline-input" />
+            <input type="text" name="citizenNo" value={form.citizenNo} onChange={handleChange} className="pr-inline-input" />
             <span className="pr-required">*</span>
           </span>
 
           <span>निवेदक :</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} className="pr-inline-input pr-long" />
+            <input type="text" name="applicantName" value={form.applicantName} onChange={handleChange} className="pr-inline-input pr-long" />
             <span className="pr-required">*</span>
           </span>
           <span>को राहदानी सिफारिस गरिन्छ।</span>
@@ -489,35 +628,49 @@ const PassportRecommendation = () => {
         <div className="pr-signature-section">
           <div className="pr-signature-line">हस्ताक्षर</div>
           <div className="pr-field-inline">
-            <select name="designation" value={formData.designation} onChange={handleChange} className="pr-select">
+            <select name="designation" value={form.designation} onChange={handleChange} className="pr-select">
               <option value="">पद छनोट गर्नुहोस्</option>
               <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
               <option value="वडा सचिव">वडा सचिव</option>
+              <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
             </select>
             <span className="pr-required">*</span>
           </div>
         </div>
 
         {/* ── Applicant Details ── */}
-        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
         {/* ── Notes ── */}
         <div className="pr-notes-group">
           <label>कैफियत / टिप्पणी</label>
-          <textarea name="notes" value={formData.notes} onChange={handleChange} rows={3} />
+          <textarea name="notes" value={form.notes} onChange={handleChange} rows={3} />
         </div>
 
-        {/* ── Submit ── */}
+        {/* ── Footer — two buttons, same as DomesticAnimal ── */}
         <div className="form-footer">
-          <button type="submit" disabled={loading} className="save-print-btn">
-            {loading ? "सेभ हुँदै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          <button
+            type="submit"
+            className="save-print-btn"
+            disabled={loading}
+            style={{ marginRight: 12, backgroundColor: "#2c3e50" }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
         <div className="copyright-footer">
           © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
         </div>
-
       </form>
     </>
   );
