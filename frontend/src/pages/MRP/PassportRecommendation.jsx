@@ -236,27 +236,27 @@ const styles = `
 
 /* ─────────────────────────── Initial State ─────────────────────────── */
 const initialState = {
-  letterNo:            "२०८२/८३",
-  refNo:               "",
-  dateOfLetter:        new Date().toISOString().slice(0, 10),
-  dayText:             "",
-  headerTo:            "श्री ईलाका प्रशासन कार्यालय,",
-  headerDistrict:      MUNICIPALITY.city || "",
-  mainDistrict:        MUNICIPALITY.city || "",
-  prevLocationType:    "साबिक",
-  prevWardNo:          "",
+  letterNo: "२०८२/८३",
+  refNo: "",
+  dateOfLetter: new Date().toISOString().slice(0, 10),
+  dayText: "",
+  headerTo: "ईलाका प्रशासन कार्यालय,",
+  headerDistrict: MUNICIPALITY.city || "",
+  mainDistrict: MUNICIPALITY.city || "",
+  prevLocationType: "साबिक",
+  prevWardNo: "",
   currentMunicipality: MUNICIPALITY.name || "",
-  currentWardNo:       "",   // populated by useWardForm via ward_no — kept separate below
+  currentWardNo: "", // populated by useWardForm via ward_no — kept separate below
   residentAddressType: "स्थायी",
-  residentDistrict:    "",
-  citizenIssueDate:    "",
-  citizenNo:           "",
-  applicantName:       "",
-  designation:         "",
-  applicantAddress:    "",
-  applicantCitizenship:"",
-  applicantPhone:      "",
-  notes:               "",
+  residentDistrict: "",
+  citizenIssueDate: "",
+  citizenNo: "",
+  applicantName: "",
+  designation: "",
+  applicantAddress: "",
+  applicantCitizenship: "",
+  applicantPhone: "",
+  notes: "",
 };
 
 /* ─────────────────────────── Component ─────────────────────────── */
@@ -317,27 +317,27 @@ const PassportRecommendation = () => {
     setLoading(true);
     try {
       const payload = {
-        letter_no:             form.letterNo            || null,
-        ref_no:                form.refNo               || null,
-        date_of_letter:        form.dateOfLetter        || null,
-        day_text:              form.dayText             || null,
-        header_to:             form.headerTo            || null,
-        header_district:       form.headerDistrict      || null,
-        main_district:         form.mainDistrict        || null,
-        prev_location_type:    form.prevLocationType    || null,
-        prev_ward_no:          form.prevWardNo          || null,
-        current_municipality:  form.currentMunicipality || null,
-        current_ward_no:       form.ward_no             || null,
+        letter_no: form.letterNo || null,
+        ref_no: form.refNo || null,
+        date_of_letter: form.dateOfLetter || null,
+        day_text: form.dayText || null,
+        header_to: form.headerTo || null,
+        header_district: form.headerDistrict || null,
+        main_district: form.mainDistrict || null,
+        prev_location_type: form.prevLocationType || null,
+        prev_ward_no: form.prevWardNo || null,
+        current_municipality: form.currentMunicipality || null,
+        current_ward_no: form.ward_no || null,
         resident_address_type: form.residentAddressType || null,
-        resident_district:     form.residentDistrict    || null,
-        citizen_issue_date:    form.citizenIssueDate    || null,
-        citizen_no:            form.citizenNo           || null,
-        applicant_name:        form.applicantName       || null,
-        designation:           form.designation         || null,
-        applicant_address:     form.applicantAddress    || null,
-        applicant_citizenship: form.applicantCitizenship|| null,
-        applicant_phone:       form.applicantPhone      || null,
-        notes:                 form.notes               || null,
+        resident_district: form.residentDistrict || null,
+        citizen_issue_date: form.citizenIssueDate || null,
+        citizen_no: form.citizenNo || null,
+        applicant_name: form.applicantName || null,
+        designation: form.designation || null,
+        applicant_address: form.applicantAddress || null,
+        applicant_citizenship: form.applicantCitizenship || null,
+        applicant_phone: form.applicantPhone || null,
+        notes: form.notes || null,
       };
 
       const res = await axios.post(API_URL, payload);
@@ -457,11 +457,15 @@ const PassportRecommendation = () => {
           </div>
         </div>
 
-        ${form.notes ? `
+        ${
+          form.notes
+            ? `
         <div class="notes-box">
           <div class="notes-label">कैफियत / टिप्पणी :</div>
           <div>${form.notes}</div>
-        </div>` : ""}
+        </div>`
+            : ""
+        }
 
         <div class="applicant-box">
           <div class="applicant-title">निवेदकको विवरण</div>
@@ -518,17 +522,32 @@ const PassportRecommendation = () => {
           <div className="pr-meta-left">
             <div className="pr-field-inline">
               <label>पत्र संख्या :</label>
-              <input type="text" name="letterNo" value={form.letterNo} onChange={handleChange} />
+              <input
+                type="text"
+                name="letterNo"
+                value={form.letterNo}
+                onChange={handleChange}
+              />
             </div>
             <div className="pr-field-inline">
               <label>चलानी नं. :</label>
-              <input type="text" name="refNo" value={form.refNo} onChange={handleChange} />
+              <input
+                type="text"
+                name="refNo"
+                value={form.refNo}
+                onChange={handleChange}
+              />
             </div>
           </div>
           <div className="pr-meta-right">
             <div className="pr-field-inline">
               <label>मिति :</label>
-              <input type="date" name="dateOfLetter" value={form.dateOfLetter} onChange={handleChange} />
+              <input
+                type="date"
+                name="dateOfLetter"
+                value={form.dateOfLetter}
+                onChange={handleChange}
+              />
             </div>
             <div className="pr-field-inline">
               <label>ने.सं :</label>
@@ -546,13 +565,16 @@ const PassportRecommendation = () => {
 
         {/* ── Addressee ── */}
         <div className="pr-addressee">
-          <input
-            type="text"
-            name="headerTo"
-            value={form.headerTo}
-            onChange={handleChange}
-            className="pr-addressee-line"
-          />
+          <div className="pr-field-inline">
+            <span style={{ fontWeight: 600, fontSize: "1rem" }}>श्री</span>
+            <input
+              type="text"
+              name="headerTo"
+              value={form.headerTo}
+              onChange={handleChange}
+              className="pr-addressee-line"
+            />
+          </div>
           <div className="pr-field-inline">
             <input
               type="text"
@@ -570,15 +592,34 @@ const PassportRecommendation = () => {
         <div className="pr-body-paragraph">
           <span>जिल्ला</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="mainDistrict" value={form.mainDistrict} onChange={handleChange} className="pr-inline-input" />
+            <input
+              type="text"
+              name="mainDistrict"
+              value={form.mainDistrict}
+              onChange={handleChange}
+              className="pr-inline-input"
+            />
             <span className="pr-required">*</span>
           </span>
 
           <span>(</span>
-          <input type="text" name="prevLocationType" value={form.prevLocationType} onChange={handleChange} className="pr-inline-input pr-short" />
+          <input
+            type="text"
+            name="prevLocationType"
+            value={form.prevLocationType}
+            onChange={handleChange}
+            className="pr-inline-input pr-short"
+          />
           <span>)</span>
 
-          <input type="text" name="prevWardNo" placeholder="साविक वडा" value={form.prevWardNo} onChange={handleChange} className="pr-inline-input pr-short" />
+          <input
+            type="text"
+            name="prevWardNo"
+            placeholder="साविक वडा"
+            value={form.prevWardNo}
+            onChange={handleChange}
+            className="pr-inline-input pr-short"
+          />
 
           <span>हाल वडा नं.</span>
           <input
@@ -591,34 +632,71 @@ const PassportRecommendation = () => {
 
           <span>हाल</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="currentMunicipality" value={form.currentMunicipality} onChange={handleChange} className="pr-inline-input pr-long" />
+            <input
+              type="text"
+              name="currentMunicipality"
+              value={form.currentMunicipality}
+              onChange={handleChange}
+              className="pr-inline-input pr-long"
+            />
             <span className="pr-required">*</span>
           </span>
 
           <span>स्थायी/अस्थायी :</span>
-          <input type="text" name="residentAddressType" value={form.residentAddressType} onChange={handleChange} className="pr-inline-input pr-short" />
+          <input
+            type="text"
+            name="residentAddressType"
+            value={form.residentAddressType}
+            onChange={handleChange}
+            className="pr-inline-input pr-short"
+          />
 
           <span>जिल्ला</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="residentDistrict" value={form.residentDistrict} onChange={handleChange} className="pr-inline-input" placeholder="जिल्ला" />
+            <input
+              type="text"
+              name="residentDistrict"
+              value={form.residentDistrict}
+              onChange={handleChange}
+              className="pr-inline-input"
+              placeholder="जिल्ला"
+            />
             <span className="pr-required">*</span>
           </span>
 
           <span>नागरिकता जारी मिति :</span>
           <span className="pr-inline-wrap">
-            <input type="date" name="citizenIssueDate" value={form.citizenIssueDate} onChange={handleChange} className="pr-inline-input pr-date" />
+            <input
+              type="date"
+              name="citizenIssueDate"
+              value={form.citizenIssueDate}
+              onChange={handleChange}
+              className="pr-inline-input pr-date"
+            />
             <span className="pr-required">*</span>
           </span>
 
           <span>नागरिकता नं. :</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="citizenNo" value={form.citizenNo} onChange={handleChange} className="pr-inline-input" />
+            <input
+              type="text"
+              name="citizenNo"
+              value={form.citizenNo}
+              onChange={handleChange}
+              className="pr-inline-input"
+            />
             <span className="pr-required">*</span>
           </span>
 
           <span>निवेदक :</span>
           <span className="pr-inline-wrap">
-            <input type="text" name="applicantName" value={form.applicantName} onChange={handleChange} className="pr-inline-input pr-long" />
+            <input
+              type="text"
+              name="applicantName"
+              value={form.applicantName}
+              onChange={handleChange}
+              className="pr-inline-input pr-long"
+            />
             <span className="pr-required">*</span>
           </span>
           <span>को राहदानी सिफारिस गरिन्छ।</span>
@@ -628,11 +706,18 @@ const PassportRecommendation = () => {
         <div className="pr-signature-section">
           <div className="pr-signature-line">हस्ताक्षर</div>
           <div className="pr-field-inline">
-            <select name="designation" value={form.designation} onChange={handleChange} className="pr-select">
+            <select
+              name="designation"
+              value={form.designation}
+              onChange={handleChange}
+              className="pr-select"
+            >
               <option value="">पद छनोट गर्नुहोस्</option>
               <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
               <option value="वडा सचिव">वडा सचिव</option>
-              <option value="कार्यवाहक वडा अध्यक्ष">कार्यवाहक वडा अध्यक्ष</option>
+              <option value="कार्यवाहक वडा अध्यक्ष">
+                कार्यवाहक वडा अध्यक्ष
+              </option>
             </select>
             <span className="pr-required">*</span>
           </div>
@@ -644,7 +729,12 @@ const PassportRecommendation = () => {
         {/* ── Notes ── */}
         <div className="pr-notes-group">
           <label>कैफियत / टिप्पणी</label>
-          <textarea name="notes" value={form.notes} onChange={handleChange} rows={3} />
+          <textarea
+            name="notes"
+            value={form.notes}
+            onChange={handleChange}
+            rows={3}
+          />
         </div>
 
         {/* ── Footer — two buttons, same as DomesticAnimal ── */}
