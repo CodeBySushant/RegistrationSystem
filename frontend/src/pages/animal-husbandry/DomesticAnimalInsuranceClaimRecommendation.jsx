@@ -4,6 +4,7 @@ import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const STYLES = `
   .daic-container {
@@ -323,7 +324,7 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
           .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
           .addressee { margin-bottom: 16px; font-size: 11pt; }
           .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 24px; }
-          .value { font-weight: bold; border-bottom: 1px dotted #333; padding: 0 4px; display: inline-block; min-width: 60px; }
+          .value { font-weight: bold; padding: 0 4px; display: inline-block; min-width: 60px; }
           .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
           .sig-block { width: 200px; text-align: center; }
           .sig-line { border-top: 1px solid #000; padding-top: 6px; margin-bottom: 4px; }
@@ -331,7 +332,7 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
           .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
           .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
           .field-label { min-width: 160px; font-weight: 600; }
-          .field-val { border-bottom: 1px dotted #999; flex: 1; }
+          .field-val { flex: 1; }
         </style>
       </head>
       <body>
@@ -450,14 +451,7 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             <img src="/nepallogo.svg" alt="Nepal Emblem" />
           </div>
           <div className="daic-header-text">
-            <h1 className="daic-municipality-name">{MUNICIPALITY.name}</h1>
-            <h2 className="daic-ward-title">
-              {user?.role === "SUPERADMIN"
-                ? "सबै वडा कार्यालय"
-                : `${user?.ward || " "} नं. वडा कार्यालय`}
-            </h2>
-            <p className="daic-address-text">{MUNICIPALITY.officeLine}</p>
-            <p className="daic-province-text">{MUNICIPALITY.provinceLine}</p>
+            <MunicipalityHeader />
           </div>
         </div>
 
