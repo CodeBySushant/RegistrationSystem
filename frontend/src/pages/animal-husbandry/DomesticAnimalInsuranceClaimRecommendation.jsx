@@ -106,16 +106,6 @@ const STYLES = `
   .daic-sig-name-input    { width: 100%; margin-bottom: 5px; border: none; border-bottom: 1px solid #000; outline: none; background: transparent; font-family: inherit; font-size: 1rem; }
   .daic-designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; font-family: inherit; }
 
-  .daic-container .applicant-details-box .details-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 18px !important;
-  }
-  .daic-container .applicant-details-box .detail-input {
-    max-width: 400px;
-    width: 100%;
-  }
-
   .daic-footer { text-align: center; margin-top: 40px; }
   .daic-save-print-btn {
     background-color: #2c3e50;
@@ -214,8 +204,10 @@ const PrintField = ({
 const initialState = {
   chalan_no: "",
   subject: "सिफारिस सम्बन्धमा",
-  addressee_line1: "", // fixed: was applicant_name — causes clash
+  addressee_line1: "",
   addressee_line2: "",
+  nepali_date_label: "",
+  issue_date: new Date().toISOString().slice(0, 10),
   municipality_name: MUNICIPALITY.name,
   municipality_city: MUNICIPALITY.city,
   ward_no: "",
@@ -350,7 +342,8 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
             <div>चलानी नं. : <span class="value">${form.chalan_no || ""}</span></div>
           </div>
           <div style="text-align:right">
-            <div>मिति : <strong>२०८२-०८-०६</strong></div>
+            <div>मिति : <strong>${form.issue_date || ""}</strong></div>
+            <div>ने.सं : <strong>${form.nepali_date_label || ""}</strong></div>
           </div>
         </div>
 
@@ -472,9 +465,27 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
           </div>
           <div className="daic-meta-right">
             <p>
-              मिति : <span className="daic-bold">२०८२-०८-०६</span>
+              मिति :
+              <input
+                name="issue_date"
+                type="date"
+                className="daic-dotted-input daic-w-small"
+                value={form.issue_date || ""}
+                onChange={handleChange}
+              />
             </p>
-            <p>ने.सं - 1146 पोहेलाथ्व, 1 आइतबार</p>
+            <p>
+              ने.सं :
+              <input
+                name="nepali_date_label"
+                type="text"
+                className="daic-dotted-input"
+                style={{ width: "220px" }}
+                placeholder="जस्तै: 1146 थिंलागा, 30 शनिबार"
+                value={form.nepali_date_label || ""}
+                onChange={handleChange}
+              />
+            </p>
           </div>
         </div>
 

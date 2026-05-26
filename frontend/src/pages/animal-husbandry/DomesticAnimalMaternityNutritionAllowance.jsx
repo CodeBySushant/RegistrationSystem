@@ -129,11 +129,6 @@ const STYLES = `
   }
   .damn-designation-select { width: 100%; padding: 5px; border: 1px solid #ccc; background: #fff; font-family: inherit; }
 
-  .damn-container .applicant-details-box .detail-input {
-    max-width: 400px;
-    width: 100%;
-  }
-
   /* --- Footer --- */
   .damn-footer { text-align: center; margin-top: 40px; }
   .damn-save-print-btn {
@@ -183,6 +178,7 @@ const initialState = {
   chalan_no: "",
   subject: "गाई / भैंसी सुत्केरी पोषण भत्ता उपलब्ध गरिदिने बारे ।",
   issue_date: new Date().toISOString().slice(0, 10),
+  nepali_date_label: "", 
   district: MUNICIPALITY.district,
   municipality_name_header: MUNICIPALITY.name,
   municipality_name_body: MUNICIPALITY.name,
@@ -319,6 +315,7 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
         </div>
         <div style="text-align:right">
           <div>मिति : <strong>${form.issue_date || ""}</strong></div>
+          <div>ने.सं : <strong>${form.nepali_date_label || ""}</strong></div>
         </div>
       </div>
 
@@ -436,12 +433,25 @@ const DomesticAnimalMaternityNutritionAllowance = () => {
             <p>
               मिति :
               <input
-                readOnly
+                name="issue_date"
+                type="date"
                 className="damn-dotted-input damn-w-small"
-                value={toNepaliDigits(form.issue_date || "")}
+                value={form.issue_date || ""}
+                onChange={handleChange}
               />
             </p>
-            <p>ने.सं - 1146 थिंलागा, 30 शनिबार</p>
+            <p>
+              ने.सं :
+              <input
+                name="nepali_date_label"
+                type="text"
+                className="damn-dotted-input"
+                style={{ width: "220px" }}
+                placeholder="जस्तै: 1146 थिंलागा, 30 शनिबार"
+                value={form.nepali_date_label || ""}
+                onChange={handleChange}
+              />
+            </p>
           </div>
         </div>
 
