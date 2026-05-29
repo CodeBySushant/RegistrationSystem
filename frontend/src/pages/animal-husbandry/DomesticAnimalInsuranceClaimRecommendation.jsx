@@ -316,7 +316,9 @@ const DomesticAnimalInsuranceClaimRecommendation = () => {
           .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
           .addressee { margin-bottom: 16px; font-size: 11pt; }
           .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 24px; }
-          .value { font-weight: bold; padding: 0 4px; display: inline-block; min-width: 60px; }
+          /* value spans size to content — no fixed min-width so small values
+             don't leave big gaps and long values don't get clipped/merged */
+          .value { font-weight: bold; padding: 0 4px; white-space: nowrap; }
           .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
           .sig-block { width: 200px; text-align: center; }
           .sig-line { border-top: 1px solid #000; padding-top: 6px; margin-bottom: 4px; }
