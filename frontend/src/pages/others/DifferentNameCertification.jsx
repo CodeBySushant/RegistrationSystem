@@ -1,11 +1,14 @@
 // DifferentNameCertification.jsx
 import React, { useState } from "react";
-import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Styles (merged from DifferentNameCertification.css)
-   All classes prefixed with "dnc-" to avoid global collisions.
+   Styles
 ───────────────────────────────────────────────────────────────────────────── */
 const STYLES = `
   /* ── Container ── */
@@ -40,6 +43,9 @@ const STYLES = `
   }
   .dnc-breadcrumb { font-size: 0.9rem; color: #777; font-weight: normal; }
 
+  /* ── Header ── */
+  .dnc-header { text-align: center; margin-bottom: 28px; position: relative; min-height: 90px; }
+
   /* ── Meta ── */
   .dnc-meta-row {
     display: flex;
@@ -50,33 +56,38 @@ const STYLES = `
   .dnc-meta-left p,
   .dnc-meta-right p { margin: 5px 0; }
 
-  .dnc-dotted-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+  /* ── Shared inputs — white bg with border radius ── */
+  .dnc-dotted-input,
+  .dnc-line-input,
+  .dnc-inline-input {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 3px;
     outline: none;
-    padding: 2px 5px;
+    padding: 4px 8px;
     font-family: inherit;
     font-size: 1rem;
+    margin: 0 4px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .dnc-dotted-input:focus,
+  .dnc-line-input:focus,
+  .dnc-inline-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
   }
   .dnc-w-small  { width: 120px; }
   .dnc-w-medium { width: 200px; }
   .dnc-w-long   { width: 300px; }
+  .dnc-full-width { width: 100%; }
+  .dnc-w-tiny   { width: 44px;  text-align: center; }
+  .dnc-w-sm-box { width: 100px; }
+  .dnc-w-md-box { width: 180px; }
 
   /* ── Addressee ── */
   .dnc-addressee     { margin-bottom: 20px; font-size: 1.05rem; }
   .dnc-addressee-row { margin-bottom: 8px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-
-  .dnc-line-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    outline: none;
-    padding: 2px 5px;
-    font-family: inherit;
-    font-size: 1rem;
-  }
-  .dnc-full-width { width: 100%; }
 
   /* ── Subject ── */
   .dnc-subject { text-align: center; margin: 24px 0; font-size: 1.1rem; font-weight: bold; }
@@ -88,21 +99,6 @@ const STYLES = `
     text-align: justify;
     margin-bottom: 28px;
   }
-  .dnc-inline-input {
-    border: 1px solid #ccc;
-    background-color: #fff;
-    padding: 4px 8px;
-    border-radius: 3px;
-    margin: 0 4px;
-    font-size: 1rem;
-    outline: none;
-    display: inline-block;
-    vertical-align: middle;
-    font-family: inherit;
-  }
-  .dnc-w-tiny   { width: 44px;  text-align: center; }
-  .dnc-w-sm-box { width: 100px; }
-  .dnc-w-md-box { width: 180px; }
 
   .dnc-inline-select {
     border: 1px solid #ccc;
@@ -135,7 +131,7 @@ const STYLES = `
   }
   .dnc-req-wrap .dnc-inline-input,
   .dnc-req-wrap .dnc-line-input,
-  .dnc-req-wrap input { padding-left: 16px; }
+  .dnc-req-wrap input { padding-left: 18px; }
 
   /* ── Table ── */
   .dnc-table-section    { margin: 16px 0 36px; }
@@ -171,14 +167,16 @@ const STYLES = `
 
   .dnc-table-input {
     width: 90%;
-    border: none;
-    background: transparent;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 3px;
     outline: none;
-    padding: 4px;
+    padding: 4px 6px;
     font-size: 0.95rem;
     color: #c0392b;
     font-family: inherit;
   }
+  .dnc-table-input:focus { border-color: #2563eb; }
   .dnc-last-col .dnc-table-input { flex: 1; width: auto; }
 
   .dnc-add-row-btn {
@@ -224,45 +222,6 @@ const STYLES = `
     font-size: 0.95rem;
   }
 
-  /* ── Applicant Details overrides ── */
-  .dnc-container .applicant-details-box {
-    border: 1px solid #ddd;
-    padding: 20px;
-    background-color: rgba(255,255,255,0.4);
-    margin-top: 20px;
-    border-radius: 4px;
-  }
-  .dnc-container .applicant-details-box h3 {
-    color: #777;
-    font-size: 1.05rem;
-    margin: 0 0 14px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-  }
-  .dnc-container .applicant-details-box .details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  @media (max-width: 600px) {
-    .dnc-container .applicant-details-box .details-grid { grid-template-columns: 1fr; }
-  }
-  .dnc-container .detail-group { display: flex; flex-direction: column; gap: 4px; }
-  .dnc-container .detail-group label { font-size: 0.88rem; font-weight: bold; color: #333; }
-  .dnc-container .detail-input {
-    border: 1px solid #ddd;
-    padding: 8px 10px;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: inherit;
-    font-size: 0.95rem;
-    outline: none;
-  }
-  .dnc-container .detail-input:focus { border-color: #aaa; }
-  .dnc-container .bg-gray  { background-color: #eef2f5; }
-  .dnc-container .required { color: red; margin-left: 2px; }
-
   /* ── Footer ── */
   .dnc-footer { text-align: center; margin-top: 36px; }
   .dnc-save-print-btn {
@@ -298,47 +257,13 @@ const STYLES = `
     border-top: 1px solid #eee;
     padding-top: 10px;
   }
-
-  /* ── Print ── */
-  @media print {
-    body * { visibility: hidden; }
-    .dnc-container,
-    .dnc-container * { visibility: visible; }
-    .dnc-container {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 20px 40px;
-      background: white;
-    }
-    .dnc-footer,
-    .dnc-add-row-btn,
-    .dnc-rm-row-btn { display: none !important; }
-    .dnc-inline-input,
-    .dnc-line-input,
-    .dnc-dotted-input,
-    .dnc-table-input,
-    .dnc-container .detail-input {
-      border: none !important;
-      background: transparent !important;
-    }
-    select { border: none !important; background: transparent !important; }
-    input  {
-      color: #000 !important;
-      -webkit-text-fill-color: #000 !important;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-  }
 `;
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Constants
 ───────────────────────────────────────────────────────────────────────────── */
 const FORM_KEY = "different-name-certification";
+const API_URL  = `/api/forms/${FORM_KEY}`;
 
 const emptyRow = () => ({
   id: Date.now() + Math.random(),
@@ -353,70 +278,33 @@ const INITIAL_FORM = {
   reference_no: "",
   date_bs: "२०८२-०८-०६",
   municipality: MUNICIPALITY.name,
-  previous_unit_type: "",   // BUG FIX: was bound to BOTH a text input AND a select
-  previous_ward: "",        // now only the select controls this field
+  previous_unit_type: "",
+  previous_ward: "",
   salutation: "श्री",
   applicant_name: "",
+  recommender_address: "",
   rows: [emptyRow()],
   recommender_name: "",
   recommender_designation: "",
-  applicantName: "",
-  applicantAddress: "",
-  applicantCitizenship: "",
-  applicantPhone: "",
-};
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Inline API helper with Authorization header
-───────────────────────────────────────────────────────────────────────────── */
-const apiPost = async (url, body) => {
-  try {
-    const token =
-      localStorage.getItem("authToken") ||
-      localStorage.getItem("token") ||
-      sessionStorage.getItem("authToken") ||
-      sessionStorage.getItem("token") ||
-      "";
-
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      let errMsg = `Server error: ${res.status}`;
-      try {
-        const errData = await res.json();
-        errMsg = errData?.message || errData?.error || errMsg;
-      } catch (_) { /* response body is not JSON */ }
-      return { data: null, error: errMsg };
-    }
-
-    const data = await res.json();
-    return { data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message || "Network error" };
-  }
+  // Applicant footer details — snake_case to match ApplicantDetailsNp
+  applicant_full_name: "",
+  applicant_address: "",
+  applicant_citizenship_no: "",
+  applicant_phone: "",
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Component
 ───────────────────────────────────────────────────────────────────────────── */
 const DifferentNameCertification = () => {
-  const [form, setForm]     = useState(INITIAL_FORM);
+  const { form, setForm, handleChange } = useWardForm(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg]       = useState(null);
+  const [msg, setMsg] = useState(null);
+  const { user } = useAuth();
 
   /* ── Helpers ── */
   const update = (key) => (e) =>
     setForm((s) => ({ ...s, [key]: e.target.value }));
-
-  const handleChange = (e) =>
-    setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
 
   const updateRow = (idx, key) => (e) =>
     setForm((s) => ({
@@ -434,30 +322,29 @@ const DifferentNameCertification = () => {
 
   /* ── Validation ── */
   const validate = () => {
-    if (!form.applicant_name.trim())      return "कृपया निवेदकको नाम (माथि) प्रविष्ट गर्नुहोस्।";
-    if (!form.recommender_name.trim())    return "सिफारिसकर्ताको नाम प्रविष्ट गर्नुहोस्।";
-    if (!form.recommender_designation)    return "सिफारिसकर्ताको पद छनौट गर्नुहोस्।";
-    if (form.rows.length === 0)           return "कागजातको तालिका खाली हुन सक्दैन।";
+    if (!form.applicant_name.trim())            return "कृपया निवेदकको नाम (माथि) प्रविष्ट गर्नुहोस्।";
+    if (!form.recommender_name.trim())          return "सिफारिसकर्ताको नाम प्रविष्ट गर्नुहोस्।";
+    if (!form.recommender_designation)          return "सिफारिसकर्ताको पद छनौट गर्नुहोस्।";
+    if (form.rows.length === 0)                 return "कागजातको तालिका खाली हुन सक्दैन।";
     for (const r of form.rows) {
       if (!r.doc.trim() || !r.name_on_doc.trim() || !r.diff_doc.trim() || !r.diff_name.trim())
         return "तालिकाका सबै पंक्तिहरू पूरा गर्नुहोस्।";
     }
-    if (!form.applicantName.trim())       return "निवेदकको नाम (तल) प्रविष्ट गर्नुहोस्।";
-    if (!form.applicantAddress.trim())    return "निवेदकको ठेगाना प्रविष्ट गर्नुहोस्।";
-    if (!form.applicantCitizenship.trim()) return "नागरिकता नं. प्रविष्ट गर्नुहोस्।";
-    if (!form.applicantPhone.trim())      return "फोन नं. प्रविष्ट गर्नुहोस्।";
+    if (!form.applicant_full_name.trim())       return "निवेदकको नाम (तल) प्रविष्ट गर्नुहोस्।";
+    if (!form.applicant_address.trim())         return "निवेदकको ठेगाना प्रविष्ट गर्नुहोस्।";
+    if (!form.applicant_citizenship_no.trim())  return "नागरिकता नं. प्रविष्ट गर्नुहोस्।";
+    if (!form.applicant_phone.trim())           return "फोन नं. प्रविष्ट गर्नुहोस्।";
     return null;
   };
 
-  /* ── Submit ── */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  /* ── Single save — no duplicate POST ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (loading) return;
     setMsg(null);
 
     const err = validate();
     if (err) { setMsg({ type: "error", text: err }); return; }
 
-    // Build payload — strip internal `id` from table rows
     const payload = {
       letter_no:               form.letter_no,
       reference_no:            form.reference_no,
@@ -467,26 +354,175 @@ const DifferentNameCertification = () => {
       previous_ward:           form.previous_ward,
       salutation:              form.salutation,
       applicant_name:          form.applicant_name,
+      recommender_address:     form.recommender_address,
       rows:                    form.rows.map(({ id: _id, ...rest }) => rest),
       recommender_name:        form.recommender_name,
       recommender_designation: form.recommender_designation,
-      applicantName:           form.applicantName,
-      applicantAddress:        form.applicantAddress,
-      applicantCitizenship:    form.applicantCitizenship,
-      applicantPhone:          form.applicantPhone,
+      applicant_full_name:      form.applicant_full_name,
+      applicant_address:        form.applicant_address,
+      applicant_citizenship_no: form.applicant_citizenship_no,
+      applicant_phone:          form.applicant_phone,
     };
 
     setLoading(true);
-    const { data, error } = await apiPost(`/api/forms/${FORM_KEY}`, payload);
-    setLoading(false);
-
-    if (error) {
-      setMsg({ type: "error", text: error });
-    } else {
-      setMsg({ type: "success", text: `सेभ भयो (id: ${data?.id ?? "unknown"})` });
-      // Wait for success message to render, then open print preview
-      setTimeout(() => window.print(), 300);
+    try {
+      const res = await axios.post(API_URL, payload);
+      if (shouldPrint) {
+        handleCleanPrint();
+      } else {
+        setMsg({ type: "success", text: `सेभ भयो (id: ${res.data?.id ?? "unknown"})` });
+      }
+      setForm(INITIAL_FORM);
+    } catch (err) {
+      const text =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "सेभ गर्न असफल भयो।";
+      setMsg({ type: "error", text });
+    } finally {
+      setLoading(false);
     }
+  };
+
+  /* ── Clean print — isolated window, values sized to content ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
+
+    const esc = (v) =>
+      String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    const rowsHtml = form.rows
+      .map(
+        (r) => `
+          <tr>
+            <td>${esc(r.doc)}</td>
+            <td>${esc(r.name_on_doc)}</td>
+            <td>${esc(r.diff_doc)}</td>
+            <td>${esc(r.diff_name)}</td>
+          </tr>`
+      )
+      .join("");
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>फरक फरक नाम र थर सिफारिस</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000; background: white;
+            padding: 15mm 20mm; font-size: 11pt; line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .addressee { margin-bottom: 16px; }
+          .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 20px; }
+          /* value sizes to content — short values inline, long ones wrap cleanly */
+          .value { font-weight: bold; padding: 0 4px; }
+          .value-inline { white-space: nowrap; }
+          table.rows { width: 100%; border-collapse: collapse; border: 1px solid #555; margin: 16px 0; }
+          table.rows th { background: #e0e0e0; border: 1px solid #555; padding: 8px; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          table.rows td { border: 1px solid #555; padding: 6px 8px; font-size: 10pt; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
+          .sig-block { width: 210px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${esc(MUNICIPALITY.name)}</div>
+          <div class="ward-title">${esc(wardTitle)}</div>
+          <div class="addr">${esc(MUNICIPALITY.officeLine)}</div>
+          <div class="addr">${esc(MUNICIPALITY.provinceLine)}</div>
+        </div>
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value value-inline">${esc(form.letter_no)}</span></div>
+            <div>चलानी नं. : <span class="value value-inline">${esc(form.reference_no)}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value value-inline">${esc(form.date_bs)}</span></div>
+          </div>
+        </div>
+
+        <div class="addressee">
+          श्री <span class="value">${esc(form.recommender_name)}</span><br/>
+          <span class="value">${esc(form.recommender_designation)}</span>${
+            form.recommender_address ? `<br/><span class="value">${esc(form.recommender_address)}</span>` : ""
+          }
+        </div>
+
+        <div class="subject">विषय: फरक फरक नाम र थर सिफारिस ।</div>
+
+        <div class="body-text">
+          उपरोक्त विषयमा
+          <span class="value">${esc(form.municipality)}</span>
+          वडा नं. <span class="value value-inline">१</span>
+          (साविक <span class="value value-inline">${esc(form.previous_unit_type)}</span>,
+          वडा नं. <span class="value value-inline">${esc(form.previous_ward)}</span>)
+          निवासी <span class="value value-inline">${esc(form.salutation)}</span>
+          <span class="value">${esc(form.applicant_name)}</span>
+          को तल उल्लेखित कागजात अनुसार नाम थर फरक भएकोले सिफारिस गरिन्छ ।
+        </div>
+
+        <table class="rows">
+          <thead>
+            <tr>
+              <th>कागजात</th>
+              <th>नाम थर</th>
+              <th>फरक भएको कागजात</th>
+              <th>फरक भएको नाम थर</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${esc(form.recommender_name)}</div>
+            <div>${esc(form.recommender_designation)}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row"><span class="field-label">नाम:</span><span>${esc(form.applicant_full_name)}</span></div>
+          <div class="field-row"><span class="field-label">ठेगाना:</span><span>${esc(form.applicant_address)}</span></div>
+          <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span>${esc(form.applicant_citizenship_no)}</span></div>
+          <div class="field-row"><span class="field-label">फोन:</span><span>${esc(form.applicant_phone)}</span></div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -496,7 +532,14 @@ const DifferentNameCertification = () => {
     <>
       <style>{STYLES}</style>
 
-      <form className="dnc-container" onSubmit={handleSubmit} noValidate>
+      <form
+        className="dnc-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+        noValidate
+      >
 
         {/* ── Top Bar ── */}
         <div className="dnc-top-bar">
@@ -504,10 +547,23 @@ const DifferentNameCertification = () => {
           <span className="dnc-breadcrumb">अन्य &gt; फरक फरक नाम र थर सिफारिस</span>
         </div>
 
+        {/* ── Header ── */}
+        <div className="dnc-header">
+          <MunicipalityHeader formTitle="फरक फरक नाम र थर सिफारिस" />
+        </div>
+
         {/* ── Meta ── */}
         <div className="dnc-meta-row">
           <div className="dnc-meta-left">
-            <p>पत्र संख्या : <span className="dnc-bold">{form.letter_no}</span></p>
+            <p>
+              पत्र संख्या :{" "}
+              <input
+                type="text"
+                className="dnc-dotted-input dnc-w-small"
+                value={form.letter_no}
+                onChange={update("letter_no")}
+              />
+            </p>
             <p>
               चलानी नं. :{" "}
               <input
@@ -559,6 +615,8 @@ const DifferentNameCertification = () => {
             <input
               type="text"
               className="dnc-line-input dnc-w-long"
+              value={form.recommender_address}
+              onChange={update("recommender_address")}
               placeholder="ठेगाना"
             />
           </div>
@@ -580,11 +638,6 @@ const DifferentNameCertification = () => {
               onChange={update("municipality")}
             />{" "}
             वडा नं. <span className="dnc-bold">१</span> (साविक{" "}
-            {/*
-              BUG FIX: original had BOTH a text <input> AND a <select> bound to
-              previous_unit_type — they conflicted with each other.
-              Removed the redundant text input; only the <select> remains.
-            */}
             <select
               className="dnc-inline-select"
               value={form.previous_unit_type}
@@ -611,7 +664,7 @@ const DifferentNameCertification = () => {
               <option>सुश्री</option>
               <option>श्रीमती</option>
             </select>
-            <div className="dnc-req-wrap">
+            <span className="dnc-req-wrap">
               <span className="dnc-req-star">*</span>
               <input
                 type="text"
@@ -620,7 +673,7 @@ const DifferentNameCertification = () => {
                 onChange={update("applicant_name")}
                 placeholder="निवेदकको नाम"
               />
-            </div>{" "}
+            </span>{" "}
             को तल उल्लेखित कागजात अनुसार नाम थर फरक भएकोले सिफारिस गरिन्छ ।
           </p>
         </div>
@@ -724,10 +777,24 @@ const DifferentNameCertification = () => {
         {/* ── Applicant Details ── */}
         <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        {/* ── Footer ── */}
+        {/* ── Footer buttons ── */}
         <div className="dnc-footer">
-          <button className="dnc-save-print-btn" type="submit" disabled={loading}>
-            {loading ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          <button
+            type="submit"
+            className="dnc-save-print-btn"
+            disabled={loading}
+            style={{ marginRight: 12 }}
+          >
+            {loading ? "सेभ गर्दै..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="dnc-save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "सेभ गर्दै..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
