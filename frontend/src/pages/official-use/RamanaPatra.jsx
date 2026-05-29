@@ -349,9 +349,9 @@ const NUMBERED_POINTS = [
 ];
 
 const INITIAL_FORM = {
-  letter_no:    "२०८२/८३",
-  reference_no: "",
-  date:         "२०८२-१२-१८",
+  letter_no:      "",
+  reference_no:      "",
+  date:              "",
   recipient_name:    "",
   recipient_address: "",
   decision_no:       "",
