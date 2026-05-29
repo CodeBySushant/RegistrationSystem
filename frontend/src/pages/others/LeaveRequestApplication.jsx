@@ -2,10 +2,13 @@
 import React, { useState } from "react";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import MunicipalityHeader from "../../components/MunicipalityHeader";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Styles (merged from LeaveRequestApplication.css)
-   All classes prefixed with "lra-" to avoid global collisions.
+   Styles
 ───────────────────────────────────────────────────────────────────────────── */
 const STYLES = `
   /* ── Container ── */
@@ -124,7 +127,7 @@ const STYLES = `
     flex-wrap: wrap;
   }
   .lra-form-group label { white-space: nowrap; font-size: 1rem; flex-shrink: 0; }
-  .lra-date-range-group { column-span: all; }
+  .lra-date-range-group { grid-column: 1 / -1; }
   .lra-range-sep        { font-size: 0.95rem; flex-shrink: 0; margin: 0 2px; }
   .lra-reason-label-group { align-items: flex-start; }
 
@@ -213,43 +216,6 @@ const STYLES = `
     border-top: 1px solid #eee;
     padding-top: 10px;
   }
-
-  /* ── Print ── */
-  @media print {
-    body * { visibility: hidden; }
-    .lra-container,
-    .lra-container * { visibility: visible; }
-    .lra-container {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 20px 40px;
-      background: white;
-      min-height: unset;
-    }
-    .lra-footer,
-    .lra-msg { display: none !important; }
-    .lra-dotted-input,
-    .lra-reason-textarea {
-      border: none !important;
-      background: transparent !important;
-      color: #000 !important;
-      -webkit-text-fill-color: #000 !important;
-    }
-    .lra-leave-table th {
-      background-color: #ccc !important;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    .lra-row-selected {
-      background-color: #f5f5f5 !important;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-  }
 `;
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -281,50 +247,21 @@ const INITIAL_FORM = {
     selected: false,
     requested_days: "",
   })),
-};
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   API helper with Authorization header
-───────────────────────────────────────────────────────────────────────────── */
-const apiPost = async (url, body) => {
-  try {
-    const token =
-      localStorage.getItem("auth_token") ||
-      sessionStorage.getItem("auth_token") ||
-      (typeof window !== "undefined" && window.__AUTH_TOKEN__) ||
-      "";
-
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      return {
-        data: null,
-        error: errData?.message || `Error ${res.status}: ${res.statusText}`,
-      };
-    }
-
-    const data = await res.json().catch(() => ({}));
-    return { data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message || "Network error" };
-  }
+  // Applicant footer details
+  applicant_name: "",
+  applicant_address: "",
+  applicant_citizenship_no: "",
+  applicant_phone: "",
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Component
 ───────────────────────────────────────────────────────────────────────────── */
 const LeaveRequestApplication = ({ employees = [] }) => {
-  const [form, setForm]     = useState(INITIAL_FORM);
+  const { form, setForm, handleChange } = useWardForm(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg]       = useState(null);
+  const [msg, setMsg] = useState(null);
+  const { user } = useAuth();
 
   /* ── Helpers ── */
   const update = (key) => (e) =>
@@ -375,9 +312,9 @@ const LeaveRequestApplication = ({ employees = [] }) => {
     return null;
   };
 
-  /* ── Submit ── */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  /* ── Single save — no duplicate POST ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (loading) return;
     setMsg(null);
 
     const err = validate();
@@ -397,19 +334,165 @@ const LeaveRequestApplication = ({ employees = [] }) => {
       leave_choices: form.leave_choices
         .filter((c) => c.selected)
         .map(({ key, label, requested_days }) => ({ key, label, requested_days })),
+      applicant_name:           form.applicant_name,
+      applicant_address:        form.applicant_address,
+      applicant_citizenship_no: form.applicant_citizenship_no,
+      applicant_phone:          form.applicant_phone,
     };
 
     setLoading(true);
-    const { data, error } = await apiPost(`/api/forms/${FORM_KEY}`, payload);
-    setLoading(false);
-
-    if (error) {
-      setMsg({ type: "error", text: error });
-    } else {
-      setMsg({ type: "success", text: `सेभ भयो (id: ${data?.id ?? "unknown"})` });
-      // Wait for success message to render, then open print preview
-      setTimeout(() => window.print(), 300);
+    try {
+      const res = await axios.post(`/api/forms/${FORM_KEY}`, payload);
+      if (shouldPrint) {
+        handleCleanPrint();
+      } else {
+        setMsg({ type: "success", text: `सेभ भयो (id: ${res.data?.id ?? "unknown"})` });
+      }
+      setForm(INITIAL_FORM);
+    } catch (err) {
+      const text =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
+      setMsg({ type: "error", text });
+    } finally {
+      setLoading(false);
     }
+  };
+
+  /* ── Clean print — isolated window, values sized to content ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
+
+    const esc = (v) =>
+      String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    const selectedRows = form.leave_choices
+      .filter((c) => c.selected)
+      .map(
+        (c) => `
+          <tr>
+            <td>${esc(c.label)}</td>
+            <td style="text-align:center">${esc(c.requested_days)}</td>
+          </tr>`
+      )
+      .join("");
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>बिदाको निवेदन</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000; background: white;
+            padding: 15mm 20mm; font-size: 11pt; line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          /* value sizes to content — no fixed min-width, no forced nowrap on long text */
+          .value { font-weight: bold; padding: 0 4px; }
+          .value-inline { white-space: nowrap; }
+          .field-line { margin: 10px 0; }
+          .reason-block { margin: 18px 0; text-align: justify; }
+          table.leave { width: 100%; border-collapse: collapse; border: 1px solid #555; margin-top: 16px; }
+          table.leave th { background: #ccc; border: 1px solid #555; padding: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          table.leave td { border: 1px solid #555; padding: 7px 10px; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
+          .sig-block { width: 200px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${esc(MUNICIPALITY.name)}</div>
+          <div class="ward-title">${esc(wardTitle)}</div>
+          <div class="addr">${esc(MUNICIPALITY.officeLine)}</div>
+          <div class="addr">${esc(MUNICIPALITY.provinceLine)}</div>
+        </div>
+
+        <div class="meta">
+          <div>पत्र संख्या : <span class="value value-inline">${esc(form.letter_no)}</span></div>
+          <div>मिति : <span class="value value-inline">${esc(form.date_bs)}</span></div>
+        </div>
+
+        <div class="subject">विषय: बिदाको निवेदन</div>
+
+        <div class="field-line">
+          कर्मचारीको नाम <span class="value">${esc(form.employee_name)}</span>,
+          पद <span class="value">${esc(form.position)}</span>,
+          फोन नं. <span class="value value-inline">${esc(form.phone)}</span>
+        </div>
+
+        <div class="field-line">
+          बिदाको मिति <span class="value value-inline">${esc(form.leave_from_bs)}</span>
+          देखि <span class="value value-inline">${esc(form.leave_to_bs)}</span> सम्म,
+          हाल माँगेको बिदाको अवधि <span class="value value-inline">${esc(form.leave_days)}</span> दिन।
+        </div>
+
+        ${
+          form.reason?.trim()
+            ? `<div class="reason-block">कारण: <span class="value">${esc(form.reason)}</span></div>`
+            : ""
+        }
+
+        <table class="leave">
+          <thead>
+            <tr>
+              <th style="width:70%">माँगेको बिदाको किसिम</th>
+              <th style="width:30%">बिदाको अवधि (दिन)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${selectedRows}
+          </tbody>
+        </table>
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${esc(form.employee_name)}</div>
+            <div>${esc(form.position)}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row"><span class="field-label">नाम:</span><span>${esc(form.applicant_name)}</span></div>
+          <div class="field-row"><span class="field-label">ठेगाना:</span><span>${esc(form.applicant_address)}</span></div>
+          <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span>${esc(form.applicant_citizenship_no)}</span></div>
+          <div class="field-row"><span class="field-label">फोन:</span><span>${esc(form.applicant_phone)}</span></div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -419,7 +502,14 @@ const LeaveRequestApplication = ({ employees = [] }) => {
     <>
       <style>{STYLES}</style>
 
-      <form className="lra-container" onSubmit={handleSubmit} noValidate>
+      <form
+        className="lra-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+        noValidate
+      >
 
         {/* ── Top Bar ── */}
         <div className="lra-top-bar">
@@ -428,12 +518,22 @@ const LeaveRequestApplication = ({ employees = [] }) => {
         </div>
 
         {/* ── Header ── */}
-        <MunicipalityHeader formTitle="बिदाको निवेदन" />
+        <div className="lra-header">
+          <MunicipalityHeader formTitle="बिदाको निवेदन" />
+        </div>
 
         {/* ── Meta row ── */}
         <div className="lra-meta-row">
           <div className="lra-meta-left">
-            <p>पत्र संख्या : <span className="lra-bold">{form.letter_no}</span></p>
+            <p>
+              पत्र संख्या :{" "}
+              <input
+                type="text"
+                className="lra-dotted-input lra-medium-width"
+                value={form.letter_no}
+                onChange={update("letter_no")}
+              />
+            </p>
           </div>
           <div className="lra-meta-right">
             <p>
@@ -466,89 +566,71 @@ const LeaveRequestApplication = ({ employees = [] }) => {
                 ))}
               </select>
             ) : (
-              <div className="lra-star-wrap">
-                <span className="lra-star">*</span>
-                <input
-                  type="text"
-                  className="lra-dotted-input lra-full-width"
-                  value={form.employee_name}
-                  onChange={update("employee_name")}
-                  placeholder="कर्मचारीको नाम"
-                />
-              </div>
+              <input
+                type="text"
+                className="lra-dotted-input lra-full-width"
+                value={form.employee_name}
+                onChange={update("employee_name")}
+                placeholder="कर्मचारीको नाम"
+              />
             )}
           </div>
 
           {/* Position */}
           <div className="lra-form-group">
             <label>पद : <span className="lra-req">*</span></label>
-            <div className="lra-star-wrap">
-              <span className="lra-star">*</span>
-              <input
-                type="text"
-                className="lra-dotted-input lra-full-width"
-                value={form.position}
-                onChange={update("position")}
-                placeholder="पद"
-              />
-            </div>
+            <input
+              type="text"
+              className="lra-dotted-input lra-full-width"
+              value={form.position}
+              onChange={update("position")}
+              placeholder="पद"
+            />
           </div>
 
           {/* Phone */}
           <div className="lra-form-group">
             <label>फोन न. : <span className="lra-req">*</span></label>
-            <div className="lra-star-wrap">
-              <span className="lra-star">*</span>
-              <input
-                type="text"
-                className="lra-dotted-input lra-medium-width"
-                value={form.phone}
-                onChange={update("phone")}
-                placeholder="फोन नं."
-              />
-            </div>
+            <input
+              type="text"
+              className="lra-dotted-input lra-medium-width"
+              value={form.phone}
+              onChange={update("phone")}
+              placeholder="फोन नं."
+            />
           </div>
 
           {/* Leave date range */}
           <div className="lra-form-group lra-date-range-group">
-            <label>बिदाको मिति :</label>
-            <div className="lra-star-wrap">
-              <span className="lra-star">*</span>
-              <input
-                type="text"
-                className="lra-dotted-input lra-small-width"
-                value={form.leave_from_bs}
-                onChange={update("leave_from_bs")}
-                placeholder="देखि"
-              />
-            </div>
+            <label>बिदाको मिति : <span className="lra-req">*</span></label>
+            <input
+              type="text"
+              className="lra-dotted-input lra-small-width"
+              value={form.leave_from_bs}
+              onChange={update("leave_from_bs")}
+              placeholder="देखि"
+            />
             <span className="lra-range-sep">देखि</span>
-            <div className="lra-star-wrap">
-              <span className="lra-star">*</span>
-              <input
-                type="text"
-                className="lra-dotted-input lra-small-width"
-                value={form.leave_to_bs}
-                onChange={update("leave_to_bs")}
-                placeholder="सम्म"
-              />
-            </div>
+            <input
+              type="text"
+              className="lra-dotted-input lra-small-width"
+              value={form.leave_to_bs}
+              onChange={update("leave_to_bs")}
+              placeholder="सम्म"
+            />
             <span className="lra-range-sep">सम्म</span>
           </div>
 
           {/* Leave days */}
           <div className="lra-form-group">
             <label>हाल माँगेको बिदाको अवधि : <span className="lra-req">*</span></label>
-            <div className="lra-star-wrap">
-              <span className="lra-star">*</span>
-              <input
-                type="text"
-                className="lra-dotted-input lra-small-width"
-                value={form.leave_days}
-                onChange={update("leave_days")}
-                placeholder="दिन"
-              />
-            </div>
+            <input
+              type="text"
+              className="lra-dotted-input lra-small-width"
+              value={form.leave_days}
+              onChange={update("leave_days")}
+              placeholder="दिन"
+            />
             <span style={{ marginLeft: 6 }}>दिन</span>
           </div>
 
@@ -592,26 +674,14 @@ const LeaveRequestApplication = ({ employees = [] }) => {
                   </td>
                   <td>{c.label}</td>
                   <td>
-                    {c.selected ? (
-                      <div className="lra-star-wrap">
-                        <span className="lra-star">*</span>
-                        <input
-                          type="text"
-                          className="lra-dotted-input lra-small-width"
-                          value={c.requested_days}
-                          onChange={updateLeaveDays(idx)}
-                          placeholder="दिन"
-                        />
-                      </div>
-                    ) : (
-                      <input
-                        type="text"
-                        className="lra-dotted-input lra-small-width"
-                        value=""
-                        disabled
-                        readOnly
-                      />
-                    )}
+                    <input
+                      type="text"
+                      className="lra-dotted-input lra-small-width"
+                      value={c.selected ? c.requested_days : ""}
+                      onChange={updateLeaveDays(idx)}
+                      disabled={!c.selected}
+                      placeholder="दिन"
+                    />
                   </td>
                 </tr>
               ))}
@@ -619,10 +689,27 @@ const LeaveRequestApplication = ({ employees = [] }) => {
           </table>
         </div>
 
-        {/* ── Footer ── */}
+        {/* ── Applicant Details ── */}
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
+
+        {/* ── Footer buttons ── */}
         <div className="lra-footer">
-          <button className="lra-save-print-btn" type="submit" disabled={loading}>
-            {loading ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          <button
+            type="submit"
+            className="lra-save-print-btn"
+            disabled={loading}
+            style={{ marginRight: 12 }}
+          >
+            {loading ? "सेभ गर्दै..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="lra-save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "सेभ गर्दै..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
