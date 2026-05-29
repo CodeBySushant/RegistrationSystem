@@ -5,10 +5,10 @@ import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Styles (merged from NepaliLanguage.css)
-   All classes prefixed with "nl-" to avoid global collisions.
+   Styles — all classes prefixed with "nl-" to avoid global collisions.
 ───────────────────────────────────────────────────────────────────────────── */
 const STYLES = `
   /* ── Container ── */
@@ -42,33 +42,28 @@ const STYLES = `
   }
   .nl-breadcrumb { font-size: 0.9rem; color: #777; font-weight: normal; }
 
-  /* ── Header ── */
-  .nl-header { text-align: center; margin-bottom: 20px; position: relative; }
-  .nl-header-logo img { position: absolute; left: 0; top: 0; width: 80px; }
-  .nl-header-text { display: flex; flex-direction: column; align-items: center; }
-  .nl-municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
-  .nl-ward-title        { color: #e74c3c; font-size: 1.6rem; margin: 5px 0; font-weight: bold; }
-  .nl-address-text,
-  .nl-province-text     { color: #e74c3c; margin: 0; font-size: 1rem; }
+  .nl-header-row { margin-bottom: 16px; }
 
   /* ── Meta ── */
   .nl-meta-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1rem; }
-  .nl-meta-item { margin: 5px 0; }
+  .nl-meta-left, .nl-meta-right { display: flex; flex-direction: column; gap: 6px; }
+  .nl-meta-right { align-items: flex-end; }
+  .nl-meta-item { margin: 5px 0; display: flex; align-items: center; gap: 4px; }
 
   .nl-dotted-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
     outline: none;
-    padding: 2px 5px;
+    padding: 4px 6px;
     font-family: inherit;
     font-size: 1rem;
   }
+  .nl-dotted-input:focus { border-color: #2563eb; }
   .nl-w-small  { width: 120px; }
   .nl-w-medium { width: 260px; }
   .nl-w-long   { width: 320px; }
   .nl-w-full   { width: 100%; }
-  .nl-nepali-date { font-size: 0.9rem; color: #555; margin: 3px 0; }
 
   /* ── Required-star wrapper ── */
   .nl-req-wrap {
@@ -89,14 +84,16 @@ const STYLES = `
   }
   .nl-req-wrap input { padding-left: 16px; }
 
-  /* ── Subject ── */
+  /* ── Subject — centered ── */
   .nl-subject {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     margin: 20px 0;
     font-size: 1rem;
     font-weight: bold;
+    text-align: center;
   }
 
   /* ── Addressee ── */
@@ -109,7 +106,7 @@ const STYLES = `
     border: 1px solid #ddd;
     border-radius: 4px;
     overflow: hidden;
-    background: rgba(255,255,255,0.6);
+    background: #fff;
   }
   .nl-editor-toolbar {
     background: #f5f5f5;
@@ -127,7 +124,7 @@ const STYLES = `
     border: none;
     outline: none;
     resize: vertical;
-    background: transparent;
+    background: #fff;
     line-height: 1.8;
     min-height: 220px;
   }
@@ -144,16 +141,17 @@ const STYLES = `
   .nl-full-textarea {
     width: 100%;
     box-sizing: border-box;
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
     font-family: inherit;
     font-size: 1rem;
     resize: vertical;
     outline: none;
-    padding: 4px;
+    padding: 6px;
     margin-top: 4px;
   }
+  .nl-full-textarea:focus { border-color: #2563eb; }
 
   /* ── Signature ── */
   .nl-signature-container { display: flex; justify-content: flex-end; margin-top: 50px; margin-bottom: 30px; }
@@ -162,13 +160,16 @@ const STYLES = `
   .nl-sig-name-input {
     width: 100%;
     margin-bottom: 6px;
-    border: none;
-    border-bottom: 1px solid #000;
-    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
     outline: none;
     font-family: inherit;
     font-size: 1rem;
+    padding: 4px 6px;
+    box-sizing: border-box;
   }
+  .nl-sig-name-input:focus { border-color: #2563eb; }
   .nl-designation-select {
     width: 100%;
     padding: 5px;
@@ -206,12 +207,12 @@ const STYLES = `
     padding: 8px;
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: #fff;
   }
 
   /* ── Footer ── */
   .nl-footer { text-align: center; margin-top: 36px; }
   .nl-save-print-btn {
-    background-color: #2c3e50;
     color: white;
     padding: 10px 28px;
     border: none;
@@ -220,7 +221,6 @@ const STYLES = `
     cursor: pointer;
     font-family: inherit;
   }
-  .nl-save-print-btn:hover:not(:disabled) { background-color: #1a252f; }
   .nl-save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
   /* ── Copyright ── */
@@ -232,60 +232,20 @@ const STYLES = `
     border-top: 1px solid #eee;
     padding-top: 10px;
   }
-
-  /* ── Print ── */
-  @media print {
-    body * { visibility: hidden; }
-    .nl-container,
-    .nl-container * { visibility: visible; }
-    .nl-container {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 20px 40px;
-      background: white !important;
-    }
-    .nl-top-bar,
-    .nl-footer,
-    .nl-editor-toolbar,
-    .nl-word-count { display: none !important; }
-    .nl-editor-mock {
-      border: none !important;
-      background: transparent !important;
-    }
-    .nl-editor-textarea,
-    .nl-full-textarea {
-      border: none !important;
-      background: transparent !important;
-      resize: none !important;
-    }
-    input, select, textarea {
-      color: #000 !important;
-      -webkit-text-fill-color: #000 !important;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    input::placeholder,
-    textarea::placeholder { color: transparent !important; }
-  }
 `;
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Initial state
-   BUG FIX: added recipient_post and recipient_address for the two
-   uncontrolled addressee inputs that had no name/value/onChange
 ───────────────────────────────────────────────────────────────────────────── */
 const initialState = {
   patra_sankhya: "२०८२/८३",
   chalani_no: "",
   date_nepali: "२०८२-१२-१८",
+  nepali_sambat: "ने.सं. ११४६ चौलागा, २४ शनिबार",
   subject: "",
   recipient_name: "",
-  recipient_post: "",      // BUG FIX: was uncontrolled (no name/value/onChange)
-  recipient_address: "",   // BUG FIX: was uncontrolled (no name/value/onChange)
+  recipient_post: "",
+  recipient_address: "",
   body_text: "",
   bodartha: "",
   signatory_name: "",
@@ -304,45 +264,173 @@ const NepaliLanguage = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  /* ── Submit ── */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  /* ── Single save function — no duplicate records ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (!form.subject?.trim()) {
+      alert("विषय आवश्यक छ");
+      return;
+    }
+    if (!form.recipient_name?.trim()) {
+      alert("प्राप्तकर्ताको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.signatory_name?.trim()) {
+      alert("हस्ताक्षरकर्ताको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.signatory_designation?.trim()) {
+      alert("पद छनौट गर्नुहोस्");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post("/api/forms/nepali-language", form);
-      if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
+      if (res.status === 201 || res.status === 200) {
+        if (shouldPrint) {
+          handleCleanPrint();
+        } else {
+          alert("सफलतापूर्वक सुरक्षित भयो! ID: " + (res.data?.id ?? ""));
+        }
         setForm(initialState);
       }
     } catch (err) {
-      console.error("Submit error:", err.response || err.message || err);
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
         err.message ||
         "Submission failed";
-      alert("Error: " + msg);
+      alert("त्रुटि: " + msg);
     } finally {
       setLoading(false);
     }
   };
 
-  /* ── Save + Print ── */
-  const handlePrint = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post("/api/forms/nepali-language", form);
-      if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
-        window.print();
-        setForm(initialState);
-      }
-    } catch (err) {
-      console.error("Print error:", err.response || err.message || err);
-      alert("Error saving before print.");
-    } finally {
-      setLoading(false);
-    }
+  /* ── Clean print — isolated window, values interpolated as spans ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>नेपाली पत्र</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+          .meta .nsm { font-size: 9pt; color: #555; margin-top: 3px; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .addressee { margin-bottom: 16px; font-size: 11pt; font-weight: 600; line-height: 1.9; }
+          .body-text { font-size: 11pt; line-height: 2; text-align: justify; margin-bottom: 20px; white-space: pre-wrap; }
+          .bodartha { font-size: 11pt; margin-bottom: 20px; }
+          /* value spans size to content — no fixed min-width so small values
+             don't leave big gaps and long values don't get clipped/merged */
+          .value { font-weight: bold; padding: 0 4px; white-space: nowrap; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
+          .sig-block { width: 220px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; margin-bottom: 4px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+          .field-val { flex: 1; }
+          /* blank signing line — applicant signs here after printing */
+          .sign-hint { font-size: 9pt; color: #777; font-style: italic; margin: 10px 0 6px; }
+          .sign-line { height: 50px; border: 1px solid #ccc; border-radius: 3px; display: flex; align-items: flex-end; padding-bottom: 4px; }
+          .sign-line-label { font-size: 9pt; color: #999; width: 100%; text-align: center; border-top: 1px solid #ccc; margin: 0 8px; padding-top: 3px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="${MUNICIPALITY.logoSrc || "/nepallogo.svg"}" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine || ""}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine || ""}</div>
+        </div>
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value">${form.patra_sankhya || ""}</span></div>
+            <div>चलानी नं. : <span class="value">${form.chalani_no || ""}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value">${form.date_nepali || ""}</span></div>
+            <div class="nsm">${form.nepali_sambat || ""}</div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: ${form.subject || ""}</div>
+
+        <div class="addressee">
+          श्री <span class="value">${form.recipient_name || ""}</span><br/>
+          ${form.recipient_post ? `<span class="value">${form.recipient_post}</span><br/>` : ""}
+          ${form.recipient_address ? `<span class="value">${form.recipient_address}</span>` : ""}
+        </div>
+
+        <div class="body-text">${form.body_text || ""}</div>
+
+        ${form.bodartha ? `<div class="bodartha">बोधार्थ:- <span class="value">${form.bodartha}</span></div>` : ""}
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${form.signatory_name || ""}</div>
+            <div>${form.signatory_designation || ""}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row">
+            <span class="field-label">नाम:</span>
+            <span class="field-val">${form.applicantName || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">ठेगाना:</span>
+            <span class="field-val">${form.applicantAddress || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">नागरिकता नं.:</span>
+            <span class="field-val">${form.applicantCitizenship || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">फोन:</span>
+            <span class="field-val">${form.applicantPhone || ""}</span>
+          </div>
+          <div class="sign-hint">प्रिन्ट गरेपछि यहाँ दस्तखत गर्नुहोस्</div>
+          <div class="sign-line"><span class="sign-line-label">दस्तखत</span></div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -360,32 +448,30 @@ const NepaliLanguage = () => {
           <span className="nl-breadcrumb">खुला ढाँचा &gt; नेपाली प्रपत्र</span>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave(false);
+          }}
+        >
 
-          {/* ── Header ── */}
-          <header className="nl-header">
-            <div className="nl-header-logo">
-              <img src={MUNICIPALITY.logoSrc} alt="Nepal Logo" />
-            </div>
-            <div className="nl-header-text">
-              <h1 className="nl-municipality-name">{MUNICIPALITY.name}</h1>
-              <h2 className="nl-ward-title">
-                {user?.role === "SUPERADMIN"
-                  ? "सबै वडा कार्यालय"
-                  : user?.ward
-                    ? `वडा नं. ${user.ward} वडा कार्यालय`
-                    : "वडा कार्यालय"}
-              </h2>
-              <p className="nl-address-text">{MUNICIPALITY.officeLine}</p>
-              <p className="nl-province-text">{MUNICIPALITY.provinceLine}</p>
-            </div>
-          </header>
+          {/* ── Municipality Header ── */}
+          <div className="nl-header-row">
+            <MunicipalityHeader showLogo />
+          </div>
 
-          {/* ── Meta ── */}
+          {/* ── Meta — all editable now ── */}
           <div className="nl-meta-row">
             <div className="nl-meta-left">
               <div className="nl-meta-item">
-                पत्र संख्या : <span className="nl-bold">{form.patra_sankhya}</span>
+                पत्र संख्या :
+                <input
+                  name="patra_sankhya"
+                  type="text"
+                  className="nl-dotted-input nl-w-small"
+                  value={form.patra_sankhya}
+                  onChange={handleChange}
+                />
               </div>
               <div className="nl-meta-item">
                 चलानी नं. :
@@ -400,13 +486,31 @@ const NepaliLanguage = () => {
             </div>
             <div className="nl-meta-right">
               <div className="nl-meta-item">
-                मिति : <span className="nl-bold">{form.date_nepali}</span>
+                मिति :
+                <input
+                  name="date_nepali"
+                  type="text"
+                  className="nl-dotted-input nl-w-small"
+                  value={form.date_nepali}
+                  onChange={handleChange}
+                />
               </div>
-              <p className="nl-nepali-date">ने.सं. ११४६ चौलागा, २४ शनिबार</p>
+              <div className="nl-meta-item">
+                ने.सं. :
+                <input
+                  name="nepali_sambat"
+                  type="text"
+                  className="nl-dotted-input"
+                  style={{ width: 240 }}
+                  value={form.nepali_sambat}
+                  onChange={handleChange}
+                  placeholder="जस्तै: ने.सं. ११४६ चौलागा, २४ शनिबार"
+                />
+              </div>
             </div>
           </div>
 
-          {/* ── Subject ── */}
+          {/* ── Subject — centered ── */}
           <div className="nl-subject">
             विषय:
             <div className="nl-req-wrap">
@@ -422,10 +526,7 @@ const NepaliLanguage = () => {
             </div>
           </div>
 
-          {/* ── Addressee ──
-              BUG FIX: the पद/कार्यालय and ठेगाना inputs were uncontrolled
-              (no name/value/onChange). Now wired to recipient_post and
-              recipient_address so their values are submitted with the form. */}
+          {/* ── Addressee ── */}
           <div className="nl-addressee">
             <div className="nl-addressee-row">
               श्री
@@ -442,24 +543,32 @@ const NepaliLanguage = () => {
               </div>
             </div>
             <div className="nl-addressee-row">
-              <input
-                name="recipient_post"
-                type="text"
-                className="nl-dotted-input nl-w-long"
-                value={form.recipient_post}
-                onChange={handleChange}
-                placeholder="पद/कार्यालय"
-              />
+              <div className="nl-req-wrap">
+                <span className="nl-req-star">*</span>
+                <input
+                  name="recipient_post"
+                  type="text"
+                  className="nl-dotted-input nl-w-long"
+                  value={form.recipient_post}
+                  onChange={handleChange}
+                  placeholder="पद/कार्यालय"
+                  required
+                />
+              </div>
             </div>
             <div className="nl-addressee-row">
-              <input
-                name="recipient_address"
-                type="text"
-                className="nl-dotted-input nl-w-long"
-                value={form.recipient_address}
-                onChange={handleChange}
-                placeholder="ठेगाना"
-              />
+              <div className="nl-req-wrap">
+                <span className="nl-req-star">*</span>
+                <input
+                  name="recipient_address"
+                  type="text"
+                  className="nl-dotted-input nl-w-long"
+                  value={form.recipient_address}
+                  onChange={handleChange}
+                  placeholder="ठेगाना"
+                  required
+                />
+              </div>
             </div>
           </div>
 
@@ -505,7 +614,7 @@ const NepaliLanguage = () => {
                 <input
                   name="signatory_name"
                   type="text"
-                  className="nl-dotted-input nl-sig-name-input"
+                  className="nl-sig-name-input"
                   value={form.signatory_name}
                   onChange={handleChange}
                   placeholder="नाम"
@@ -530,15 +639,24 @@ const NepaliLanguage = () => {
           {/* ── Applicant Details ── */}
           <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-          {/* ── Footer ── */}
+          {/* ── Footer buttons ── */}
           <div className="nl-footer">
+            <button
+              type="submit"
+              className="nl-save-print-btn"
+              disabled={loading}
+              style={{ marginRight: 12, backgroundColor: "#2c3e50" }}
+            >
+              {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+            </button>
             <button
               type="button"
               className="nl-save-print-btn"
-              onClick={handlePrint}
               disabled={loading}
+              onClick={() => handleSave(true)}
+              style={{ backgroundColor: "#1a6b3a" }}
             >
-              {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+              {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
             </button>
           </div>
 
