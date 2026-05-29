@@ -376,7 +376,9 @@ const RequestforCertification = () => {
           .top-row   { display: flex; justify-content: space-between; margin: 16px 0 10px; }
           .subject   { text-align: center; font-weight: bold; font-size: 12pt; margin: 18px 0; text-decoration: underline; }
           .body-text { font-size: 11pt; line-height: 2.4; text-align: justify; margin-bottom: 18px; }
-          .value     { font-weight: bold; padding: 0 3px; display: inline-block; min-width: 50px; }
+          /* value spans size to content — no fixed min-width so small values
+             don't leave big gaps and long values don't get clipped/merged */
+          .value     { font-weight: bold; padding: 0 3px; white-space: nowrap; }
           .variation { margin: 14px 0; font-size: 11pt; }
           .bottom-wrapper { display: flex; justify-content: flex-end; margin-top: 30px; }
           .sig-card  { width: 280px; border: 1px solid #ccc; padding: 14px 16px; border-radius: 4px; }

@@ -447,7 +447,9 @@ const BusinessRegistrationApplicationForm = () => {
   .section-title { font-weight:bold; text-decoration:underline; text-align:center; margin:14px 0 8px; font-size:11pt; }
   .field-row  { display:flex; flex-wrap:wrap; margin-bottom:6px; align-items:baseline; gap:4px; font-size:10pt; }
   .field-label { min-width:200px; font-weight:normal; }
-  .value { font-weight:bold; display:inline-block;}
+  /* value spans size to content — no fixed min-width so small values
+     don't leave big gaps and long values don't get clipped/merged */
+  .value { font-weight:bold; padding:0 3px; white-space:nowrap; }
   .body-para { text-align:justify; line-height:1.9; margin-bottom:10px; text-indent:30px; }
   .right-block { display:flex; flex-direction:column; align-items:flex-end; margin-top:16px; }
   .thumb-box { width:240px; border:1px solid #000; }
@@ -487,7 +489,7 @@ const BusinessRegistrationApplicationForm = () => {
   <div class="field-row"><span class="field-label">४. पूँजी रु:</span>${val(f.capitalAmount)} (${val(f.capitalInWords)})</div>
   <div class="field-row"><span class="field-label">५. उद्देश्य:</span>${val(f.businessObjective)}</div>
   <div class="field-row"><span class="field-label">६. मुख्य वस्तु/सेवा:</span>${val(f.mainGoods)}</div>
-  <div class="field-row"><span class="field-label">७. प्रोप्राइटरको नाम:</span>${val(f.proprietorName)}</div>
+  <div class="field-row"><span class="field-label">७. प्रोप्राइटरको नाम:</span>${val(f.mainProprietorName)}</div>
   <div class="field-row"><span class="field-label">स्थायी ठेगाना:</span>जिल्ला ${val(f.permDistrict)} वडा ${val(f.permWard)} टोल ${val(f.permTole)} फोन ${val(f.permPhone)}</div>
   <div class="field-row"><span class="field-label">नागरिकता नं:</span>${val(f.citizenshipNo)} जारी जिल्ला: ${val(f.citizenshipIssueDistrict)} मिति: ${val(f.citizenshipIssueDate)}</div>
   <div class="field-row"><span class="field-label">हालको ठेगाना:</span>${val(f.tempAddress)} जिल्ला ${val(f.tempDistrict)} वडा ${val(f.tempWard)} टोल ${val(f.tempTole)}</div>
@@ -496,7 +498,7 @@ const BusinessRegistrationApplicationForm = () => {
   <div class="field-row"><span class="field-label">पतिको नाम:</span>${val(f.husbandName)} ठेगाना: ${val(f.husbandAddress)}</div>
 
   <div class="right-block">
-    <div>निवेदक: ${val(f.proprietorName)}</div>
+    <div>निवेदक: ${val(f.mainProprietorName)}</div>
     <div style="margin-top:10px">सही: <span style="border-bottom:1px solid #000;display:inline-block;width:180px;"></span></div>
     <div class="thumb-box" style="margin-top:10px">
       <div class="thumb-header"><span>दायाँ</span><span>बायाँ</span></div>
@@ -508,9 +510,9 @@ const BusinessRegistrationApplicationForm = () => {
   <p class="body-para">
     लिखितम् ${val(f.kabGrandfatherName)} को नातो ${val(f.kabGrandfatherRelation)}
     ${val(f.kabParentName)} को ${val(f.kabParentRelation)}
-    ${val(f.kabApplicantName)} बसे वर्ष ${val(f.kabAge)} को
-    ${val(f.kabFirmName)} अगाडि ${val(f.kabWardNo)} को नामले व्यवसाय दर्ता गर्न ...
-    ${val(f.kabApplicantName)} वडा नं ${val(f.kabWardNo)} को कार्यालयमा चढाएँ।
+    ${val(f.kabApplicantName1)} बसे वर्ष ${val(f.kabAge)} को
+    ${val(f.kabFirmName)} अगाडि ${val(f.kabWardNo1)} को नामले व्यवसाय दर्ता गर्न ...
+    ${val(f.kabApplicantName2)} वडा नं ${val(f.kabWardNo2)} को कार्यालयमा चढाएँ।
   </p>
   <div class="date-center">ईतिसंवत ${val(f.kabYear)} साल ${val(f.kabMonth)} महिना ${val(f.kabDay)} गतेरोज ${val(f.kabWeekday)} शुभम्</div>
 
@@ -529,7 +531,7 @@ const BusinessRegistrationApplicationForm = () => {
   <p class="body-para">श्रीमान् ${val(f.tippaniName)} नामक व्यवसाय ${val(f.tippaniBusinessName)} को नाममा दर्ता गरी पाउन आवश्यक सबै कागजातहरु रितपूर्वक पेश हुन आएको।</p>
   <div class="tippani-footer">
     <div class="tippani-sign"><div class="tippani-line">${f.tippaniPeshGarne || ""}</div><div>पेश गर्ने</div></div>
-    <div class="tippani-sign"><div class="tippani-line">${f.tippaniSadarGarne || ""}</div><div>सदर गर्ने</div></div>
+    <div class="tippani-sign"><div class="tippani-line">${f.tippaniSadarGarneSign || ""}</div><div>सदर गर्ने</div></div>
   </div>
 
   <div class="applicant-box">

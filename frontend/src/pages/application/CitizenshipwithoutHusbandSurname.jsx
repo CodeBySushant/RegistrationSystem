@@ -303,7 +303,9 @@ const CitizenshipwithoutHusbandSurname = () => {
     .subject    { text-align:center; font-weight:bold; font-size:12pt; margin:20px 0; }
     .addressee  { margin-bottom:16px; font-size:11pt; font-weight:bold; }
     .body-text  { font-size:11pt; line-height:2.4; text-align:justify; margin-bottom:24px; }
-    .value { font-weight:bold; padding:0 4px; display:inline-block; min-width:60px; }
+    /* value spans size to content — no fixed min-width so small values
+       don't leave big gaps and long values don't get clipped/merged */
+    .value { font-weight:bold; padding:0 4px; white-space:nowrap; }
     .applicant-box { border:1px solid #999; padding:14px; margin-top:20px; border-radius:3px; }
     .applicant-title { font-weight:bold; border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:10px; font-size:11pt; }
     .field-row { display:flex; margin-bottom:8px; font-size:10pt; }
