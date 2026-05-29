@@ -4,10 +4,10 @@ import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Styles (merged from OpenApplication.css)
-   All classes prefixed with "oa-" to avoid global collisions.
+   Styles — all classes prefixed with "oa-" to avoid global collisions.
 ───────────────────────────────────────────────────────────────────────────── */
 const STYLES = `
   /* ── Container ── */
@@ -39,63 +39,59 @@ const STYLES = `
     font-weight: normal;
   }
 
-  /* ── Header ── */
-  .oa-form-header-section {
-    text-align: center;
-    margin-bottom: 30px;
-    position: relative;
-  }
-  .oa-header-logo {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-  .oa-header-logo img { width: 80px; }
-  .oa-header-text {
+  .oa-header-row { margin-bottom: 24px; }
+
+  /* ── Date row — right aligned ── */
+  .oa-date-row {
+    margin-bottom: 20px;
     display: flex;
-    flex-direction: column;
+    justify-content: flex-end;
     align-items: center;
-  }
-  .oa-municipality-name {
-    color: #e74c3c;
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: bold;
-    line-height: 1.2;
-  }
-  .oa-ward-title {
-    color: #e74c3c;
-    font-size: 2.5rem;
-    margin: 5px 0;
-    font-weight: bold;
-  }
-  .oa-address-text,
-  .oa-province-text {
-    color: #e74c3c;
-    font-size: 1rem;
-    margin: 2px 0;
+    gap: 6px;
     font-weight: bold;
   }
 
-  /* ── Date row ── */
-  .oa-date-row { margin-bottom: 20px; }
-
-  /* ── Dotted input (underline style) ── */
+  /* ── Dotted/boxed input ── */
   .oa-dotted-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
     outline: none;
-    padding: 0 5px;
+    padding: 4px 8px;
     font-size: 1.1rem;
     font-family: inherit;
   }
+  .oa-dotted-input:focus { border-color: #2563eb; }
+
+  /* ── Required star wrapper ── */
+  .oa-req-wrap { position: relative; display: inline-block; vertical-align: middle; }
+  .oa-req-wrap input { padding-left: 16px !important; }
+  .oa-req-star {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: red;
+    font-weight: bold;
+    pointer-events: none;
+    font-size: 13px;
+    line-height: 1;
+    z-index: 1;
+  }
 
   /* ── Recipient section ── */
-  .oa-recipient-section { margin-bottom: 20px; line-height: 2.2; }
+  .oa-recipient-section { margin-bottom: 20px; line-height: 2.4; }
+  .oa-recipient-section .oa-req-wrap { margin: 0 4px; }
 
-  /* ── Subject row ── */
-  .oa-subject-row { margin-bottom: 20px; }
+  /* ── Subject row — centered ── */
+  .oa-subject-row {
+    margin-bottom: 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
 
   /* ── Salutation ── */
   .oa-salutation { margin-bottom: 10px; }
@@ -104,6 +100,7 @@ const STYLES = `
   .oa-inline-meta-fields {
     text-align: justify;
     margin-bottom: 25px;
+    line-height: 2.6;
   }
   .oa-inline-input {
     width: 120px;
@@ -111,29 +108,33 @@ const STYLES = `
     margin: 0 5px;
   }
   .oa-tiny-input {
-    width: 45px;
+    width: 55px;
     text-align: center;
   }
   .oa-inline-select {
     border: 1px solid #ccc;
+    border-radius: 4px;
     background: #fff;
-    padding: 2px 5px;
+    padding: 4px 6px;
     margin: 0 5px;
     font-size: 1rem;
     font-family: inherit;
     vertical-align: middle;
   }
+  .oa-inline-meta-fields .oa-req-wrap { margin: 0 2px; }
 
   /* ── Rich editor mock ── */
   .oa-editor-area { margin-bottom: 30px; }
   .oa-rich-editor-mock {
     border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
     background: #fff;
   }
   .oa-editor-toolbar {
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-bottom: 1px solid #ccc;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #555;
     background: #f5f5f5;
   }
@@ -146,6 +147,8 @@ const STYLES = `
     font-size: 1.1rem;
     font-family: inherit;
     resize: vertical;
+    background: #fff;
+    box-sizing: border-box;
   }
 
   /* ── Applicant details override (scoped) ── */
@@ -154,6 +157,7 @@ const STYLES = `
     background-color: rgba(255, 255, 255, 0.4);
     padding: 20px;
     margin-top: 20px;
+    border-radius: 4px;
   }
   .oa-container .details-grid {
     display: flex !important;
@@ -171,7 +175,6 @@ const STYLES = `
   /* ── Footer ── */
   .oa-form-footer { margin-top: 30px; text-align: center; }
   .oa-save-print-btn {
-    background-color: #2c3e50;
     color: white;
     padding: 10px 25px;
     border: none;
@@ -180,7 +183,6 @@ const STYLES = `
     font-size: 1rem;
     font-family: inherit;
   }
-  .oa-save-print-btn:hover:not(:disabled) { background-color: #1a252f; }
   .oa-save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .oa-copyright-footer {
@@ -188,37 +190,8 @@ const STYLES = `
     font-size: 0.8rem;
     color: #666;
     margin-top: 40px;
-  }
-
-  /* ── Print ── */
-  @media print {
-    body * { visibility: hidden; }
-    .oa-container,
-    .oa-container * { visibility: visible; }
-    .oa-container {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      margin: 0;
-      padding: 20px 40px;
-      background: white !important;
-      background-image: none !important;
-      box-shadow: none;
-    }
-    .oa-top-bar-title,
-    .oa-form-footer,
-    .oa-editor-toolbar { display: none !important; }
-    .oa-rich-editor-mock {
-      border: none !important;
-      background: transparent !important;
-    }
-    .oa-editor-textarea {
-      border: none !important;
-      background: transparent !important;
-      resize: none !important;
-      min-height: auto !important;
-    }
+    border-top: 1px solid #eee;
+    padding-top: 10px;
   }
 `;
 
@@ -229,6 +202,8 @@ const initialState = {
   date: "",
   subject: "",
   recipient_name: "",
+  recipient_post: "",       // wired (was uncontrolled)
+  recipient_office: "",     // wired (was uncontrolled)
   rel_subject: "",
   district: "",
   municipality: "गाउँपालिका",
@@ -253,17 +228,37 @@ const OpenApplication = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  /* ── Save → Print → Reset ── */
-  const handlePrint = async () => {
+  /* ── Single save function — no duplicate records ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (!form.recipient_name?.trim()) {
+      alert("प्राप्तकर्ताको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.subject?.trim()) {
+      alert("विषय आवश्यक छ");
+      return;
+    }
+    if (!form.district?.trim()) {
+      alert("जिल्ला आवश्यक छ");
+      return;
+    }
+    if (!form.ward_no?.toString().trim()) {
+      alert("वडा नं. आवश्यक छ");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post("/api/forms/open-application", {
         ...form,
         date: form.date || null,
       });
-      if (res.status === 201) {
-        alert("सफल! ID: " + res.data.id);
-        window.print();
+      if (res.status === 201 || res.status === 200) {
+        if (shouldPrint) {
+          handleCleanPrint();
+        } else {
+          alert("सफल! ID: " + (res.data?.id ?? ""));
+        }
         setForm(initialState);
       }
     } catch (err) {
@@ -272,6 +267,118 @@ const OpenApplication = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  /* ── Clean print — isolated window, values interpolated as spans ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>खुल्ला निवेदन</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .date-row { text-align: right; margin: 16px 0; }
+          .recipient { margin-bottom: 16px; font-size: 11pt; font-weight: 600; line-height: 1.9; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .salutation { margin-bottom: 10px; }
+          .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 20px; }
+          .letter-body { font-size: 11pt; line-height: 2; text-align: justify; margin-bottom: 24px; white-space: pre-wrap; }
+          /* value spans size to content — no fixed min-width so small values
+             don't leave big gaps and long values don't get clipped/merged */
+          .value { font-weight: bold; padding: 0 4px; white-space: nowrap; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+          .field-val { flex: 1; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="${MUNICIPALITY.logoSrc || "/nepallogo.svg"}" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine || ""}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine || ""}</div>
+        </div>
+
+        <div class="date-row">मिति : <span class="value">${form.date || ""}</span></div>
+
+        <div class="recipient">
+          श्रीमान् <span class="value">${form.recipient_name || ""}</span> ज्यू,<br/>
+          ${form.recipient_post ? `<span class="value">${form.recipient_post}</span><br/>` : ""}
+          ${form.recipient_office ? `<span class="value">${form.recipient_office}</span>` : ""}
+        </div>
+
+        <div class="subject">विषय:- ${form.subject || ""} ।</div>
+
+        <div class="salutation">महोदय,</div>
+
+        <div class="body-text">
+          उपरोक्त सम्बन्धमा <span class="value">${form.rel_subject || ""}</span>
+          जिल्ला <span class="value">${form.district || ""}</span>
+          <span class="value">${form.municipality || ""}</span>
+          वडा नं. <span class="value">${form.ward_no || ""}</span>
+          साविक <span class="value">${form.savik_address || ""}</span>
+          गाविस <span class="value">${form.savik_vdc || ""}</span>
+          वडा नं. <span class="value">${form.savik_ward || ""}</span>
+          मा बस्ने ।
+        </div>
+
+        <div class="letter-body">${form.body_text || ""}</div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row">
+            <span class="field-label">नाम:</span>
+            <span class="field-val">${form.applicant_name || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">ठेगाना:</span>
+            <span class="field-val">${form.applicant_address || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">नागरिकता नं.:</span>
+            <span class="field-val">${form.applicant_citizenship_no || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">फोन:</span>
+            <span class="field-val">${form.applicant_phone || ""}</span>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -287,76 +394,93 @@ const OpenApplication = () => {
         <span className="oa-top-right-bread">खुला ढाँचा &gt; खुल्ला निवेदन</span>
       </div>
 
-      <form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+      >
         {/* ── Municipality Header ── */}
-        <header className="oa-form-header-section">
-          <div className="oa-header-logo">
-            <img src={MUNICIPALITY.logoSrc} alt="Nepal Logo" />
-          </div>
-          <div className="oa-header-text">
-            <h1 className="oa-municipality-name">{MUNICIPALITY.name}</h1>
-            <h2 className="oa-ward-title">
-              {user?.role === "SUPERADMIN"
-                ? "सबै वडा कार्यालय"
-                : user?.ward
-                  ? `वडा नं. ${user.ward} वडा कार्यालय`
-                  : "वडा कार्यालय"}
-            </h2>
-            <p className="oa-address-text">{MUNICIPALITY.officeLine}</p>
-            <p className="oa-province-text">{MUNICIPALITY.provinceLine}</p>
-          </div>
-        </header>
+        <div className="oa-header-row">
+          <MunicipalityHeader showLogo />
+        </div>
 
-        {/* ── Date ── */}
+        {/* ── Date — right side ── */}
         <div className="oa-date-row">
           मिति :
-          <input
-            name="date"
-            type="text"
-            className="oa-dotted-input"
-            value={form.date}
-            onChange={handleChange}
-          />
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="date"
+              type="text"
+              className="oa-dotted-input"
+              value={form.date}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
         {/* ── Recipient ── */}
         <div className="oa-recipient-section">
           श्रीमान्
-          <input
-            name="recipient_name"
-            type="text"
-            className="oa-dotted-input"
-            value={form.recipient_name}
-            onChange={handleChange}
-          />{" "}
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="recipient_name"
+              type="text"
+              className="oa-dotted-input"
+              value={form.recipient_name}
+              onChange={handleChange}
+              required
+            />
+          </div>{" "}
           ज्यू,
           <br />
-          <input
-            type="text"
-            className="oa-dotted-input"
-            style={{ width: "200px" }}
-            placeholder="पद"
-          />
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="recipient_post"
+              type="text"
+              className="oa-dotted-input"
+              style={{ width: "200px" }}
+              placeholder="पद"
+              value={form.recipient_post}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <br />
-          <input
-            type="text"
-            className="oa-dotted-input"
-            style={{ width: "200px" }}
-            placeholder="कार्यालय"
-          />
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="recipient_office"
+              type="text"
+              className="oa-dotted-input"
+              style={{ width: "200px" }}
+              placeholder="कार्यालय"
+              value={form.recipient_office}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
-        {/* ── Subject ── */}
+        {/* ── Subject — centered ── */}
         <div className="oa-subject-row">
           विषय:-
-          <input
-            name="subject"
-            type="text"
-            className="oa-dotted-input"
-            style={{ width: "300px" }}
-            value={form.subject}
-            onChange={handleChange}
-          />{" "}
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="subject"
+              type="text"
+              className="oa-dotted-input"
+              style={{ width: "300px" }}
+              value={form.subject}
+              onChange={handleChange}
+              required
+            />
+          </div>{" "}
           ।
         </div>
 
@@ -366,21 +490,29 @@ const OpenApplication = () => {
         {/* ── Inline address meta ── */}
         <div className="oa-inline-meta-fields">
           उपरोक्त सम्बन्धमा
-          <input
-            name="rel_subject"
-            type="text"
-            className="oa-dotted-input oa-inline-input"
-            value={form.rel_subject}
-            onChange={handleChange}
-          />
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="rel_subject"
+              type="text"
+              className="oa-dotted-input oa-inline-input"
+              value={form.rel_subject}
+              onChange={handleChange}
+              required
+            />
+          </div>
           जिल्ला
-          <input
-            name="district"
-            type="text"
-            className="oa-dotted-input oa-inline-input"
-            value={form.district}
-            onChange={handleChange}
-          />
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="district"
+              type="text"
+              className="oa-dotted-input oa-inline-input"
+              value={form.district}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <select
             name="municipality"
             className="oa-inline-select"
@@ -391,37 +523,53 @@ const OpenApplication = () => {
             <option>नगरपालिका</option>
           </select>
           वडा नं.
-          <input
-            name="ward_no"
-            type="text"
-            className="oa-dotted-input oa-tiny-input"
-            value={form.ward_no}
-            onChange={handleChange}
-          />
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="ward_no"
+              type="text"
+              className="oa-dotted-input oa-tiny-input"
+              value={form.ward_no}
+              onChange={handleChange}
+              required
+            />
+          </div>
           साविक
-          <input
-            name="savik_address"
-            type="text"
-            className="oa-dotted-input oa-inline-input"
-            value={form.savik_address}
-            onChange={handleChange}
-          />
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="savik_address"
+              type="text"
+              className="oa-dotted-input oa-inline-input"
+              value={form.savik_address}
+              onChange={handleChange}
+              required
+            />
+          </div>
           गाविस
-          <input
-            name="savik_vdc"
-            type="text"
-            className="oa-dotted-input oa-inline-input"
-            value={form.savik_vdc}
-            onChange={handleChange}
-          />
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="savik_vdc"
+              type="text"
+              className="oa-dotted-input oa-inline-input"
+              value={form.savik_vdc}
+              onChange={handleChange}
+              required
+            />
+          </div>
           वडा नं.
-          <input
-            name="savik_ward"
-            type="text"
-            className="oa-dotted-input oa-tiny-input"
-            value={form.savik_ward}
-            onChange={handleChange}
-          />{" "}
+          <div className="oa-req-wrap">
+            <span className="oa-req-star">*</span>
+            <input
+              name="savik_ward"
+              type="text"
+              className="oa-dotted-input oa-tiny-input"
+              value={form.savik_ward}
+              onChange={handleChange}
+              required
+            />
+          </div>{" "}
           मा बस्ने ।
         </div>
 
@@ -429,7 +577,7 @@ const OpenApplication = () => {
         <div className="oa-editor-area">
           <div className="oa-rich-editor-mock">
             <div className="oa-editor-toolbar">
-              <span>File Edit View Insert Format Tools Table Help</span>
+              <span>पत्रको विवरण यहाँ लेख्नुहोस्:</span>
             </div>
             <textarea
               name="body_text"
@@ -444,15 +592,24 @@ const OpenApplication = () => {
         {/* ── Applicant Details ── */}
         <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        {/* ── Footer ── */}
+        {/* ── Footer buttons ── */}
         <div className="oa-form-footer">
+          <button
+            type="submit"
+            className="oa-save-print-btn"
+            disabled={loading}
+            style={{ marginRight: 12, backgroundColor: "#2c3e50" }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
           <button
             type="button"
             className="oa-save-print-btn"
-            onClick={handlePrint}
             disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
           >
-            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
       </form>
