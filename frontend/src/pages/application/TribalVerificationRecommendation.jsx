@@ -6,17 +6,13 @@ import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Styles (merged from TribalVerificationRecommendation.css)
-   All classes prefixed with "tvr-" to avoid global collisions.
-───────────────────────────────────────────────────────────────────────────── */
+/* ─────────────────────────── Styles ─────────────────────────── */
 const STYLES = `
-  /* ── Container ── */
   .tvr-container {
     width: 90%;
     max-width: 1000px;
     margin: 20px auto;
-    padding: 25px;
+    padding: 30px 40px;
     border: 1px solid #ddd;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     font-family: 'Kalimati', 'Kokila', 'Arial', sans-serif;
@@ -27,156 +23,154 @@ const STYLES = `
     box-sizing: border-box;
   }
 
-  /* ── Top row (addressee + date) ── */
-  .tvr-form-row {
+  /* ── All inputs/selects white ── */
+  .tvr-container input[type="text"],
+  .tvr-container input[type="date"],
+  .tvr-container select,
+  .tvr-container textarea {
+    background-color: #fff;
+    font-family: inherit;
+  }
+  .tvr-container input[type="text"]:focus,
+  .tvr-container input[type="date"]:focus,
+  .tvr-container select:focus,
+  .tvr-container textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.12);
+  }
+
+  /* ── Addressee + date row ── */
+  .tvr-top-row {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
     flex-wrap: wrap;
-    margin-bottom: 15px;
+    gap: 16px;
   }
 
-  /* ── Generic form-group ── */
-  .tvr-form-group {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    margin-bottom: 10px;
-  }
-  .tvr-form-group label { font-weight: bold; margin-right: 8px; }
-  .tvr-form-group input {
-    width: 200px;
-    max-width: 100%;
-    padding: 5px;
+  /* Addressee block — clean gov-form layout */
+  .tvr-addressee-block { display: flex; flex-direction: column; gap: 6px; font-size: 1rem; }
+  .tvr-addr-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .tvr-addr-label {
+  font-weight: bold;
+  white-space: nowrap;
+  min-width: auto;
+}
+  .tvr-post-input{
+  width:220px;
+}
+
+.tvr-municipality-input{
+  width:320px;
+}
+
+.tvr-ward-input{
+  width:70px;
+}
+
+.tvr-district-input{
+  width:180px;
+}
+
+.tvr-addressee-block{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.tvr-addr-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+  /* Shared inline input style */
+  .tvr-input {
+    padding: 4px 8px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-family: inherit;
-  }
-
-  /* ── Header "To" ── */
-  .tvr-header-to {
-    flex-wrap: wrap;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  .tvr-header-to .tvr-header-input,
-  .tvr-header-to .tvr-header-select {
-    font-family: inherit;
-    font-size: 16px;
-    padding: 4px 6px;
-    margin: 0 5px;
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-  }
-  .tvr-header-to .tvr-header-select       { width: auto; min-width: 150px; }
-  .tvr-header-to .tvr-header-select.tvr-short { min-width: 50px; }
-
-  /* ── Date group ── */
-  .tvr-date-group { font-weight: bold; }
-  .tvr-date-group input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+    border-radius: 3px;
     font-family: inherit;
     font-size: 1rem;
-    padding: 2px 6px;
+    background-color: #fff;
     outline: none;
   }
+  .tvr-select {
+    padding: 4px 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 1rem;
+    background-color: #fff;
+    outline: none;
+    cursor: pointer;
+  }
+  .tvr-w-xs   { width: 55px; }
+  .tvr-w-sm   { width: 110px; }
+  .tvr-w-md   { width: 180px; }
+  .tvr-w-lg   { width: 280px; }
+  .tvr-w-date { width: 140px; }
+
+  /* Date block */
+  .tvr-date-block { display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: bold; }
+  .tvr-date-block label { white-space: nowrap; }
 
   /* ── Subject ── */
-  .tvr-subject-line { text-align: center; margin: 25px 0; font-size: 16px; }
+  .tvr-subject-line { text-align: center; margin: 20px 0; font-size: 1rem; font-weight: bold; }
 
   /* ── Certificate body ── */
   .tvr-certificate-body {
     line-height: 2.8;
-    font-size: 16px;
+    font-size: 1rem;
     text-align: justify;
+    margin-bottom: 20px;
   }
-  .tvr-certificate-body input[type="text"],
-  .tvr-certificate-body select {
+  /* Inline inputs inside paragraph */
+  .tvr-certificate-body .tvr-input,
+  .tvr-certificate-body .tvr-select {
     display: inline-block;
     vertical-align: baseline;
-    padding: 4px 6px;
-    font-family: inherit;
-    font-size: 15px;
-    background-color: transparent;
-    border: none;
-    border-bottom: 1px dotted #000;
-    margin: 0 5px;
-    width: 120px;
-    max-width: 100%;
-    box-sizing: border-box;
+    margin: 0 4px;
   }
-  .tvr-certificate-body select { width: auto; min-width: 80px; }
 
-  /* ── Rich text area (plain textarea, no fake toolbar) ── */
-  .tvr-rich-text-area { margin-top: 20px; }
-  .tvr-rich-text-area label {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    display: block;
-  }
-  .tvr-rich-text-area textarea {
+  /* ── Extra content textarea ── */
+  .tvr-extra-block { margin-top: 16px; }
+  .tvr-extra-block label { font-size: 1rem; font-weight: bold; display: block; margin-bottom: 6px; }
+  .tvr-extra-block textarea {
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
     font-family: inherit;
-    font-size: 16px;
+    font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     line-height: 1.8;
     resize: vertical;
-    background-color: rgba(255,255,255,0.7);
+    background-color: #fff;
   }
-  .tvr-rich-text-area textarea:focus { outline: none; border-color: #888; }
 
-  /* ── Designation / Signature section ── */
-  .tvr-designation-section {
+  /* ── Signature section ── */
+  .tvr-signature-section {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    margin-top: 40px;
+    margin-top: 8px;
     margin-right: 20px;
   }
-  .tvr-signature-label { font-weight: bold; font-size: 16px; }
-  .tvr-signature-fields { display: flex; flex-direction: column; align-items: flex-end; }
-  .tvr-form-group-inline {
-    display: flex;
-    align-items: baseline;
-    margin-top: 10px;
-  }
-  .tvr-form-group-inline label {
-    font-weight: bold;
-    margin-right: 8px;
-    white-space: nowrap;
-  }
-  .tvr-form-group-inline input {
-    width: 200px;
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    font-family: inherit;
-    font-size: 15px;
-  }
 
-  /* ── Column form-group ── */
-  .tvr-form-group-column { display: flex; flex-direction: column; margin-bottom: 12px; }
-  .tvr-form-group-column label { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
-  .tvr-form-group-column input {
-    width: 350px;
-    max-width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-    box-sizing: border-box;
-    font-family: inherit;
+  .tvr-signature-title { font-weight: bold; font-size: 1rem; margin-bottom: 10px; }
+  .tvr-sig-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
   }
+  .tvr-sig-field label { font-weight: bold; white-space: nowrap; min-width: 80px; text-align: right; }
+  .tvr-sig-field input { width: 220px; }
 
   /* ── Required star ── */
-  .tvr-req { color: red; margin-left: 4px; }
+  .tvr-req { color: red; margin-left: 3px; }
 
   /* ── Applicant details overrides ── */
   .tvr-container .applicant-details-box {
@@ -187,84 +181,137 @@ const STYLES = `
     border-radius: 4px;
   }
   .tvr-container .applicant-details-box h3 {
-    color: #777;
-    font-size: 1.1rem;
-    margin: 0 0 15px 0;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
+    color: #777; font-size: 1.1rem; margin: 0 0 15px 0;
+    border-bottom: 1px solid #eee; padding-bottom: 8px;
   }
   .tvr-container .applicant-details-box .details-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 18px !important;
+    display: flex !important; flex-direction: column !important; gap: 18px !important;
   }
   .tvr-container .applicant-details-box .detail-input {
-    max-width: 400px;
-    width: 100%;
-    border: 1px solid #ddd;
-    padding: 8px;
-    border-radius: 4px;
-    box-sizing: border-box;
+    max-width: 400px; width: 100%;
+    border: 1px solid #ddd; padding: 8px;
+    border-radius: 4px; box-sizing: border-box;
+    background-color: #fff;
   }
 
-  /* ── Submit ── */
-  .tvr-submit-area { text-align: center; margin-top: 30px; padding-top: 10px; }
-  .tvr-submit-btn {
-    background-color: #343a40;
-    color: white;
-    padding: 12px 25px;
+  /* ── Footer buttons ── */
+  .tvr-footer { text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 12px; }
+  .tvr-btn {
+    padding: 10px 26px;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 4px;
+    font-size: 1rem;
     font-family: inherit;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.15s;
   }
-  .tvr-submit-btn:hover:not(:disabled) { background-color: #23272b; }
-  .tvr-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .tvr-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .tvr-btn-save  { background-color: #2c3e50; color: #fff; }
+  .tvr-btn-save:hover:not(:disabled)  { background-color: #1a252f; }
+  .tvr-btn-print { background-color: #1a6b3a; color: #fff; }
+  .tvr-btn-print:hover:not(:disabled) { background-color: #145230; }
+
+  /* ── Copyright ── */
+  .tvr-copyright { text-align: right; font-size: 0.8rem; color: #666; margin-top: 24px; border-top: 1px solid #eee; padding-top: 10px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .tvr-container { padding: 18px 14px; }
+    .tvr-top-row   { flex-direction: column; }
+    .tvr-addr-line { flex-wrap: wrap; }
+    .tvr-w-lg      { width: 100%; }
+  }
 
   /* ── Print ── */
   @media print {
     body * { visibility: hidden; }
-    .tvr-container,
-    .tvr-container * { visibility: visible; }
+    .tvr-container, .tvr-container * { visibility: visible; }
     .tvr-container {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 20px 40px;
-      background: white;
+      position: absolute; left: 0; top: 0;
+      width: 100%; box-shadow: none; border: none;
+      margin: 0; padding: 12mm 16mm; background: white;
     }
-    .tvr-submit-area { display: none !important; }
+    .tvr-footer, .tvr-copyright { display: none !important; }
     input, select, textarea {
-      border: none !important;
-      background: transparent !important;
-      box-shadow: none !important;
-      color: #000 !important;
+      border: none !important; background: transparent !important;
+      box-shadow: none !important; color: #000 !important;
       -webkit-text-fill-color: #000 !important;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
     }
-    input::placeholder,
-    textarea::placeholder { color: transparent !important; }
+    .tvr-certificate-body {
+      line-height: 1.8 !important;
+    }
+    .tvr-date-block input {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+  }
+  .tvr-top-row {
+    margin-bottom: 10px !important;
+  }
+
+  .tvr-subject-line {
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
+  }
+    input::placeholder, textarea::placeholder { color: transparent !important; }
+    .tvr-input,
+    .tvr-select {
+      width: auto !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+    }
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .tvr-signature-section {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+      .applicant-details-box,
+  .applicant-details-box * {
+    visibility: visible !important;
+    display: block !important;
+    color: #000 !important;
+  }
+
+  .applicant-details-box {
+    margin-top: 20px !important;
+    border: 1px solid #999 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
   }
 `;
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Initial state
-───────────────────────────────────────────────────────────────────────────── */
-const initialState = {
+/* ─────────────────────────── Helpers ─────────────────────────── */
+
+const WARD_OPTIONS = [
+  "१",
+  "२",
+  "३",
+  "४",
+  "५",
+  "६",
+  "७",
+  "८",
+  "९",
+  "१०",
+  "११",
+  "१२",
+];
+
+const makeInitialState = () => ({
   date: new Date().toISOString().slice(0, 10),
-  headerTo: "श्री वडा सचिव ज्यु",
-  municipality1: MUNICIPALITY?.name || "",
-  wardNo1: MUNICIPALITY?.wardNumber || "",
-  officeName: "नं वडा कार्यालय",
-  address1: MUNICIPALITY?.district || "काठमाडौँ",
-  municipality2: MUNICIPALITY?.name || "",
-  wardNo2: MUNICIPALITY?.wardNumber || "१",
+  // Addressee
+  addresseePost: "वडा सचिव ज्यु", // e.g. "वडा सचिव ज्यु"
+  addresseeMunicipality: MUNICIPALITY.name,
+  addresseeWardNo: MUNICIPALITY.wardNumber || "१",
+  addresseeOfficeSuffix: "वडा कार्यालय",
+  addresseeDistrict: MUNICIPALITY.city || "",
+  // Body
+  municipality2: MUNICIPALITY.name,
+  wardNo2: MUNICIPALITY.wardNumber || "१",
   residentTitle: "श्री",
   residentName: "",
   relation: "बाबु",
@@ -273,21 +320,39 @@ const initialState = {
   tribeCategory: "आदिवासी जनजाती",
   tribeName: "",
   mainContent: "",
+  // Signature
   applicantNameSignature: "",
   applicantAddressSignature: "",
+  // Applicant details
   applicantName: "",
   applicantAddress: "",
   applicantCitizenship: "",
   applicantPhone: "",
-};
+});
 
 const phoneRegex = /^[0-9+\-\s]{6,20}$/;
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Component
-───────────────────────────────────────────────────────────────────────────── */
+const validate = (fd) => {
+  if (!fd.residentName?.trim()) return "निवासीको नाम भर्नुहोस्";
+  if (!fd.guardianName?.trim()) return "अभिभावकको नाम भर्नुहोस्";
+  if (!fd.tribeName?.trim()) return "जाति नाम भर्नुहोस्";
+  if (!fd.applicantNameSignature?.trim())
+    return "निवेदकको नाम (दस्तखत) भर्नुहोस्";
+  if (!fd.applicantAddressSignature?.trim())
+    return "निवेदकको ठेगाना (दस्तखत) भर्नुहोस्";
+  if (!fd.applicantName?.trim()) return "निवेदकको नाम भर्नुहोस्";
+  if (!fd.applicantAddress?.trim()) return "निवेदकको ठेगाना भर्नुहोस्";
+  if (!fd.applicantCitizenship?.trim()) return "नागरिकता नं. भर्नुहोस्";
+  if (!fd.applicantPhone?.trim()) return "सम्पर्क नं. भर्नुहोस्";
+  if (!phoneRegex.test(String(fd.applicantPhone)))
+    return "सम्पर्क नं. अमान्य छ";
+  return null;
+};
+
+/* ─────────────────────────── Component ─────────────────────────── */
 const TribalVerificationRecommendation = () => {
-  const [formData, setFormData] = useState(initialState);
+  const { user } = useAuth();
+  const [formData, setFormData] = useState(makeInitialState);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
@@ -295,23 +360,13 @@ const TribalVerificationRecommendation = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const validate = (fd) => {
-    if (!fd.guardianName?.trim())              return "नाम भर्नुहोस्";
-    if (!fd.tribeName?.trim())                 return "जाति नाम भर्नुहोस्";
-    if (!fd.applicantNameSignature?.trim())    return "निवेदकको नाम (दस्तखत) भर्नुहोस्";
-    if (!fd.applicantAddressSignature?.trim()) return "निवेदकको ठेगाना (दस्तखत) भर्नुहोस्";
-    if (!fd.applicantName?.trim())             return "निवेदकको नाम भर्नुहोस्";
-    if (!fd.applicantAddress?.trim())          return "निवेदकको ठेगाना भर्नुहोस्";
-    if (!fd.applicantCitizenship?.trim())      return "नागरिकता नं. भर्नुहोस्";
-    if (!fd.applicantPhone?.trim())            return "सम्पर्क नं. भर्नुहोस्";
-    if (!phoneRegex.test(String(fd.applicantPhone))) return "सम्पर्क नं. अमान्य छ";
-    return null;
-  };
+  const wardLabel =
+    user?.role === "SUPERADMIN"
+      ? "सबै वडा कार्यालय"
+      : `${user?.ward || MUNICIPALITY.wardNumber || "१"} नं. वडा कार्यालय`;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (submitting) return;
-
+  /* Single save — no duplicate POSTs */
+  const handleSave = async (shouldPrint = false) => {
     const err = validate(formData);
     if (err) {
       alert("कृपया: " + err);
@@ -320,213 +375,285 @@ const TribalVerificationRecommendation = () => {
 
     setSubmitting(true);
     try {
-      const payload = { ...formData };
-      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+      const payload = Object.fromEntries(
+        Object.entries(formData).map(([k, v]) => [k, v === "" ? null : v]),
+      );
 
-      const res = await axios.post("/api/forms/tribal-verification-recommendation", payload);
+      const res = await axios.post(
+        "/api/forms/tribal-verification-recommendation",
+        payload,
+      );
 
       if (res.status === 201 || res.status === 200) {
-        alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
-        // Print first, then reset — so the printed page is not blank
-        window.print();
-        setTimeout(() => setFormData(initialState), 500);
+        if (shouldPrint) {
+          window.print();
+          setTimeout(() => setFormData(makeInitialState()), 500);
+        } else {
+          alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
+          setFormData(makeInitialState());
+        }
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
     } catch (error) {
       console.error("Submit error:", error);
-      const msg = error.response?.data?.message || error.message || "Submission failed";
+      const msg =
+        error.response?.data?.message || error.message || "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
       setSubmitting(false);
     }
   };
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     Render
-  ───────────────────────────────────────────────────────────────────────── */
   return (
     <>
       <style>{STYLES}</style>
 
-      <div className="tvr-container">
-        <form onSubmit={handleSubmit}>
+      <form
+        className="tvr-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+      >
+        {/* Municipality header */}
+        <MunicipalityHeader showLogo />
 
-          {/* ── Municipality Header ── */}
-          <div className="tvr-header-row">
-            <MunicipalityHeader showLogo />
-          </div>
+        {/* ── Addressee + Date ── clean structured layout ── */}
+        <div className="tvr-top-row">
+          {/* Addressee — two clear lines like a gov letter */}
+          <div className="tvr-addressee-block">
+            <div className="tvr-addr-line">
+              <span className="tvr-addr-label">श्री</span>
 
-          {/* ── Addressee + Date ── */}
-          <div className="tvr-form-row">
-            <div className="tvr-form-group tvr-header-to">
               <input
                 type="text"
-                name="headerTo"
-                value={formData.headerTo}
+                name="addresseePost"
+                value={formData.addresseePost}
                 onChange={handleChange}
-                className="tvr-header-input"
+                className="tvr-input tvr-post-input"
               />
-              <select
-                name="municipality1"
-                value={formData.municipality1}
-                onChange={handleChange}
-                className="tvr-header-select"
-              >
-                <option>{formData.municipality1}</option>
-              </select>
-              <select
-                name="wardNo1"
-                value={formData.wardNo1}
-                onChange={handleChange}
-                className="tvr-header-select tvr-short"
-              >
-                <option>१</option>
-                <option>२</option>
-                <option>३</option>
-              </select>
+
+              <span style={{ marginLeft: "-4px" }}>,</span>
+            </div>
+
+            <div className="tvr-addr-line">
               <input
                 type="text"
-                name="officeName"
-                value={formData.officeName}
+                name="addresseeMunicipality"
+                value={formData.addresseeMunicipality}
                 onChange={handleChange}
-                className="tvr-header-input"
-              />
-              <input
-                type="text"
-                name="address1"
-                value={formData.address1}
-                onChange={handleChange}
-                className="tvr-header-input"
+                className="tvr-input tvr-municipality-input"
               />
             </div>
 
-            <div className="tvr-form-group tvr-date-group">
-              <label>मिति :</label>
+            <div className="tvr-addr-line">
+              <select
+                name="addresseeWardNo"
+                value={formData.addresseeWardNo}
+                onChange={handleChange}
+                className="tvr-select tvr-ward-input"
+              >
+                {WARD_OPTIONS.map((w) => (
+                  <option key={w}>{w}</option>
+                ))}
+              </select>
+
+              <span>नं. वडा कार्यालय</span>
+            </div>
+
+            <div className="tvr-addr-line">
               <input
                 type="text"
-                name="date"
-                value={formData.date}
+                name="addresseeDistrict"
+                value={formData.addresseeDistrict}
                 onChange={handleChange}
+                className="tvr-input tvr-district-input"
               />
             </div>
           </div>
 
-          {/* ── Subject ── */}
-          <div className="tvr-subject-line">
-            <strong>विषय: <u>आदिवासी जनजाती - प्रमाणित सिफारिस पाउँ।</u></strong>
-          </div>
-
-          {/* ── Body paragraph ── */}
-          <p className="tvr-certificate-body">
-            प्रस्तुत विषयमा यस
-            <select name="municipality2" value={formData.municipality2} onChange={handleChange}>
-              <option>{formData.municipality2}</option>
-            </select>
-            वडा नं
-            <select name="wardNo2" value={formData.wardNo2} onChange={handleChange}>
-              <option>१</option>
-              <option>२</option>
-              <option>३</option>
-            </select>
-            निवासी
-            <select name="residentTitle" value={formData.residentTitle} onChange={handleChange}>
-              <option>श्री</option>
-              <option>सुश्री</option>
-              <option>श्रीमती</option>
-            </select>
+          {/* Date */}
+          <div className="tvr-date-block">
+            <label>मिति :</label>
             <input
-              type="text"
-              name="residentName"
-              placeholder="निवासीको नाम"
-              value={formData.residentName}
+              type="date"
+              name="date"
+              value={formData.date}
               onChange={handleChange}
+              className="tvr-input tvr-w-date"
             />
-            को
-            <select name="relation" value={formData.relation} onChange={handleChange}>
-              <option>बाबु</option>
-              <option>आमा</option>
-              <option>पति</option>
-            </select>
-            <select name="guardianTitle" value={formData.guardianTitle} onChange={handleChange}>
-              <option>श्री</option>
-              <option>सुश्री</option>
-              <option>श्रीमती</option>
-            </select>
+          </div>
+        </div>
+
+        {/* Subject */}
+        <div className="tvr-subject-line">
+          <strong>
+            विषय: <u>आदिवासी जनजाती - प्रमाणित सिफारिस पाउँ।</u>
+          </strong>
+        </div>
+
+        {/* Body */}
+        <p className="tvr-certificate-body">
+          प्रस्तुत विषयमा यस{" "}
+          <select
+            name="municipality2"
+            value={formData.municipality2}
+            onChange={handleChange}
+            className="tvr-select tvr-w-md"
+          >
+            <option value={MUNICIPALITY.name}>{MUNICIPALITY.name}</option>
+          </select>{" "}
+          वडा नं{" "}
+          <select
+            name="wardNo2"
+            value={formData.wardNo2}
+            onChange={handleChange}
+            className="tvr-select tvr-w-xs"
+          >
+            {WARD_OPTIONS.map((w) => (
+              <option key={w}>{w}</option>
+            ))}
+          </select>{" "}
+          निवासी{/* श्री hardcoded outside input */}{" "}
+          <select
+            name="residentTitle"
+            value={formData.residentTitle}
+            onChange={handleChange}
+            className="tvr-select tvr-w-sm"
+          >
+            <option>श्री</option>
+            <option>सुश्री</option>
+            <option>श्रीमती</option>
+          </select>{" "}
+          <input
+            type="text"
+            name="residentName"
+            placeholder="निवासीको नाम"
+            value={formData.residentName}
+            onChange={handleChange}
+            className="tvr-input tvr-w-md"
+          />{" "}
+          को{" "}
+          <select
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+            className="tvr-select tvr-w-sm"
+          >
+            <option>बाबु</option>
+            <option>आमा</option>
+            <option>पति</option>
+          </select>{" "}
+          <select
+            name="guardianTitle"
+            value={formData.guardianTitle}
+            onChange={handleChange}
+            className="tvr-select tvr-w-sm"
+          >
+            <option>श्री</option>
+            <option>सुश्री</option>
+            <option>श्रीमती</option>
+          </select>{" "}
+          <input
+            type="text"
+            name="guardianName"
+            placeholder="नाम *"
+            value={formData.guardianName}
+            onChange={handleChange}
+            className="tvr-input tvr-w-md"
+            required
+          />{" "}
+          <select
+            name="tribeCategory"
+            value={formData.tribeCategory}
+            onChange={handleChange}
+            className="tvr-select tvr-w-md"
+          >
+            <option>आदिवासी जनजाती</option>
+          </select>{" "}
+          जाती अन्तर्गत{" "}
+          <input
+            type="text"
+            name="tribeName"
+            placeholder="जातीको नाम *"
+            value={formData.tribeName}
+            onChange={handleChange}
+            className="tvr-input tvr-w-md"
+            required
+          />{" "}
+          जाती भएको व्यहोरा सिफारिस उपलब्ध गराई पाउन यो निवेदन पेश गरेको छु ।
+        </p>
+
+        {/* Extra content textarea */}
+        <div className="tvr-extra-block">
+          <label>निवेदन व्यहोरा (थप विवरण):</label>
+          <textarea
+            name="mainContent"
+            value={formData.mainContent}
+            onChange={handleChange}
+            rows="5"
+            placeholder="थप विवरण यहाँ लेख्नुहोस् (वैकल्पिक)"
+          />
+        </div>
+
+        {/* Signature */}
+        <div className="tvr-signature-section">
+          <p className="tvr-signature-title">निवेदक / निवेदिका</p>
+          <div className="tvr-sig-field">
+            <label>
+              नाम, थर :<span className="tvr-req">*</span>
+            </label>
             <input
               type="text"
-              name="guardianName"
-              placeholder="नाम"
-              value={formData.guardianName}
+              name="applicantNameSignature"
+              value={formData.applicantNameSignature}
               onChange={handleChange}
+              className="tvr-input"
               required
             />
-            <select name="tribeCategory" value={formData.tribeCategory} onChange={handleChange}>
-              <option>आदिवासी जनजाती</option>
-            </select>
-            जाती अन्तर्गत
+          </div>
+          <div className="tvr-sig-field">
+            <label>
+              ठेगाना :<span className="tvr-req">*</span>
+            </label>
             <input
               type="text"
-              name="tribeName"
-              placeholder="जातीको नाम"
-              value={formData.tribeName}
+              name="applicantAddressSignature"
+              value={formData.applicantAddressSignature}
               onChange={handleChange}
+              className="tvr-input"
               required
             />
-            जाती भएको व्यहोरा सिफारिस उपलब्ध गराई पाउन यो निवेदन पेश गरेको छु ।
-          </p>
-
-          {/* ── Additional content (plain textarea, no fake toolbar) ── */}
-          <div className="tvr-form-group-column tvr-rich-text-area">
-            <label>निवेदन व्यहोरा (थप विवरण):</label>
-            <textarea
-              name="mainContent"
-              value={formData.mainContent}
-              onChange={handleChange}
-              rows="5"
-              placeholder="थप विवरण यहाँ लेख्नुहोस् (वैकल्पिक)"
-            />
           </div>
+        </div>
 
-          {/* ── Signature section ── */}
-          <div className="tvr-designation-section">
-            <p className="tvr-signature-label">निवेदक / निवेदिका</p>
-            <div className="tvr-signature-fields">
-              <div className="tvr-form-group-inline">
-                <label>नाम, थर : <span className="tvr-req">*</span></label>
-                <input
-                  type="text"
-                  name="applicantNameSignature"
-                  value={formData.applicantNameSignature}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="tvr-form-group-inline">
-                <label>ठेगाना : <span className="tvr-req">*</span></label>
-                <input
-                  type="text"
-                  name="applicantAddressSignature"
-                  value={formData.applicantAddressSignature}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-          </div>
+        {/* Applicant details */}
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
-          {/* ── Applicant Details ── */}
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+        {/* Footer — two buttons like reference form */}
+        <div className="tvr-footer">
+          <button
+            type="submit"
+            className="tvr-btn tvr-btn-save"
+            disabled={submitting}
+          >
+            {submitting ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="tvr-btn tvr-btn-print"
+            disabled={submitting}
+            onClick={() => handleSave(true)}
+          >
+            {submitting ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
+        </div>
 
-          {/* ── Submit ── */}
-          <div className="tvr-submit-area">
-            <button type="submit" className="tvr-submit-btn" disabled={submitting}>
-              {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-            </button>
-          </div>
-
-        </form>
-      </div>
+        <div className="tvr-copyright">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
+      </form>
     </>
   );
 };
