@@ -1,8 +1,11 @@
 // src/pages/official-use/RamanaPatra.jsx
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const FORM_KEY = "ramana-patra";
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -35,22 +38,6 @@ const styles = `
   color: var(--rp-dark);
 }
 
-/* ── Breadcrumb ── */
-.rp-breadcrumb {
-  max-width: 900px;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--rp-white);
-  border: 1px solid var(--rp-border);
-  border-radius: var(--radius);
-  padding: 10px 18px;
-  box-shadow: var(--shadow);
-}
-.rp-breadcrumb-title { font-weight: 700; font-size: 1rem; }
-.rp-breadcrumb-path  { font-size: 0.82rem; color: #888; }
-
 /* ── Container (paper) ── */
 .rp-container {
   max-width: 900px;
@@ -65,21 +52,8 @@ const styles = `
   padding: 40px 52px;
 }
 
-/* ── Header ── */
-.rp-header {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-.rp-header-logo img { width: 80px; height: auto; flex-shrink: 0; }
-.rp-header-text     { text-align: center; }
-.rp-gov-label    { font-size: 0.95rem; margin: 0 0 2px; color: var(--rp-mid); }
-.rp-municipality { font-size: 2rem; font-weight: 800; margin: 0 0 4px; color: var(--rp-primary); line-height: 1.2; }
-.rp-ward         { font-size: 1.25rem; font-weight: 700; margin: 0 0 4px; color: var(--rp-primary-dk); }
-.rp-address,
-.rp-province     { margin: 0; font-size: 0.92rem; color: var(--rp-mid); }
+/* ── Header wrapper ── */
+.rp-header-section { text-align: center; margin-bottom: 14px; position: relative; min-height: 90px; }
 
 /* ── Divider ── */
 .rp-divider {
@@ -145,6 +119,17 @@ const styles = `
 .rp-num-label { font-weight: 600; white-space: nowrap; color: var(--rp-dark); }
 .rp-sub-label { white-space: nowrap; color: var(--rp-mid); font-size: 0.92rem; }
 
+/* ── Required-star wrapper ── */
+.rp-req-wrap { position: relative; display: inline-block; vertical-align: middle; }
+.rp-req-star {
+  position: absolute;
+  left: 5px; top: 50%;
+  transform: translateY(-50%);
+  color: red; font-weight: bold;
+  pointer-events: none; font-size: 13px; z-index: 1;
+}
+.rp-req-wrap .rp-input { padding-left: 16px; }
+
 /* ── Shared input / select ── */
 .rp-input {
   background: var(--rp-white);
@@ -191,7 +176,7 @@ const styles = `
 .addr-lg { width: 320px; }
 .sig-name { width: 220px; text-align: center; }
 
-/* ── Bodartha ── */
+/* ── Bodartha rich editor ── */
 .rp-bodartha { margin-bottom: 30px; }
 .rp-bodartha-title { font-weight: 700; margin-bottom: 8px; font-size: 1rem; }
 .rp-editor-wrap {
@@ -207,6 +192,7 @@ const styles = `
   display: flex;
   gap: 6px;
   align-items: center;
+  flex-wrap: wrap;
 }
 .rp-tool {
   cursor: pointer;
@@ -218,23 +204,35 @@ const styles = `
   transition: background .15s;
 }
 .rp-tool:hover     { background: #e8e8e8; }
+.rp-tool:active    { background: #dcdcdc; }
 .rp-tool.bold      { font-weight: bold; }
 .rp-tool.italic    { font-style: italic; }
 .rp-tool.underline { text-decoration: underline; }
 .rp-tool-sep       { color: #bbb; padding: 0 2px; }
-.rp-textarea {
+.rp-tool-select {
+  font-family: var(--ff);
+  font-size: 0.82rem;
+  padding: 2px 4px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  background: var(--rp-white);
+  cursor: pointer;
+}
+.rp-editable {
   width: 100%;
-  border: none;
+  min-height: 120px;
   outline: none;
   padding: 12px;
   font-family: var(--ff);
   font-size: 1rem;
-  resize: vertical;
   box-sizing: border-box;
-  min-height: 100px;
   background: var(--rp-white);
   color: var(--rp-dark);
-  display: block;
+  line-height: 1.8;
+}
+.rp-editable:empty:before {
+  content: attr(data-placeholder);
+  color: #bbb;
 }
 
 /* ── Signature ── */
@@ -249,8 +247,8 @@ const styles = `
 .rp-msg--success { background: #eafaf1; border: 1px solid #a9dfbf; color: var(--rp-success); }
 .rp-msg--error   { background: #fdedec; border: 1px solid #f5b7b1; color: var(--rp-error); }
 
-/* ── Action button ── */
-.rp-actions { display: flex; justify-content: center; padding-top: 10px; }
+/* ── Action buttons ── */
+.rp-actions { display: flex; justify-content: center; gap: 12px; padding-top: 10px; }
 .rp-btn {
   padding: 11px 32px;
   border: none;
@@ -259,51 +257,22 @@ const styles = `
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  background: var(--rp-primary);
   color: #fff;
   transition: background .2s, transform .1s;
 }
-.rp-btn:hover:not(:disabled)  { background: var(--rp-primary-dk); }
+.rp-btn--save  { background: #2c3e50; }
+.rp-btn--save:hover:not(:disabled)  { background: #1a252f; }
+.rp-btn--print { background: #1a6b3a; }
+.rp-btn--print:hover:not(:disabled) { background: #145530; }
 .rp-btn:disabled               { opacity: .6; cursor: not-allowed; }
 .rp-btn:active:not(:disabled)  { transform: scale(.97); }
 
 /* ── Footer ── */
 .rp-footer { text-align: right; font-size: 0.8rem; color: #aaa; border-top: 1px solid #eee; padding-top: 12px; margin-top: 36px; }
 
-/* ── Print value spans (hidden on screen) ── */
-.rp-print-value {
-  display: none;
-  font-family: var(--ff);
-  font-size: 0.97rem;
-  color: #000;
-  border-bottom: 1px solid #aaa;
-  min-width: 50px;
-  padding: 0 4px 1px;
-  vertical-align: middle;
-}
-.rp-print-value.meta-w   { min-width: 140px; }
-.rp-print-value.w-sm     { min-width: 54px; text-align: center; }
-.rp-print-value.w-md     { min-width: 130px; }
-.rp-print-value.w-lg     { min-width: 220px; }
-.rp-print-value.addr-md  { min-width: 180px; }
-.rp-print-value.addr-lg  { min-width: 300px; }
-.rp-print-value.sig-name { min-width: 200px; text-align: center; }
-.rp-print-value.sig-pos  { min-width: 160px; text-align: center; }
-.rp-textarea-print {
-  display: none;
-  min-height: 60px;
-  white-space: pre-wrap;
-  border: none;
-  border-bottom: 1px solid #aaa;
-  padding: 4px 0;
-}
-
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .rp-container    { padding: 24px 18px; }
-  .rp-header       { flex-direction: column; text-align: center; }
-  .rp-municipality { font-size: 1.5rem; }
-  .rp-ward         { font-size: 1.1rem; }
   .rp-meta-row     { flex-direction: column; }
   .rp-num-row      { flex-wrap: wrap; }
   .rp-signature-section { justify-content: center; }
@@ -312,95 +281,28 @@ const styles = `
   .rp-input.addr-lg { width: 100%; max-width: 100%; }
 }
 @media (max-width: 480px) {
-  .rp-municipality { font-size: 1.25rem; }
   .rp-container    { padding: 16px 12px; }
-}
-
-/* ── Print ── */
-@media print {
-  body > *:not(.rp-page-wrapper) { display: none !important; }
-  .rp-page-wrapper { background: none !important; padding: 0 !important; }
-  .rp-container {
-    box-shadow: none !important;
-    border: none !important;
-    margin: 0 !important;
-    padding: 20px 40px !important;
-    max-width: 100% !important;
-    background-image: url("/papertexture1.jpg") !important;
-    background-repeat: repeat !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .screen-only         { display: none !important; }
-  .print-only          { display: inline !important; }
-  .rp-print-value      { display: inline !important; }
-  .rp-textarea-print   { display: block !important; }
-  .rp-breadcrumb,
-  .rp-actions,
-  .rp-footer,
-  .rp-msg,
-  .rp-applicant-wrapper { display: none !important; }
-  .rp-body-para    { line-height: 2.2; font-size: 1rem; }
-  .rp-municipality { font-size: 1.7rem; }
-  .rp-ward         { font-size: 1.1rem; }
-  .rp-header-logo img { width: 70px; }
-  .rp-body-para,
-  .rp-numbered,
-  .rp-signature-section { page-break-inside: avoid; }
-  .rp-editor-wrap  { border: none; }
-  @page { size: A4; margin: 15mm 20mm; }
 }
 `;
 
 /* ─────────────────────────── Sub-components ─────────────────────────── */
 
-const PrintableInput = ({ value, onChange, className = "", required = false, placeholder = "", type = "text" }) => (
-  <>
+const StarInput = ({ value, onChange, className = "", required = false, placeholder = "", type = "text" }) => (
+  <span className="rp-req-wrap">
+    <span className="rp-req-star">*</span>
     <input
       type={type}
-      className={`rp-input ${className} screen-only`}
+      className={`rp-input ${className}`}
       value={value}
       onChange={onChange}
       required={required}
       placeholder={placeholder}
     />
-    <span className={`rp-print-value ${className} print-only`}>
-      {value || "\u00A0"}
-    </span>
-  </>
-);
-
-const PrintableSelect = ({ value, onChange, options, className = "" }) => (
-  <>
-    <select
-      className={`rp-select ${className} screen-only`}
-      value={value}
-      onChange={onChange}
-    >
-      <option value="">पद छनौट गर्नुहोस्</option>
-      {options.map((o) => (
-        <option key={o} value={o}>{o}</option>
-      ))}
-    </select>
-    <span className={`rp-print-value ${className} print-only`}>
-      {value || "\u00A0"}
-    </span>
-  </>
-);
-
-const PrintableTextarea = ({ value, onChange, rows = 6 }) => (
-  <>
-    <textarea className="rp-textarea screen-only" rows={rows} value={value} onChange={onChange} />
-    <div className="rp-print-value rp-textarea-print print-only">
-      {value || "\u00A0"}
-    </div>
-  </>
+  </span>
 );
 
 /* ─────────────────────────── Helpers ─────────────────────────── */
 
-/* 16-point list config: [label, key, className, subRows?]
-   subRows: array of [subLabel, key, className] for inline multi-field rows */
 const NUMBERED_POINTS = [
   { num: "१", label: "कर्मचारीको नाम थर :",           key: "point1_name",           cls: "w-lg" },
   { num: "२", label: "कर्मचारीको संकेत नम्बर :",      key: "point2_signal",         cls: "w-md" },
@@ -446,7 +348,7 @@ const NUMBERED_POINTS = [
   { num: "१६", label: "अन्य केहि भए :",                          key: "point16_other",              cls: "w-lg" },
 ];
 
-const INITIAL_FORM = () => ({
+const INITIAL_FORM = {
   letter_no:    "२०८२/८३",
   reference_no: "",
   date:         "२०८२-१२-१८",
@@ -488,7 +390,7 @@ const INITIAL_FORM = () => ({
   applicant_address:        "",
   applicant_citizenship_no: "",
   applicant_phone:          "",
-});
+};
 
 const validate = (form) => {
   const errors = [];
@@ -501,20 +403,27 @@ const validate = (form) => {
 /* ─────────────────────────── Component ─────────────────────────── */
 export default function RamanaPatra() {
   const { user } = useAuth();
-
-  const [form, setForm]       = useState(INITIAL_FORM);
+  const { form, setForm, handleChange } = useWardForm(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg]         = useState(null); // { type: 'success'|'error', text: string }
+  const [msg, setMsg]         = useState(null);
+  const editorRef = useRef(null);
 
   const upd = (k) => (e) => setForm((s) => ({ ...s, [k]: e.target.value }));
 
-  const wardLabel =
-    user?.role === "SUPERADMIN"
-      ? "सबै वडा कार्यालय"
-      : `वडा नं. ${user?.ward || "—"} वडा कार्यालय`;
+  /* Rich-text toolbar command */
+  const exec = (command, value = null) => {
+    editorRef.current?.focus();
+    document.execCommand(command, false, value);
+    // sync HTML back to state
+    setForm((s) => ({ ...s, bodartha: editorRef.current?.innerHTML || "" }));
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onEditorInput = () =>
+    setForm((s) => ({ ...s, bodartha: editorRef.current?.innerHTML || "" }));
+
+  /* ── Single save — no duplicate POST ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (loading) return;
     setMsg(null);
 
     const errors = validate(form);
@@ -525,35 +434,167 @@ export default function RamanaPatra() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          ...form,
-          submitted_by: user?.username || "unknown",
-          ward: user?.ward,
-        }),
+      const res = await axios.post(API_URL, {
+        ...form,
+        submitted_by: user?.username || "unknown",
+        ward: user?.ward,
       });
-
-      const ct = res.headers.get("content-type") || "";
-      const body = ct.includes("application/json")
-        ? await res.json()
-        : { message: await res.text() };
-
-      if (!res.ok) throw new Error(body.message || `HTTP ${res.status}`);
-
-      window.print();
-      setForm(INITIAL_FORM());
-      setMsg({ type: "success", text: `सफलतापूर्वक सेभ भयो (ID: ${body.id || "—"})` });
+      if (shouldPrint) {
+        handleCleanPrint();
+      } else {
+        setMsg({ type: "success", text: `सफलतापूर्वक सेभ भयो (ID: ${res.data?.id || "—"})` });
+      }
+      setForm(INITIAL_FORM);
+      if (editorRef.current) editorRef.current.innerHTML = "";
     } catch (err) {
-      setMsg({ type: "error", text: err.message || "सेभ गर्न सकिएन" });
+      const text = err.response?.data?.message || err.response?.data?.error || err.message || "सेभ गर्न सकिएन";
+      setMsg({ type: "error", text });
     } finally {
       setLoading(false);
     }
+  };
+
+  /* ── Clean print — isolated window, values sized to content ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `वडा नं. ${user?.ward || ""} वडा कार्यालय`;
+
+    const esc = (v) =>
+      String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    // numbered points as a clean list
+    const numberedHtml = NUMBERED_POINTS
+      .map((pt) => {
+        if (pt.inline) {
+          const subs = pt.subs
+            .map(([subLabel, subKey]) => `${esc(subLabel)} <span class="value">${esc(form[subKey])}</span>`)
+            .join(" &nbsp; ");
+          return `<div class="num-row"><span class="num-label">${esc(pt.num)}. ${esc(pt.label)}</span> ${subs}</div>`;
+        }
+        return `<div class="num-row"><span class="num-label">${esc(pt.num)}. ${esc(pt.label)}</span> <span class="value">${esc(form[pt.key])}</span></div>`;
+      })
+      .join("");
+
+    // bodartha is rich HTML — already escaped at entry by the browser; insert as-is
+    const bodarthaHtml = form.bodartha || "";
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>रमाना पत्र</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Tiro Devanagari Nepal', 'Kalimati', 'Noto Sans Devanagari', serif;
+            color: #000; background: white;
+            padding: 15mm 20mm; font-size: 11pt; line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 14px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .gov-label { font-size: 10pt; color: #333; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 16pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .divider { border: none; border-top: 2.5px double #c0392b; margin: 12px 0 18px; }
+          .meta { display: flex; justify-content: space-between; margin: 14px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 16px 0; text-decoration: underline; }
+          .addressee { margin-bottom: 16px; }
+          .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 20px; }
+          /* value sizes to content — short values inline, long ones wrap cleanly */
+          .value { font-weight: bold; padding: 0 4px; }
+          .value-inline { white-space: nowrap; }
+          .numbered { margin-bottom: 22px; }
+          .num-row { margin-bottom: 8px; font-size: 10.5pt; line-height: 1.9; }
+          .num-label { font-weight: 600; }
+          .bodartha-title { font-weight: bold; margin: 14px 0 6px; }
+          .bodartha-content { border: 1px solid #ccc; padding: 10px; min-height: 50px; margin-bottom: 20px; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 36px; margin-bottom: 24px; }
+          .sig-block { width: 220px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="${esc(MUNICIPALITY.logoSrc || "/nepallogo.svg")}" alt="Nepal" />
+          <div class="gov-label">नेपाल सरकार</div>
+          <div class="mun-name">${esc(MUNICIPALITY.name)}</div>
+          <div class="ward-title">${esc(wardTitle)}</div>
+          <div class="addr">${esc(MUNICIPALITY.officeLine)}</div>
+          <div class="addr">${esc(MUNICIPALITY.provinceLine)}</div>
+        </div>
+        <hr class="divider" />
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value value-inline">${esc(form.letter_no)}</span></div>
+            <div>चलानी नं. : <span class="value value-inline">${esc(form.reference_no)}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value value-inline">${esc(form.date)}</span></div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: रमाना पत्र ।</div>
+
+        <div class="addressee">
+          श्री <span class="value">${esc(form.recipient_name)}</span> ज्यू,<br/>
+          <span class="value">${esc(form.recipient_address)}</span>
+        </div>
+
+        <div class="body-text">
+          यस कार्यालयको निर्णय नं <span class="value value-inline">${esc(form.decision_no)}</span>
+          मिति <span class="value value-inline">${esc(form.decision_date)}</span>
+          को निर्णय अनुसार <span class="value">${esc(form.emp_post)}</span>
+          <span class="value">${esc(form.emp_name)}</span>
+          लाई यस कार्यालयबाट मिति <span class="value value-inline">${esc(form.transfer_date)}</span>
+          देखि लागू हुने गरी <span class="value">${esc(form.transfer_office)}</span>
+          मा सरुवा/काजमा खटाई पठाइएको हुनाले देहाय बमोजिमको विवरण खुलाई रमाना दिइएको व्यहोरा अनुरोध छ ।
+        </div>
+
+        <div class="numbered">${numberedHtml}</div>
+
+        ${
+          bodarthaHtml
+            ? `<div class="bodartha-title">बोधार्थ:</div><div class="bodartha-content">${bodarthaHtml}</div>`
+            : ""
+        }
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${esc(form.signatory_name)}</div>
+            <div>${esc(form.signatory_position)}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row"><span class="field-label">नाम:</span><span>${esc(form.applicant_name)}</span></div>
+          <div class="field-row"><span class="field-label">ठेगाना:</span><span>${esc(form.applicant_address)}</span></div>
+          <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span>${esc(form.applicant_citizenship_no)}</span></div>
+          <div class="field-row"><span class="field-label">फोन:</span><span>${esc(form.applicant_phone)}</span></div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   return (
@@ -561,30 +602,19 @@ export default function RamanaPatra() {
       <style>{styles}</style>
 
       <div className="rp-page-wrapper">
-        {/* Breadcrumb */}
-        <div className="rp-breadcrumb screen-only">
-          <span className="rp-breadcrumb-title">रमाना पत्र</span>
-          <span className="rp-breadcrumb-path">
-            आधिकारिक प्रयोग &rsaquo; रमाना पत्र
-          </span>
-        </div>
-
         <div className="rp-container">
-          <form onSubmit={handleSubmit} noValidate>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSave(false);
+            }}
+            noValidate
+          >
 
             {/* Header */}
-            <header className="rp-header">
-              <div className="rp-header-logo">
-                <img src={MUNICIPALITY.logoSrc} alt="नेपाल सरकार" />
-              </div>
-              <div className="rp-header-text">
-                <p className="rp-gov-label">नेपाल सरकार</p>
-                <h1 className="rp-municipality">{MUNICIPALITY.name}</h1>
-                <h2 className="rp-ward">{wardLabel}</h2>
-                <p className="rp-address">{MUNICIPALITY.officeLine}</p>
-                <p className="rp-province">{MUNICIPALITY.provinceLine}</p>
-              </div>
-            </header>
+            <div className="rp-header-section">
+              <MunicipalityHeader formTitle="रमाना पत्र" />
+            </div>
 
             <div className="rp-divider" />
 
@@ -593,17 +623,17 @@ export default function RamanaPatra() {
               <div className="rp-meta-left">
                 <div className="rp-meta-field">
                   <label>पत्र संख्या:</label>
-                  <PrintableInput value={form.letter_no} onChange={upd("letter_no")} className="meta-w" />
+                  <StarInput value={form.letter_no} onChange={upd("letter_no")} className="meta-w" />
                 </div>
                 <div className="rp-meta-field">
                   <label>चलानी नं.:</label>
-                  <PrintableInput value={form.reference_no} onChange={upd("reference_no")} className="meta-w" placeholder="चलानी नं." />
+                  <StarInput value={form.reference_no} onChange={upd("reference_no")} className="meta-w" placeholder="चलानी नं." />
                 </div>
               </div>
               <div className="rp-meta-right">
                 <div className="rp-meta-field">
                   <label>मिति:</label>
-                  <PrintableInput value={form.date} onChange={upd("date")} className="meta-w" />
+                  <StarInput value={form.date} onChange={upd("date")} className="meta-w" />
                 </div>
               </div>
             </div>
@@ -617,11 +647,11 @@ export default function RamanaPatra() {
             <div className="rp-addressee">
               <div className="rp-addressee-row">
                 <span>श्री</span>
-                <PrintableInput value={form.recipient_name} onChange={upd("recipient_name")} className="addr-md" placeholder="प्राप्तकर्ताको नाम" />
+                <StarInput value={form.recipient_name} onChange={upd("recipient_name")} className="addr-md" placeholder="प्राप्तकर्ताको नाम" />
                 <span>ज्यू,</span>
               </div>
               <div className="rp-addressee-row">
-                <PrintableInput value={form.recipient_address} onChange={upd("recipient_address")} className="addr-lg" placeholder="ठेगाना" />
+                <StarInput value={form.recipient_address} onChange={upd("recipient_address")} className="addr-lg" placeholder="ठेगाना" />
               </div>
             </div>
 
@@ -629,21 +659,21 @@ export default function RamanaPatra() {
             <div className="rp-body-para">
               <p>
                 यस कार्यालयको निर्णय नं{" "}
-                <PrintableInput value={form.decision_no} onChange={upd("decision_no")} className="w-sm" />{" "}
+                <StarInput value={form.decision_no} onChange={upd("decision_no")} className="w-sm" />{" "}
                 मिति{" "}
-                <PrintableInput value={form.decision_date} onChange={upd("decision_date")} className="w-md" />{" "}
+                <StarInput value={form.decision_date} onChange={upd("decision_date")} className="w-md" />{" "}
                 को निर्णय अनुसार{" "}
-                <PrintableInput value={form.emp_post} onChange={upd("emp_post")} className="w-md" placeholder="पद" />{" "}
-                <PrintableInput value={form.emp_name} onChange={upd("emp_name")} className="w-md" placeholder="कर्मचारीको नाम" required />{" "}
+                <StarInput value={form.emp_post} onChange={upd("emp_post")} className="w-md" placeholder="पद" />{" "}
+                <StarInput value={form.emp_name} onChange={upd("emp_name")} className="w-md" placeholder="कर्मचारीको नाम" required />{" "}
                 लाई यस कार्यालयबाट मिति{" "}
-                <PrintableInput value={form.transfer_date} onChange={upd("transfer_date")} className="w-md" />{" "}
+                <StarInput value={form.transfer_date} onChange={upd("transfer_date")} className="w-md" />{" "}
                 देखि लागू हुने गरी{" "}
-                <PrintableInput value={form.transfer_office} onChange={upd("transfer_office")} className="w-lg" placeholder="सरुवा कार्यालय" />{" "}
+                <StarInput value={form.transfer_office} onChange={upd("transfer_office")} className="w-lg" placeholder="सरुवा कार्यालय" />{" "}
                 मा सरुवा/काजमा खटाई पठाइएको हुनाले देहाय बमोजिमको विवरण खुलाई रमाना दिइएको व्यहोरा अनुरोध छ ।
               </p>
             </div>
 
-            {/* 16-point numbered list — driven by config array */}
+            {/* 16-point numbered list */}
             <div className="rp-numbered">
               {NUMBERED_POINTS.map((pt) =>
                 pt.inline ? (
@@ -652,65 +682,104 @@ export default function RamanaPatra() {
                     {pt.subs.map(([subLabel, subKey, subCls]) => (
                       <React.Fragment key={subKey}>
                         <span className="rp-sub-label">{subLabel}</span>
-                        <PrintableInput value={form[subKey]} onChange={upd(subKey)} className={subCls} />
+                        <StarInput value={form[subKey]} onChange={upd(subKey)} className={subCls} />
                       </React.Fragment>
                     ))}
                   </div>
                 ) : (
                   <div key={pt.num} className="rp-num-row">
                     <span className="rp-num-label">{pt.num}. {pt.label}</span>
-                    <PrintableInput value={form[pt.key]} onChange={upd(pt.key)} className={pt.cls} />
+                    <StarInput value={form[pt.key]} onChange={upd(pt.key)} className={pt.cls} />
                   </div>
                 )
               )}
             </div>
 
-            {/* Bodartha */}
+            {/* Bodartha — working rich-text editor */}
             <div className="rp-bodartha">
               <p className="rp-bodartha-title">बोधार्थ:</p>
               <div className="rp-editor-wrap">
-                <div className="rp-editor-toolbar screen-only">
-                  <button type="button" className="rp-tool bold"      tabIndex={-1}>B</button>
-                  <button type="button" className="rp-tool italic"    tabIndex={-1}>I</button>
-                  <button type="button" className="rp-tool underline" tabIndex={-1}>U</button>
+                <div className="rp-editor-toolbar">
+                  <button type="button" className="rp-tool bold"      onClick={() => exec("bold")}      tabIndex={-1}>B</button>
+                  <button type="button" className="rp-tool italic"    onClick={() => exec("italic")}    tabIndex={-1}>I</button>
+                  <button type="button" className="rp-tool underline" onClick={() => exec("underline")} tabIndex={-1}>U</button>
                   <span className="rp-tool-sep">|</span>
-                  <button type="button" className="rp-tool"           tabIndex={-1}>Styles</button>
-                  <button type="button" className="rp-tool"           tabIndex={-1}>Format</button>
+                  <select
+                    className="rp-tool-select"
+                    defaultValue=""
+                    onChange={(e) => { exec("fontSize", e.target.value); e.target.value = ""; }}
+                    tabIndex={-1}
+                  >
+                    <option value="" disabled>Styles</option>
+                    <option value="2">सानो</option>
+                    <option value="3">मध्यम</option>
+                    <option value="5">ठूलो</option>
+                  </select>
+                  <select
+                    className="rp-tool-select"
+                    defaultValue=""
+                    onChange={(e) => { exec(e.target.value); e.target.value = ""; }}
+                    tabIndex={-1}
+                  >
+                    <option value="" disabled>Format</option>
+                    <option value="justifyLeft">बायाँ</option>
+                    <option value="justifyCenter">बीच</option>
+                    <option value="justifyRight">दायाँ</option>
+                    <option value="insertUnorderedList">सूची</option>
+                  </select>
                 </div>
-                <PrintableTextarea value={form.bodartha} onChange={upd("bodartha")} rows={6} />
+                <div
+                  ref={editorRef}
+                  className="rp-editable"
+                  contentEditable
+                  suppressContentEditableWarning
+                  data-placeholder="बोधार्थ यहाँ लेख्नुहोस्..."
+                  onInput={onEditorInput}
+                />
               </div>
             </div>
 
             {/* Signature */}
             <div className="rp-signature-section">
               <div className="rp-signature-block">
-                <PrintableInput value={form.signatory_name} onChange={upd("signatory_name")} className="sig-name" required placeholder="हस्ताक्षरकर्ताको नाम *" />
-                <PrintableSelect value={form.signatory_position} onChange={upd("signatory_position")} options={["वडा अध्यक्ष", "वडा सचिव"]} className="sig-pos" />
+                <StarInput value={form.signatory_name} onChange={upd("signatory_name")} className="sig-name" required placeholder="हस्ताक्षरकर्ताको नाम" />
+                <select
+                  className="rp-select"
+                  value={form.signatory_position}
+                  onChange={upd("signatory_position")}
+                >
+                  <option value="">पद छनौट गर्नुहोस्</option>
+                  <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+                  <option value="वडा सचिव">वडा सचिव</option>
+                </select>
               </div>
             </div>
 
-            {/* Applicant details (screen only) */}
-            <div className="rp-applicant-wrapper screen-only">
-              <ApplicantDetailsNp formData={form} handleChange={upd} />
+            {/* Applicant details */}
+            <div className="rp-applicant-wrapper">
+              <ApplicantDetailsNp formData={form} handleChange={handleChange} />
             </div>
 
             {/* Message */}
             {msg && (
-              <div className={`rp-msg rp-msg--${msg.type} screen-only`}>
+              <div className={`rp-msg rp-msg--${msg.type}`}>
                 {msg.type === "success" ? "✓" : "✗"} {msg.text}
               </div>
             )}
 
-            {/* Submit */}
-            <div className="rp-actions screen-only">
-              <button type="submit" className="rp-btn" disabled={loading}>
-                {loading ? "⏳ सेभ हुँदै..." : "🖨 सेभ र प्रिन्ट गर्नुहोस्"}
+            {/* Footer buttons */}
+            <div className="rp-actions">
+              <button type="submit" className="rp-btn rp-btn--save" disabled={loading}>
+                {loading ? "सेभ हुँदै..." : "सेभ गर्नुहोस्"}
+              </button>
+              <button type="button" className="rp-btn rp-btn--print" disabled={loading} onClick={() => handleSave(true)}>
+                {loading ? "सेभ हुँदै..." : "सेभ र प्रिन्ट गर्नुहोस्"}
               </button>
             </div>
 
           </form>
 
-          <footer className="rp-footer screen-only">
+          <footer className="rp-footer">
             © सर्वाधिकार सुरक्षित — {MUNICIPALITY.name}
           </footer>
         </div>
