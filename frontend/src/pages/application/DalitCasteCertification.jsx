@@ -1,64 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import axios from "../../utils/axiosInstance";
-import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
-
-/* ─────────────────────────────────────────────
-   PrintField & PrintSelect — MODULE SCOPE ONLY.
-   Never define inside the component — React
-   creates a new type each render → input
-   unmounts every keystroke → 1 char limit.
-───────────────────────────────────────────── */
-const PrintField = ({ value, isPrint, className = "", name, onChange, ...rest }) => {
-  if (isPrint) {
-    return <span className={`dcc-pf-value ${className}`}>{value || ""}</span>;
-  }
-  return (
-    <input
-      type="text"
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={`dcc-pf-input ${className}`}
-      {...rest}
-    />
-  );
-};
-
-const PrintSelect = ({ value, isPrint, className = "", name, onChange, children }) => {
-  if (isPrint) {
-    return <span className={`dcc-pf-value ${className}`}>{value || ""}</span>;
-  }
-  return (
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={`dcc-pf-select ${className}`}
-    >
-      {children}
-    </select>
-  );
-};
 
 /* ─────────────────────────────────────────────
    INITIAL STATE
 ───────────────────────────────────────────── */
 const INITIAL_STATE = {
-  date:               new Date().toISOString().slice(0, 10),
-  headerDistrict:     MUNICIPALITY?.englishDistrict || "काठमाडौँ",
-  mainDistrict:       MUNICIPALITY?.englishDistrict || "काठमाडौँ",
-  palikaName:         MUNICIPALITY?.name            || "",
-  wardNo:             MUNICIPALITY?.wardNumber      || "",
-  residentName:       "",
-  relation:           "छोरा",
-  guardianName:       "",
-  casteName:          "",
-  applicantName:      "",
-  applicantAddress:   "",
+  date:                 new Date().toISOString().slice(0, 10),
+  cdoTitle:             "प्रमुख जिल्ला अधिकारी",
+  headerDistrict:       MUNICIPALITY?.englishDistrict || "काठमाडौँ",
+  mainDistrict:         MUNICIPALITY?.englishDistrict || "काठमाडौँ",
+  palikaName:           MUNICIPALITY?.name            || "",
+  wardNo:               MUNICIPALITY?.wardNumber      || "",
+  residentName:         "",
+  relation:             "छोरा",
+  guardianName:         "",
+  casteName:            "",
+  applicantName:        "",
+  applicantAddress:     "",
   applicantCitizenship: "",
-  applicantPhone:     "",
+  applicantPhone:       "",
 };
 
 /* ─────────────────────────────────────────────
@@ -136,8 +100,23 @@ const styles = `
   text-align: justify;
 }
 
-/* PrintField — screen (input) */
-.dcc-pf-input {
+/* required-star wrapper */
+.dcc-req-wrap { position: relative; display: inline-block; }
+.dcc-req-star {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: red;
+  font-weight: bold;
+  pointer-events: none;
+  font-size: 13px;
+  line-height: 1;
+}
+.dcc-req-wrap .dcc-inline-input { padding-left: 15px; }
+
+/* inline input */
+.dcc-inline-input {
   display: inline-block;
   vertical-align: baseline;
   padding: 2px 6px;
@@ -153,41 +132,21 @@ const styles = `
   box-sizing: border-box;
   transition: border-color 0.15s, background-color 0.15s;
 }
-.dcc-pf-input:focus {
+.dcc-inline-input:focus {
   border-bottom-color: #3b7dd8;
   background-color: #f0f7ff;
 }
-.dcc-pf-input.short        { width: 70px; }
-.dcc-pf-input.long         { width: 220px; }
-.dcc-pf-input.header-field {
+.dcc-inline-input.short        { width: 70px; }
+.dcc-inline-input.long         { width: 220px; }
+.dcc-inline-input.header-field {
   font-size: 16px;
   font-weight: bold;
   width: 260px;
   border-bottom: 1px dotted #000;
 }
 
-/* PrintField — print mode (span) */
-.dcc-pf-value {
-  display: inline-block;
-  vertical-align: baseline;
-  padding: 0 4px;
-  font-family: inherit;
-  font-size: 15px;
-  color: #000;
-  min-width: 60px;
-  border-bottom: 1px solid #000;
-  word-break: break-word;
-}
-.dcc-pf-value.short        { min-width: 40px; }
-.dcc-pf-value.long         { min-width: 160px; }
-.dcc-pf-value.header-field {
-  font-size: 16px;
-  font-weight: bold;
-  min-width: 200px;
-}
-
-/* PrintSelect — screen */
-.dcc-pf-select {
+/* inline select */
+.dcc-inline-select {
   display: inline-block;
   vertical-align: baseline;
   padding: 2px 6px;
@@ -201,16 +160,15 @@ const styles = `
   min-width: 80px;
   cursor: pointer;
 }
-.dcc-pf-select:focus { border-bottom-color: #3b7dd8; }
+.dcc-inline-select:focus { border-bottom-color: #3b7dd8; }
 
-.dcc-submit-area {
+.dcc-footer {
   clear: both;
   text-align: center;
   margin-top: 30px;
   padding-top: 30px;
 }
-.dcc-submit-btn {
-  background-color: #343a40;
+.dcc-save-print-btn {
   color: white;
   padding: 12px 25px;
   border: none;
@@ -218,64 +176,25 @@ const styles = `
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+  font-family: inherit;
 }
-.dcc-submit-btn:hover:not(:disabled) { background-color: #23272b; }
-.dcc-submit-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
+.dcc-save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ── Print ── */
-@media print {
-  body * { visibility: hidden; }
-
-  .dcc-container,
-  .dcc-container * { visibility: visible; }
-
-  .dcc-container {
-    position: absolute;
-    left: 0; top: 0;
-    width: 100%;
-    max-width: none;
-    box-shadow: none;
-    border: none;
-    margin: 0;
-    padding: 15px;
-    background: white !important;
-    background-image: none !important;
-    font-size: 14px;
-    line-height: 1.8;
-    color: #000;
-  }
-
-  .dcc-submit-area { display: none !important; }
-
-  .dcc-pf-value {
-    border-bottom: 1px solid #000 !important;
-    color: #000 !important;
-    background: transparent !important;
-  }
-
-  /* Fallback for inputs inside ApplicantDetailsNp */
-  input, select, textarea {
-    color: #000 !important;
-    -webkit-text-fill-color: #000 !important;
-    background: transparent !important;
-    border: none !important;
-    border-bottom: 1px solid #000 !important;
-    opacity: 1 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  input::placeholder, textarea::placeholder {
-    color: transparent !important;
-    -webkit-text-fill-color: transparent !important;
-  }
+.dcc-copyright {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
 }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .dcc-container { width: 100%; padding: 15px; }
   .dcc-form-row { flex-direction: column; }
-  .dcc-pf-input { width: 110px; }
-  .dcc-pf-input.header-field { width: 100%; }
+  .dcc-inline-input { width: 110px; }
+  .dcc-inline-input.header-field { width: 100%; }
 }
 `;
 
@@ -283,9 +202,9 @@ const styles = `
    COMPONENT
 ───────────────────────────────────────────── */
 const DalitCasteCertification = () => {
-  const [formData, setFormData]     = useState(INITIAL_STATE);
-  const [submitting, setSubmitting] = useState(false);
-  const [isPrint, setIsPrint]       = useState(false);
+  const [formData, setFormData] = useState(INITIAL_STATE);
+  const [loading, setLoading]   = useState(false);
+  const { user } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -293,6 +212,7 @@ const DalitCasteCertification = () => {
   };
 
   const validate = (d) => {
+    if (!d.cdoTitle?.trim())       return "अधिकारीको पद आवश्यक छ";
     if (!d.mainDistrict?.trim())   return "जिल्लाको नाम आवश्यक छ";
     if (!d.palikaName?.trim())     return "पालिकाको नाम आवश्यक छ";
     if (!d.wardNo?.trim())         return "वडा नम्बर आवश्यक छ";
@@ -303,14 +223,12 @@ const DalitCasteCertification = () => {
     return null;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (submitting) return;
-
+  /* ── Single save function — no duplicate records ── */
+  const handleSave = async (shouldPrint = false) => {
     const err = validate(formData);
     if (err) { alert("कृपया आवश्यक क्षेत्रहरू भर्नुहोस्: " + err); return; }
 
-    setSubmitting(true);
+    setLoading(true);
     try {
       const payload = { ...formData };
       Object.keys(payload).forEach((k) => {
@@ -323,8 +241,12 @@ const DalitCasteCertification = () => {
       );
 
       if (res.status === 201 || res.status === 200) {
-        alert("सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
-        setIsPrint(true);
+        if (shouldPrint) {
+          handleCleanPrint();
+        } else {
+          alert("सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
+        }
+        setFormData(INITIAL_STATE);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -336,27 +258,137 @@ const DalitCasteCertification = () => {
         "Submission failed";
       alert("त्रुटि: " + msg);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (!isPrint) return;
-    const id = requestAnimationFrame(() => {
-      window.print();
-      setFormData(INITIAL_STATE);
-      setIsPrint(false);
-    });
-    return () => cancelAnimationFrame(id);
-  }, [isPrint]);
+  /* ── Clean print — isolated print window, values interpolated as spans ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>दलित जाति प्रमाणित</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+          .addressee { margin-bottom: 8px; font-size: 11pt; font-weight: bold; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .body-text { font-size: 11pt; line-height: 2.4; text-align: justify; margin-bottom: 24px; }
+          /* value spans size to content — no fixed min-width so small values
+             don't leave big gaps and long values don't get clipped/merged */
+          .value { font-weight: bold; padding: 0 4px; white-space: nowrap; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 28px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+          .field-val { flex: 1; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine || ""}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine || ""}</div>
+        </div>
+
+        <div class="meta">
+          <div>
+            <div class="addressee">श्रीमान् <span class="value">${formData.cdoTitle || ""}</span>ज्यु,</div>
+            <div><span class="value">${formData.headerDistrict || ""}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <strong>${formData.date || ""}</strong></div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: दलित जाति प्रमाणित गरि पाउँ ।</div>
+
+        <div class="body-text">
+          <span class="value">${formData.mainDistrict || ""}</span>
+          जिल्ला
+          <span class="value">${formData.palikaName || ""}</span>
+          वडा नं.
+          <span class="value">${formData.wardNo || ""}</span>
+          निवासी
+          <span class="value">${formData.residentName || ""}</span>
+          को
+          <span class="value">${formData.relation || ""}</span>
+          म
+          <span class="value">${formData.guardianName || ""}</span>
+          दलित जाति अन्तर्गत
+          <span class="value">${formData.casteName || ""}</span>
+          जातिमा पर्ने भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा
+          कार्यालयको सिफारिस, नागरिकता प्रमाणपत्रको फोटोकपी सहित रु १०।- को
+          टिकट टाँसी यो निवेदन पेश गरेको छु ।
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row">
+            <span class="field-label">नाम:</span>
+            <span class="field-val">${formData.applicantName || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">ठेगाना:</span>
+            <span class="field-val">${formData.applicantAddress || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">नागरिकता नं.:</span>
+            <span class="field-val">${formData.applicantCitizenship || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">फोन:</span>
+            <span class="field-val">${formData.applicantPhone || ""}</span>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
 
   return (
     <>
       <style>{styles}</style>
 
       <div className="dcc-container">
-        <form onSubmit={handleSubmit}>
-
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave(false);
+          }}
+        >
           {/* ── Municipality header ── */}
           <div className="dcc-header-row">
             <MunicipalityHeader showLogo />
@@ -365,28 +397,42 @@ const DalitCasteCertification = () => {
           {/* ── Addressee + Date ── */}
           <div className="dcc-form-row">
             <div className="dcc-header-to-group">
-              <h3>श्रीमान् प्रमुख जिल्ला अधिकारीज्यु,</h3>
-              <PrintField
-                name="headerDistrict"
-                value={formData.headerDistrict}
-                onChange={handleChange}
-                isPrint={isPrint}
-                className="header-field"
-                required
-              />
+              <h3>
+                श्रीमान्{" "}
+                <span className="dcc-req-wrap">
+                  <span className="dcc-req-star">*</span>
+                  <input
+                    type="text"
+                    name="cdoTitle"
+                    className="dcc-inline-input long"
+                    value={formData.cdoTitle}
+                    onChange={handleChange}
+                    required
+                  />
+                </span>
+                ज्यु,
+              </h3>
+              <div className="dcc-req-wrap">
+                <span className="dcc-req-star">*</span>
+                <input
+                  type="text"
+                  name="headerDistrict"
+                  className="dcc-inline-input header-field"
+                  value={formData.headerDistrict}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
 
             <div className="dcc-date-group">
               <label>मिति :</label>
-              {isPrint
-                ? <span className="dcc-pf-value">{formData.date}</span>
-                : <input
-                    type="text"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                  />
-              }
+              <input
+                type="text"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
@@ -399,70 +445,90 @@ const DalitCasteCertification = () => {
 
           {/* ── Body paragraph ── */}
           <p className="dcc-certificate-body">
-            <PrintField
-              name="mainDistrict"
-              value={formData.mainDistrict}
-              onChange={handleChange}
-              isPrint={isPrint}
-              required
-            />
+            <span className="dcc-req-wrap">
+              <span className="dcc-req-star">*</span>
+              <input
+                type="text"
+                name="mainDistrict"
+                className="dcc-inline-input"
+                value={formData.mainDistrict}
+                onChange={handleChange}
+                required
+              />
+            </span>
             &nbsp;जिल्ला&nbsp;
-            <PrintField
-              name="palikaName"
-              value={formData.palikaName}
-              onChange={handleChange}
-              isPrint={isPrint}
-              placeholder="गाउँपालिका/नगरपालिका"
-              required
-            />
+            <span className="dcc-req-wrap">
+              <span className="dcc-req-star">*</span>
+              <input
+                type="text"
+                name="palikaName"
+                className="dcc-inline-input"
+                value={formData.palikaName}
+                onChange={handleChange}
+                placeholder="गाउँपालिका/नगरपालिका"
+                required
+              />
+            </span>
             &nbsp;वडा नं.&nbsp;
-            <PrintField
-              name="wardNo"
-              value={formData.wardNo}
-              onChange={handleChange}
-              isPrint={isPrint}
-              placeholder="वडा"
-              className="short"
-              required
-            />
+            <span className="dcc-req-wrap">
+              <span className="dcc-req-star">*</span>
+              <input
+                type="text"
+                name="wardNo"
+                className="dcc-inline-input short"
+                value={formData.wardNo}
+                onChange={handleChange}
+                placeholder="वडा"
+                required
+              />
+            </span>
             &nbsp;निवासी&nbsp;
-            <PrintField
-              name="residentName"
-              value={formData.residentName}
-              onChange={handleChange}
-              isPrint={isPrint}
-              placeholder="निवासीको नाम"
-              required
-            />
+            <span className="dcc-req-wrap">
+              <span className="dcc-req-star">*</span>
+              <input
+                type="text"
+                name="residentName"
+                className="dcc-inline-input"
+                value={formData.residentName}
+                onChange={handleChange}
+                placeholder="निवासीको नाम"
+                required
+              />
+            </span>
             &nbsp;को&nbsp;
-            <PrintSelect
+            <select
               name="relation"
+              className="dcc-inline-select"
               value={formData.relation}
               onChange={handleChange}
-              isPrint={isPrint}
             >
               <option>छोरा</option>
               <option>छोरी</option>
               <option>पति</option>
               <option>पत्नी</option>
-            </PrintSelect>
+            </select>
             &nbsp;म&nbsp;
-            <PrintField
+            <input
+              type="text"
               name="guardianName"
+              className="dcc-inline-input"
               value={formData.guardianName}
               onChange={handleChange}
-              isPrint={isPrint}
               placeholder="अभिभावकको नाम"
             />
             &nbsp;दलित जाति अन्तर्गत&nbsp;
-            <PrintField
-              name="casteName"
-              value={formData.casteName}
-              onChange={handleChange}
-              isPrint={isPrint}
-              placeholder="जातिको नाम"
-              required
-            />
+            <span className="dcc-req-wrap">
+              <span className="dcc-req-star">*</span>
+              <input
+                type="text"
+                name="casteName"
+                className="dcc-inline-input"
+                value={formData.casteName}
+                onChange={handleChange}
+                placeholder="जातिको नाम"
+                required
+              />
+            </span>
             &nbsp;जातिमा पर्ने भएकोले सोही व्यहोरा प्रमाणित गरि पाउन, वडा
             कार्यालयको सिफारिस, नागरिकता प्रमाणपत्रको फोटोकपी सहित रु १०।- को
             टिकट टाँसी यो निवेदन पेश गरेको छु ।
@@ -474,21 +540,30 @@ const DalitCasteCertification = () => {
             handleChange={handleChange}
           />
 
-          {/* ── Submit (hidden in print mode) ── */}
-          {!isPrint && (
-            <div className="dcc-submit-area">
-              <button
-                type="submit"
-                className="dcc-submit-btn"
-                disabled={submitting}
-              >
-                {submitting
-                  ? "पठाइँ हुँदैछ..."
-                  : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-              </button>
-            </div>
-          )}
+          {/* ── Footer buttons ── */}
+          <div className="dcc-footer">
+            <button
+              type="submit"
+              className="dcc-save-print-btn"
+              disabled={loading}
+              style={{ marginRight: 12, backgroundColor: "#2c3e50" }}
+            >
+              {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+            </button>
+            <button
+              type="button"
+              className="dcc-save-print-btn"
+              disabled={loading}
+              onClick={() => handleSave(true)}
+              style={{ backgroundColor: "#1a6b3a" }}
+            >
+              {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
+            </button>
+          </div>
 
+          <div className="dcc-copyright">
+            © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+          </div>
         </form>
       </div>
     </>
