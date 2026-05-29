@@ -1,8 +1,11 @@
 // src/pages/others/DifferentEnglishSpellingCertification.jsx
 import React, { useState } from "react";
-import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
+import { useAuth } from "../../context/AuthContext";
+import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
 const FORM_KEY = "different-english-spelling-certification";
 const API_URL  = `/api/forms/${FORM_KEY}`;
@@ -41,6 +44,9 @@ const styles = `
 }
 .top-right-bread { font-size: 0.9rem; color: #777; font-weight: normal; }
 
+/* ── Header ── */
+.sc-header { text-align: center; margin-bottom: 28px; position: relative; min-height: 90px; }
+
 /* ── Meta ── */
 .meta-data-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1rem; }
 .meta-left p,
@@ -70,36 +76,20 @@ const styles = `
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Shared inputs ── */
-.spelling-cert-container .dotted-input {
-  border: none;
-  border-bottom: 1px dotted #000;
-  background: transparent;
-  outline: none;
-  padding: 2px 5px;
-  font-family: inherit;
-  font-size: 1rem;
-}
-.spelling-cert-container .line-input {
-  border: none;
-  border-bottom: 1px dotted #000;
-  background: transparent;
-  outline: none;
-  padding: 2px 5px;
-  font-family: inherit;
-  font-size: 1rem;
-}
+/* ── Shared inputs — white bg with border radius ── */
+.spelling-cert-container .dotted-input,
+.spelling-cert-container .line-input,
 .spelling-cert-container .inline-box-input {
   border: 1px solid #ccc;
   background-color: #fff;
-  padding: 4px 8px;
   border-radius: 3px;
-  margin: 0 4px;
-  font-size: 1rem;
   outline: none;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  margin: 0 4px;
   display: inline-block;
   vertical-align: middle;
-  font-family: inherit;
 }
 .spelling-cert-container .dotted-input:focus,
 .spelling-cert-container .line-input:focus,
@@ -150,7 +140,7 @@ const styles = `
 }
 .inline-input-wrapper .inline-box-input,
 .inline-input-wrapper .line-input,
-.inline-input-wrapper input { padding-left: 16px; }
+.inline-input-wrapper input { padding-left: 18px; }
 
 /* ── Subject ── */
 .subject-section { text-align: center; margin: 24px 0; font-size: 1.1rem; font-weight: bold; }
@@ -185,14 +175,16 @@ const styles = `
 .details-table td { border: 1px solid #555; padding: 4px 6px; vertical-align: middle; }
 .table-input {
   width: 95%;
-  border: none;
-  background: transparent;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 3px;
   outline: none;
-  padding: 4px;
+  padding: 4px 6px;
   font-size: 0.95rem;
   color: #c0392b;
   font-family: inherit;
 }
+.table-input:focus { border-color: #2563eb; }
 .add-row-btn {
   margin-top: 8px;
   padding: 5px 14px;
@@ -231,38 +223,6 @@ const styles = `
 }
 .designation-select:focus { outline: none; border-color: #2563eb; }
 
-/* ── Applicant details box ── */
-.applicant-details-box {
-  border: 1px solid #ddd;
-  padding: 20px;
-  background-color: rgba(255,255,255,0.4);
-  margin-top: 20px;
-  border-radius: 4px;
-}
-.applicant-details-box h3 {
-  color: #777;
-  font-size: 1.05rem;
-  margin: 0 0 14px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-}
-.details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.detail-group { display: flex; flex-direction: column; gap: 4px; }
-.detail-group label { font-size: 0.88rem; font-weight: bold; color: #333; }
-.detail-input {
-  border: 1px solid #ddd;
-  padding: 8px 10px;
-  border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
-  font-family: inherit;
-  font-size: 0.95rem;
-  outline: none;
-}
-.detail-input:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
-.bg-gray  { background-color: #eef2f5; }
-.required { color: red; margin-left: 2px; }
-
 /* ── Footer ── */
 .form-footer { text-align: center; margin-top: 36px; }
 .save-print-btn {
@@ -293,36 +253,7 @@ const styles = `
   .spelling-cert-container { padding: 20px 14px; }
   .meta-data-row           { flex-direction: column; gap: 8px; }
   .top-bar-title           { flex-direction: column; gap: 4px; }
-  .details-grid            { grid-template-columns: 1fr; }
   .sc-toast                { right: 12px; left: 12px; max-width: none; }
-}
-
-/* ── Print ── */
-@media print {
-  body * { visibility: hidden; }
-  .spelling-cert-container,
-  .spelling-cert-container * { visibility: visible; }
-  .spelling-cert-container {
-    position: absolute;
-    left: 0; top: 0;
-    width: 100%;
-    box-shadow: none;
-    border: none;
-    margin: 0;
-    padding: 20px 40px;
-    background: white;
-  }
-  .form-footer,
-  .add-row-btn,
-  .rm-row-btn,
-  .sc-toast,
-  .top-bar-title { display: none !important; }
-  .inline-box-input,
-  .line-input,
-  .dotted-input,
-  .table-input,
-  .detail-input { border: none !important; background: transparent !important; }
-  select { border: none !important; background: transparent !important; }
 }
 `;
 
@@ -335,9 +266,13 @@ const emptyDoc = () => ({
 });
 
 const INITIAL_FORM = {
+  letter_no:               "२०८२/८३",
   reference_no:            "",
+  issue_date:              "२०८२-०८-०६",
+  nepali_date_label:       "1146 थिंलाथ्व, 2 शनिवार",
   municipality:            MUNICIPALITY.name,
   previous_unit_type:      "",
+  previous_unit_select:    "",
   previous_ward:           "",
   salutation:              "श्री",
   applicant_name:          "",
@@ -345,33 +280,35 @@ const INITIAL_FORM = {
   docs:                    [emptyDoc()],
   recommender_name:        "",
   recommender_designation: "",
-  applicantName:           "",
-  applicantAddress:        "",
-  applicantCitizenship:    "",
-  applicantPhone:          "",
+  // Applicant footer details — snake_case to match ApplicantDetailsNp
+  applicant_full_name:      "",
+  applicant_address:        "",
+  applicant_citizenship_no: "",
+  applicant_phone:          "",
 };
 
 const validate = (form) => {
-  if (!form.applicant_name.trim())        return "कृपया निवेदकको नाम (माथि) प्रविष्ट गर्नुहोस्।";
-  if (!form.english_spelling_basis.trim())return "अंग्रेजी हिज्जेको आधार प्रविष्ट गर्नुहोस्।";
-  if (!form.recommender_name.trim())      return "सिफारिसकर्ताको नाम प्रविष्ट गर्नुहोस्।";
-  if (!form.recommender_designation)      return "सिफारिसकर्ताको पद छनौट गर्नुहोस्।";
+  if (!form.applicant_name.trim())            return "कृपया निवेदकको नाम (माथि) प्रविष्ट गर्नुहोस्।";
+  if (!form.english_spelling_basis.trim())    return "अंग्रेजी हिज्जेको आधार प्रविष्ट गर्नुहोस्।";
+  if (!form.recommender_name.trim())          return "सिफारिसकर्ताको नाम प्रविष्ट गर्नुहोस्।";
+  if (!form.recommender_designation)          return "सिफारिसकर्ताको पद छनौट गर्नुहोस्।";
   for (const d of form.docs) {
     if (!d.doc_name.trim() || !d.diff_name.trim())
       return "कागजात र फरक नाम थर पूरा गर्नुहोस्।";
   }
-  if (!form.applicantName.trim())         return "निवेदकको नाम (तल) प्रविष्ट गर्नुहोस्।";
-  if (!form.applicantAddress.trim())      return "निवेदकको ठेगाना प्रविष्ट गर्नुहोस्।";
-  if (!form.applicantCitizenship.trim())  return "नागरिकता नं. प्रविष्ट गर्नुहोस्।";
-  if (!form.applicantPhone.trim())        return "फोन नं. प्रविष्ट गर्नुहोस्।";
+  if (!form.applicant_full_name.trim())       return "निवेदकको नाम (तल) प्रविष्ट गर्नुहोस्।";
+  if (!form.applicant_address.trim())         return "निवेदकको ठेगाना प्रविष्ट गर्नुहोस्।";
+  if (!form.applicant_citizenship_no.trim())  return "नागरिकता नं. प्रविष्ट गर्नुहोस्।";
+  if (!form.applicant_phone.trim())           return "फोन नं. प्रविष्ट गर्नुहोस्।";
   return null;
 };
 
 /* ─────────────────────────── Component ─────────────────────────── */
 const DifferentEnglishSpellingCertification = () => {
-  const [form, setForm]       = useState(INITIAL_FORM);
+  const { form, setForm, handleChange } = useWardForm(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast]     = useState(null); // { type, text }
+  const [toast, setToast]     = useState(null);
+  const { user } = useAuth();
 
   const showToast = (type, text) => {
     setToast({ type, text });
@@ -381,9 +318,6 @@ const DifferentEnglishSpellingCertification = () => {
   /* Field updaters */
   const update = (key) => (e) =>
     setForm((s) => ({ ...s, [key]: e.target.value }));
-
-  const handleChange = (e) =>
-    setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
 
   const updateDoc = (idx, key) => (e) =>
     setForm((s) => ({
@@ -397,9 +331,9 @@ const DifferentEnglishSpellingCertification = () => {
   const removeDocRow = (idx) =>
     setForm((s) => ({ ...s, docs: s.docs.filter((_, i) => i !== idx) }));
 
-  /* Submit */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  /* ── Single save — no duplicate POST ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (loading) return;
     setToast(null);
 
     const err = validate(form);
@@ -408,13 +342,14 @@ const DifferentEnglishSpellingCertification = () => {
     setLoading(true);
     try {
       const res = await axios.post(API_URL, form);
-      showToast("success", `सेभ भयो (id: ${res.data?.id ?? "unknown"})`);
-      setTimeout(() => {
-        window.print();
-        setForm(INITIAL_FORM);
-      }, 300);
+      if (shouldPrint) {
+        handleCleanPrint();
+      } else {
+        showToast("success", `सेभ भयो (id: ${res.data?.id ?? "unknown"})`);
+      }
+      setForm(INITIAL_FORM);
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "सेभ गर्न असफल भयो।";
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "सेभ गर्न असफल भयो।";
       showToast("error", msg);
       console.error("submit error:", err);
     } finally {
@@ -422,11 +357,151 @@ const DifferentEnglishSpellingCertification = () => {
     }
   };
 
+  /* ── Clean print — isolated window, values sized to content ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || ""} नं. वडा कार्यालय`;
+
+    const esc = (v) =>
+      String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    const docRows = form.docs
+      .map(
+        (d) => `
+          <tr>
+            <td>${esc(d.doc_name)}</td>
+            <td>${esc(d.diff_name)}</td>
+          </tr>`
+      )
+      .join("");
+
+    const unitType = form.previous_unit_type || form.previous_unit_select;
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>फरक फरक अंग्रेजी हिज्जे प्रमाणित</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000; background: white;
+            padding: 15mm 20mm; font-size: 11pt; line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 20px; }
+          /* value sizes to content — short values inline, long ones wrap cleanly */
+          .value { font-weight: bold; padding: 0 4px; }
+          .value-inline { white-space: nowrap; }
+          table.docs { width: 100%; border-collapse: collapse; border: 1px solid #555; margin: 16px 0; }
+          table.docs th { background: #e0e0e0; border: 1px solid #555; padding: 8px; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          table.docs td { border: 1px solid #555; padding: 6px 8px; font-size: 10pt; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
+          .sig-block { width: 210px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${esc(MUNICIPALITY.name)}</div>
+          <div class="ward-title">${esc(wardTitle)}</div>
+          <div class="addr">${esc(MUNICIPALITY.officeLine)}</div>
+          <div class="addr">${esc(MUNICIPALITY.provinceLine)}</div>
+        </div>
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value value-inline">${esc(form.letter_no)}</span></div>
+            <div>चलानी नं. : <span class="value value-inline">${esc(form.reference_no)}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value value-inline">${esc(form.issue_date)}</span></div>
+            <div>ने.सं : <span class="value value-inline">${esc(form.nepali_date_label)}</span></div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: फरक फरक अंग्रेजी हिज्जे प्रमाणित ।</div>
+
+        <div class="body-text">
+          उपरोक्त विषयमा
+          <span class="value">${esc(form.municipality)}</span>
+          वडा नं. <span class="value value-inline">१</span>
+          (साविक <span class="value">${esc(unitType)}</span>,
+          वडा नं. <span class="value value-inline">${esc(form.previous_ward)}</span>)
+          निवासी <span class="value value-inline">${esc(form.salutation)}</span>
+          <span class="value">${esc(form.applicant_name)}</span>
+          को नाम थर मा अंग्रेजी हिज्जे
+          <span class="value">${esc(form.english_spelling_basis)}</span>
+          को आधारमा तल उल्लेखित कागजातमा अंग्रेजी हिज्जे फरक भएकोले प्रमाणित गरिन्छ ।
+        </div>
+
+        <table class="docs">
+          <thead>
+            <tr>
+              <th>फरक भएको कागजात</th>
+              <th>फरक भएको नाम थर</th>
+            </tr>
+          </thead>
+          <tbody>${docRows}</tbody>
+        </table>
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${esc(form.recommender_name)}</div>
+            <div>${esc(form.recommender_designation)}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row"><span class="field-label">नाम:</span><span>${esc(form.applicant_full_name)}</span></div>
+          <div class="field-row"><span class="field-label">ठेगाना:</span><span>${esc(form.applicant_address)}</span></div>
+          <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span>${esc(form.applicant_citizenship_no)}</span></div>
+          <div class="field-row"><span class="field-label">फोन:</span><span>${esc(form.applicant_phone)}</span></div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
   return (
     <>
       <style>{styles}</style>
 
-      <form className="spelling-cert-container" onSubmit={handleSubmit} noValidate>
+      <form
+        className="spelling-cert-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+        noValidate
+      >
 
         {/* Toast */}
         {toast && (
@@ -442,10 +517,23 @@ const DifferentEnglishSpellingCertification = () => {
           <span className="top-right-bread">अन्य &gt; फरक फरक अंग्रेजी हिज्जे प्रमाणित</span>
         </div>
 
-        {/* Meta */}
+        {/* Header */}
+        <div className="sc-header">
+          <MunicipalityHeader formTitle="फरक फरक अंग्रेजी हिज्जे प्रमाणित" />
+        </div>
+
+        {/* Meta — now editable */}
         <div className="meta-data-row">
           <div className="meta-left">
-            <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
+            <p>
+              पत्र संख्या :{" "}
+              <input
+                type="text"
+                className="dotted-input small-input"
+                value={form.letter_no}
+                onChange={update("letter_no")}
+              />
+            </p>
             <p>
               चलानी नं. :{" "}
               <input
@@ -457,8 +545,24 @@ const DifferentEnglishSpellingCertification = () => {
             </p>
           </div>
           <div className="meta-right">
-            <p>मिति : <span className="bold-text">२०८२-०८-०६</span></p>
-            <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
+            <p>
+              मिति :{" "}
+              <input
+                type="text"
+                className="dotted-input small-input"
+                value={form.issue_date}
+                onChange={update("issue_date")}
+              />
+            </p>
+            <p>
+              ने.सं :{" "}
+              <input
+                type="text"
+                className="dotted-input medium-input"
+                value={form.nepali_date_label}
+                onChange={update("nepali_date_label")}
+              />
+            </p>
           </div>
         </div>
 
@@ -477,7 +581,7 @@ const DifferentEnglishSpellingCertification = () => {
             <input type="text" className="inline-box-input medium-box" value={form.municipality} onChange={update("municipality")} />{" "}
             वडा नं. <span className="bold-text">१</span> (साविक{" "}
             <input type="text" className="inline-box-input small-box" value={form.previous_unit_type} onChange={update("previous_unit_type")} placeholder="इकाई" />
-            <select className="inline-select" value={form.previous_unit_type} onChange={update("previous_unit_type")}>
+            <select className="inline-select" value={form.previous_unit_select} onChange={update("previous_unit_select")}>
               <option value="">--</option>
               <option>गा.वि.स.</option>
               <option>न.पा.</option>
@@ -490,15 +594,15 @@ const DifferentEnglishSpellingCertification = () => {
               <option>सुश्री</option>
               <option>श्रीमती</option>
             </select>
-            <div className="inline-input-wrapper">
+            <span className="inline-input-wrapper">
               <span className="input-required-star">*</span>
               <input type="text" className="inline-box-input medium-box" value={form.applicant_name} onChange={update("applicant_name")} placeholder="निवेदकको नाम" />
-            </div>{" "}
+            </span>{" "}
             को नाम थर मा अंग्रेजी हिज्जे{" "}
-            <div className="inline-input-wrapper">
+            <span className="inline-input-wrapper">
               <span className="input-required-star">*</span>
               <input type="text" className="inline-box-input medium-box" value={form.english_spelling_basis} onChange={update("english_spelling_basis")} placeholder="हिज्जेको आधार" />
-            </div>{" "}
+            </span>{" "}
             को आधारमा तल उल्लेखित कागजातमा अंग्रेजी हिज्जे फरक भएकोले प्रमाणित गरिन्छ ।
           </p>
         </div>
@@ -567,10 +671,24 @@ const DifferentEnglishSpellingCertification = () => {
         {/* Applicant details */}
         <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        {/* Footer */}
+        {/* Footer buttons */}
         <div className="form-footer">
-          <button className="save-print-btn" type="submit" disabled={loading}>
-            {loading ? "सेभ गर्दै..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          <button
+            type="submit"
+            className="save-print-btn"
+            disabled={loading}
+            style={{ marginRight: 12 }}
+          >
+            {loading ? "सेभ गर्दै..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "सेभ गर्दै..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
