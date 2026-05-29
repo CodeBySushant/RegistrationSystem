@@ -3,22 +3,19 @@ import React, { useState, useEffect } from "react";
 import axios from "../../utils/axiosInstance";
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Styles (merged from BusinessDeregistrationForm.css)
-   All classes prefixed with "bdf-" to avoid global collisions.
-───────────────────────────────────────────────────────────────────────────── */
+/* ─────────────────────────── Styles ─────────────────────────── */
 const STYLES = `
-  /* ── Container ── */
   .bdf-container {
     width: 90%;
     max-width: 1000px;
     margin: 20px auto;
-    padding: 25px;
+    padding: 30px 40px;
     border: 1px solid #ddd;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    font-family: "Arial", sans-serif;
+    font-family: 'Kalimati', 'Kokila', 'Arial', sans-serif;
     background-image: url("/papertexture1.jpg");
     background-repeat: repeat;
     background-size: auto;
@@ -28,143 +25,98 @@ const STYLES = `
     line-height: 1.6;
   }
 
-  /* ── Title Header ── */
-  .bdf-title-header { text-align: center; margin-bottom: 20px; }
-  .bdf-title-header h3 { margin: 0; font-size: 18px; }
-  .bdf-title-header h4 { margin: 5px 0; font-size: 16px; font-weight: bold; }
+  /* ── All inputs/selects white ── */
+  .bdf-container input[type="text"],
+  .bdf-container input[type="date"],
+  .bdf-container select {
+    background-color: #fff;
+    font-family: inherit;
+  }
+  .bdf-container input[type="text"]:focus,
+  .bdf-container input[type="date"]:focus,
+  .bdf-container select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.12);
+  }
 
-  /* ── Top Row ── */
+  /* ── Title header ── */
+  .bdf-title-header { text-align: center; margin-bottom: 20px; }
+  .bdf-title-header h3 { margin: 8px 0 2px; font-size: 17px; }
+  .bdf-title-header h4 { margin: 2px 0; font-size: 15px; font-weight: bold; }
+
+  /* ── Top row (addressee + stamp/date) ── */
   .bdf-form-row {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     border-bottom: 1px dashed #ccc;
     padding-bottom: 15px;
     gap: 20px;
-  }
-  .bdf-form-group {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    margin-bottom: 10px;
-  }
-  .bdf-form-group label { font-weight: bold; margin-right: 8px; }
-
-  .bdf-header-to-group { display: flex; flex-direction: column; gap: 4px; }
-  .bdf-form-group-inline {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-  .bdf-form-group-inline label {
-    font-weight: bold;
-    white-space: nowrap;
-    margin-right: 4px;
+    align-items: flex-start;
   }
 
-  /* ── Header Meta ── */
-  .bdf-header-meta { display: flex; flex-direction: column; align-items: flex-end; }
+  /* Addressee block */
+  .bdf-addressee-block { display: flex; flex-direction: column; gap: 8px; font-size: 1rem; }
+  .bdf-addr-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .bdf-addr-label { font-weight: bold; white-space: nowrap; }
+
+  /* Shared inline inputs */
+  .bdf-input {
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 1rem;
+    background-color: #fff;
+    outline: none;
+  }
+  .bdf-select {
+    padding: 4px 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 1rem;
+    background-color: #fff;
+    outline: none;
+    cursor: pointer;
+  }
+  .bdf-w-sm   { width: 100px; }
+  .bdf-w-md   { width: 180px; }
+  .bdf-w-lg   { width: 280px; }
+  .bdf-w-date { width: 150px; }
+
+  /* Header meta (stamp + date) */
+  .bdf-header-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
   .bdf-stamp-box {
     width: 120px; height: 120px;
     border: 1px solid #000;
     display: flex; align-items: center; justify-content: center;
     text-align: center; padding: 10px;
-    font-size: 14px; background: #fff; margin-bottom: 15px;
+    font-size: 13px; background: #fff;
   }
-  .bdf-date-group { font-weight: bold; }
-  .bdf-date-group input[type="date"] {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: #fff;
-    font-family: inherit;
-    font-size: 14px;
-    padding: 2px 6px;
-    outline: none;
-    color: #000;
-  }
+  .bdf-date-row { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 1rem; }
+  .bdf-date-row label { white-space: nowrap; }
 
   /* ── Subject ── */
-  .bdf-subject-line { text-align: center; margin: 25px 0; font-size: 16px; }
+  .bdf-subject-line { text-align: center; margin: 20px 0; font-size: 1rem; }
 
-  /* ── Certificate Body ── */
-  .bdf-certificate-body {
-    line-height: 2.6;
-    font-size: 15px;
-    text-align: justify;
-  }
-
-  /* ── PrintField / PrintSelect shared styles ── */
-  .bdf-pf-input {
+  /* ── Body paragraph — inline inputs ── */
+  .bdf-certificate-body { line-height: 2.8; font-size: 1rem; text-align: justify; margin-bottom: 20px; }
+  .bdf-certificate-body .bdf-input,
+  .bdf-certificate-body .bdf-select {
     display: inline-block;
     vertical-align: baseline;
-    padding: 2px 6px;
-    font-family: inherit;
-    font-size: 15px;
-    color: #000;
-    background-color: #fff;
-    border: none;
-    border-bottom: 1px dotted #555;
-    outline: none;
-    width: 150px;
-    max-width: 100%;
-    box-sizing: border-box;
-    transition: border-color 0.15s, background-color 0.15s;
-  }
-  .bdf-pf-input:focus {
-    border-bottom-color: #3b7dd8;
-    background-color: #f0f7ff;
-  }
-  .bdf-pf-input.bdf-short       { width: 80px; }
-  .bdf-pf-input.bdf-header-field {
-    font-size: 16px;
-    font-weight: bold;
-    width: 250px;
-    border-bottom: 1px dotted #000;
+    margin: 0 4px;
   }
 
-  .bdf-pf-value {
-    display: inline-block;
-    vertical-align: baseline;
-    padding: 0 4px;
-    font-family: inherit;
-    font-size: 15px;
-    color: #000;
-    min-width: 60px;
-    border-bottom: 1px solid #000;
-    word-break: break-word;
-  }
-  .bdf-pf-value.bdf-short        { min-width: 40px; }
-  .bdf-pf-value.bdf-header-field {
-    font-size: 16px;
-    font-weight: bold;
-    min-width: 200px;
-  }
-
-  .bdf-pf-select {
-    display: inline-block;
-    vertical-align: baseline;
-    padding: 2px 6px;
-    font-family: inherit;
-    font-size: 15px;
-    color: #000;
-    background-color: #fff;
-    border: none;
-    border-bottom: 1px dotted #555;
-    outline: none;
-    min-width: 80px;
-    cursor: pointer;
-  }
-  .bdf-pf-select:focus { border-bottom-color: #3b7dd8; }
-
-  /* ── Documents List ── */
+  /* ── Documents list ── */
   .bdf-documents-list { margin: 20px 0; padding-left: 20px; }
-  .bdf-documents-list strong { font-size: 16px; }
-  .bdf-documents-list ol { margin-top: 10px; padding-left: 25px; line-height: 1.8; }
+  .bdf-documents-list strong { font-size: 1rem; }
+  .bdf-documents-list ol { margin-top: 10px; padding-left: 25px; line-height: 1.9; }
 
-  /* ── Signature & Thumbprint ── */
+  /* ── Signature & thumbprint wrapper ── */
   .bdf-signature-wrapper {
     display: flex;
     justify-content: space-between;
@@ -174,247 +126,220 @@ const STYLES = `
     border-bottom: 1px dashed #ccc;
     gap: 20px;
   }
+
+  /* Thumbprint */
   .bdf-thumb-section { flex-basis: 30%; min-width: 200px; }
-  .bdf-section-title { font-weight: bold; font-size: 16px; text-align: center; margin-bottom: 10px; }
-  .bdf-thumb-boxes { display: flex; justify-content: space-around; }
-  .bdf-thumb-box { display: flex; flex-direction: column; align-items: center; }
-  .bdf-thumb-box label { font-weight: bold; font-size: 14px; margin-bottom: 5px; }
-  .bdf-thumb-area { width: 60px; height: 80px; border: 1px solid #000; background: #f9f9f9; }
+  .bdf-section-title { font-weight: bold; font-size: 1rem; text-align: center; margin-bottom: 10px; }
+  .bdf-thumb-boxes   { display: flex; justify-content: space-around; }
+  .bdf-thumb-box     { display: flex; flex-direction: column; align-items: center; }
+  .bdf-thumb-box label { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; }
+  .bdf-thumb-area    { width: 60px; height: 80px; border: 1px solid #000; background: #f9f9f9; }
 
+  /* Signature */
   .bdf-signature-section {
-    flex-basis: 50%;
-    min-width: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    flex-basis: 50%; min-width: 280px;
+    display: flex; flex-direction: column; align-items: flex-end;
   }
-  .bdf-signature-label { font-weight: bold; font-size: 16px; margin-bottom: 10px; }
-  .bdf-signature-section .bdf-form-group-inline {
-    width: 100%;
-    max-width: 320px;
-    justify-content: flex-end;
-  }
-  .bdf-signature-section .bdf-pf-input,
-  .bdf-signature-section .bdf-pf-value { width: 200px; min-width: 200px; }
-
-  /* ── Applicant Details overrides ── */
-  .bdf-container .applicant-details-box {
-    border: 1px solid #ddd;
-    padding: 20px;
-    background-color: #fff;
-    margin-top: 20px;
-    border-radius: 4px;
-  }
-  .bdf-container .applicant-details-box h3 {
-    color: #555; font-size: 1.1rem;
-    margin: 0 0 15px 0;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-  }
-  .bdf-container .details-grid { display: flex; flex-direction: column; gap: 15px; }
-  .bdf-container .detail-group { display: flex; flex-direction: column; }
-  .bdf-container .detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
-  .bdf-container .detail-input {
-    border: 1px solid #ddd;
-    padding: 8px;
-    border-radius: 4px;
-    width: 100%;
-    max-width: 400px;
-    box-sizing: border-box;
-    background-color: #fff;
-    font-family: inherit;
-    font-size: 0.9rem;
-  }
-  .bdf-container .detail-input:focus { border-color: #3b7dd8; outline: none; }
+  .bdf-signature-label { font-weight: bold; font-size: 1rem; margin-bottom: 10px; }
+  .bdf-sig-field { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .bdf-sig-field label { font-weight: bold; white-space: nowrap; min-width: 90px; text-align: right; }
+  .bdf-sig-field input { width: 200px; }
 
   /* ── Required star ── */
-  .bdf-req { color: red; font-weight: bold; }
+  .bdf-req { color: red; margin-left: 3px; }
 
-  /* ── Submit ── */
-  .bdf-submit-area { text-align: center; margin-top: 30px; }
-  .bdf-submit-btn {
-    background-color: #343a40;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
+  /* ── Applicant details — scoped overrides that don't fight the component ── */
+  .bdf-container .applicant-details-box {
+    border: 1px solid #ddd !important;
+    padding: 20px !important;
+    background-color: rgba(255,255,255,0.5) !important;
+    margin-top: 20px !important;
+    border-radius: 4px !important;
   }
-  .bdf-submit-btn:hover:not(:disabled) { background-color: #23272b; }
-  .bdf-submit-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
+  .bdf-container .applicant-details-box h3 {
+    color: #777 !important;
+    font-size: 1.1rem !important;
+    margin: 0 0 15px 0 !important;
+    border-bottom: 1px solid #eee !important;
+    padding-bottom: 8px !important;
+  }
+  .bdf-container .applicant-details-box .details-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+  .bdf-container .applicant-details-box .detail-group {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .bdf-container .applicant-details-box .detail-group label {
+    font-size: 0.9rem !important;
+    margin-bottom: 5px !important;
+    font-weight: bold !important;
+    color: #333 !important;
+  }
+  .bdf-container .applicant-details-box .detail-input {
+    border: 1px solid #ddd !important;
+    padding: 8px !important;
+    border-radius: 4px !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    box-sizing: border-box !important;
+    background-color: #fff !important;
+    font-family: inherit !important;
+    font-size: 0.9rem !important;
+  }
+  .bdf-container .applicant-details-box .detail-input:focus {
+    border-color: #2563eb !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.12) !important;
+  }
+  .bdf-container .applicant-details-box .bg-gray {
+    background-color: #eef2f5 !important;
+  }
 
-  /* ── Print ──
-     PrintField/PrintSelect already swap to <span> before window.print(),
-     so no input-colour hacks are needed — only layout cleanup.        */
+  /* ── Footer buttons ── */
+  .bdf-footer {
+    text-align: center;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .bdf-btn {
+    padding: 10px 26px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.15s;
+  }
+  .bdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .bdf-btn-save  { background-color: #2c3e50; color: #fff; }
+  .bdf-btn-save:hover:not(:disabled)  { background-color: #1a252f; }
+  .bdf-btn-print { background-color: #1a6b3a; color: #fff; }
+  .bdf-btn-print:hover:not(:disabled) { background-color: #145230; }
+
+  /* ── Copyright ── */
+  .bdf-copyright { text-align: right; font-size: 0.8rem; color: #666; margin-top: 24px; border-top: 1px solid #eee; padding-top: 10px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .bdf-container { padding: 18px 14px; }
+    .bdf-form-row  { flex-direction: column; }
+  }
+
+  /* ── Print ── */
   @media print {
     body * { visibility: hidden; }
-    .bdf-container,
-    .bdf-container * { visibility: visible; }
+    .bdf-container, .bdf-container * { visibility: visible; }
     .bdf-container {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      max-width: none;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 15px;
+      position: absolute; left: 0; top: 0;
+      width: 100%; max-width: none;
+      box-shadow: none; border: none;
+      margin: 0; padding: 12mm 16mm;
       background: white !important;
       background-image: none !important;
-      font-size: 14px;
-      line-height: 1.8;
-      color: #000;
     }
-    .bdf-submit-area { display: none !important; }
-
-    .bdf-pf-value {
-      border-bottom: 1px solid #000 !important;
-      color: #000 !important;
-      background: transparent !important;
+    .bdf-footer, .bdf-copyright { display: none !important; }
+    input, select {
+      border: none !important; background: transparent !important;
+      color: #000 !important; -webkit-text-fill-color: #000 !important;
+      -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
     }
-
-    /* Fallback for ApplicantDetailsNp inputs not wrapped by PrintField */
-    input, select, textarea {
-      color: #000 !important;
-      -webkit-text-fill-color: #000 !important;
-      background: transparent !important;
-      border: none !important;
-      border-bottom: 1px solid #000 !important;
-      opacity: 1 !important;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    input::placeholder, textarea::placeholder {
-      color: transparent !important;
-      -webkit-text-fill-color: transparent !important;
-    }
-
-    .bdf-container .applicant-details-box {
-      page-break-inside: avoid;
-      break-inside: avoid;
-      border: 1px solid #ccc !important;
-      background: white !important;
-    }
-    .bdf-stamp-box  { border: 1px solid #000 !important; }
-    .bdf-thumb-area { border: 1px solid #000 !important; }
+    input::placeholder { color: transparent !important; }
+    .bdf-stamp-box, .bdf-thumb-area { border: 1px solid #000 !important; }
   }
 `;
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   PrintField / PrintSelect
-   IMPORTANT: defined at MODULE SCOPE (outside the component) so their
-   identity is stable across renders — prevents the 1-char-per-keystroke
-   focus-loss bug that occurs when components are defined inside another
-   component's function body.
-───────────────────────────────────────────────────────────────────────────── */
-const PrintField = ({ value, isPrint, className = "", name, onChange, ...rest }) => {
-  if (isPrint) {
-    return <span className={`bdf-pf-value ${className}`}>{value || ""}</span>;
-  }
-  return (
-    <input
-      type="text"
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={`bdf-pf-input ${className}`}
-      {...rest}
-    />
-  );
-};
+/* ─────────────────────────── Helpers ─────────────────────────── */
 
-const PrintSelect = ({ value, isPrint, className = "", name, onChange, children }) => {
-  if (isPrint) {
-    return <span className={`bdf-pf-value ${className}`}>{value || ""}</span>;
-  }
-  return (
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={`bdf-pf-select ${className}`}
-    >
-      {children}
-    </select>
-  );
-};
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Initial state
-───────────────────────────────────────────────────────────────────────────── */
-const initialState = {
-  headerTo: "श्रीमान्",
-  headerMunicipality: MUNICIPALITY?.name || "",
-  headerOffice: MUNICIPALITY?.englishDistrict || "",
-  date: new Date().toISOString().slice(0, 10),
-  municipality: MUNICIPALITY?.name || "",
-  firmType: "प्राइभेट फर्म",
-  firmRegNo: "",
-  firmName: "",
-  dissolveReason: "",
+const makeInitialState = () => ({
+  wardOfficerName:          "",   // was headerTo — now just the officer name
+  headerMunicipality:       MUNICIPALITY.name,
+  headerOffice:             MUNICIPALITY.city || "",
+  date:                     new Date().toISOString().slice(0, 10),
+  municipality:             MUNICIPALITY.name,
+  firmType:                 "प्राइभेट फर्म",
+  firmRegNo:                "",
+  firmName:                 "",
+  dissolveReason:           "",
   applicantNameForDissolve: "",
-  sigSignature: "",
-  sigName: "",
-  sigAddress: "",
-  sigFirmStamp: "",
-  applicantName: "",
-  applicantAddress: "",
-  applicantCitizenship: "",
-  applicantPhone: "",
-  wardNo: MUNICIPALITY?.wardNumber || "",
+  sigSignature:             "",
+  sigName:                  "",
+  sigAddress:               "",
+  sigFirmStamp:             "",
+  applicantName:            "",
+  applicantAddress:         "",
+  applicantCitizenship:     "",
+  applicantPhone:           "",
+  wardNo:                   MUNICIPALITY.wardNumber || "",
+});
+
+const validate = (d) => {
+  const required = [
+    ["firmRegNo",                "दर्ता नं."],
+    ["firmName",                 "फर्मको नाम"],
+    ["dissolveReason",           "खारेजीको कारण"],
+    ["applicantNameForDissolve", "निवेदकको नाम (फर्म खारेजी)"],
+    ["sigSignature",             "दस्तखत"],
+    ["sigName",                  "हस्ताक्षरकर्ताको नाम"],
+    ["sigAddress",               "ठेगाना"],
+    ["sigFirmStamp",             "फर्मको छाप"],
+    ["applicantName",            "निवेदकको नाम"],
+    ["applicantAddress",         "निवेदकको ठेगाना"],
+    ["applicantCitizenship",     "नागरिकता नं."],
+  ];
+  for (const [field, label] of required) {
+    if (!d[field] || !String(d[field]).trim()) return `${label} आवश्यक छ`;
+  }
+  if (d.applicantPhone && !/^[0-9+\-\s]{6,20}$/.test(String(d.applicantPhone)))
+    return "फोन नम्बर अमान्य";
+  return null;
 };
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Component
-───────────────────────────────────────────────────────────────────────────── */
+const SIG_FIELDS = [
+  { label: "दस्तखत",     name: "sigSignature" },
+  { label: "नाम",        name: "sigName"      },
+  { label: "ठेगाना",     name: "sigAddress"   },
+  { label: "फर्मको छाप",  name: "sigFirmStamp" },
+];
+
+/* ─────────────────────────── Component ─────────────────────────── */
 const BusinessDeregistrationForm = () => {
-  const [formData, setFormData]     = useState(initialState);
+  const { user } = useAuth();
+  const [formData, setFormData]     = useState(makeInitialState);
   const [submitting, setSubmitting] = useState(false);
-  const [isPrint, setIsPrint]       = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const validate = (d) => {
-    const required = [
-      "firmRegNo", "firmName", "dissolveReason",
-      "applicantNameForDissolve", "sigSignature",
-      "sigName", "sigAddress", "sigFirmStamp",
-      "applicantName", "applicantAddress", "applicantCitizenship",
-    ];
-    for (const f of required) {
-      if (!d[f] || !String(d[f]).trim()) return `${f} आवश्यक छ`;
-    }
-    if (d.applicantPhone && !/^[0-9+\-\s]{6,20}$/.test(String(d.applicantPhone))) {
-      return "फोन नम्बर अमान्य";
-    }
-    return null;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (submitting) return;
-
+  /* Single save — no duplicate POSTs */
+  const handleSave = async (shouldPrint = false) => {
     const err = validate(formData);
-    if (err) {
-      alert("कृपया सबै आवश्यक क्षेत्रहरू भर्नुहोस्। (" + err + ")");
-      return;
-    }
+    if (err) { alert("कृपया सबै आवश्यक क्षेत्रहरू भर्नुहोस्। (" + err + ")"); return; }
 
     setSubmitting(true);
     try {
-      const payload = { ...formData };
-      Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
+      const payload = Object.fromEntries(
+        Object.entries(formData).map(([k, v]) => [k, v === "" ? null : v])
+      );
 
       const res = await axios.post("/api/forms/business-deregistration", payload);
 
       if (res.status === 201 || res.status === 200) {
-        alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
-        setIsPrint(true);
+        if (shouldPrint) {
+          window.print();
+          setTimeout(() => setFormData(makeInitialState()), 500);
+        } else {
+          alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
+          setFormData(makeInitialState());
+        }
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -426,210 +351,167 @@ const BusinessDeregistrationForm = () => {
     }
   };
 
-  /* After isPrint → true, React repaints with <span> values,
-     then RAF fires: print dialog opens, then form resets.       */
-  useEffect(() => {
-    if (!isPrint) return;
-    const id = requestAnimationFrame(() => {
-      window.print();
-      setFormData(initialState);
-      setIsPrint(false);
-    });
-    return () => cancelAnimationFrame(id);
-  }, [isPrint]);
-
-  const sigFields = [
-    { label: "दस्तखत",    name: "sigSignature" },
-    { label: "नाम",       name: "sigName"      },
-    { label: "ठेगाना",    name: "sigAddress"   },
-    { label: "फर्मको छाप", name: "sigFirmStamp" },
-  ];
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     Render
-  ───────────────────────────────────────────────────────────────────────── */
   return (
     <>
       <style>{STYLES}</style>
 
-      <div className="bdf-container">
-        <form onSubmit={handleSubmit}>
+      <form
+        className="bdf-container"
+        onSubmit={(e) => { e.preventDefault(); handleSave(false); }}
+      >
+        {/* Title header */}
+        <div className="bdf-title-header">
+          <MunicipalityHeader showLogo />
+          <h3>अनुसूची-१५.३</h3>
+          <h4>प्राइभेट फर्म तथा साझेदारी फर्म खारेजीको लागि निवेदन</h4>
+        </div>
 
-          {/* ── Header ── */}
-          <div className="bdf-title-header">
-            <MunicipalityHeader showLogo />
-            <h3>अनुसूची-१५.३</h3>
-            <h4>प्राइभेट फर्म तथा साझेदारी फर्म खारेजीको लागि निवेदन</h4>
-          </div>
+        {/* ── Addressee + stamp/date ── */}
+        <div className="bdf-form-row">
 
-          <div className="bdf-form-row">
-            <div className="bdf-header-to-group">
-              <div className="bdf-form-group-inline">
-                <PrintField
-                  name="headerTo"
-                  value={formData.headerTo}
-                  onChange={handleChange}
-                  isPrint={isPrint}
-                  className="bdf-header-field"
-                />
-                <span>ज्यु,</span>
-              </div>
-              <PrintField
+          {/* Addressee — श्रीमान् hardcoded, input is just the officer name */}
+          <div className="bdf-addressee-block">
+            {/* Line 1: श्रीमान् [ward officer name] ज्यु, */}
+            <div className="bdf-addr-line">
+              <span className="bdf-addr-label">श्रीमान्</span>
+              <input
+                type="text"
+                name="wardOfficerName"
+                value={formData.wardOfficerName}
+                onChange={handleChange}
+                className="bdf-input bdf-w-lg"
+                placeholder="वडा अधिकारीको नाम / पद"
+              />
+              <span>ज्यु,</span>
+            </div>
+            {/* Line 2: [municipality] [office/district] */}
+            <div className="bdf-addr-line">
+              <select
                 name="headerMunicipality"
                 value={formData.headerMunicipality}
                 onChange={handleChange}
-                isPrint={isPrint}
-                className="bdf-header-field"
-              />
-              <PrintField
+                className="bdf-select bdf-w-md"
+              >
+                <option value={MUNICIPALITY.name}>{MUNICIPALITY.name}</option>
+              </select>
+              <input
+                type="text"
                 name="headerOffice"
                 value={formData.headerOffice}
                 onChange={handleChange}
-                isPrint={isPrint}
-                className="bdf-header-field"
+                className="bdf-input bdf-w-md"
+                placeholder="जिल्ला / कार्यालय"
               />
             </div>
+          </div>
 
-            <div className="bdf-header-meta">
-              <div className="bdf-stamp-box">रु. २० को टिकट</div>
-              <div className="bdf-form-group bdf-date-group">
-                <label>मिति :</label>
-                {isPrint
-                  ? <span className="bdf-pf-value">{formData.date}</span>
-                  : <input type="date" name="date" value={formData.date} onChange={handleChange} />
-                }
+          {/* Stamp + date */}
+          <div className="bdf-header-meta">
+            <div className="bdf-stamp-box">रु. २० को टिकट</div>
+            <div className="bdf-date-row">
+              <label>मिति :</label>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="bdf-input bdf-w-date"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Subject */}
+        <div className="bdf-subject-line">
+          <strong>विषय: <u>फर्म खारेजी सम्बन्धमा ।</u></strong>
+        </div>
+
+        {/* Body */}
+        <p className="bdf-certificate-body">
+          उपर्युक्त सम्बन्धमा मेरो नाममा यस{" "}
+          <select name="municipality" value={formData.municipality} onChange={handleChange} className="bdf-select bdf-w-md">
+            <option value={MUNICIPALITY.name}>{MUNICIPALITY.name}</option>
+          </select>{" "}
+          मा व्यापारिक प्रयोजनको लागि दर्ता भएको{" "}
+          <select name="firmType" value={formData.firmType} onChange={handleChange} className="bdf-select bdf-w-md">
+            <option>प्राइभेट फर्म</option>
+            <option>साझेदारी फर्म</option>
+          </select>{" "}
+          नं.{" "}
+          <input type="text" name="firmRegNo" value={formData.firmRegNo} onChange={handleChange} className="bdf-input bdf-w-sm" placeholder="दर्ता नं. *" required />{" "}
+          को{" "}
+          <input type="text" name="firmName" value={formData.firmName} onChange={handleChange} className="bdf-input bdf-w-md" placeholder="फर्मको नाम *" required />{" "}
+          नामको फर्म{" "}
+          <input type="text" name="dissolveReason" value={formData.dissolveReason} onChange={handleChange} className="bdf-input bdf-w-md" placeholder="कारण *" required />{" "}
+          कारणले खारेज गरी पाउन रु. २० को टिकट टाँसी यो निवेदन दिएको छु।
+          उक्त फर्मको नामबाट नेपाल सरकार र अन्य कुनै निकायमा कुनै राजस्व र अन्य रकम
+          बुझाउन बाँकी छैन। कुनै किसिमको रकमा वा राजस्व बुझाउन बाँकी देखिएमा पछि
+          कुनै उजुरबाजुर नगरी सम्बन्धित निकायमा बुझाउन मेरो मन्जुरी छ। निम्नानुसार
+          लाग्ने दस्तुर तिरी मेरो{" "}
+          <input type="text" name="applicantNameForDissolve" value={formData.applicantNameForDissolve} onChange={handleChange} className="bdf-input bdf-w-md" placeholder="तपाईको नाम *" required />{" "}
+          नामको उक्त फर्म खारेज गरी पाउन श्रीमान समक्ष अनुरोध गर्दछु।
+        </p>
+
+        {/* Documents list */}
+        <div className="bdf-documents-list">
+          <strong>संलग्न कागजातहरु:</strong>
+          <ol>
+            <li>सक्कल प्रमाणपत्र</li>
+            <li>नागरिकता दर्ता प्रमाणपत्रको प्रतिलिपि</li>
+            <li>कर तिरेको निस्सा</li>
+            <li>लेखा परिक्षण प्रतिवेदन</li>
+            <li>अन्य (भएमा उल्लेख गर्ने)</li>
+          </ol>
+        </div>
+
+        {/* Signature + thumbprint */}
+        <div className="bdf-signature-wrapper">
+
+          <div className="bdf-thumb-section">
+            <p className="bdf-section-title">औंठा छाप</p>
+            <div className="bdf-thumb-boxes">
+              <div className="bdf-thumb-box"><label>बायाँ</label><div className="bdf-thumb-area" /></div>
+              <div className="bdf-thumb-box"><label>दायाँ</label><div className="bdf-thumb-area" /></div>
+            </div>
+          </div>
+
+          <div className="bdf-signature-section">
+            <p className="bdf-signature-label">निवेदक</p>
+            {SIG_FIELDS.map(({ label, name }) => (
+              <div className="bdf-sig-field" key={name}>
+                <label>{label} :<span className="bdf-req">*</span></label>
+                <input
+                  type="text"
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  className="bdf-input"
+                  required
+                />
               </div>
-            </div>
+            ))}
           </div>
 
-          {/* ── Subject ── */}
-          <div className="bdf-subject-line">
-            <strong>विषय: <u>फर्म खारेजी सम्बन्धमा ।</u></strong>
-          </div>
+        </div>
 
-          {/* ── Body paragraph ── */}
-          <p className="bdf-certificate-body">
-            उपर्युक्त सम्बन्धमा मेरो नाममा यस&nbsp;
-            <PrintSelect
-              name="municipality"
-              value={formData.municipality}
-              onChange={handleChange}
-              isPrint={isPrint}
-            >
-              <option>{MUNICIPALITY?.name || "नागार्जुन नगरपालिका"}</option>
-            </PrintSelect>
-            &nbsp;मा व्यापारिक प्रयोजनको लागि दर्ता भएको&nbsp;
-            <PrintSelect
-              name="firmType"
-              value={formData.firmType}
-              onChange={handleChange}
-              isPrint={isPrint}
-            >
-              <option>प्राइभेट फर्म</option>
-              <option>साझेदारी फर्म</option>
-            </PrintSelect>
-            &nbsp;नं.&nbsp;
-            <PrintField
-              name="firmRegNo"
-              value={formData.firmRegNo}
-              onChange={handleChange}
-              isPrint={isPrint}
-              className="bdf-short"
-              required
-            />
-            &nbsp;को&nbsp;
-            <PrintField
-              name="firmName"
-              value={formData.firmName}
-              onChange={handleChange}
-              isPrint={isPrint}
-              placeholder="फर्मको नाम"
-              required
-            />
-            &nbsp;नामको फर्म&nbsp;
-            <PrintField
-              name="dissolveReason"
-              value={formData.dissolveReason}
-              onChange={handleChange}
-              isPrint={isPrint}
-              placeholder="कारण"
-              required
-            />
-            &nbsp;कारणले खारेज गरी पाउन रु. २० को टिकट टाँसी यो निवेदन दिएको छु।
-            उक्त फर्मको नामबाट नेपाल सरकार र अन्य कुनै निकायमा कुनै राजस्व र अन्य रकम
-            बुझाउन बाँकी छैन। कुनै किसिमको रकमा वा राजस्व बुझाउन बाँकी देखिएमा पछि
-            कुनै उजुरबाजुर नगरी सम्बन्धित निकायमा बुझाउन मेरो मन्जुरी छ। निम्नानुसार
-            लाग्ने दस्तुर तिरी मेरो&nbsp;
-            <PrintField
-              name="applicantNameForDissolve"
-              value={formData.applicantNameForDissolve}
-              onChange={handleChange}
-              isPrint={isPrint}
-              placeholder="तपाईको नाम"
-              required
-            />
-            &nbsp;नामको उक्त फर्म खारेज गरी पाउन श्रीमान समक्ष अनुरोध गर्दछु।
-          </p>
+        {/* Applicant details */}
+        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
-          {/* ── Documents list ── */}
-          <div className="bdf-documents-list">
-            <strong>संलग्न कागजातहरु:</strong>
-            <ol>
-              <li>सक्कल प्रमाणपत्र</li>
-              <li>नागरिकता दर्ता प्रमाणपत्रको प्रतिलिपि</li>
-              <li>कर तिरेको निस्सा</li>
-              <li>लेखा परिक्षण प्रतिवेदन</li>
-              <li>अन्य (भएमा उल्लेख गर्ने)</li>
-            </ol>
-          </div>
+        {/* Footer — two buttons */}
+        <div className="bdf-footer">
+          <button type="submit" className="bdf-btn bdf-btn-save" disabled={submitting}>
+            {submitting ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button type="button" className="bdf-btn bdf-btn-print" disabled={submitting} onClick={() => handleSave(true)}>
+            {submitting ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
+          </button>
+        </div>
 
-          {/* ── Signature & Thumbprint ── */}
-          <div className="bdf-signature-wrapper">
-            <div className="bdf-thumb-section">
-              <label className="bdf-section-title">औंठा छाप</label>
-              <div className="bdf-thumb-boxes">
-                <div className="bdf-thumb-box">
-                  <label>बायाँ</label>
-                  <div className="bdf-thumb-area" />
-                </div>
-                <div className="bdf-thumb-box">
-                  <label>दायाँ</label>
-                  <div className="bdf-thumb-area" />
-                </div>
-              </div>
-            </div>
+        <div className="bdf-copyright">
+          © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
+        </div>
 
-            <div className="bdf-signature-section">
-              <p className="bdf-signature-label">निवेदक</p>
-              {sigFields.map(({ label, name }) => (
-                <div className="bdf-form-group-inline" key={name}>
-                  <label>{label} : <span className="bdf-req">*</span></label>
-                  <PrintField
-                    name={name}
-                    value={formData[name]}
-                    onChange={handleChange}
-                    isPrint={isPrint}
-                    required
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Applicant Details ── */}
-          <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
-
-          {/* ── Submit (hidden in print mode) ── */}
-          {!isPrint && (
-            <div className="bdf-submit-area">
-              <button type="submit" className="bdf-submit-btn" disabled={submitting}>
-                {submitting ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
-              </button>
-            </div>
-          )}
-
-        </form>
-      </div>
+      </form>
     </>
   );
 };
