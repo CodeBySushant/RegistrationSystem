@@ -4,6 +4,8 @@ import axios from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import { useWardForm } from "../../hooks/useWardForm";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const FORM_KEY = "agreement-of-plan";
 const API_URL  = `/api/forms/${FORM_KEY}`;
@@ -46,13 +48,8 @@ const styles = `
   text-align: center;
   margin-bottom: 20px;
   position: relative;
+  min-height: 90px;
 }
-.header-logo img { position: absolute; left: 0; top: 0; width: 80px; }
-.header-text { display: flex; flex-direction: column; align-items: center; }
-.municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
-.ward-title        { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
-.address-text,
-.province-text     { color: #e74c3c; margin: 0; font-size: 1rem; }
 
 /* ── Meta row ── */
 .meta-data-row { display: flex; justify-content: space-between; margin-top: 20px; font-size: 1rem; }
@@ -79,34 +76,20 @@ const styles = `
   margin-bottom: 30px;
 }
 
-/* ── Shared input bases ── */
-.plan-agreement-container .line-input {
-  border: none;
-  border-bottom: 1px dotted #000;
-  background: #fff;
-  outline: none;
-  font-family: inherit;
-  font-size: 1rem;
-}
-.plan-agreement-container .dotted-input {
-  border: none;
-  border-bottom: 1px dotted #000;
-  background: #fff;
-  outline: none;
-  font-family: inherit;
-  font-size: 1rem;
-}
+/* ── Shared input bases — white bg, border radius ── */
+.plan-agreement-container .line-input,
+.plan-agreement-container .dotted-input,
 .plan-agreement-container .inline-box-input {
   border: 1px solid #ccc;
   background-color: #fff;
-  padding: 4px 8px;
   border-radius: 3px;
-  margin: 0 5px;
-  font-size: 1rem;
   outline: none;
+  padding: 4px 8px;
+  margin: 0 5px;
+  font-family: inherit;
+  font-size: 1rem;
   display: inline-block;
   vertical-align: middle;
-  font-family: inherit;
 }
 .plan-agreement-container .inline-box-input:focus,
 .plan-agreement-container .line-input:focus,
@@ -137,6 +120,7 @@ const styles = `
   font-weight: bold;
   pointer-events: none;
   font-size: 14px;
+  z-index: 1;
 }
 .inline-input-wrapper input { padding-left: 18px; }
 
@@ -165,41 +149,6 @@ const styles = `
   cursor: pointer;
 }
 .designation-select:focus { outline: none; border-color: #2563eb; }
-
-/* ── ApplicantDetailsNp box ── */
-.applicant-details-box {
-  border: 1px solid #ddd;
-  padding: 20px;
-  background-color: rgba(255,255,255,0.4);
-  margin-top: 20px;
-  border-radius: 4px;
-}
-.applicant-details-box h3 {
-  color: #777;
-  font-size: 1.1rem;
-  margin: 0 0 15px 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-}
-.plan-agreement-container .applicant-details-box .details-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 18px !important;
-}
-.detail-group { display: flex; flex-direction: column; }
-.detail-group label { font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: #333; }
-.detail-input {
-  border: 1px solid #ddd;
-  padding: 8px;
-  border-radius: 4px;
-  font-family: inherit;
-  font-size: 0.9rem;
-  box-sizing: border-box;
-}
-.detail-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
-.bg-gray { background-color: #eef2f5; }
-.plan-agreement-container .applicant-details-box .detail-input { max-width: 400px; width: 100%; }
-.required { color: red; margin-left: 4px; }
 
 /* ── Footer ── */
 .form-footer { text-align: center; margin-top: 40px; }
@@ -256,27 +205,6 @@ const styles = `
   .top-bar-title { flex-direction: column; gap: 4px; }
   .long-box, .medium-box, .long-input, .medium-input { width: 100%; max-width: 100%; }
 }
-
-/* ── Print ── */
-@media print {
-  body * { visibility: hidden; }
-  .plan-agreement-container,
-  .plan-agreement-container * { visibility: visible; }
-  .plan-agreement-container {
-    position: absolute;
-    left: 0; top: 0;
-    width: 100%;
-    box-shadow: none;
-    border: none;
-    margin: 0;
-    padding: 10mm 14mm;
-    background: white;
-  }
-  .form-footer,
-  .copyright-footer,
-  .aop-toast,
-  .top-bar-title { display: none !important; }
-}
 `;
 
 /* ─────────────────────────── Helpers ─────────────────────────── */
@@ -293,7 +221,10 @@ const TAPSIL_FIELDS = [
 ];
 
 const INITIAL_FORM = {
+  letter_no:                  "२०८२/८३",
   chalan_no:                  "",
+  issue_date:                 "२०८२-०८-०६",
+  nepali_date_label:          "1146 थिंलाथ्व, 2 शनिवार",
   fiscal_year:                "२०८२/८३",
   addressee_line1:            "प्रमुख प्रशासकीय अधिकृत",
   addressee_line2:            "नगर कार्यपालिकाको कार्यालय",
@@ -317,10 +248,11 @@ const INITIAL_FORM = {
   consumer_committee:         "",
   signatory_name:             "",
   signatory_designation:      "",
-  applicantName:              "",
-  applicantAddress:           "",
-  applicantCitizenship:       "",
-  applicantPhone:             "",
+  // Applicant footer details — snake_case to match ApplicantDetailsNp
+  applicant_name:             "",
+  applicant_address:          "",
+  applicant_citizenship_no:   "",
+  applicant_phone:            "",
 };
 
 /** Convert form to API payload — empty strings become null */
@@ -340,25 +272,19 @@ const StarInput = ({ className = "", ...props }) => (
 /* ─────────────────────────── Component ─────────────────────────── */
 export default function AgreementOfPlan() {
   const { user } = useAuth();
-
-  const [form, setForm]     = useState(INITIAL_FORM);
+  const { form, setForm, handleChange } = useWardForm(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast]   = useState(null); // { type, text }
+  const [toast, setToast]     = useState(null);
 
   const showToast = (type, text) => {
     setToast({ type, text });
     setTimeout(() => setToast(null), type === "success" ? 3000 : 5000);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  /* Single save-and-print handler — replaces the two separate handleSubmit / handlePrint */
-  const handleSaveAndPrint = async (e) => {
-    e.preventDefault();
+  /* ── Single save — no duplicate POST ── */
+  const handleSave = async (shouldPrint = false) => {
     if (loading) return;
+    setToast(null);
 
     // Basic required-field check
     const required = ["district", "implement_unit", "project_title",
@@ -373,13 +299,14 @@ export default function AgreementOfPlan() {
     setLoading(true);
     try {
       const res = await axios.post(API_URL, toPayload(form));
-      showToast("success", `सफलतापूर्वक सेभ भयो (ID: ${res.data?.id ?? ""})`);
-      setTimeout(() => {
-        window.print();
-        setForm(INITIAL_FORM);
-      }, 300);
+      if (shouldPrint) {
+        handleCleanPrint();
+      } else {
+        showToast("success", `सफलतापूर्वक सेभ भयो (ID: ${res.data?.id ?? ""})`);
+      }
+      setForm(INITIAL_FORM);
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "सेभ गर्न असफल भयो।";
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "सेभ गर्न असफल भयो।";
       showToast("error", msg);
       console.error("submit error:", err);
     } finally {
@@ -387,16 +314,155 @@ export default function AgreementOfPlan() {
     }
   };
 
-  const wardLabel =
-    user?.role === "SUPERADMIN"
-      ? "सबै वडा कार्यालय"
-      : `${user?.ward || MUNICIPALITY.wardNumber} नं. वडा कार्यालय`;
+  /* ── Clean print — isolated window, values sized to content ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const esc = (v) =>
+      String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    const tapsilRows = TAPSIL_FIELDS
+      .map(
+        ({ label, name }) => `
+          <tr>
+            <td class="tapsil-label">${esc(label)}</td>
+            <td>${esc(form[name])}</td>
+          </tr>`
+      )
+      .join("");
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>योजना सम्झौता सिफारिस</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000; background: white;
+            padding: 15mm 20mm; font-size: 11pt; line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .addressee { margin-bottom: 16px; line-height: 1.9; }
+          .body-text { font-size: 11pt; line-height: 2.4; text-align: justify; margin-bottom: 20px; }
+          /* value sizes to content — short values inline, long ones wrap cleanly */
+          .value { font-weight: bold; padding: 0 4px; }
+          .value-inline { white-space: nowrap; }
+          .tapsil-title { font-weight: bold; text-decoration: underline; margin: 16px 0 8px; }
+          table.tapsil { width: 100%; border-collapse: collapse; border: 1px solid #555; margin-bottom: 16px; }
+          table.tapsil td { border: 1px solid #555; padding: 7px 10px; font-size: 10pt; vertical-align: top; }
+          table.tapsil td.tapsil-label { width: 45%; font-weight: 600; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
+          .sig-block { width: 210px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="${esc(MUNICIPALITY.logoSrc || "/nepallogo.svg")}" alt="Nepal" />
+          <div class="mun-name">${esc(MUNICIPALITY.name)}</div>
+          <div class="ward-title">${esc(wardTitle)}</div>
+          <div class="addr">${esc(MUNICIPALITY.officeLine)}</div>
+          <div class="addr">${esc(MUNICIPALITY.provinceLine)}</div>
+        </div>
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value value-inline">${esc(form.letter_no)}</span></div>
+            <div>चलानी नं. : <span class="value value-inline">${esc(form.chalan_no)}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value value-inline">${esc(form.issue_date)}</span></div>
+            <div>ने.सं : <span class="value value-inline">${esc(form.nepali_date_label)}</span></div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: योजना सम्झौता गरिदिने सम्बन्धमा।</div>
+
+        <div class="addressee">
+          <span class="value">${esc(form.addressee_line1)}</span><br/>
+          <span class="value">${esc(form.addressee_line2)}</span><br/>
+          <span class="value">${esc(form.addressee_implement_unit)}</span>
+          <span class="value">${esc(form.addressee_district)}</span>
+        </div>
+
+        <div class="body-text">
+          उपरोक्त सम्बन्धमा
+          <span class="value">${esc(form.district)}</span>
+          <span class="value">${esc(form.implement_unit)}</span>
+          को चालु आ.व. <span class="value value-inline">${esc(form.fiscal_year)}</span>
+          को स्वीकृत बजेट तथा निति कार्यक्रम अनुसार
+          <span class="value">${esc(form.project_title)}</span>
+          लाई <span class="value">${esc(form.agreement_amount)}</span>
+          कार्य गर्न रु <span class="value value-inline">${esc(form.allocated_amount)}</span>
+          ( <span class="value">${esc(form.allocated_amount_in_words)}</span> )
+          विनियोजन भएको हुदा त्यहाँ कार्यालयको नियम अनुसार
+          <span class="value">${esc(form.party_a)}</span>, र
+          <span class="value">${esc(form.party_b)}</span>,
+          विच योजना / कार्यक्रम सम्झौता गरि दिनुहुन यो सिफारिस गरिएको व्यहोरा अनुरोध छ।
+        </div>
+
+        <div class="tapsil-title">तपशिल</div>
+        <table class="tapsil">
+          <tbody>${tapsilRows}</tbody>
+        </table>
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${esc(form.signatory_name)}</div>
+            <div>${esc(form.signatory_designation)}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row"><span class="field-label">नाम:</span><span>${esc(form.applicant_name)}</span></div>
+          <div class="field-row"><span class="field-label">ठेगाना:</span><span>${esc(form.applicant_address)}</span></div>
+          <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span>${esc(form.applicant_citizenship_no)}</span></div>
+          <div class="field-row"><span class="field-label">फोन:</span><span>${esc(form.applicant_phone)}</span></div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
 
   return (
     <>
       <style>{styles}</style>
 
-      <form onSubmit={handleSaveAndPrint} className="plan-agreement-container">
+      <form
+        className="plan-agreement-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+      >
 
         {/* Toast */}
         {toast && (
@@ -414,21 +480,22 @@ export default function AgreementOfPlan() {
 
         {/* Letterhead */}
         <div className="form-header-section">
-          <div className="header-logo">
-            <img src={MUNICIPALITY.logoSrc} alt="Nepal Emblem" />
-          </div>
-          <div className="header-text">
-            <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
-            <h2 className="ward-title">{wardLabel}</h2>
-            <p className="address-text">{MUNICIPALITY.officeLine}</p>
-            <p className="province-text">{MUNICIPALITY.provinceLine}</p>
-          </div>
+          <MunicipalityHeader formTitle="योजना सम्झौता सिफारिस" />
         </div>
 
-        {/* Meta row */}
+        {/* Meta row — now editable */}
         <div className="meta-data-row">
           <div className="meta-left">
-            <p>पत्र संख्या : <span className="bold-text">२०८२/८३</span></p>
+            <p>
+              पत्र संख्या :{" "}
+              <input
+                name="letter_no"
+                type="text"
+                className="dotted-input small-input"
+                value={form.letter_no}
+                onChange={handleChange}
+              />
+            </p>
             <p>
               चलानी नं. :{" "}
               <StarInput
@@ -441,8 +508,26 @@ export default function AgreementOfPlan() {
             </p>
           </div>
           <div className="meta-right">
-            <p>मिति : <span className="bold-text">२०८२-०८-०६</span></p>
-            <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
+            <p>
+              मिति :{" "}
+              <input
+                name="issue_date"
+                type="text"
+                className="dotted-input small-input"
+                value={form.issue_date}
+                onChange={handleChange}
+              />
+            </p>
+            <p>
+              ने.सं :{" "}
+              <input
+                name="nepali_date_label"
+                type="text"
+                className="dotted-input medium-input"
+                value={form.nepali_date_label}
+                onChange={handleChange}
+              />
+            </p>
           </div>
         </div>
 
@@ -540,10 +625,24 @@ export default function AgreementOfPlan() {
         {/* Applicant details */}
         <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        {/* Footer */}
+        {/* Footer buttons */}
         <div className="form-footer">
-          <button type="submit" className="save-print-btn" disabled={loading}>
-            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+          <button
+            type="submit"
+            className="save-print-btn"
+            disabled={loading}
+            style={{ marginRight: 12 }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
