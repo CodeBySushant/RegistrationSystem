@@ -1,8 +1,11 @@
 // src/pages/official-use/InterLocalTransferRecommendation.jsx
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const FORM_KEY = "inter-local-transfer-recommendation";
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -35,22 +38,6 @@ const styles = `
   color: var(--ilt-dark);
 }
 
-/* ── Breadcrumb ── */
-.ilt-breadcrumb {
-  max-width: 900px;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--ilt-white);
-  border: 1px solid var(--ilt-border);
-  border-radius: var(--radius);
-  padding: 10px 18px;
-  box-shadow: var(--shadow);
-}
-.ilt-breadcrumb-title { font-weight: 700; font-size: 1rem; }
-.ilt-breadcrumb-path  { font-size: 0.82rem; color: #888; }
-
 /* ── Container (paper) ── */
 .ilt-container {
   max-width: 900px;
@@ -65,21 +52,20 @@ const styles = `
   padding: 40px 52px;
 }
 
-/* ── Header ── */
-.ilt-header {
+/* ── Top bar (inside container) ── */
+.ilt-top-bar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  justify-content: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
   margin-bottom: 20px;
 }
-.ilt-header-logo img { width: 80px; height: auto; flex-shrink: 0; }
-.ilt-header-text     { text-align: center; }
-.ilt-gov-label    { font-size: 0.95rem; margin: 0 0 2px; color: var(--ilt-mid); }
-.ilt-municipality { font-size: 2rem; font-weight: 800; margin: 0 0 4px; color: var(--ilt-primary); line-height: 1.2; }
-.ilt-ward         { font-size: 1.25rem; font-weight: 700; margin: 0 0 4px; color: var(--ilt-primary-dk); }
-.ilt-address,
-.ilt-province     { margin: 0; font-size: 0.92rem; color: var(--ilt-mid); }
+.ilt-top-bar-title { font-weight: 700; font-size: 1.1rem; color: #333; }
+.ilt-top-bar-path  { font-size: 0.9rem; color: #777; }
+
+/* ── Header wrapper ── */
+.ilt-header-section { text-align: center; margin-bottom: 14px; position: relative; min-height: 90px; }
 
 /* ── Divider ── */
 .ilt-divider {
@@ -107,6 +93,17 @@ const styles = `
 .ilt-subject-label { font-weight: 700; margin-right: 6px; }
 .ilt-subject-text  { font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 
+/* ── Required-star wrapper ── */
+.ilt-req-wrap { position: relative; display: inline-block; vertical-align: middle; }
+.ilt-req-star {
+  position: absolute;
+  left: 5px; top: 50%;
+  transform: translateY(-50%);
+  color: red; font-weight: bold;
+  pointer-events: none; font-size: 13px; z-index: 1;
+}
+.ilt-req-wrap .ilt-input { padding-left: 16px; }
+
 /* ── Shared input / select ── */
 .ilt-input {
   background: var(--ilt-white);
@@ -118,6 +115,7 @@ const styles = `
   color: var(--ilt-dark);
   outline: none;
   transition: border-color .2s, box-shadow .2s;
+  vertical-align: middle;
 }
 .ilt-input:focus {
   border-color: var(--ilt-primary);
@@ -184,6 +182,65 @@ const styles = `
   flex-shrink: 0;
 }
 
+/* ── Notes rich editor ── */
+.ilt-notes { margin: 20px 0 30px; }
+.ilt-notes-title { font-weight: 700; margin-bottom: 8px; font-size: 1rem; }
+.ilt-editor-wrap {
+  border: 1px solid var(--ilt-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--ilt-white);
+}
+.ilt-editor-toolbar {
+  background: #f5f5f5;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--ilt-border);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ilt-tool {
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border: 1px solid #ddd;
+  background: var(--ilt-white);
+  border-radius: 2px;
+  transition: background .15s;
+}
+.ilt-tool:hover  { background: #e8e8e8; }
+.ilt-tool:active { background: #dcdcdc; }
+.ilt-tool.bold      { font-weight: bold; }
+.ilt-tool.italic    { font-style: italic; }
+.ilt-tool.underline { text-decoration: underline; }
+.ilt-tool-sep { color: #bbb; padding: 0 2px; }
+.ilt-tool-select {
+  font-family: var(--ff);
+  font-size: 0.82rem;
+  padding: 2px 4px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  background: var(--ilt-white);
+  cursor: pointer;
+}
+.ilt-editable {
+  width: 100%;
+  min-height: 110px;
+  outline: none;
+  padding: 12px;
+  font-family: var(--ff);
+  font-size: 1rem;
+  box-sizing: border-box;
+  background: var(--ilt-white);
+  color: var(--ilt-dark);
+  line-height: 1.8;
+}
+.ilt-editable:empty:before {
+  content: attr(data-placeholder);
+  color: #bbb;
+}
+
 /* ── Signature ── */
 .ilt-signature-section {
   display: flex;
@@ -207,8 +264,8 @@ const styles = `
 .ilt-msg--success { background: #eafaf1; border: 1px solid #a9dfbf; color: var(--ilt-success); }
 .ilt-msg--error   { background: #fdedec; border: 1px solid #f5b7b1; color: var(--ilt-error); }
 
-/* ── Action button ── */
-.ilt-actions { display: flex; justify-content: center; padding-top: 10px; }
+/* ── Action buttons ── */
+.ilt-actions { display: flex; justify-content: center; gap: 12px; padding-top: 10px; }
 .ilt-btn {
   padding: 11px 32px;
   border: none;
@@ -217,121 +274,46 @@ const styles = `
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  background: var(--ilt-primary);
   color: #fff;
   transition: background .2s, transform .1s;
 }
-.ilt-btn:hover:not(:disabled)  { background: var(--ilt-primary-dk); }
-.ilt-btn:disabled               { opacity: .6; cursor: not-allowed; }
-.ilt-btn:active:not(:disabled)  { transform: scale(.97); }
+.ilt-btn--save  { background: #2c3e50; }
+.ilt-btn--save:hover:not(:disabled)  { background: #1a252f; }
+.ilt-btn--print { background: #1a6b3a; }
+.ilt-btn--print:hover:not(:disabled) { background: #145530; }
+.ilt-btn:disabled              { opacity: .6; cursor: not-allowed; }
+.ilt-btn:active:not(:disabled) { transform: scale(.97); }
 
 /* ── Footer ── */
 .ilt-footer { text-align: right; font-size: 0.8rem; color: #aaa; border-top: 1px solid #eee; padding-top: 12px; margin-top: 36px; }
 
-/* ── Print value spans (hidden on screen) ── */
-.ilt-print-value {
-  display: none;
-  font-family: var(--ff);
-  font-size: 1rem;
-  color: #000;
-  border-bottom: 1px solid #aaa;
-  min-width: 60px;
-  padding: 0 4px 1px;
-  vertical-align: middle;
-}
-.ilt-print-value.meta-input     { min-width: 140px; }
-.ilt-print-value.inline-sm      { min-width: 60px; text-align: center; }
-.ilt-print-value.inline-md      { min-width: 160px; }
-.ilt-print-value.inline-lg      { min-width: 220px; }
-.ilt-print-value.detail-input   { min-width: 120px; }
-.ilt-print-value.sig-name-input { min-width: 200px; text-align: center; }
-.ilt-print-value.sig-pos-select { min-width: 180px; text-align: center; }
-
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .ilt-container    { padding: 24px 18px; }
-  .ilt-header       { flex-direction: column; text-align: center; }
-  .ilt-municipality { font-size: 1.5rem; }
-  .ilt-ward         { font-size: 1.1rem; }
   .ilt-meta-row     { flex-direction: column; }
   .ilt-dehay-grid   { grid-template-columns: 1fr; }
   .ilt-body-para .ilt-input { width: 100%; }
   .ilt-signature-section    { justify-content: center; }
-  .ilt-breadcrumb   { flex-direction: column; gap: 4px; align-items: flex-start; }
 }
 @media (max-width: 480px) {
-  .ilt-municipality { font-size: 1.25rem; }
   .ilt-container    { padding: 16px 12px; }
-}
-
-/* ── Print ── */
-@media print {
-  body > *:not(.ilt-page-wrapper) { display: none !important; }
-  .ilt-page-wrapper { background: none !important; padding: 0 !important; }
-  .ilt-container {
-    box-shadow: none !important;
-    border: none !important;
-    margin: 0 !important;
-    padding: 20px 40px !important;
-    max-width: 100% !important;
-    background-image: url("/papertexture1.jpg") !important;
-    background-repeat: repeat !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .screen-only { display: none !important; }
-  .print-only  { display: inline !important; }
-  .ilt-print-value { display: inline !important; }
-  .ilt-breadcrumb,
-  .ilt-actions,
-  .ilt-footer,
-  .ilt-msg,
-  .ilt-applicant-wrapper { display: none !important; }
-  .ilt-body-para    { line-height: 2.2; font-size: 1rem; }
-  .ilt-municipality { font-size: 1.7rem; }
-  .ilt-ward         { font-size: 1.1rem; }
-  .ilt-header-logo img { width: 70px; }
-  .ilt-body-para,
-  .ilt-dehay,
-  .ilt-signature-section { page-break-inside: avoid; }
-  @page { size: A4; margin: 15mm 20mm; }
 }
 `;
 
 /* ─────────────────────────── Sub-components ─────────────────────────── */
 
-const PrintableInput = ({ value, onChange, className = "", required = false, placeholder = "", type = "text" }) => (
-  <>
+const StarInput = ({ value, onChange, className = "", required = false, placeholder = "", type = "text" }) => (
+  <span className="ilt-req-wrap">
+    <span className="ilt-req-star">*</span>
     <input
       type={type}
-      className={`ilt-input ${className} screen-only`}
+      className={`ilt-input ${className}`}
       value={value}
       onChange={onChange}
       required={required}
       placeholder={placeholder}
     />
-    <span className={`ilt-print-value ${className} print-only`}>
-      {value || "\u00A0"}
-    </span>
-  </>
-);
-
-const PrintableSelect = ({ value, onChange, options, className = "" }) => (
-  <>
-    <select
-      className={`ilt-select ${className} screen-only`}
-      value={value}
-      onChange={onChange}
-    >
-      <option value="">पद छनौट गर्नुहोस्</option>
-      {options.map((o) => (
-        <option key={o} value={o}>{o}</option>
-      ))}
-    </select>
-    <span className={`ilt-print-value ${className} print-only`}>
-      {value || "\u00A0"}
-    </span>
-  </>
+  </span>
 );
 
 /* ─────────────────────────── Helpers ─────────────────────────── */
@@ -353,8 +335,8 @@ const DEHAY_RIGHT_FIELDS = [
   ["जारी जिल्ला:","citizenship_issue_district","text"],
 ];
 
-const INITIAL_FORM = (user) => ({
-  letter_no:                    "२०८२/८३",
+const INITIAL_FORM = {
+  letter_no:                    "",
   reference_no:                 "",
   date:                         new Date().toISOString().slice(0, 10),
   subject:                      "अन्तर स्थानीय सरुवा सहमति दिईएको सम्बन्धमा",
@@ -381,7 +363,7 @@ const INITIAL_FORM = (user) => ({
   applicant_citizenship_no:     "",
   applicant_phone:              "",
   notes:                        "",
-});
+};
 
 const validate = (form) => {
   const errors = [];
@@ -394,20 +376,26 @@ const validate = (form) => {
 /* ─────────────────────────── Component ─────────────────────────── */
 export default function InterLocalTransferRecommendation() {
   const { user } = useAuth();
-
-  const [form, setForm]       = useState(() => INITIAL_FORM(user));
+  const { form, setForm, handleChange } = useWardForm(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg]         = useState(null); // { type: 'success'|'error', text: string }
+  const [msg, setMsg]         = useState(null);
+  const editorRef = useRef(null);
 
   const upd = (k) => (e) => setForm((s) => ({ ...s, [k]: e.target.value }));
 
-  const wardLabel =
-    user?.role === "SUPERADMIN"
-      ? "सबै वडा कार्यालय"
-      : `वडा नं. ${user?.ward || "—"} वडा कार्यालय`;
+  /* Rich-text toolbar command */
+  const exec = (command, value = null) => {
+    editorRef.current?.focus();
+    document.execCommand(command, false, value);
+    setForm((s) => ({ ...s, notes: editorRef.current?.innerHTML || "" }));
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onEditorInput = () =>
+    setForm((s) => ({ ...s, notes: editorRef.current?.innerHTML || "" }));
+
+  /* ── Single save — no duplicate POST ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (loading) return;
     setMsg(null);
 
     const errors = validate(form);
@@ -418,35 +406,165 @@ export default function InterLocalTransferRecommendation() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          ...form,
-          submitted_by: user?.username || "unknown",
-          ward: user?.ward,
-        }),
+      const res = await axios.post(API_URL, {
+        ...form,
+        submitted_by: user?.username || "unknown",
+        ward: user?.ward,
       });
-
-      const ct = res.headers.get("content-type") || "";
-      const body = ct.includes("application/json")
-        ? await res.json()
-        : { message: await res.text() };
-
-      if (!res.ok) throw new Error(body.message || `HTTP ${res.status}`);
-
-      window.print();
-      setForm(INITIAL_FORM(user));
-      setMsg({ type: "success", text: `सफलतापूर्वक सेभ भयो (ID: ${body.id || "—"})` });
+      if (shouldPrint) {
+        handleCleanPrint();
+      } else {
+        setMsg({ type: "success", text: `सफलतापूर्वक सेभ भयो (ID: ${res.data?.id || "—"})` });
+      }
+      setForm(INITIAL_FORM);
+      if (editorRef.current) editorRef.current.innerHTML = "";
     } catch (err) {
-      setMsg({ type: "error", text: err.message || "सेभ गर्न सकिएन" });
+      const text = err.response?.data?.message || err.response?.data?.error || err.message || "सेभ गर्न सकिएन";
+      setMsg({ type: "error", text });
     } finally {
       setLoading(false);
     }
+  };
+
+  /* ── Clean print — isolated window, values sized to content ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `वडा नं. ${user?.ward || ""} वडा कार्यालय`;
+
+    const esc = (v) =>
+      String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    const dehayRows = (fields) =>
+      fields
+        .map(
+          ([label, key]) => `
+            <div class="detail-row">
+              <span class="detail-label">${esc(label)}</span>
+              <span class="value">${esc(form[key])}</span>
+            </div>`
+        )
+        .join("");
+
+    const notesHtml = form.notes || "";
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>अन्तर स्थानीय सरुवा सहमति</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Tiro Devanagari Nepal', 'Kalimati', 'Noto Sans Devanagari', serif;
+            color: #000; background: white;
+            padding: 15mm 20mm; font-size: 11pt; line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 14px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .gov-label { font-size: 10pt; color: #333; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 16pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .divider { border: none; border-top: 2.5px double #c0392b; margin: 12px 0 18px; }
+          .meta { display: flex; justify-content: space-between; margin: 14px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 16px 0; text-decoration: underline; }
+          .body-text { font-size: 11pt; line-height: 2.3; text-align: justify; margin-bottom: 20px; }
+          /* value sizes to content — short values inline, long ones wrap cleanly */
+          .value { font-weight: bold; padding: 0 4px; border-bottom: 1px solid #aaa; }
+          .value-inline { white-space: nowrap; }
+          .dehay-title { font-weight: bold; text-decoration: underline; margin: 16px 0 10px; }
+          .dehay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 28px; }
+          .detail-row { display: flex; gap: 8px; font-size: 10.5pt; margin-bottom: 4px; }
+          .detail-label { font-weight: 600; min-width: 150px; }
+          .notes-title { font-weight: bold; margin: 14px 0 6px; }
+          .notes-content { border: 1px solid #ccc; padding: 10px; min-height: 40px; margin-bottom: 20px; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 36px; margin-bottom: 24px; }
+          .sig-block { width: 220px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="${esc(MUNICIPALITY.logoSrc || "/nepallogo.svg")}" alt="Nepal" />
+          <div class="gov-label">नेपाल सरकार</div>
+          <div class="mun-name">${esc(MUNICIPALITY.name)}</div>
+          <div class="ward-title">${esc(wardTitle)}</div>
+          <div class="addr">${esc(MUNICIPALITY.officeLine)}</div>
+          <div class="addr">${esc(MUNICIPALITY.provinceLine)}</div>
+        </div>
+        <hr class="divider" />
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value value-inline">${esc(form.letter_no)}</span></div>
+            <div>चलानी नं. : <span class="value value-inline">${esc(form.reference_no)}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value value-inline">${esc(form.date)}</span></div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: ${esc(form.subject)}</div>
+
+        <div class="body-text">
+          श्री <span class="value">${esc(form.requested_person_name)}</span>
+          ले यस कार्यालयमा मिति <span class="value value-inline">${esc(form.date)}</span>
+          मा माथि स्वीकृति भई <span class="value">${esc(form.transfer_to_local)}</span>
+          को पद <span class="value">${esc(form.transfer_to_position)}</span>
+          को च.न. <span class="value value-inline">${esc(form.requested_person_position_code)}</span>
+          मा प्राप्त भएको निवेदन अनुसार कर्मचारी <span class="value">${esc(form.employee_name)}</span>
+          को पदनाम <span class="value">${esc(form.employee_post_title)}</span>
+          बमोजिम <span class="value">${esc(form.service_group)}</span>
+          लाई यस गाउँपालिकाबाट सरुवा भई देहायको विवरण सहित सहमति प्रदान गरिएको व्यहोरा अनुरोध छ।
+        </div>
+
+        <div class="dehay-title">देहाय</div>
+        <div class="dehay-grid">
+          <div>${dehayRows(DEHAY_LEFT_FIELDS)}</div>
+          <div>${dehayRows(DEHAY_RIGHT_FIELDS)}</div>
+        </div>
+
+        ${
+          notesHtml
+            ? `<div class="notes-title">कैफियत:</div><div class="notes-content">${notesHtml}</div>`
+            : ""
+        }
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${esc(form.signatory_name)}</div>
+            <div>${esc(form.signatory_position)}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row"><span class="field-label">नाम:</span><span>${esc(form.applicant_name)}</span></div>
+          <div class="field-row"><span class="field-label">ठेगाना:</span><span>${esc(form.applicant_address)}</span></div>
+          <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span>${esc(form.applicant_citizenship_no)}</span></div>
+          <div class="field-row"><span class="field-label">फोन:</span><span>${esc(form.applicant_phone)}</span></div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   return (
@@ -454,30 +572,25 @@ export default function InterLocalTransferRecommendation() {
       <style>{styles}</style>
 
       <div className="ilt-page-wrapper">
-        {/* Breadcrumb */}
-        <div className="ilt-breadcrumb screen-only">
-          <span className="ilt-breadcrumb-title">अन्तर स्थानीय संस्थागत सरुवा सहमति</span>
-          <span className="ilt-breadcrumb-path">
-            आर्थिक प्रबेश &rsaquo; अन्तर स्थानीय संस्थागत सरुवा सहमति
-          </span>
-        </div>
-
         <div className="ilt-container">
-          <form onSubmit={handleSubmit} noValidate>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSave(false);
+            }}
+            noValidate
+          >
+
+            {/* Top bar (inside container) */}
+            <div className="ilt-top-bar">
+              <span className="ilt-top-bar-title">अन्तर स्थानीय संस्थागत सरुवा सहमति</span>
+              <span className="ilt-top-bar-path">आधिकारिक प्रयोग &rsaquo; अन्तर स्थानीय संस्थागत सरुवा सहमति</span>
+            </div>
 
             {/* Header */}
-            <header className="ilt-header">
-              <div className="ilt-header-logo">
-                <img src={MUNICIPALITY.logoSrc} alt="नेपाल सरकार" />
-              </div>
-              <div className="ilt-header-text">
-                <p className="ilt-gov-label">नेपाल सरकार</p>
-                <h1 className="ilt-municipality">{MUNICIPALITY.name}</h1>
-                <h2 className="ilt-ward">{wardLabel}</h2>
-                <p className="ilt-address">{MUNICIPALITY.officeLine}</p>
-                <p className="ilt-province">{MUNICIPALITY.provinceLine}</p>
-              </div>
-            </header>
+            <div className="ilt-header-section">
+              <MunicipalityHeader formTitle="अन्तर स्थानीय संस्थागत सरुवा सहमति" />
+            </div>
 
             <div className="ilt-divider" />
 
@@ -486,17 +599,17 @@ export default function InterLocalTransferRecommendation() {
               <div className="ilt-meta-left">
                 <div className="ilt-meta-field">
                   <label>पत्र संख्या:</label>
-                  <PrintableInput value={form.letter_no} onChange={upd("letter_no")} className="meta-input" />
+                  <StarInput value={form.letter_no} onChange={upd("letter_no")} className="meta-input" placeholder="पत्र संख्या" />
                 </div>
                 <div className="ilt-meta-field">
                   <label>चलानी नं.:</label>
-                  <PrintableInput value={form.reference_no} onChange={upd("reference_no")} className="meta-input" placeholder="चलानी नं." />
+                  <StarInput value={form.reference_no} onChange={upd("reference_no")} className="meta-input" placeholder="चलानी नं." />
                 </div>
               </div>
               <div className="ilt-meta-right">
                 <div className="ilt-meta-field">
                   <label>मिति:</label>
-                  <PrintableInput value={form.date} onChange={upd("date")} className="meta-input" type="date" />
+                  <StarInput value={form.date} onChange={upd("date")} className="meta-input" type="date" />
                 </div>
               </div>
             </div>
@@ -511,21 +624,21 @@ export default function InterLocalTransferRecommendation() {
             <div className="ilt-body-para">
               <p>
                 श्री{" "}
-                <PrintableInput value={form.requested_person_name} onChange={upd("requested_person_name")} className="inline-md" placeholder="नाम" />{" "}
+                <StarInput value={form.requested_person_name} onChange={upd("requested_person_name")} className="inline-md" placeholder="नाम" />{" "}
                 ले यस कार्यालयमा मिति{" "}
                 <strong>{form.date || "______"}</strong>{" "}
                 मा माथि स्वीकृति भई{" "}
-                <PrintableInput value={form.transfer_to_local} onChange={upd("transfer_to_local")} className="inline-lg" placeholder="सरुवा जाने स्थानीय तह" />{" "}
+                <StarInput value={form.transfer_to_local} onChange={upd("transfer_to_local")} className="inline-lg" placeholder="सरुवा जाने स्थानीय तह" />{" "}
                 को पद{" "}
-                <PrintableInput value={form.transfer_to_position} onChange={upd("transfer_to_position")} className="inline-md" placeholder="पद" />{" "}
+                <StarInput value={form.transfer_to_position} onChange={upd("transfer_to_position")} className="inline-md" placeholder="पद" />{" "}
                 को च.न.{" "}
-                <PrintableInput value={form.requested_person_position_code} onChange={upd("requested_person_position_code")} className="inline-sm" placeholder="च.न." />{" "}
+                <StarInput value={form.requested_person_position_code} onChange={upd("requested_person_position_code")} className="inline-sm" placeholder="च.न." />{" "}
                 मा प्राप्त भएको निवेदन अनुसार कर्मचारी{" "}
-                <PrintableInput value={form.employee_name} onChange={upd("employee_name")} className="inline-md" placeholder="कर्मचारीको नाम" required />{" "}
+                <StarInput value={form.employee_name} onChange={upd("employee_name")} className="inline-md" placeholder="कर्मचारीको नाम" required />{" "}
                 को पदनाम{" "}
-                <PrintableInput value={form.employee_post_title} onChange={upd("employee_post_title")} className="inline-md" placeholder="पद/तह" />{" "}
+                <StarInput value={form.employee_post_title} onChange={upd("employee_post_title")} className="inline-md" placeholder="पद/तह" />{" "}
                 बमोजिम{" "}
-                <PrintableInput value={form.service_group} onChange={upd("service_group")} className="inline-lg" placeholder="सेवा/समूह/उपसमूह" />{" "}
+                <StarInput value={form.service_group} onChange={upd("service_group")} className="inline-lg" placeholder="सेवा/समूह/उपसमूह" />{" "}
                 लाई यस गाउँपालिकाबाट सरुवा भई देहायको विवरण सहित सहमति प्रदान गरिएको व्यहोरा अनुरोध छ।
               </p>
             </div>
@@ -535,12 +648,12 @@ export default function InterLocalTransferRecommendation() {
               <h4 className="ilt-dehay-title">देहाय</h4>
               <div className="ilt-dehay-grid">
 
-                {/* Left column — driven by config array */}
+                {/* Left column */}
                 <div className="ilt-dehay-col">
                   {DEHAY_LEFT_FIELDS.map(([label, key]) => (
                     <div className="ilt-detail-item" key={key}>
                       <label>{label}</label>
-                      <PrintableInput value={form[key]} onChange={upd(key)} className="detail-input" />
+                      <StarInput value={form[key]} onChange={upd(key)} className="detail-input" />
                     </div>
                   ))}
                 </div>
@@ -550,7 +663,7 @@ export default function InterLocalTransferRecommendation() {
                   {DEHAY_RIGHT_FIELDS.map(([label, key, type]) => (
                     <div className="ilt-detail-item" key={key}>
                       <label>{label}</label>
-                      <PrintableInput
+                      <StarInput
                         value={form[key]}
                         onChange={upd(key)}
                         className="detail-input"
@@ -564,47 +677,97 @@ export default function InterLocalTransferRecommendation() {
               </div>
             </div>
 
+            {/* Notes — working rich-text editor */}
+            <div className="ilt-notes">
+              <p className="ilt-notes-title">कैफियत:</p>
+              <div className="ilt-editor-wrap">
+                <div className="ilt-editor-toolbar">
+                  <button type="button" className="ilt-tool bold"      onClick={() => exec("bold")}      tabIndex={-1}>B</button>
+                  <button type="button" className="ilt-tool italic"    onClick={() => exec("italic")}    tabIndex={-1}>I</button>
+                  <button type="button" className="ilt-tool underline" onClick={() => exec("underline")} tabIndex={-1}>U</button>
+                  <span className="ilt-tool-sep">|</span>
+                  <select
+                    className="ilt-tool-select"
+                    defaultValue=""
+                    onChange={(e) => { exec("fontSize", e.target.value); e.target.value = ""; }}
+                    tabIndex={-1}
+                  >
+                    <option value="" disabled>Styles</option>
+                    <option value="2">सानो</option>
+                    <option value="3">मध्यम</option>
+                    <option value="5">ठूलो</option>
+                  </select>
+                  <select
+                    className="ilt-tool-select"
+                    defaultValue=""
+                    onChange={(e) => { exec(e.target.value); e.target.value = ""; }}
+                    tabIndex={-1}
+                  >
+                    <option value="" disabled>Format</option>
+                    <option value="justifyLeft">बायाँ</option>
+                    <option value="justifyCenter">बीच</option>
+                    <option value="justifyRight">दायाँ</option>
+                    <option value="insertUnorderedList">सूची</option>
+                  </select>
+                </div>
+                <div
+                  ref={editorRef}
+                  className="ilt-editable"
+                  contentEditable
+                  suppressContentEditableWarning
+                  data-placeholder="कैफियत यहाँ लेख्नुहोस्..."
+                  onInput={onEditorInput}
+                />
+              </div>
+            </div>
+
             {/* Signature */}
             <div className="ilt-signature-section">
               <div className="ilt-signature-block">
-                <PrintableInput
+                <StarInput
                   value={form.signatory_name}
                   onChange={upd("signatory_name")}
                   className="sig-name-input"
                   required
-                  placeholder="हस्ताक्षरकर्ताको नाम *"
+                  placeholder="हस्ताक्षरकर्ताको नाम"
                 />
-                <PrintableSelect
+                <select
+                  className="ilt-select"
                   value={form.signatory_position}
                   onChange={upd("signatory_position")}
-                  options={["प्रमुख प्रशासकीय अधिकृत", "वडा सचिव"]}
-                  className="sig-pos-select"
-                />
+                >
+                  <option value="">पद छनौट गर्नुहोस्</option>
+                  <option value="प्रमुख प्रशासकीय अधिकृत">प्रमुख प्रशासकीय अधिकृत</option>
+                  <option value="वडा सचिव">वडा सचिव</option>
+                </select>
               </div>
             </div>
 
-            {/* Applicant details (screen only) */}
-            <div className="ilt-applicant-wrapper screen-only">
-              <ApplicantDetailsNp formData={form} handleChange={upd} />
+            {/* Applicant details */}
+            <div className="ilt-applicant-wrapper">
+              <ApplicantDetailsNp formData={form} handleChange={handleChange} />
             </div>
 
             {/* Message */}
             {msg && (
-              <div className={`ilt-msg ilt-msg--${msg.type} screen-only`}>
+              <div className={`ilt-msg ilt-msg--${msg.type}`}>
                 {msg.type === "success" ? "✓" : "✗"} {msg.text}
               </div>
             )}
 
-            {/* Submit */}
-            <div className="ilt-actions screen-only">
-              <button type="submit" className="ilt-btn" disabled={loading}>
-                {loading ? "⏳ सेभ हुँदै..." : "🖨 सेभ र प्रिन्ट गर्नुहोस्"}
+            {/* Footer buttons */}
+            <div className="ilt-actions">
+              <button type="submit" className="ilt-btn ilt-btn--save" disabled={loading}>
+                {loading ? "सेभ हुँदै..." : "सेभ गर्नुहोस्"}
+              </button>
+              <button type="button" className="ilt-btn ilt-btn--print" disabled={loading} onClick={() => handleSave(true)}>
+                {loading ? "सेभ हुँदै..." : "सेभ र प्रिन्ट गर्नुहोस्"}
               </button>
             </div>
 
           </form>
 
-          <footer className="ilt-footer screen-only">
+          <footer className="ilt-footer">
             © सर्वाधिकार सुरक्षित — {MUNICIPALITY.name}
           </footer>
         </div>
