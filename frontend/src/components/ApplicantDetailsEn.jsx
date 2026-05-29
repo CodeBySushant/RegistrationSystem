@@ -78,10 +78,10 @@ const ApplicantDetailsEn = ({ formData = {}, handleChange }) => {
               Applicant Name<span className="required">*</span>
             </label>
             <input
-              name="applicantName"
+              name="applicant_name"
               type="text"
               className="detail-input"
-              value={formData.applicantName ?? ""}
+              value={formData.applicant_name ?? ""}
               onChange={handleChange}
               required
             />
@@ -92,10 +92,10 @@ const ApplicantDetailsEn = ({ formData = {}, handleChange }) => {
               Applicant Address<span className="required">*</span>
             </label>
             <input
-              name="applicantAddress"
+              name="applicant_address"
               type="text"
               className="detail-input"
-              value={formData.applicantAddress ?? ""}
+              value={formData.applicant_address ?? ""}
               onChange={handleChange}
               required
             />
@@ -106,10 +106,10 @@ const ApplicantDetailsEn = ({ formData = {}, handleChange }) => {
               Applicant Citizenship Number<span className="required">*</span>
             </label>
             <input
-              name="applicantCitizenship"
+              name="applicant_citizenship_no"
               type="text"
               className="detail-input"
-              value={formData.applicantCitizenship ?? ""}
+              value={formData.applicant_citizenship_no ?? ""}
               onChange={handleChange}
               required
             />
@@ -120,10 +120,10 @@ const ApplicantDetailsEn = ({ formData = {}, handleChange }) => {
               Applicant Phone Number<span className="required">*</span>
             </label>
             <input
-              name="applicantPhone"
+              name="applicant_phone"
               type="text"
               className="detail-input"
-              value={formData.applicantPhone ?? ""}
+              value={formData.applicant_phone ?? ""}
               onChange={handleChange}
               required
             />
