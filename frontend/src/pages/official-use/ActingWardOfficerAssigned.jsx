@@ -3,6 +3,9 @@ import React, { useState, useRef } from "react";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 const FORM_KEY = "acting-ward-officer-assigned";
 const API_URL = `/api/forms/${FORM_KEY}`;
@@ -36,22 +39,6 @@ const styles = `
   color: var(--clr-dark);
 }
 
-/* ── Breadcrumb ── */
-.awo-breadcrumb {
-  max-width: 900px;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--clr-white);
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius);
-  padding: 10px 18px;
-  box-shadow: var(--shadow-card);
-}
-.awo-breadcrumb-title { font-weight: 700; font-size: 1rem; color: var(--clr-dark); }
-.awo-breadcrumb-path  { font-size: 0.82rem; color: #888; }
-
 /* ── Container ── */
 .awo-container {
   max-width: 900px;
@@ -66,21 +53,8 @@ const styles = `
   padding: 40px 52px;
 }
 
-/* ── Header ── */
-.awo-header {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-.awo-header-logo img { width: 80px; height: auto; flex-shrink: 0; }
-.awo-header-text { text-align: center; }
-.awo-gov-label    { font-size: 0.95rem; margin: 0 0 2px; color: var(--clr-mid); letter-spacing: .5px; }
-.awo-municipality { font-size: 2rem; font-weight: 800; margin: 0 0 4px; color: var(--clr-primary); line-height: 1.2; }
-.awo-ward         { font-size: 1.25rem; font-weight: 700; margin: 0 0 4px; color: var(--clr-primary-dk); }
-.awo-address,
-.awo-province     { margin: 0; font-size: 0.92rem; color: var(--clr-mid); }
+/* ── Header wrapper ── */
+.awo-header-section { text-align: center; margin-bottom: 14px; position: relative; min-height: 90px; }
 
 /* ── Divider ── */
 .awo-divider {
@@ -103,6 +77,17 @@ const styles = `
 .awo-meta-field { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
 .awo-meta-field label { white-space: nowrap; color: var(--clr-mid); font-weight: 600; min-width: 90px; }
 
+/* ── Required-star wrapper ── */
+.awo-req-wrap { position: relative; display: inline-block; vertical-align: middle; }
+.awo-req-star {
+  position: absolute;
+  left: 5px; top: 50%;
+  transform: translateY(-50%);
+  color: red; font-weight: bold;
+  pointer-events: none; font-size: 13px; z-index: 1;
+}
+.awo-req-wrap .form-input { padding-left: 16px; }
+
 /* ── Shared input/select ── */
 .form-input {
   background: var(--clr-input-bg);
@@ -114,6 +99,7 @@ const styles = `
   color: var(--clr-dark);
   outline: none;
   transition: border-color .2s, box-shadow .2s;
+  vertical-align: middle;
 }
 .form-input:focus {
   border-color: var(--clr-primary);
@@ -185,7 +171,7 @@ const styles = `
   margin-bottom: 22px;
 }
 
-/* ── Bodartha ── */
+/* ── Bodartha rich editor ── */
 .awo-bodartha { margin-bottom: 30px; }
 .awo-bodartha-title { font-weight: 700; margin-bottom: 8px; font-size: 1rem; }
 .awo-editor-wrap {
@@ -201,6 +187,7 @@ const styles = `
   display: flex;
   gap: 6px;
   align-items: center;
+  flex-wrap: wrap;
 }
 .tool-btn {
   cursor: pointer;
@@ -212,23 +199,35 @@ const styles = `
   transition: background .15s;
 }
 .tool-btn:hover  { background: #e8e8e8; }
+.tool-btn:active { background: #dcdcdc; }
 .tool-btn.bold   { font-weight: bold; }
 .tool-btn.italic { font-style: italic; }
 .tool-btn.underline { text-decoration: underline; }
 .tool-sep { color: #bbb; padding: 0 2px; }
-.editor-textarea {
+.tool-select {
+  font-family: var(--ff-nepali);
+  font-size: 0.82rem;
+  padding: 2px 4px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  background: var(--clr-white);
+  cursor: pointer;
+}
+.awo-editable {
   width: 100%;
-  border: none;
+  min-height: 110px;
   outline: none;
   padding: 12px;
   font-family: var(--ff-nepali);
   font-size: 1rem;
-  resize: vertical;
   box-sizing: border-box;
-  min-height: 100px;
   background: var(--clr-white);
   color: var(--clr-dark);
-  display: block;
+  line-height: 1.8;
+}
+.awo-editable:empty:before {
+  content: attr(data-placeholder);
+  color: #bbb;
 }
 
 /* ── Signature section ── */
@@ -244,8 +243,8 @@ const styles = `
 .awo-msg--success { background: #eafaf1; border: 1px solid #a9dfbf; color: var(--clr-success); }
 .awo-msg--error   { background: #fdedec; border: 1px solid #f5b7b1; color: var(--clr-error); }
 
-/* ── Action button ── */
-.awo-actions { display: flex; justify-content: center; padding-top: 10px; }
+/* ── Action buttons ── */
+.awo-actions { display: flex; justify-content: center; gap: 12px; padding-top: 10px; }
 .awo-btn {
   padding: 11px 32px;
   border: none;
@@ -254,41 +253,22 @@ const styles = `
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  color: #fff;
   transition: background .2s, transform .1s;
 }
 .awo-btn:disabled { opacity: .6; cursor: not-allowed; }
 .awo-btn:active:not(:disabled) { transform: scale(.97); }
-.awo-btn--primary { background: var(--clr-primary); color: #fff; letter-spacing: .3px; }
-.awo-btn--primary:hover:not(:disabled) { background: var(--clr-primary-dk); }
+.awo-btn--save  { background: #2c3e50; }
+.awo-btn--save:hover:not(:disabled)  { background: #1a252f; }
+.awo-btn--print { background: #1a6b3a; }
+.awo-btn--print:hover:not(:disabled) { background: #145530; }
 
 /* ── Footer ── */
 .awo-footer { text-align: right; font-size: 0.8rem; color: #aaa; border-top: 1px solid #eee; padding-top: 12px; margin-top: 36px; }
 
-/* ── Print value spans (hidden on screen, shown in print) ── */
-.print-value {
-  display: none;
-  font-family: var(--ff-nepali);
-  font-size: 1rem;
-  color: #000;
-  border-bottom: 1px solid #aaa;
-  min-width: 80px;
-  padding: 0 4px 1px;
-  vertical-align: middle;
-}
-.print-value.meta-input           { min-width: 140px; }
-.print-value.addressee-name-input { min-width: 200px; }
-.print-value.addressee-addr-input { min-width: 160px; }
-.print-value.ward-no-input        { min-width: 44px; text-align: center; }
-.print-value.inline-date-input    { min-width: 110px; }
-.print-value.sig-name-input       { min-width: 200px; text-align: center; }
-.print-value.sig-pos-select       { min-width: 120px; text-align: center; }
-
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .awo-container { padding: 24px 18px; }
-  .awo-header { flex-direction: column; text-align: center; }
-  .awo-municipality { font-size: 1.5rem; }
-  .awo-ward         { font-size: 1.1rem; }
   .awo-meta-row     { flex-direction: column; gap: 8px; }
   .awo-meta-right   { align-items: flex-start; }
   .awo-addressee-row { flex-wrap: wrap; }
@@ -298,120 +278,40 @@ const styles = `
   .awo-signature-section { justify-content: center; }
   .awo-actions { flex-direction: column; align-items: stretch; }
   .awo-btn { text-align: center; width: 100%; }
-  .awo-breadcrumb { flex-direction: column; gap: 4px; align-items: flex-start; }
 }
 @media (max-width: 480px) {
-  .awo-municipality { font-size: 1.25rem; }
   .awo-container { padding: 16px 12px; }
-}
-
-/* ── Print ── */
-@media print {
-  body > *:not(.awo-page-wrapper) { display: none !important; }
-  .awo-page-wrapper { background: none !important; padding: 0 !important; }
-  .awo-container {
-    box-shadow: none !important;
-    border: none !important;
-    margin: 0 !important;
-    padding: 20px 40px !important;
-    max-width: 100% !important;
-    background-image: url("/papertexture1.jpg") !important;
-    background-repeat: repeat !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .screen-only { display: none !important; }
-  .print-only  { display: inline !important; }
-  .print-value { display: inline !important; }
-  .awo-editor-wrap .print-value {
-    display: block !important;
-    border: none;
-    border-bottom: 1px solid #aaa;
-    min-height: 60px;
-    padding: 4px 0;
-    white-space: pre-wrap;
-  }
-  .awo-header-logo img { width: 70px; }
-  .awo-municipality { font-size: 1.7rem; }
-  .awo-ward         { font-size: 1.1rem; }
-  .awo-body-para    { line-height: 2.2; font-size: 1rem; }
-  .awo-body-para,
-  .awo-addressee,
-  .awo-signature-section { page-break-inside: avoid; }
-  .awo-bodartha .awo-editor-wrap { border: none; }
-  .awo-breadcrumb,
-  .awo-actions,
-  .awo-footer,
-  .awo-msg,
-  .awo-applicant-wrapper { display: none !important; }
-  @page { size: A4; margin: 15mm 20mm; }
 }
 `;
 
 /* ─────────────────────────── Sub-components ─────────────────────────── */
 
-const PrintableInput = ({ value, onChange, className = "", required = false, placeholder = "", style = {} }) => (
-  <>
+const StarInput = ({ value, onChange, className = "", required = false, placeholder = "", type = "text", style = {} }) => (
+  <span className="awo-req-wrap">
+    <span className="awo-req-star">*</span>
     <input
-      className={`form-input ${className} screen-only`}
+      type={type}
+      className={`form-input ${className}`}
       value={value}
       onChange={onChange}
       required={required}
       placeholder={placeholder}
       style={style}
     />
-    <span className={`print-value ${className} print-only`} style={style}>
-      {value || "\u00A0"}
-    </span>
-  </>
-);
-
-const PrintableSelect = ({ value, onChange, options, className = "" }) => (
-  <>
-    <select
-      className={`form-select ${className} screen-only`}
-      value={value}
-      onChange={onChange}
-    >
-      <option value="">पद छनौट गर्नुहोस्</option>
-      {options.map((o) => (
-        <option key={o} value={o}>{o}</option>
-      ))}
-    </select>
-    <span className={`print-value ${className} print-only`}>
-      {value || "\u00A0"}
-    </span>
-  </>
-);
-
-const PrintableTextarea = ({ value, onChange, rows = 6 }) => (
-  <>
-    <textarea
-      className="editor-textarea screen-only"
-      rows={rows}
-      value={value}
-      onChange={onChange}
-    />
-    <div
-      className="print-value print-only"
-      style={{ minHeight: "80px", whiteSpace: "pre-wrap" }}
-    >
-      {value || "\u00A0"}
-    </div>
-  </>
+  </span>
 );
 
 /* ─────────────────────────── Helpers ─────────────────────────── */
 const INITIAL_FORM = (user) => ({
-  letter_no:            "२०८२/८३",
+  letter_no:            "",
   reference_no:         "",
-  date:                 "२०८२-१२-१८",
+  date:                 new Date().toISOString().slice(0, 10),
   subject:              "कार्यवाहक तोकिएको सम्बन्धमा।",
   assigned_member_name: "",
   assigned_member_address: MUNICIPALITY.name,
-  assigned_ward_no:     user?.ward || "१",
-  assign_from_date:     "२०८२-१२-१८",
-  assign_to_date:       "२०८२-१२-१८",
+  assigned_ward_no:     user?.ward || "",
+  assign_from_date:     "",
+  assign_to_date:       "",
   bodartha_text:        "",
   signatory_name:       "",
   signatory_position:   "",
@@ -434,23 +334,27 @@ const validate = (form) => {
 /* ─────────────────────────── Component ─────────────────────────── */
 const ActingWardOfficerAssigned = () => {
   const { user } = useAuth();
-
-  const [form, setForm]       = useState(() => INITIAL_FORM(user));
+  const { form, setForm, handleChange } = useWardForm(INITIAL_FORM(user));
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg]         = useState(null); // { type: 'success'|'error', text: string }
-  const formRef               = useRef(null);
+  const [msg, setMsg]         = useState(null);
+  const editorRef = useRef(null);
 
-  /* Generic field updater — also compatible with ApplicantDetailsNp's handleChange(key)(e) API */
   const upd = (key) => (e) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const wardLabel =
-    user?.role === "SUPERADMIN"
-      ? "सबै वडा कार्यालय"
-      : `वडा नं. ${user?.ward || form.assigned_ward_no} वडा कार्यालय`;
+  /* Rich-text toolbar command */
+  const exec = (command, value = null) => {
+    editorRef.current?.focus();
+    document.execCommand(command, false, value);
+    setForm((s) => ({ ...s, bodartha_text: editorRef.current?.innerHTML || "" }));
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onEditorInput = () =>
+    setForm((s) => ({ ...s, bodartha_text: editorRef.current?.innerHTML || "" }));
+
+  /* ── Single save — no duplicate POST ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (loading) return;
     setMsg(null);
 
     const errors = validate(form);
@@ -461,29 +365,149 @@ const ActingWardOfficerAssigned = () => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          ...form,
-          submitted_by: user?.username || "unknown",
-          ward: user?.ward,
-        }),
+      const res = await axios.post(API_URL, {
+        ...form,
+        submitted_by: user?.username || "unknown",
+        ward: user?.ward,
       });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.message || "फारम सेभ गर्न त्रुटि भयो।");
-      window.print();
+      if (shouldPrint) {
+        handleCleanPrint();
+      } else {
+        setMsg({ type: "success", text: `सफलतापूर्वक सेभ भयो (ID: ${res.data?.id ?? "—"})` });
+      }
       setForm(INITIAL_FORM(user));
-      setMsg({ type: "success", text: `सफलतापूर्वक सेभ भयो (ID: ${body.id})` });
+      if (editorRef.current) editorRef.current.innerHTML = "";
     } catch (err) {
-      setMsg({ type: "error", text: err.message });
+      const text = err.response?.data?.message || err.response?.data?.error || err.message || "फारम सेभ गर्न त्रुटि भयो।";
+      setMsg({ type: "error", text });
     } finally {
       setLoading(false);
     }
+  };
+
+  /* ── Clean print — isolated window, values sized to content ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `वडा नं. ${user?.ward || form.assigned_ward_no || ""} वडा कार्यालय`;
+
+    const esc = (v) =>
+      String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    const bodarthaHtml = form.bodartha_text || "";
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>कार्यवाहक तोकिएको सिफारिस</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Tiro Devanagari Nepal', 'Kalimati', 'Noto Sans Devanagari', serif;
+            color: #000; background: white;
+            padding: 15mm 20mm; font-size: 11pt; line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 14px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .gov-label { font-size: 10pt; color: #333; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 16pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .divider { border: none; border-top: 2.5px double #c0392b; margin: 12px 0 18px; }
+          .meta { display: flex; justify-content: space-between; margin: 14px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 16px 0; text-decoration: underline; }
+          .addressee { margin-bottom: 16px; }
+          .body-text { font-size: 11pt; line-height: 2.3; text-align: justify; margin-bottom: 20px; }
+          /* value sizes to content — short values inline, long ones wrap cleanly */
+          .value { font-weight: bold; padding: 0 4px; border-bottom: 1px solid #aaa; }
+          .value-inline { white-space: nowrap; }
+          .bodartha-title { font-weight: bold; margin: 14px 0 6px; }
+          .bodartha-content { border: 1px solid #ccc; padding: 10px; min-height: 40px; margin-bottom: 20px; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 36px; margin-bottom: 24px; }
+          .sig-block { width: 220px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="${esc(MUNICIPALITY.logoSrc || "/nepallogo.svg")}" alt="Nepal" />
+          <div class="gov-label">नेपाल सरकार</div>
+          <div class="mun-name">${esc(MUNICIPALITY.name)}</div>
+          <div class="ward-title">${esc(wardTitle)}</div>
+          <div class="addr">${esc(MUNICIPALITY.officeLine)}</div>
+          <div class="addr">${esc(MUNICIPALITY.provinceLine)}</div>
+        </div>
+        <hr class="divider" />
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value value-inline">${esc(form.letter_no)}</span></div>
+            <div>चलानी नं. : <span class="value value-inline">${esc(form.reference_no)}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value value-inline">${esc(form.date)}</span></div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: ${esc(form.subject)}</div>
+
+        <div class="addressee">
+          श्री वडा सदस्य <span class="value">${esc(form.assigned_member_name)}</span> ज्यू,<br/>
+          <span class="value">${esc(form.assigned_member_address)}</span>
+          वडा नं. <span class="value value-inline">${esc(form.assigned_ward_no)}</span>
+        </div>
+
+        <div class="body-text">
+          प्रस्तुत विषयमा कार्यालयको कामकाजको शिलशिलामा मिति
+          <span class="value value-inline">${esc(form.assign_from_date)}</span>
+          गते देखि <span class="value value-inline">${esc(form.assign_to_date)}</span>
+          गते सम्म बाहिर जानु पर्ने भएकोले सो अवधि सम्म यस
+          <span class="value value-inline">${esc(form.assigned_ward_no)}</span>
+          नं वडा कार्यालयको वडा अध्यक्षको कामकाज सम्हाल्ने गरी तपाईंलाई
+          कार्यवाहक वडा अध्यक्ष तोकेको छु। ईमान्दारीपूर्वक कामकाज गर्नुहोला।
+        </div>
+
+        ${
+          bodarthaHtml
+            ? `<div class="bodartha-title">बोधार्थ:</div><div class="bodartha-content">${bodarthaHtml}</div>`
+            : ""
+        }
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${esc(form.signatory_name)}</div>
+            <div>${esc(form.signatory_position)}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row"><span class="field-label">नाम:</span><span>${esc(form.applicant_name)}</span></div>
+          <div class="field-row"><span class="field-label">ठेगाना:</span><span>${esc(form.applicant_address)}</span></div>
+          <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span>${esc(form.applicant_citizenship_no)}</span></div>
+          <div class="field-row"><span class="field-label">फोन:</span><span>${esc(form.applicant_phone)}</span></div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   return (
@@ -491,30 +515,19 @@ const ActingWardOfficerAssigned = () => {
       <style>{styles}</style>
 
       <div className="awo-page-wrapper">
-        {/* Breadcrumb (screen only) */}
-        <div className="awo-breadcrumb screen-only">
-          <span className="awo-breadcrumb-title">कार्यवाहक तोकिएको सिफारिस</span>
-          <span className="awo-breadcrumb-path">
-            आधिकारिक प्रयोग &rsaquo; कार्यवाहक तोकिएको सिफारिस
-          </span>
-        </div>
-
-        <div className="awo-container" ref={formRef}>
-          <form onSubmit={handleSubmit} noValidate>
+        <div className="awo-container">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSave(false);
+            }}
+            noValidate
+          >
 
             {/* Header */}
-            <header className="awo-header">
-              <div className="awo-header-logo">
-                <img src={MUNICIPALITY.logoSrc} alt="नेपाल सरकार" />
-              </div>
-              <div className="awo-header-text">
-                <p className="awo-gov-label">नेपाल सरकार</p>
-                <h1 className="awo-municipality">{MUNICIPALITY.name}</h1>
-                <h2 className="awo-ward">{wardLabel}</h2>
-                <p className="awo-address">{MUNICIPALITY.officeLine}</p>
-                <p className="awo-province">{MUNICIPALITY.provinceLine}</p>
-              </div>
-            </header>
+            <div className="awo-header-section">
+              <MunicipalityHeader formTitle="कार्यवाहक तोकिएको सिफारिस" />
+            </div>
 
             <div className="awo-divider" />
 
@@ -523,17 +536,17 @@ const ActingWardOfficerAssigned = () => {
               <div className="awo-meta-left">
                 <div className="awo-meta-field">
                   <label>पत्र संख्या:</label>
-                  <PrintableInput value={form.letter_no} onChange={upd("letter_no")} className="meta-input" />
+                  <StarInput value={form.letter_no} onChange={upd("letter_no")} className="meta-input" placeholder="पत्र संख्या" />
                 </div>
                 <div className="awo-meta-field">
                   <label>चलानी नं.:</label>
-                  <PrintableInput value={form.reference_no} onChange={upd("reference_no")} className="meta-input" placeholder="चलानी नं." />
+                  <StarInput value={form.reference_no} onChange={upd("reference_no")} className="meta-input" placeholder="चलानी नं." />
                 </div>
               </div>
               <div className="awo-meta-right">
                 <div className="awo-meta-field">
                   <label>मिति:</label>
-                  <PrintableInput value={form.date} onChange={upd("date")} className="meta-input" />
+                  <StarInput value={form.date} onChange={upd("date")} className="meta-input" type="date" />
                 </div>
               </div>
             </div>
@@ -548,19 +561,19 @@ const ActingWardOfficerAssigned = () => {
             <div className="awo-addressee">
               <div className="awo-addressee-row">
                 <span>श्री वडा सदस्य</span>
-                <PrintableInput
+                <StarInput
                   value={form.assigned_member_name}
                   onChange={upd("assigned_member_name")}
                   className="addressee-name-input"
                   required
-                  placeholder="वडा सदस्यको नाम *"
+                  placeholder="वडा सदस्यको नाम"
                 />
                 <span>ज्यू,</span>
               </div>
               <div className="awo-addressee-row">
-                <PrintableInput value={form.assigned_member_address} onChange={upd("assigned_member_address")} className="addressee-addr-input" />
+                <StarInput value={form.assigned_member_address} onChange={upd("assigned_member_address")} className="addressee-addr-input" />
                 <span>वडा नं.</span>
-                <PrintableInput value={form.assigned_ward_no} onChange={upd("assigned_ward_no")} className="ward-no-input" />
+                <StarInput value={form.assigned_ward_no} onChange={upd("assigned_ward_no")} className="ward-no-input" />
               </div>
             </div>
 
@@ -568,11 +581,11 @@ const ActingWardOfficerAssigned = () => {
             <div className="awo-body-para">
               <p>
                 प्रस्तुत विषयमा कार्यालयको कामकाजको शिलशिलामा मिति{" "}
-                <PrintableInput value={form.assign_from_date} onChange={upd("assign_from_date")} className="inline-date-input" required />{" "}
+                <StarInput value={form.assign_from_date} onChange={upd("assign_from_date")} className="inline-date-input" required />{" "}
                 गते देखि{" "}
-                <PrintableInput value={form.assign_to_date} onChange={upd("assign_to_date")} className="inline-date-input" required />{" "}
+                <StarInput value={form.assign_to_date} onChange={upd("assign_to_date")} className="inline-date-input" required />{" "}
                 गते सम्म बाहिर जानु पर्ने भएकोले सो अवधि सम्म यस{" "}
-                <PrintableInput value={form.assigned_ward_no} onChange={upd("assigned_ward_no")} className="ward-no-input" />{" "}
+                <StarInput value={form.assigned_ward_no} onChange={upd("assigned_ward_no")} className="ward-no-input" />{" "}
                 नं वडा कार्यालयको वडा अध्यक्षको कामकाज सम्हाल्ने गरी तपाईंलाई
                 कार्यवाहक वडा अध्यक्ष तोकेको छु। ईमान्दारीपूर्वक कामकाज गर्नुहोला।
               </p>
@@ -581,19 +594,47 @@ const ActingWardOfficerAssigned = () => {
             {/* Signature sample label */}
             <div className="awo-sig-sample-label">दस्तखत नमूना</div>
 
-            {/* Bodartha */}
+            {/* Bodartha — working rich-text editor */}
             <div className="awo-bodartha">
               <p className="awo-bodartha-title">बोधार्थ:</p>
               <div className="awo-editor-wrap">
-                <div className="awo-editor-toolbar screen-only">
-                  <button type="button" className="tool-btn bold"      tabIndex={-1}>B</button>
-                  <button type="button" className="tool-btn italic"    tabIndex={-1}>I</button>
-                  <button type="button" className="tool-btn underline" tabIndex={-1}>U</button>
+                <div className="awo-editor-toolbar">
+                  <button type="button" className="tool-btn bold"      onClick={() => exec("bold")}      tabIndex={-1}>B</button>
+                  <button type="button" className="tool-btn italic"    onClick={() => exec("italic")}    tabIndex={-1}>I</button>
+                  <button type="button" className="tool-btn underline" onClick={() => exec("underline")} tabIndex={-1}>U</button>
                   <span className="tool-sep">|</span>
-                  <button type="button" className="tool-btn"           tabIndex={-1}>Styles</button>
-                  <button type="button" className="tool-btn"           tabIndex={-1}>Format</button>
+                  <select
+                    className="tool-select"
+                    defaultValue=""
+                    onChange={(e) => { exec("fontSize", e.target.value); e.target.value = ""; }}
+                    tabIndex={-1}
+                  >
+                    <option value="" disabled>Styles</option>
+                    <option value="2">सानो</option>
+                    <option value="3">मध्यम</option>
+                    <option value="5">ठूलो</option>
+                  </select>
+                  <select
+                    className="tool-select"
+                    defaultValue=""
+                    onChange={(e) => { exec(e.target.value); e.target.value = ""; }}
+                    tabIndex={-1}
+                  >
+                    <option value="" disabled>Format</option>
+                    <option value="justifyLeft">बायाँ</option>
+                    <option value="justifyCenter">बीच</option>
+                    <option value="justifyRight">दायाँ</option>
+                    <option value="insertUnorderedList">सूची</option>
+                  </select>
                 </div>
-                <PrintableTextarea value={form.bodartha_text} onChange={upd("bodartha_text")} rows={6} />
+                <div
+                  ref={editorRef}
+                  className="awo-editable"
+                  contentEditable
+                  suppressContentEditableWarning
+                  data-placeholder="बोधार्थ यहाँ लेख्नुहोस्..."
+                  onInput={onEditorInput}
+                />
               </div>
             </div>
 
@@ -601,36 +642,47 @@ const ActingWardOfficerAssigned = () => {
             <div className="awo-signature-section">
               <div className="awo-signature-block">
                 <div className="awo-sig-field">
-                  <PrintableInput value={form.signatory_name} onChange={upd("signatory_name")} className="sig-name-input" required placeholder="हस्ताक्षरकर्ताको नाम *" />
+                  <StarInput value={form.signatory_name} onChange={upd("signatory_name")} className="sig-name-input" required placeholder="हस्ताक्षरकर्ताको नाम" />
                 </div>
-                <div className="awo-sig-field">
-                  <PrintableSelect value={form.signatory_position} onChange={upd("signatory_position")} options={["वडा अध्यक्ष", "वडा सचिव"]} className="sig-pos-select" />
+                <div className="awo-sig-field" style={{ width: "100%" }}>
+                  <select
+                    className="form-select"
+                    value={form.signatory_position}
+                    onChange={upd("signatory_position")}
+                  >
+                    <option value="">पद छनौट गर्नुहोस्</option>
+                    <option value="वडा अध्यक्ष">वडा अध्यक्ष</option>
+                    <option value="वडा सचिव">वडा सचिव</option>
+                  </select>
                 </div>
               </div>
             </div>
 
-            {/* Applicant Details (screen only) */}
-            <div className="awo-applicant-wrapper screen-only">
-              <ApplicantDetailsNp formData={form} handleChange={upd} />
+            {/* Applicant Details */}
+            <div className="awo-applicant-wrapper">
+              <ApplicantDetailsNp formData={form} handleChange={handleChange} />
             </div>
 
             {/* Message */}
             {msg && (
-              <div className={`awo-msg awo-msg--${msg.type} screen-only`}>
+              <div className={`awo-msg awo-msg--${msg.type}`}>
                 {msg.type === "success" ? "✓" : "✗"} {msg.text}
               </div>
             )}
 
-            {/* Submit */}
-            <div className="awo-actions screen-only">
-              <button type="submit" className="awo-btn awo-btn--primary" disabled={loading}>
-                {loading ? "⏳ सेभ हुँदै..." : "🖨 सेभ र प्रिन्ट गर्नुहोस्"}
+            {/* Footer buttons */}
+            <div className="awo-actions">
+              <button type="submit" className="awo-btn awo-btn--save" disabled={loading}>
+                {loading ? "सेभ हुँदै..." : "सेभ गर्नुहोस्"}
+              </button>
+              <button type="button" className="awo-btn awo-btn--print" disabled={loading} onClick={() => handleSave(true)}>
+                {loading ? "सेभ हुँदै..." : "सेभ र प्रिन्ट गर्नुहोस्"}
               </button>
             </div>
           </form>
 
           {/* Footer */}
-          <footer className="awo-footer screen-only">
+          <footer className="awo-footer">
             © सर्वाधिकार सुरक्षित — {MUNICIPALITY.name}
           </footer>
         </div>
