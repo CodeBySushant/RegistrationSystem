@@ -51,40 +51,18 @@ const STYLES = `
   }
 
   /* Addressee block — clean gov-form layout */
-  .tvr-addressee-block { display: flex; flex-direction: column; gap: 6px; font-size: 1rem; }
-  .tvr-addr-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .tvr-addr-label {
-  font-weight: bold;
-  white-space: nowrap;
-  min-width: auto;
-}
-  .tvr-post-input{
-  width:220px;
-}
-
-.tvr-municipality-input{
-  width:320px;
-}
-
-.tvr-ward-input{
-  width:70px;
-}
-
-.tvr-district-input{
-  width:180px;
-}
-
-.tvr-addressee-block{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.tvr-addr-line{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
+  .tvr-addressee-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 1rem;
+  }
+  .tvr-addr-line { display: flex; align-items: center; gap: 8px; }
+  .tvr-addr-label { font-weight: bold; white-space: nowrap; min-width: auto; }
+  .tvr-post-input { width: 220px; }
+  .tvr-municipality-input { width: 320px; }
+  .tvr-ward-input { width: 70px; }
+  .tvr-district-input { width: 180px; }
 
   /* Shared inline input style */
   .tvr-input {
@@ -222,89 +200,18 @@ const STYLES = `
     .tvr-addr-line { flex-wrap: wrap; }
     .tvr-w-lg      { width: 100%; }
   }
-
-  /* ── Print ── */
-  @media print {
-    body * { visibility: hidden; }
-    .tvr-container, .tvr-container * { visibility: visible; }
-    .tvr-container {
-      position: absolute; left: 0; top: 0;
-      width: 100%; box-shadow: none; border: none;
-      margin: 0; padding: 12mm 16mm; background: white;
-    }
-    .tvr-footer, .tvr-copyright { display: none !important; }
-    input, select, textarea {
-      border: none !important; background: transparent !important;
-      box-shadow: none !important; color: #000 !important;
-      -webkit-text-fill-color: #000 !important;
-    }
-    .tvr-certificate-body {
-      line-height: 1.8 !important;
-    }
-    .tvr-date-block input {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-  }
-  .tvr-top-row {
-    margin-bottom: 10px !important;
-  }
-
-  .tvr-subject-line {
-    margin-top: 15px !important;
-    margin-bottom: 15px !important;
-  }
-    input::placeholder, textarea::placeholder { color: transparent !important; }
-    .tvr-input,
-    .tvr-select {
-      width: auto !important;
-      min-width: 0 !important;
-      padding: 0 !important;
-    }
-    select {
-      appearance: none;
-      -webkit-appearance: none;
-    }
-    .tvr-signature-section {
-      page-break-inside: avoid !important;
-      break-inside: avoid !important;
-    }
-      .applicant-details-box,
-  .applicant-details-box * {
-    visibility: visible !important;
-    display: block !important;
-    color: #000 !important;
-  }
-
-  .applicant-details-box {
-    margin-top: 20px !important;
-    border: 1px solid #999 !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-  }
-  }
 `;
 
 /* ─────────────────────────── Helpers ─────────────────────────── */
 
 const WARD_OPTIONS = [
-  "१",
-  "२",
-  "३",
-  "४",
-  "५",
-  "६",
-  "७",
-  "८",
-  "९",
-  "१०",
-  "११",
-  "१२",
+  "१", "२", "३", "४", "५", "६", "७", "८", "९", "१०", "११", "१२",
 ];
 
 const makeInitialState = () => ({
   date: new Date().toISOString().slice(0, 10),
   // Addressee
-  addresseePost: "वडा सचिव ज्यु", // e.g. "वडा सचिव ज्यु"
+  addresseePost: "वडा सचिव ज्यु",
   addresseeMunicipality: MUNICIPALITY.name,
   addresseeWardNo: MUNICIPALITY.wardNumber || "१",
   addresseeOfficeSuffix: "वडा कार्यालय",
@@ -360,10 +267,97 @@ const TribalVerificationRecommendation = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const wardLabel =
-    user?.role === "SUPERADMIN"
-      ? "सबै वडा कार्यालय"
-      : `${user?.ward || MUNICIPALITY.wardNumber || "१"} नं. वडा कार्यालय`;
+  /* ── Clean print — isolated window, body + textarea + applicant box ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const f = formData;
+    const v = (val) => `<span class="value">${val || ""}</span>`;
+
+    const content = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"/>
+<title>आदिवासी जनजाती प्रमाणित सिफारिस</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Kalimati','Noto Sans Devanagari',Arial,sans-serif; color:#000; background:white; padding:15mm 20mm; font-size:11pt; line-height:1.8; }
+  .header { text-align:center; margin-bottom:16px; position:relative; min-height:90px; }
+  .logo { position:absolute; left:0; top:0; width:70px; }
+  .mun-name   { color:#c0392b; font-size:20pt; font-weight:700; }
+  .ward-title { color:#c0392b; font-size:16pt; font-weight:700; margin:4px 0; }
+  .addr       { color:#c0392b; font-size:10pt; }
+  .meta { display:flex; justify-content:space-between; align-items:flex-start; margin:14px 0; }
+  .addressee { font-size:11pt; font-weight:bold; line-height:1.9; }
+  .subject { text-align:center; font-weight:bold; font-size:12pt; margin:18px 0; text-decoration:underline; }
+  /* value spans size to content — no fixed min-width so small values
+     don't leave big gaps and long values don't get clipped/merged */
+  .value { font-weight:bold; padding:0 3px; white-space:nowrap; }
+  .body-text { font-size:11pt; line-height:2.3; text-align:justify; margin-bottom:14px; }
+  .extra { font-size:11pt; line-height:1.9; text-align:justify; margin-bottom:16px; white-space:pre-wrap; }
+  .sig-section { display:flex; flex-direction:column; align-items:flex-end; margin:18px 20px 0 0; gap:6px; }
+  .sig-title { font-weight:bold; margin-bottom:4px; font-size:11pt; }
+  .sig-row { display:flex; gap:8px; align-items:baseline; font-size:10pt; }
+  .sig-label { font-weight:600; min-width:80px; text-align:right; }
+  .applicant-box { border:1px solid #999; padding:14px; margin-top:24px; border-radius:3px; }
+  .applicant-title { font-weight:bold; border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:10px; font-size:11pt; }
+  .field-row { display:flex; margin-bottom:8px; font-size:10pt; }
+  .field-label { min-width:160px; font-weight:600; }
+  .field-val { flex:1; }
+</style>
+</head><body>
+  <div class="header">
+    <img class="logo" src="/nepallogo.svg" alt="Nepal"/>
+    <div class="mun-name">${MUNICIPALITY.name}</div>
+    <div class="ward-title">${wardTitle}</div>
+    <div class="addr">${MUNICIPALITY.officeLine}</div>
+    <div class="addr">${MUNICIPALITY.provinceLine}</div>
+  </div>
+
+  <div class="meta">
+    <div class="addressee">
+      श्री ${v(f.addresseePost)},<br/>
+      ${v(f.addresseeMunicipality)}<br/>
+      ${v(f.addresseeWardNo)} नं. वडा कार्यालय<br/>
+      ${v(f.addresseeDistrict)}
+    </div>
+    <div>मिति : <strong>${f.date || ""}</strong></div>
+  </div>
+
+  <div class="subject">विषय: आदिवासी जनजाती - प्रमाणित सिफारिस पाउँ।</div>
+
+  <div class="body-text">
+    प्रस्तुत विषयमा यस ${v(f.municipality2)} वडा नं ${v(f.wardNo2)} निवासी
+    ${v(f.residentTitle)} ${v(f.residentName)} को ${v(f.relation)}
+    ${v(f.guardianTitle)} ${v(f.guardianName)} ${v(f.tribeCategory)}
+    जाती अन्तर्गत ${v(f.tribeName)} जाती भएको व्यहोरा सिफारिस उपलब्ध गराई पाउन
+    यो निवेदन पेश गरेको छु ।
+  </div>
+
+  ${f.mainContent ? `<div class="extra">${f.mainContent}</div>` : ""}
+
+  <div class="sig-section">
+    <div class="sig-title">निवेदक / निवेदिका</div>
+    <div class="sig-row"><span class="sig-label">नाम, थर :</span><span class="value">${f.applicantNameSignature || ""}</span></div>
+    <div class="sig-row"><span class="sig-label">ठेगाना :</span><span class="value">${f.applicantAddressSignature || ""}</span></div>
+  </div>
+
+  <div class="applicant-box">
+    <div class="applicant-title">निवेदकको विवरण</div>
+    <div class="field-row"><span class="field-label">नाम:</span><span class="field-val">${f.applicantName || ""}</span></div>
+    <div class="field-row"><span class="field-label">ठेगाना:</span><span class="field-val">${f.applicantAddress || ""}</span></div>
+    <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span class="field-val">${f.applicantCitizenship || ""}</span></div>
+    <div class="field-row"><span class="field-label">फोन:</span><span class="field-val">${f.applicantPhone || ""}</span></div>
+  </div>
+</body></html>`;
+
+    const w = window.open("", "_blank", "width=900,height=700");
+    w.document.write(content);
+    w.document.close();
+    w.focus();
+    setTimeout(() => { w.print(); w.close(); }, 500);
+  };
 
   /* Single save — no duplicate POSTs */
   const handleSave = async (shouldPrint = false) => {
@@ -386,12 +380,11 @@ const TribalVerificationRecommendation = () => {
 
       if (res.status === 201 || res.status === 200) {
         if (shouldPrint) {
-          window.print();
-          setTimeout(() => setFormData(makeInitialState()), 500);
+          handleCleanPrint();
         } else {
           alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
-          setFormData(makeInitialState());
         }
+        setFormData(makeInitialState());
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -515,7 +508,7 @@ const TribalVerificationRecommendation = () => {
               <option key={w}>{w}</option>
             ))}
           </select>{" "}
-          निवासी{/* श्री hardcoded outside input */}{" "}
+          निवासी{" "}
           <select
             name="residentTitle"
             value={formData.residentTitle}
@@ -631,7 +624,7 @@ const TribalVerificationRecommendation = () => {
         {/* Applicant details */}
         <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
 
-        {/* Footer — two buttons like reference form */}
+        {/* Footer — two buttons */}
         <div className="tvr-footer">
           <button
             type="submit"

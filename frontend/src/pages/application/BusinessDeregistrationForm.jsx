@@ -1,5 +1,5 @@
 // src/pages/application/BusinessDeregistrationForm.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "../../utils/axiosInstance";
 import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
@@ -38,6 +38,13 @@ const STYLES = `
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 2px rgba(37,99,235,0.12);
+  }
+
+  /* Read-only fields (signed/stamped after printing) */
+  .bdf-container input[readonly] {
+    background-color: #f5f5f5 !important;
+    cursor: not-allowed;
+    color: #999;
   }
 
   /* ── Title header ── */
@@ -144,6 +151,7 @@ const STYLES = `
   .bdf-sig-field { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
   .bdf-sig-field label { font-weight: bold; white-space: nowrap; min-width: 90px; text-align: right; }
   .bdf-sig-field input { width: 200px; }
+  .bdf-sig-hint { font-size: 0.78rem; color: #888; font-style: italic; margin-left: 6px; white-space: nowrap; }
 
   /* ── Required star ── */
   .bdf-req { color: red; margin-left: 3px; }
@@ -231,34 +239,12 @@ const STYLES = `
     .bdf-container { padding: 18px 14px; }
     .bdf-form-row  { flex-direction: column; }
   }
-
-  /* ── Print ── */
-  @media print {
-    body * { visibility: hidden; }
-    .bdf-container, .bdf-container * { visibility: visible; }
-    .bdf-container {
-      position: absolute; left: 0; top: 0;
-      width: 100%; max-width: none;
-      box-shadow: none; border: none;
-      margin: 0; padding: 12mm 16mm;
-      background: white !important;
-      background-image: none !important;
-    }
-    .bdf-footer, .bdf-copyright { display: none !important; }
-    input, select {
-      border: none !important; background: transparent !important;
-      color: #000 !important; -webkit-text-fill-color: #000 !important;
-      -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-    }
-    input::placeholder { color: transparent !important; }
-    .bdf-stamp-box, .bdf-thumb-area { border: 1px solid #000 !important; }
-  }
 `;
 
 /* ─────────────────────────── Helpers ─────────────────────────── */
 
 const makeInitialState = () => ({
-  wardOfficerName:          "",   // was headerTo — now just the officer name
+  wardOfficerName:          "",
   headerMunicipality:       MUNICIPALITY.name,
   headerOffice:             MUNICIPALITY.city || "",
   date:                     new Date().toISOString().slice(0, 10),
@@ -280,15 +266,14 @@ const makeInitialState = () => ({
 });
 
 const validate = (d) => {
+  // sigSignature & sigFirmStamp are filled by hand after printing — not required here
   const required = [
     ["firmRegNo",                "दर्ता नं."],
     ["firmName",                 "फर्मको नाम"],
     ["dissolveReason",           "खारेजीको कारण"],
     ["applicantNameForDissolve", "निवेदकको नाम (फर्म खारेजी)"],
-    ["sigSignature",             "दस्तखत"],
     ["sigName",                  "हस्ताक्षरकर्ताको नाम"],
     ["sigAddress",               "ठेगाना"],
-    ["sigFirmStamp",             "फर्मको छाप"],
     ["applicantName",            "निवेदकको नाम"],
     ["applicantAddress",         "निवेदकको ठेगाना"],
     ["applicantCitizenship",     "नागरिकता नं."],
@@ -301,11 +286,12 @@ const validate = (d) => {
   return null;
 };
 
+/* readOnly fields get signed/stamped by hand after printing */
 const SIG_FIELDS = [
-  { label: "दस्तखत",     name: "sigSignature" },
-  { label: "नाम",        name: "sigName"      },
-  { label: "ठेगाना",     name: "sigAddress"   },
-  { label: "फर्मको छाप",  name: "sigFirmStamp" },
+  { label: "दस्तखत",     name: "sigSignature", readOnly: true,  required: false },
+  { label: "नाम",        name: "sigName",      readOnly: false, required: true  },
+  { label: "ठेगाना",     name: "sigAddress",   readOnly: false, required: true  },
+  { label: "फर्मको छाप",  name: "sigFirmStamp", readOnly: true,  required: false },
 ];
 
 /* ─────────────────────────── Component ─────────────────────────── */
@@ -317,6 +303,133 @@ const BusinessDeregistrationForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
+  };
+
+  /* ── Clean print — isolated window, all values + applicant box ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const f = formData;
+    const v = (val) => `<span class="value">${val || ""}</span>`;
+
+    const content = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"/>
+<title>फर्म खारेजी निवेदन</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Kalimati','Noto Sans Devanagari',Arial,sans-serif; color:#000; background:white; padding:15mm 20mm; font-size:11pt; line-height:1.8; }
+  .header { text-align:center; margin-bottom:14px; position:relative; min-height:90px; }
+  .logo { position:absolute; left:0; top:0; width:70px; }
+  .mun-name   { color:#c0392b; font-size:20pt; font-weight:700; }
+  .ward-title { color:#c0392b; font-size:16pt; font-weight:700; margin:4px 0; }
+  .addr       { color:#c0392b; font-size:10pt; }
+  .doc-title  { text-align:center; margin:10px 0 4px; font-size:13pt; }
+  .doc-sub    { text-align:center; font-weight:bold; font-size:11pt; margin-bottom:14px; }
+  .meta { display:flex; justify-content:space-between; align-items:flex-start; margin:14px 0; }
+  .addressee { font-size:11pt; font-weight:bold; line-height:1.9; }
+  .stamp-box { width:110px; height:110px; border:1px solid #000; display:flex; align-items:center; justify-content:center; text-align:center; font-size:9pt; padding:8px; }
+  .subject { text-align:center; font-weight:bold; font-size:12pt; margin:18px 0; text-decoration:underline; }
+  /* value spans size to content — no fixed min-width so small values
+     don't leave big gaps and long values don't get clipped/merged */
+  .value { font-weight:bold; padding:0 3px; white-space:nowrap; }
+  /* blank signing line for fields filled by hand after printing */
+  .sign-line { display:inline-block; border-bottom:1px solid #000; min-width:140px; height:1.2em; vertical-align:baseline; }
+  .body-text { font-size:11pt; line-height:2.2; text-align:justify; margin-bottom:16px; }
+  .docs { margin:14px 0; }
+  .docs ol { padding-left:28px; line-height:1.9; font-size:10pt; }
+  .sig-wrap { display:flex; justify-content:space-between; margin-top:24px; gap:20px; }
+  .thumb-section { width:30%; }
+  .sec-title { font-weight:bold; text-align:center; margin-bottom:8px; font-size:10pt; }
+  .thumb-boxes { display:flex; justify-content:space-around; }
+  .thumb-box { display:flex; flex-direction:column; align-items:center; font-size:9pt; }
+  .thumb-area { width:55px; height:70px; border:1px solid #000; margin-top:4px; }
+  .sig-section { width:55%; display:flex; flex-direction:column; align-items:flex-end; }
+  .sig-row { display:flex; gap:8px; margin-bottom:8px; font-size:10pt; align-items:baseline; }
+  .sig-label { font-weight:600; min-width:80px; text-align:right; }
+  .applicant-box { border:1px solid #999; padding:14px; margin-top:24px; border-radius:3px; }
+  .applicant-title { font-weight:bold; border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:10px; font-size:11pt; }
+  .field-row { display:flex; margin-bottom:8px; font-size:10pt; }
+  .field-label { min-width:160px; font-weight:600; }
+  .field-val { flex:1; }
+</style>
+</head><body>
+  <div class="header">
+    <img class="logo" src="/nepallogo.svg" alt="Nepal"/>
+    <div class="mun-name">${MUNICIPALITY.name}</div>
+    <div class="ward-title">${wardTitle}</div>
+    <div class="addr">${MUNICIPALITY.officeLine}</div>
+    <div class="addr">${MUNICIPALITY.provinceLine}</div>
+  </div>
+
+  <div class="doc-title">अनुसूची-१५.३</div>
+  <div class="doc-sub">प्राइभेट फर्म तथा साझेदारी फर्म खारेजीको लागि निवेदन</div>
+
+  <div class="meta">
+    <div class="addressee">
+      श्रीमान् ${v(f.wardOfficerName)} ज्यु,<br/>
+      ${v(f.headerMunicipality)} ${v(f.headerOffice)}<br/>
+      मिति : <strong>${f.date || ""}</strong>
+    </div>
+    <div class="stamp-box">रु. २० को टिकट</div>
+  </div>
+
+  <div class="subject">विषय: फर्म खारेजी सम्बन्धमा ।</div>
+
+  <div class="body-text">
+    उपर्युक्त सम्बन्धमा मेरो नाममा यस ${v(f.municipality)} मा व्यापारिक प्रयोजनको लागि दर्ता भएको
+    ${v(f.firmType)} नं. ${v(f.firmRegNo)} को ${v(f.firmName)} नामको फर्म
+    ${v(f.dissolveReason)} कारणले खारेज गरी पाउन रु. २० को टिकट टाँसी यो निवेदन दिएको छु।
+    उक्त फर्मको नामबाट नेपाल सरकार र अन्य कुनै निकायमा कुनै राजस्व र अन्य रकम बुझाउन बाँकी छैन।
+    कुनै किसिमको रकमा वा राजस्व बुझाउन बाँकी देखिएमा पछि कुनै उजुरबाजुर नगरी सम्बन्धित निकायमा
+    बुझाउन मेरो मन्जुरी छ। निम्नानुसार लाग्ने दस्तुर तिरी मेरो ${v(f.applicantNameForDissolve)}
+    नामको उक्त फर्म खारेज गरी पाउन श्रीमान समक्ष अनुरोध गर्दछु।
+  </div>
+
+  <div class="docs">
+    <strong>संलग्न कागजातहरु:</strong>
+    <ol>
+      <li>सक्कल प्रमाणपत्र</li>
+      <li>नागरिकता दर्ता प्रमाणपत्रको प्रतिलिपि</li>
+      <li>कर तिरेको निस्सा</li>
+      <li>लेखा परिक्षण प्रतिवेदन</li>
+      <li>अन्य (भएमा उल्लेख गर्ने)</li>
+    </ol>
+  </div>
+
+  <div class="sig-wrap">
+    <div class="thumb-section">
+      <div class="sec-title">औंठा छाप</div>
+      <div class="thumb-boxes">
+        <div class="thumb-box">बायाँ<div class="thumb-area"></div></div>
+        <div class="thumb-box">दायाँ<div class="thumb-area"></div></div>
+      </div>
+    </div>
+    <div class="sig-section">
+      <div class="sec-title">निवेदक</div>
+      <div class="sig-row"><span class="sig-label">दस्तखत :</span><span class="sign-line"></span></div>
+      <div class="sig-row"><span class="sig-label">नाम :</span><span class="value">${f.sigName || ""}</span></div>
+      <div class="sig-row"><span class="sig-label">ठेगाना :</span><span class="value">${f.sigAddress || ""}</span></div>
+      <div class="sig-row"><span class="sig-label">फर्मको छाप :</span><span class="sign-line"></span></div>
+    </div>
+  </div>
+
+  <div class="applicant-box">
+    <div class="applicant-title">निवेदकको विवरण</div>
+    <div class="field-row"><span class="field-label">नाम:</span><span class="field-val">${f.applicantName || ""}</span></div>
+    <div class="field-row"><span class="field-label">ठेगाना:</span><span class="field-val">${f.applicantAddress || ""}</span></div>
+    <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span class="field-val">${f.applicantCitizenship || ""}</span></div>
+    <div class="field-row"><span class="field-label">फोन:</span><span class="field-val">${f.applicantPhone || ""}</span></div>
+  </div>
+</body></html>`;
+
+    const w = window.open("", "_blank", "width=900,height=700");
+    w.document.write(content);
+    w.document.close();
+    w.focus();
+    setTimeout(() => { w.print(); w.close(); }, 500);
   };
 
   /* Single save — no duplicate POSTs */
@@ -334,12 +447,11 @@ const BusinessDeregistrationForm = () => {
 
       if (res.status === 201 || res.status === 200) {
         if (shouldPrint) {
-          window.print();
-          setTimeout(() => setFormData(makeInitialState()), 500);
+          handleCleanPrint();
         } else {
           alert("फर्म सफलतापूर्वक सेव भयो। ID: " + (res.data?.id ?? ""));
-          setFormData(makeInitialState());
         }
+        setFormData(makeInitialState());
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -371,7 +483,6 @@ const BusinessDeregistrationForm = () => {
 
           {/* Addressee — श्रीमान् hardcoded, input is just the officer name */}
           <div className="bdf-addressee-block">
-            {/* Line 1: श्रीमान् [ward officer name] ज्यु, */}
             <div className="bdf-addr-line">
               <span className="bdf-addr-label">श्रीमान्</span>
               <input
@@ -384,7 +495,6 @@ const BusinessDeregistrationForm = () => {
               />
               <span>ज्यु,</span>
             </div>
-            {/* Line 2: [municipality] [office/district] */}
             <div className="bdf-addr-line">
               <select
                 name="headerMunicipality"
@@ -477,16 +587,20 @@ const BusinessDeregistrationForm = () => {
 
           <div className="bdf-signature-section">
             <p className="bdf-signature-label">निवेदक</p>
-            {SIG_FIELDS.map(({ label, name }) => (
+            {SIG_FIELDS.map(({ label, name, readOnly, required }) => (
               <div className="bdf-sig-field" key={name}>
-                <label>{label} :<span className="bdf-req">*</span></label>
+                <label>
+                  {label} :{required && <span className="bdf-req">*</span>}
+                </label>
                 <input
                   type="text"
                   name={name}
                   value={formData[name]}
                   onChange={handleChange}
                   className="bdf-input"
-                  required
+                  readOnly={readOnly}
+                  required={required}
+                  placeholder={readOnly ? "प्रिन्ट पछि हस्ताक्षर/छाप" : ""}
                 />
               </div>
             ))}

@@ -202,26 +202,6 @@ const STYLES = `
     .lbvf-form-row  { flex-direction: column; }
     .lbvf-w-lg      { width: 100%; }
   }
-
-  /* ── Print ── */
-  @media print {
-    body * { visibility: hidden; }
-    .lbvf-container, .lbvf-container * { visibility: visible; }
-    .lbvf-container {
-      position: absolute; left: 0; top: 0;
-      width: 100%; box-shadow: none; border: none;
-      margin: 0; padding: 12mm 16mm; background: white;
-    }
-    .lbvf-footer, .lbvf-copyright { display: none !important; }
-    input, select, textarea {
-      border: none !important; background: transparent !important;
-      box-shadow: none !important; color: #000 !important;
-      -webkit-text-fill-color: #000 !important;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    input::placeholder, textarea::placeholder { color: transparent !important; }
-  }
 `;
 
 /* ─────────────────────────── Helpers ─────────────────────────── */
@@ -293,6 +273,113 @@ const LandBoundaryVerificationForm = () => {
     setFormData((p) => ({ ...p, [name]: value }));
   };
 
+  /* ── Clean print — isolated window, all fields + applicant box ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const f = formData;
+    const v = (val) => `<span class="value">${val || ""}</span>`;
+
+    const content = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"/>
+<title>जग्गा साँध सिमाङ्कन निवेदन</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Kalimati','Noto Sans Devanagari',Arial,sans-serif; color:#000; background:white; padding:15mm 20mm; font-size:11pt; line-height:1.8; }
+  .header { text-align:center; margin-bottom:16px; position:relative; min-height:90px; }
+  .logo { position:absolute; left:0; top:0; width:70px; }
+  .mun-name   { color:#c0392b; font-size:20pt; font-weight:700; }
+  .ward-title { color:#c0392b; font-size:16pt; font-weight:700; margin:4px 0; }
+  .addr       { color:#c0392b; font-size:10pt; }
+  .meta { display:flex; justify-content:space-between; align-items:flex-start; margin:14px 0; }
+  .addressee { font-size:11pt; font-weight:bold; line-height:1.9; }
+  .subject { text-align:center; font-weight:bold; font-size:12pt; margin:18px 0; text-decoration:underline; }
+  /* value spans size to content — no fixed min-width so small values
+     don't leave big gaps and long values don't get clipped/merged */
+  .value { font-weight:bold; padding:0 3px; white-space:nowrap; }
+  .body-text { font-size:11pt; line-height:2.2; text-align:justify; margin-bottom:16px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 28px; margin-bottom:18px; }
+  .grid .full { grid-column:1/-1; }
+  .g-row { display:flex; gap:6px; align-items:baseline; font-size:10pt; }
+  .g-label { font-weight:600; min-width:110px; }
+  .g-val { flex:1; }
+  .sig-section { display:flex; flex-direction:column; align-items:flex-end; margin:18px 20px 0 0; gap:6px; }
+  .sig-row { display:flex; gap:8px; align-items:baseline; font-size:10pt; }
+  .sig-label { font-weight:600; min-width:90px; text-align:right; }
+  .applicant-box { border:1px solid #999; padding:14px; margin-top:24px; border-radius:3px; }
+  .applicant-title { font-weight:bold; border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:10px; font-size:11pt; }
+  .field-row { display:flex; margin-bottom:8px; font-size:10pt; }
+  .field-label { min-width:160px; font-weight:600; }
+  .field-val { flex:1; }
+</style>
+</head><body>
+  <div class="header">
+    <img class="logo" src="/nepallogo.svg" alt="Nepal"/>
+    <div class="mun-name">${MUNICIPALITY.name}</div>
+    <div class="ward-title">${wardTitle}</div>
+    <div class="addr">${MUNICIPALITY.officeLine}</div>
+    <div class="addr">${MUNICIPALITY.provinceLine}</div>
+  </div>
+
+  <div class="meta">
+    <div class="addressee">
+      श्री ${v(f.addresseePost)},<br/>
+      ${v(f.addresseeMunicipality)} ${v(f.addresseeDistrict)}
+    </div>
+    <div>मिति : <strong>${f.date || ""}</strong></div>
+  </div>
+
+  <div class="subject">विषय: जग्गाको साँध सिमाङ्कन गर्न अधिन खटाई पाउँ बारे।</div>
+
+  <div class="body-text">
+    यस सम्बन्धमा म/हामीले तल उल्लेखित जग्गाको सीमा सिमाङ्कन गराउन अनुरोध गर्दछौं।
+    आवश्यक नक्सा, कित्ता विवरण र अन्य कागजात संलग्न गरिएको छ।
+  </div>
+
+  <div class="grid">
+    <div class="g-row"><span class="g-label">मुख्य जिल्ला:</span><span class="g-val">${v(f.mainDistrict)}</span></div>
+    <div class="g-row"><span class="g-label">पालिका:</span><span class="g-val">${v(f.mainMunicipality)}</span></div>
+    <div class="g-row"><span class="g-label">वडा नं.:</span><span class="g-val">${v(f.mainWardNo1)}</span></div>
+    <div class="g-row"><span class="g-label">पूर्व स्थान प्रकार:</span><span class="g-val">${v(f.prevLocationType)}</span></div>
+    <div class="g-row"><span class="g-label">पूर्व वडा नं.:</span><span class="g-val">${v(f.prevWardNo)}</span></div>
+    <div class="g-row"><span class="g-label">टोल:</span><span class="g-val">${v(f.tole)}</span></div>
+    <div class="g-row"><span class="g-label">निवेदकको नाम:</span><span class="g-val">${v(f.applicantName)}</span></div>
+    <div class="g-row"><span class="g-label">उमेर:</span><span class="g-val">${v(f.applicantAge)}</span></div>
+    <div class="g-row"><span class="g-label">अभिभावक/पति:</span><span class="g-val">${v(f.guardianName)}</span></div>
+    <div class="g-row"><span class="g-label">कित्ता नं.:</span><span class="g-val">${v(f.kittaNo)}</span></div>
+    <div class="g-row"><span class="g-label">जग्गाको नाम:</span><span class="g-val">${v(f.landName)}</span></div>
+    <div class="g-row"><span class="g-label">क्षेत्रफल:</span><span class="g-val">${v(f.landArea)}</span></div>
+    <div class="g-row"><span class="g-label">दर्ता दस्तुर (रु.):</span><span class="g-val">${v(f.feeAmount)}</span></div>
+    <div class="g-row full"><span class="g-label">रकम (अक्षरुपी):</span><span class="g-val">${v(f.feeAmountWords)}</span></div>
+  </div>
+
+  <div class="sig-section">
+    <div class="sig-row"><span class="sig-label">प्रकार :</span><span class="value">${f.sigApplicantType || ""}</span></div>
+    <div class="sig-row"><span class="sig-label">नाम :</span><span class="value">${f.sigName || ""}</span></div>
+    <div class="sig-row"><span class="sig-label">ठेगाना :</span><span class="value">${f.sigAddress || ""}</span></div>
+    <div class="sig-row"><span class="sig-label">वडा नं. :</span><span class="value">${f.sigWard || ""}</span></div>
+    <div class="sig-row"><span class="sig-label">सम्पर्क नं. :</span><span class="value">${f.sigPhone || ""}</span></div>
+  </div>
+
+  <div class="applicant-box">
+    <div class="applicant-title">निवेदकको विवरण</div>
+    <div class="field-row"><span class="field-label">नाम:</span><span class="field-val">${f.applicantName || ""}</span></div>
+    <div class="field-row"><span class="field-label">ठेगाना:</span><span class="field-val">${f.applicantAddress || ""}</span></div>
+    <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span class="field-val">${f.applicantCitizenship || ""}</span></div>
+    <div class="field-row"><span class="field-label">फोन:</span><span class="field-val">${f.applicantPhone || ""}</span></div>
+  </div>
+</body></html>`;
+
+    const w = window.open("", "_blank", "width=900,height=700");
+    w.document.write(content);
+    w.document.close();
+    w.focus();
+    setTimeout(() => { w.print(); w.close(); }, 500);
+  };
+
   /* Single save — no duplicate POSTs */
   const handleSave = async (shouldPrint = false) => {
     const err = validate(formData);
@@ -308,12 +395,11 @@ const LandBoundaryVerificationForm = () => {
 
       if (res.status === 201 || res.status === 200) {
         if (shouldPrint) {
-          window.print();
-          setTimeout(() => setFormData(makeInitialState()), 500);
+          handleCleanPrint();
         } else {
           alert("रेकर्ड सफलतापूर्वक सेभ भयो। ID: " + (res.data?.id ?? ""));
-          setFormData(makeInitialState());
         }
+        setFormData(makeInitialState());
       } else {
         alert("Unexpected response: " + JSON.stringify(res.data));
       }
@@ -341,7 +427,6 @@ const LandBoundaryVerificationForm = () => {
         <div className="lbvf-form-row">
 
           <div className="lbvf-addressee-block">
-            {/* Line 1: श्री [post] , */}
             <div className="lbvf-addr-line">
               <span className="lbvf-addr-label">श्री</span>
               <input
@@ -354,7 +439,6 @@ const LandBoundaryVerificationForm = () => {
               />
               <span>,</span>
             </div>
-            {/* Line 2: [municipality] [office suffix] [district] */}
             <div className="lbvf-addr-line">
               <input
                 type="text"
