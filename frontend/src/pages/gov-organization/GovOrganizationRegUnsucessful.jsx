@@ -1,29 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import PrintPreviewModal from "../../components/PrintPreviewModal";
 import axios from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
-
-/* ─────────────────────────────────────────────
-   HELPER
-───────────────────────────────────────────── */
-function toCSV(rows) {
-  if (!rows || !rows.length) return "";
-  const headers = [
-    "sn", "date", "proposalName", "headOffice", "purpose",
-    "activities", "totalShareCapital", "entranceFee", "recommendation_note",
-  ];
-  const lines = [headers.join(",")].concat(
-    rows.map((r, idx) =>
-      headers.map(h => {
-        const val = h === "sn"
-          ? idx + 1
-          : (r[h] == null ? "" : String(r[h]));
-        return `"${val.replace(/"/g, '""')}"`;
-      }).join(",")
-    )
-  );
-  return lines.join("\r\n");
-}
+import { useAuth } from "../../context/AuthContext";
 
 /* ─────────────────────────────────────────────
    STYLES  (prefix: guru-)
@@ -130,7 +108,7 @@ const styles = `
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  min-width: 900px;
+  min-width: 980px;
 }
 .guru-table thead { background-color: #192236; color: #fff; }
 .guru-table th,
@@ -154,25 +132,46 @@ const styles = `
   text-overflow: ellipsis;
 }
 
-.guru-eye {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
+/* ── Status icon (rejected) ── */
+.guru-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: #f8d7da;
+  color: #c82333;
+  font-size: 14px;
+  border: 1px solid #f1aeb5;
 }
-.guru-eye:hover { opacity: 0.65; }
 
-.guru-rejected-badge {
-  display: inline-block;
-  background-color: #c82333;
-  color: #fff;
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
+/* ── Action cell — one row of evenly-spaced buttons ── */
+.guru-action-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
 }
+.guru-act-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  transition: filter 0.15s, opacity 0.15s;
+}
+.guru-act-btn:hover:not(:disabled) { filter: brightness(0.9); }
+.guru-act-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.guru-act-btn.view  { background-color: #6f42c1; }
+.guru-act-btn.print { background-color: #0a7d5a; }
 
 .guru-state-msg { padding: 24px; color: #555; font-size: 14px; }
 .guru-error     { color: crimson; }
@@ -186,13 +185,13 @@ const styles = `
   color: #666;
 }
 
-/* ── Print ── */
+/* ── Print (per-row print opens its own window) ── */
 @media print {
   .guru-header .guru-btn-row,
   .guru-filter-bar,
-  .guru-eye,
+  .guru-action-cell,
   .guru-footer { display: none !important; }
-  .guru-table  { font-size: 11px; }
+  .guru-table  { font-size: 11px; min-width: unset; }
 }
 
 /* ── Responsive ── */
@@ -236,6 +235,7 @@ const styles = `
     color: #333;
   }
   .guru-ellipsis { max-width: none; white-space: normal; }
+  .guru-action-cell { justify-content: flex-end; }
 }
 `;
 
@@ -243,6 +243,8 @@ const styles = `
    COMPONENT
 ───────────────────────────────────────────── */
 const GovOrganizationRegUnsuccessful = () => {
+  const { user } = useAuth();
+
   const [rows, setRows]           = useState([]);
   const [filtered, setFiltered]   = useState([]);
   const [loading, setLoading]     = useState(false);
@@ -250,7 +252,6 @@ const GovOrganizationRegUnsuccessful = () => {
   const [fromDate, setFromDate]   = useState("");
   const [toDate, setToDate]       = useState("");
   const [searchName, setSearchName] = useState("");
-  const [previewRow, setPreviewRow] = useState(null);
   const abortRef = useRef(null);
 
   const fetchRows = async () => {
@@ -260,13 +261,15 @@ const GovOrganizationRegUnsuccessful = () => {
     const ac = new AbortController();
     abortRef.current = ac;
     try {
-      const res = await axios.get("/api/forms/gov-organization-registration");
+      const res = await axios.get("/api/forms/gov-organization-registration", {
+        signal: ac.signal,
+      });
       const all = Array.isArray(res.data) ? res.data : [];
-      const rejected = all.filter(r => r.status === "rejected");
+      const rejected = all.filter((r) => r.status === "rejected");
       setRows(rejected);
       setFiltered(rejected);
     } catch (e) {
-      if (e.name !== "AbortError") {
+      if (e.name !== "AbortError" && e.name !== "CanceledError") {
         console.error("Fetch error", e);
         setError("डेटा लोड गर्न असफल भयो।");
       }
@@ -286,16 +289,56 @@ const GovOrganizationRegUnsuccessful = () => {
     let out = [...rows];
     if (searchName.trim()) {
       const q = searchName.trim().toLowerCase();
-      out = out.filter(r =>
-        (r.proposalName && r.proposalName.toLowerCase().includes(q)) ||
-        (r.applicantName && r.applicantName.toLowerCase().includes(q)) ||
-        (r.headOffice && r.headOffice.toLowerCase().includes(q))
+      out = out.filter(
+        (r) =>
+          (r.proposalName && r.proposalName.toLowerCase().includes(q)) ||
+          (r.applicantName && r.applicantName.toLowerCase().includes(q)) ||
+          (r.headOffice && r.headOffice.toLowerCase().includes(q))
       );
     }
-    if (fromDate) out = out.filter(r => r.date ? r.date.slice(0, 10) >= fromDate : false);
-    if (toDate)   out = out.filter(r => r.date ? r.date.slice(0, 10) <= toDate   : false);
+    if (fromDate) out = out.filter((r) => (r.date ? r.date.slice(0, 10) >= fromDate : false));
+    if (toDate)   out = out.filter((r) => (r.date ? r.date.slice(0, 10) <= toDate   : false));
     setFiltered(out);
   }, [rows, fromDate, toDate, searchName]);
+
+  /* ── CSV export — full field set, UTF-8 BOM for Excel ── */
+  const toCSV = (rs) => {
+    if (!rs?.length) return "";
+
+    const columns = [
+      ["sn",                (r, i) => i + 1],
+      ["regDate",           (r) => (r.date ? r.date.slice(0, 10) : "")],
+      ["letterNo",          (r) => r.letterNo ?? ""],
+      ["refNo",             (r) => r.refNo ?? ""],
+      ["officerName",       (r) => r.officerName ?? ""],
+      ["municipalityName",  (r) => r.municipalityName ?? ""],
+      ["proposalName",      (r) => r.proposalName ?? ""],
+      ["wardNo",            (r) => r.wardNo ?? ""],
+      ["headOffice",        (r) => r.headOffice ?? ""],
+      ["branchOffice",      (r) => r.branchOffice ?? ""],
+      ["purpose",           (r) => r.purpose ?? ""],
+      ["activities",        (r) => r.activities ?? ""],
+      ["liability",         (r) => r.liability ?? ""],
+      ["femaleMembers",     (r) => r.femaleMembers ?? ""],
+      ["maleMembers",       (r) => r.maleMembers ?? ""],
+      ["totalShareCapital", (r) => r.totalShareCapital ?? ""],
+      ["entranceFee",       (r) => r.entranceFee ?? ""],
+      ["applicantName",     (r) => r.applicantName ?? ""],
+      ["applicantAddress",  (r) => r.applicantAddress ?? ""],
+      ["applicantCitizenship", (r) => r.applicantCitizenship ?? ""],
+      ["applicantPhone",    (r) => r.applicantPhone ?? ""],
+      ["rejectionReason",   (r) => r.recommendation_note ?? ""],
+      ["status",            (r) => r.status ?? "rejected"],
+    ];
+
+    const esc = (val) => `"${String(val).replace(/"/g, '""')}"`;
+    const headerLine = columns.map(([h]) => esc(h)).join(",");
+    const bodyLines = rs.map((r, i) =>
+      columns.map(([, accessor]) => esc(accessor(r, i))).join(",")
+    );
+
+    return [headerLine, ...bodyLines].join("\r\n");
+  };
 
   const handleExport = () => {
     const csv = toCSV(filtered);
@@ -309,6 +352,160 @@ const GovOrganizationRegUnsuccessful = () => {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+  };
+
+  /* ── Per-row detailed print — same full letter layout as the entry form ── */
+  const handleRowPrint = (row) => {
+    if (!row) return;
+
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const v = (val) => (val === null || val === undefined ? "" : String(val));
+    const dateOnly = row.date ? v(row.date).slice(0, 10) : "";
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>सहकारी संस्था दर्ता (अस्वीकृत)</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .status-stamp {
+            display: inline-block; border: 2px solid #c82333; color: #c82333;
+            font-weight: 700; font-size: 12pt; padding: 4px 16px; border-radius: 4px;
+            margin: 10px 0; letter-spacing: 1px;
+          }
+          .sub-header { text-align: center; font-size: 12pt; margin: 12px 0 16px; line-height: 1.6; border-top: 1px solid #ccc; padding-top: 12px; }
+          .meta { display: flex; justify-content: space-between; align-items: flex-start; margin: 12px 0; font-size: 11pt; line-height: 1.8; }
+          .meta-left { text-align: left; }
+          .meta-right { text-align: right; }
+          .top-info { margin: 18px 0; font-size: 11pt; line-height: 2; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .paragraph { font-size: 11pt; line-height: 2; text-align: justify; margin-bottom: 20px; }
+          .section-title { font-weight: bold; font-size: 11pt; margin: 18px 0 10px; }
+          .detail-line { font-size: 11pt; line-height: 2; margin-bottom: 4px; }
+          .value { font-weight: bold; padding: 0 4px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 24px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+          .field-val { flex: 1; }
+          .reject-box { margin-top: 20px; border: 1px solid #f1aeb5; background: #fff5f5; padding: 12px 14px; border-radius: 4px; font-size: 11pt; line-height: 1.8; }
+          .reject-box strong { color: #c82333; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine}</div>
+          <div class="status-stamp">अस्वीकृत</div>
+        </div>
+
+        <div class="sub-header">
+          अनुसूची २<br/>
+          दर्ता दरखास्तको नमुना
+        </div>
+
+        <div class="meta">
+          <div class="meta-left">
+            <div>पत्र संख्या : <span class="value">${v(row.letterNo) || "2082/83"}</span></div>
+          </div>
+          <div class="meta-right">
+            <div>मिति : <span class="value">${dateOnly}</span></div>
+            <div>सन्दर्भ नं. : <span class="value">${v(row.refNo)}</span></div>
+          </div>
+        </div>
+
+        <div class="top-info">
+          श्री दत्ता गर्ने अधिकारी
+          <span class="value">${v(row.officerName)}</span>
+          ज्यू,<br/>
+          <span class="value">${v(row.municipalityName)}</span>
+          , नगर कार्यपालिकाको कार्यालय ।
+        </div>
+
+        <div class="subject">विषय : सहकारी संस्था दर्ता ।</div>
+
+        <div class="paragraph">
+          महोदय,<br/><br/>
+          हामी देहायका व्यक्तिगत दर्ता भएको सहकारी संस्था दर्ता गरी पाउन निवेदन
+          गर्दछौं। उद्देश्यअनुसार संस्थाले संचालन गर्न कार्यक्रमको योजना र
+          प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी पेश गरेको छ।
+        </div>
+
+        <div class="section-title">संस्थासम्बन्धी विवरण</div>
+
+        <div class="detail-line">(क) प्रस्तावित संस्था नामः <span class="value">${v(row.proposalName)}</span></div>
+        <div class="detail-line">(ख) ठेगाना: वडा नं. <span class="value">${v(row.wardNo)}</span></div>
+        <div class="detail-line">(ग) उद्देश्य: <span class="value">${v(row.purpose)}</span></div>
+        <div class="detail-line">(घ) गतिविधि: <span class="value">${v(row.activities)}</span></div>
+        <div class="detail-line">(ङ) मुख्य कार्यालय: <span class="value">${v(row.headOffice)}</span></div>
+        <div class="detail-line">(च) शाखा कार्यालय: <span class="value">${v(row.branchOffice)}</span></div>
+        <div class="detail-line">(छ) दायित्व: <span class="value">${v(row.liability)}</span></div>
+        <div class="detail-line">(ज) सदस्य संख्या: महिला: <span class="value">${v(row.femaleMembers)}</span> जना &nbsp; पुरुष: <span class="value">${v(row.maleMembers)}</span> जना</div>
+        <div class="detail-line">(झ) कुल शेयर पूँजीको रकमः <span class="value">${v(row.totalShareCapital)}</span></div>
+        <div class="detail-line">(ञ) प्राप्त प्रवेश शुल्कको रकमः <span class="value">${v(row.entranceFee)}</span></div>
+
+        <div class="reject-box">
+          <strong>अस्वीकृत कारण:</strong> <span class="value">${v(row.recommendation_note) || "—"}</span>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row">
+            <span class="field-label">नाम:</span>
+            <span class="field-val">${v(row.applicantName)}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">ठेगाना:</span>
+            <span class="field-val">${v(row.applicantAddress)}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">नागरिकता नं.:</span>
+            <span class="field-val">${v(row.applicantCitizenship)}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">फोन:</span>
+            <span class="field-val">${v(row.applicantPhone)}</span>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    if (!printWindow) {
+      alert("कृपया पप-अप अनुमति दिनुहोस् (popup blocked).");
+      return;
+    }
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   return (
@@ -328,13 +525,6 @@ const GovOrganizationRegUnsuccessful = () => {
             >
               📥 एक्सेल निर्यात
             </button>
-            <button
-              className="guru-primary-btn"
-              onClick={() => window.print()}
-              disabled={loading}
-            >
-              🖨 प्रिन्ट
-            </button>
           </div>
         </header>
 
@@ -346,7 +536,7 @@ const GovOrganizationRegUnsuccessful = () => {
               <input
                 type="date"
                 value={fromDate}
-                onChange={e => setFromDate(e.target.value)}
+                onChange={(e) => setFromDate(e.target.value)}
               />
             </div>
             <div className="guru-filter-group">
@@ -354,7 +544,7 @@ const GovOrganizationRegUnsuccessful = () => {
               <input
                 type="date"
                 value={toDate}
-                onChange={e => setToDate(e.target.value)}
+                onChange={(e) => setToDate(e.target.value)}
               />
             </div>
             <div className="guru-filter-group wide">
@@ -362,7 +552,7 @@ const GovOrganizationRegUnsuccessful = () => {
               <input
                 type="text"
                 value={searchName}
-                onChange={e => setSearchName(e.target.value)}
+                onChange={(e) => setSearchName(e.target.value)}
                 placeholder="नाम/आवेदक खोज्नुहोस्"
               />
             </div>
@@ -402,7 +592,7 @@ const GovOrganizationRegUnsuccessful = () => {
                     <th>प्राप्त सेयर</th>
                     <th>प्राप्त प्रवेश शुल्क</th>
                     <th>अस्वीकृत कारण</th>
-                    <th>स्क्यान</th>
+                    <th>स्थिति</th>
                     <th>कार्य</th>
                   </tr>
                 </thead>
@@ -435,18 +625,28 @@ const GovOrganizationRegUnsuccessful = () => {
                       <td data-label="अस्वीकृत कारण" className="guru-ellipsis">
                         {row.recommendation_note || "-"}
                       </td>
-                      <td data-label="स्क्यान" className="guru-center">
-                        <button
-                          className="guru-eye"
-                          onClick={() => setPreviewRow(row)}
-                          aria-label="Print Preview"
-                          title="प्रिन्ट पूर्वावलोकन"
-                        >
-                          👁
-                        </button>
+
+                      <td data-label="स्थिति" className="guru-center">
+                        <span className="guru-status-icon" title="अस्वीकृत">✖</span>
                       </td>
+
                       <td data-label="कार्य" className="guru-center">
-                        <span className="guru-rejected-badge">✖ अस्वीकृत</span>
+                        <div className="guru-action-cell">
+                          <button
+                            className="guru-act-btn view"
+                            onClick={() => handleRowPrint(row)}
+                            title="पूर्वावलोकन"
+                          >
+                            👁
+                          </button>
+                          <button
+                            className="guru-act-btn print"
+                            onClick={() => handleRowPrint(row)}
+                            title="प्रिन्ट / डाउनलोड"
+                          >
+                            🖨
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -459,14 +659,6 @@ const GovOrganizationRegUnsuccessful = () => {
         <footer className="guru-footer">
           © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
         </footer>
-
-        {/* ── Print Preview Modal ── */}
-        {previewRow && (
-          <PrintPreviewModal
-            row={previewRow}
-            onClose={() => setPreviewRow(null)}
-          />
-        )}
 
       </div>
     </>
