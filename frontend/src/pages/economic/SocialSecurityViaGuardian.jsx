@@ -8,14 +8,14 @@ import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
    INITIAL STATE — matches forms.json columns
    for "social-security-via-guardian"
 ───────────────────────────────────────────── */
-// Update initialState:
 const initialState = {
   letter_no: "",
   chalani_no: "",
   date: "",
+  ne_sa: "", // ← NEW: was hardcoded "1146 थिंलाथ्व, 2 शनिवार"
   addressee_line1: "",
   addressee_line2: "",
-  body_person_name: "", // renamed from applicant_name
+  body_person_name: "",
   ward_chairman_name: "",
   beneficiary_name: "",
   guardian_relation: "",
@@ -32,7 +32,7 @@ const initialState = {
   grd_account_no: "",
   signature_name: "",
   designation: "",
-  applicant_name: "", // footer box — now standard name
+  applicant_name: "",
   applicant_address: "",
   applicant_citizenship: "",
   applicant_phone: "",
@@ -230,6 +230,29 @@ const styles = `
   font-size: 1rem;
 }
 
+/* ── NEW: red * wrapper for inputs ── */
+.ssvg-req-wrap {
+  position: relative;
+  display: inline-block;
+}
+.ssvg-req-wrap.ssvg-req-block {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+.ssvg-req-star {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: red;
+  font-weight: bold;
+  pointer-events: none;
+  font-size: 14px;
+  z-index: 1;
+}
+.ssvg-req-wrap input { padding-left: 18px; }
+
 .ssvg-footer { text-align: center; margin-top: 40px; }
 .ssvg-save-print-btn {
   background-color: #2c3e50;
@@ -276,6 +299,10 @@ const styles = `
   .ssvg-footer,
   .ssvg-top-right-bread,
   .ssvg-copyright-footer { display: none !important; }
+
+  /* Hide red * in print */
+  .ssvg-req-star { display: none !important; }
+  .ssvg-req-wrap input { padding-left: 5px !important; }
 
   input, select, textarea {
     background: white !important;
@@ -348,7 +375,8 @@ const SocialSecurityViaGuardian = () => {
       if (res.status === 201 || res.status === 200) {
         alert("सफलतापूर्वक सुरक्षित भयो! ID: " + (res.data?.id || ""));
         window.print();
-        setTimeout(() => setForm(INITIAL_STATE), 500);
+        // FIX: was INITIAL_STATE (undefined) — would crash on reset
+        setTimeout(() => setForm(initialState), 500);
       } else {
         alert("अनपेक्षित प्रतिक्रिया: " + JSON.stringify(res.data));
       }
@@ -419,7 +447,8 @@ const SocialSecurityViaGuardian = () => {
             <div className="ssvg-meta-left">
               <p>
                 पत्र संख्या :{" "}
-                <span className="ssvg-bold-text">
+                <span className="ssvg-req-wrap">
+                  <span className="ssvg-req-star">*</span>
                   <input
                     type="text"
                     name="letter_no"
@@ -431,19 +460,23 @@ const SocialSecurityViaGuardian = () => {
               </p>
               <p>
                 चलानी नं. :{" "}
-                <input
-                  type="text"
-                  name="chalani_no"
-                  value={form.chalani_no}
-                  onChange={handleChange}
-                  className="ssvg-dotted-input ssvg-small-input"
-                />
+                <span className="ssvg-req-wrap">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    type="text"
+                    name="chalani_no"
+                    value={form.chalani_no}
+                    onChange={handleChange}
+                    className="ssvg-dotted-input ssvg-small-input"
+                  />
+                </span>
               </p>
             </div>
             <div className="ssvg-meta-right">
               <p>
                 मिति :{" "}
-                <span className="ssvg-bold-text">
+                <span className="ssvg-req-wrap">
+                  <span className="ssvg-req-star">*</span>
                   <input
                     type="text"
                     name="date"
@@ -453,7 +486,22 @@ const SocialSecurityViaGuardian = () => {
                   />
                 </span>
               </p>
-              <p>ने.सं - 1146 थिंलाथ्व, 2 शनिवार</p>
+              {/* ── ने.सं — was hardcoded, now editable ── */}
+              <p>
+                ने.सं :{" "}
+                <span className="ssvg-req-wrap">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    type="text"
+                    name="ne_sa"
+                    value={form.ne_sa}
+                    onChange={handleChange}
+                    className="ssvg-dotted-input"
+                    style={{ width: "220px" }}
+                    placeholder="जस्तै: 1146 थिंलाथ्व, 2 शनिवार"
+                  />
+                </span>
+              </p>
             </div>
           </div>
 
@@ -471,23 +519,29 @@ const SocialSecurityViaGuardian = () => {
           <div className="ssvg-addressee-section">
             <div className="ssvg-addressee-row">
               <span>श्री</span>
-              <input
-                name="addressee_line1"
-                type="text"
-                className="ssvg-line-input ssvg-large-input"
-                value={form.addressee_line1}
-                onChange={handleChange}
-                required
-              />
+              <span className="ssvg-req-wrap">
+                <span className="ssvg-req-star">*</span>
+                <input
+                  name="addressee_line1"
+                  type="text"
+                  className="ssvg-line-input ssvg-large-input"
+                  value={form.addressee_line1}
+                  onChange={handleChange}
+                  required
+                />
+              </span>
             </div>
             <div className="ssvg-addressee-row">
-              <input
-                name="addressee_line2"
-                type="text"
-                className="ssvg-line-input ssvg-medium-input"
-                value={form.addressee_line2}
-                onChange={handleChange}
-              />
+              <span className="ssvg-req-wrap">
+                <span className="ssvg-req-star">*</span>
+                <input
+                  name="addressee_line2"
+                  type="text"
+                  className="ssvg-line-input ssvg-medium-input"
+                  value={form.addressee_line2}
+                  onChange={handleChange}
+                />
+              </span>
               <span>।</span>
             </div>
           </div>
@@ -496,34 +550,43 @@ const SocialSecurityViaGuardian = () => {
           <div className="ssvg-form-body">
             <p>
               उपरोक्त सम्बन्धमा निवेदक श्री{" "}
-              <input
-                name="body_person_name"
-                type="text"
-                className="ssvg-inline-input ssvg-long-box"
-                value={form.body_person_name}
-                onChange={handleChange}
-                required
-              />{" "}
+              <span className="ssvg-req-wrap">
+                <span className="ssvg-req-star">*</span>
+                <input
+                  name="body_person_name"
+                  type="text"
+                  className="ssvg-inline-input ssvg-long-box"
+                  value={form.body_person_name}
+                  onChange={handleChange}
+                  required
+                />
+              </span>{" "}
               को माग माथि आवश्यक स्थलगत अवलोकन गरी बुझ्दा निज निवेदक को निवेदन
               सही साँचो रहेको बुझिएकोले पछी आईपर्न सम्पूर्ण कानूनी र आर्थिक
               जवाफदेहिता म वडा अध्यक्ष{" "}
-              <input
-                name="ward_chairman_name"
-                type="text"
-                className="ssvg-inline-input ssvg-medium-box"
-                value={form.ward_chairman_name}
-                onChange={handleChange}
-                required
-              />{" "}
+              <span className="ssvg-req-wrap">
+                <span className="ssvg-req-star">*</span>
+                <input
+                  name="ward_chairman_name"
+                  type="text"
+                  className="ssvg-inline-input ssvg-medium-box"
+                  value={form.ward_chairman_name}
+                  onChange={handleChange}
+                  required
+                />
+              </span>{" "}
               ले बहन गर्ने गरी सामाजिक सुरक्षा लाभग्राही श्री{" "}
-              <input
-                name="beneficiary_name"
-                type="text"
-                className="ssvg-inline-input ssvg-long-box"
-                value={form.beneficiary_name}
-                onChange={handleChange}
-                required
-              />{" "}
+              <span className="ssvg-req-wrap">
+                <span className="ssvg-req-star">*</span>
+                <input
+                  name="beneficiary_name"
+                  type="text"
+                  className="ssvg-inline-input ssvg-long-box"
+                  value={form.beneficiary_name}
+                  onChange={handleChange}
+                  required
+                />
+              </span>{" "}
               को संरक्षक निजको परिवार सदस्य
               <select
                 name="guardian_relation"
@@ -539,14 +602,17 @@ const SocialSecurityViaGuardian = () => {
                 <option value="नाति">नाति</option>
               </select>
               नाता पर्ने श्री{" "}
-              <input
-                name="guardian_name"
-                type="text"
-                className="ssvg-inline-input ssvg-long-box"
-                value={form.guardian_name}
-                onChange={handleChange}
-                required
-              />{" "}
+              <span className="ssvg-req-wrap">
+                <span className="ssvg-req-star">*</span>
+                <input
+                  name="guardian_name"
+                  type="text"
+                  className="ssvg-inline-input ssvg-long-box"
+                  value={form.guardian_name}
+                  onChange={handleChange}
+                  required
+                />
+              </span>{" "}
               लाई संरक्षक सिफारिस गर्दछु ।
             </p>
           </div>
@@ -559,61 +625,70 @@ const SocialSecurityViaGuardian = () => {
             <div className="ssvg-details-grid-2-col">
               <div className="ssvg-form-group-row">
                 <label>नाम :</label>
-                <input
-                  name="ben_name"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.ben_name}
-                  onChange={handleChange}
-                />
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="ben_name"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.ben_name}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
               <div className="ssvg-form-group-row"></div>
               <div className="ssvg-form-group-row">
-                <label>
-                  जारी जिल्ला : <span className="ssvg-red">*</span>
-                </label>
-                <input
-                  name="ben_issue_district"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.ben_issue_district}
-                  onChange={handleChange}
-                />
+                <label>जारी जिल्ला :</label>
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="ben_issue_district"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.ben_issue_district}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
               <div className="ssvg-form-group-row">
                 <label>जारी मिति :</label>
-                <input
-                  name="ben_issue_date"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.ben_issue_date}
-                  onChange={handleChange}
-                />
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="ben_issue_date"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.ben_issue_date}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
               <div className="ssvg-form-group-row">
-                <label>
-                  ना.प्र. नं. : <span className="ssvg-red">*</span>
-                </label>
-                <input
-                  name="ben_citizenship_no"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.ben_citizenship_no}
-                  onChange={handleChange}
-                />
+                <label>ना.प्र. नं. :</label>
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="ben_citizenship_no"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.ben_citizenship_no}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
               <div className="ssvg-form-group-row"></div>
               <div className="ssvg-form-group-row">
-                <label>
-                  खाता नम्बर : <span className="ssvg-red">*</span>
-                </label>
-                <input
-                  name="ben_account_no"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.ben_account_no}
-                  onChange={handleChange}
-                />
+                <label>खाता नम्बर :</label>
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="ben_account_no"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.ben_account_no}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
             </div>
           </div>
@@ -626,61 +701,70 @@ const SocialSecurityViaGuardian = () => {
             <div className="ssvg-details-grid-2-col">
               <div className="ssvg-form-group-row">
                 <label>नाम :</label>
-                <input
-                  name="grd_name"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.grd_name}
-                  onChange={handleChange}
-                />
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="grd_name"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.grd_name}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
               <div className="ssvg-form-group-row"></div>
               <div className="ssvg-form-group-row">
-                <label>
-                  जारी जिल्ला : <span className="ssvg-red">*</span>
-                </label>
-                <input
-                  name="grd_issue_district"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.grd_issue_district}
-                  onChange={handleChange}
-                />
+                <label>जारी जिल्ला :</label>
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="grd_issue_district"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.grd_issue_district}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
               <div className="ssvg-form-group-row">
                 <label>जारी मिति :</label>
-                <input
-                  name="grd_issue_date"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.grd_issue_date}
-                  onChange={handleChange}
-                />
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="grd_issue_date"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.grd_issue_date}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
               <div className="ssvg-form-group-row">
-                <label>
-                  ना.प्र. नं. : <span className="ssvg-red">*</span>
-                </label>
-                <input
-                  name="grd_citizenship_no"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.grd_citizenship_no}
-                  onChange={handleChange}
-                />
+                <label>ना.प्र. नं. :</label>
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="grd_citizenship_no"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.grd_citizenship_no}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
               <div className="ssvg-form-group-row"></div>
               <div className="ssvg-form-group-row">
-                <label>
-                  खाता नम्बर : <span className="ssvg-red">*</span>
-                </label>
-                <input
-                  name="grd_account_no"
-                  type="text"
-                  className="ssvg-full-width-input"
-                  value={form.grd_account_no}
-                  onChange={handleChange}
-                />
+                <label>खाता नम्बर :</label>
+                <span className="ssvg-req-wrap ssvg-req-block">
+                  <span className="ssvg-req-star">*</span>
+                  <input
+                    name="grd_account_no"
+                    type="text"
+                    className="ssvg-full-width-input"
+                    value={form.grd_account_no}
+                    onChange={handleChange}
+                  />
+                </span>
               </div>
             </div>
           </div>
@@ -689,14 +773,17 @@ const SocialSecurityViaGuardian = () => {
           <div className="ssvg-signature-section">
             <div className="ssvg-signature-block">
               <div className="ssvg-signature-line"></div>
-              <input
-                name="signature_name"
-                type="text"
-                className="ssvg-sig-input"
-                value={form.signature_name}
-                onChange={handleChange}
-                required
-              />
+              <span className="ssvg-req-wrap ssvg-req-block">
+                <span className="ssvg-req-star">*</span>
+                <input
+                  name="signature_name"
+                  type="text"
+                  className="ssvg-sig-input"
+                  value={form.signature_name}
+                  onChange={handleChange}
+                  required
+                />
+              </span>
               <select
                 name="designation"
                 className="ssvg-designation-select"
