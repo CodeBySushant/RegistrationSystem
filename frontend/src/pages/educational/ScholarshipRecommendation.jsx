@@ -12,7 +12,7 @@ import MunicipalityHeader from "../../components/MunicipalityHeader";
 const INITIAL_STATE = {
   letter_no:              "२०८२/८३",
   chalani_no:             "",
-  date:                   "२०८२-०८-०६",
+  date:                   "",
   nepali_date_label:      "1146 थिंलाथ्व, 2 शनिवार",
   sabik_place:            "",
   ward_no:                MUNICIPALITY.wardNumber || "",

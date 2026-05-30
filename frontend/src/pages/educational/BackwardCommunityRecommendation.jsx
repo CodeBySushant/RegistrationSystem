@@ -188,7 +188,7 @@ const STYLES = `
 const initialState = {
   letter_no: "२०८२/८३",
   chalani_no: "",
-  issue_date: "२०८२-०८-०६",
+  issue_date: "",
   nepali_date_label: "1146 थिंलाथ्व, 2 शनिवार",
   tole_address: "",
   ward_no: "",
