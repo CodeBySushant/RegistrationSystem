@@ -4,13 +4,13 @@ import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
 import axios from "../../utils/axiosInstance";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
+import { useWardForm } from "../../hooks/useWardForm";
+import MunicipalityHeader from "../../components/MunicipalityHeader";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Styles (merged from GovOrganizationReg.css)
-   All classes prefixed with "gor-" to avoid global collisions.
+   Styles
 ───────────────────────────────────────────────────────────────────────────── */
 const STYLES = `
-  /* ── Page wrapper ── */
   .gor-form-page {
     width: 100%;
     display: flex;
@@ -18,7 +18,6 @@ const STYLES = `
     align-items: center;
   }
 
-  /* ── Form container with paper texture ── */
   .gor-form-container {
     width: 90%;
     padding: 40px;
@@ -32,7 +31,6 @@ const STYLES = `
     color: #000;
   }
 
-  /* ── Top Bar ── */
   .gor-top-bar-title {
     display: flex;
     justify-content: space-between;
@@ -49,44 +47,6 @@ const STYLES = `
     font-weight: normal;
   }
 
-  /* ── Letterhead Header ── */
-  .gor-form-header-section {
-    text-align: center;
-    margin-bottom: 20px;
-    position: relative;
-  }
-  .gor-header-logo img {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80px;
-  }
-  .gor-header-text {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .gor-municipality-name {
-    color: #e74c3c;
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: bold;
-    line-height: 1.2;
-  }
-  .gor-ward-title {
-    color: #e74c3c;
-    font-size: 2.5rem;
-    margin: 5px 0;
-    font-weight: bold;
-  }
-  .gor-address-text,
-  .gor-province-text {
-    color: #e74c3c;
-    margin: 0;
-    font-size: 1rem;
-  }
-
-  /* ── Sub Header ── */
   .gor-sub-header {
     text-align: center;
     font-size: 18px;
@@ -96,7 +56,38 @@ const STYLES = `
     padding-top: 14px;
   }
 
-  /* ── Top Info / Addressee ── */
+  /* ── Meta row: patra sankhya left, date + ref no right ── */
+  .gor-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 20px 0 0;
+  }
+  .gor-meta-left,
+  .gor-meta-right {
+    font-size: 1rem;
+  }
+  .gor-meta-left { text-align: left; }
+  .gor-meta-right { text-align: right; }
+  .gor-meta-left p,
+  .gor-meta-right p {
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gor-meta-right p { justify-content: flex-end; }
+  .gor-date-input {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    outline: none;
+    width: 150px;
+    font-size: 1rem;
+    font-family: inherit;
+    padding: 4px 8px;
+    border-radius: 3px;
+  }
+
   .gor-top-info {
     margin: 20px 0;
     font-size: 1rem;
@@ -120,38 +111,27 @@ const STYLES = `
     font-family: inherit;
     padding: 2px 5px 2px 18px;
   }
-  .gor-date-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
-    outline: none;
-    width: 140px;
-    font-size: 1rem;
-    font-family: inherit;
-    padding: 2px 5px;
-  }
 
-  /* ── Subject ── */
+  /* ── Subject centered ── */
   .gor-subject {
-    font-size: 1.05rem;
-    margin-top: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 30px 0;
   }
 
-  /* ── Paragraph ── */
   .gor-paragraph {
     font-size: 1rem;
     line-height: 2;
     margin-top: 10px;
   }
 
-  /* ── Section Title ── */
   .gor-section-title {
     font-weight: bold;
     margin-top: 30px;
     font-size: 1.05rem;
   }
 
-  /* ── Section inputs ── */
   .gor-section {
     display: flex;
     flex-direction: column;
@@ -173,7 +153,6 @@ const STYLES = `
     font-size: 1rem;
   }
 
-  /* ── Inline row (member count etc.) ── */
   .gor-inline-row {
     display: flex;
     align-items: center;
@@ -186,7 +165,6 @@ const STYLES = `
     margin: 0 4px;
   }
 
-  /* ── Red required-star wrapper ── */
   .gor-inline-input-wrapper {
     position: relative;
     display: inline-block;
@@ -210,7 +188,6 @@ const STYLES = `
     margin-left: 4px;
   }
 
-  /* ── Applicant Details Box ── */
   .gor-form-container .applicant-details-box {
     border: 1px solid #ddd;
     padding: 20px;
@@ -255,7 +232,6 @@ const STYLES = `
     background-color: #eef2f5 !important;
   }
 
-  /* ── Footer ── */
   .gor-form-footer {
     text-align: center;
     margin-top: 40px;
@@ -286,31 +262,10 @@ const STYLES = `
     border-top: 1px solid #eee;
     padding-top: 10px;
   }
-
-  /* ── Print ── */
-  @media print {
-    body * { visibility: hidden; }
-    .gor-form-container,
-    .gor-form-container * { visibility: visible; }
-    .gor-form-container {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 10mm 14mm;
-      background: white;
-    }
-    .gor-top-bar-title,
-    .gor-form-footer { display: none; }
-    .gor-input-required-star { display: none; }
-  }
 `;
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Initial State — extracted so reset works cleanly
+   Initial State
 ───────────────────────────────────────────────────────────────────────────── */
 const initialState = {
   status: "pending",
@@ -337,8 +292,7 @@ const initialState = {
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   StarInput — defined outside the component so it never remounts on re-render
-   (remounting causes focus loss on every keystroke)
+   StarInput — defined outside so it never remounts (avoids focus loss)
 ───────────────────────────────────────────────────────────────────────────── */
 const StarInput = ({ className = "", ...props }) => (
   <div className="gor-inline-input-wrapper">
@@ -352,18 +306,10 @@ const StarInput = ({ className = "", ...props }) => (
 ───────────────────────────────────────────────────────────────────────────── */
 const GovOrganizationReg = () => {
   const { user } = useAuth();
-  const [formData, setFormData] = useState(initialState);
+  const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
 
-  /* ── handleChange ── */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  /* ── validate ──
-     Returns { ok: true } or { ok: false, missing: fieldName }
-     Phone regex: 6–20 chars of digits, +, -, spaces */
+  /* ── validate ── */
   const validate = () => {
     const required = [
       "proposalName",
@@ -380,33 +326,30 @@ const GovOrganizationReg = () => {
       "applicantPhone",
     ];
     for (const k of required) {
-      if (!formData[k] || String(formData[k]).trim() === "")
+      if (!form[k] || String(form[k]).trim() === "")
         return { ok: false, missing: k };
     }
-    if (!/^[0-9+\-\s]{6,20}$/.test(String(formData.applicantPhone))) {
+    if (!/^[0-9+\-\s]{6,20}$/.test(String(form.applicantPhone))) {
       return { ok: false, missing: "applicantPhone (invalid format)" };
     }
     return { ok: true };
   };
 
-  /* ── handleSubmit ──
-     Called both by form onSubmit and by handlePrint.
-     When called from handlePrint, e is null (no event to prevent). */
-  const handleSubmit = async (e) => {
-    if (e && e.preventDefault) e.preventDefault();
-    if (loading) return false;
+  /* ── Single save function — one POST, no duplicate records ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (loading) return;
 
     const v = validate();
     if (!v.ok) {
       alert("कृपया भर्नुहोस्: " + v.missing);
-      return false;
+      return;
     }
 
     setLoading(true);
     try {
-      // Convert empty strings to null so the backend doesn't store blank strings
+      // Convert empty strings to null so backend doesn't store blank strings
       const payload = Object.fromEntries(
-        Object.entries(formData).map(([k, val]) => [k, val === "" ? null : val])
+        Object.entries(form).map(([k, val]) => [k, val === "" ? null : val])
       );
 
       const res = await axios.post(
@@ -415,30 +358,160 @@ const GovOrganizationReg = () => {
       );
 
       if (res.status === 200 || res.status === 201) {
-        alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
-        setFormData(initialState);
-        return true;
+        if (shouldPrint) {
+          handleCleanPrint();
+        } else {
+          alert("रेकर्ड सेभ भयो। ID: " + (res.data?.id ?? ""));
+        }
+        setForm(initialState);
       } else {
         alert("Unexpected response: " + res.status);
-        return false;
       }
     } catch (err) {
       const msg =
-        err.response?.data?.message || err.message || "Submission failed";
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Submission failed";
       alert("त्रुटि: " + msg);
-      return false;
     } finally {
       setLoading(false);
     }
   };
 
-  /* ── handlePrint — save first, then print, then reset ── */
-  const handlePrint = async () => {
-    const ok = await handleSubmit(null);
-    if (ok) {
-      window.print();
-      setFormData(initialState);
-    }
+  /* ── Clean print — isolated print window, only the form ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>सहकारी संस्था दर्ता सिफारिस</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .sub-header { text-align: center; font-size: 12pt; margin: 16px 0; line-height: 1.6; border-top: 1px solid #ccc; padding-top: 12px; }
+          .meta { display: flex; justify-content: space-between; align-items: flex-start; margin: 12px 0; font-size: 11pt; line-height: 1.8; }
+          .meta-left { text-align: left; }
+          .meta-right { text-align: right; }
+          .top-info { margin: 18px 0; font-size: 11pt; line-height: 2; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .paragraph { font-size: 11pt; line-height: 2; text-align: justify; margin-bottom: 20px; }
+          .section-title { font-weight: bold; font-size: 11pt; margin: 18px 0 10px; }
+          .detail-line { font-size: 11pt; line-height: 2; margin-bottom: 4px; }
+          /* value sizes to content — no fixed width so small values don't leave
+             big gaps and long values don't get clipped or merge into text */
+          .value { font-weight: bold; padding: 0 4px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 24px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+          .field-val { flex: 1; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine}</div>
+        </div>
+
+        <div class="sub-header">
+          अनुसूची २<br/>
+          दर्ता दरखास्तको नमुना
+        </div>
+
+        <div class="meta">
+          <div class="meta-left">
+            <div>पत्र संख्या : <span class="value">${form.letterNo || ""}</span></div>
+          </div>
+          <div class="meta-right">
+            <div>मिति : <span class="value">${form.date || ""}</span></div>
+            <div>सन्दर्भ नं. : <span class="value">${form.refNo || ""}</span></div>
+          </div>
+        </div>
+
+        <div class="top-info">
+          श्री दत्ता गर्ने अधिकारी
+          <span class="value">${form.officerName || ""}</span>
+          ज्यू,<br/>
+          <span class="value">${form.municipalityName || ""}</span>
+          , नगर कार्यपालिकाको कार्यालय ।
+        </div>
+
+        <div class="subject">विषय : सहकारी संस्था दर्ता ।</div>
+
+        <div class="paragraph">
+          महोदय,<br/><br/>
+          हामी देहायका व्यक्तिगत दर्ता भएको सहकारी संस्था दर्ता गरी पाउन निवेदन
+          गर्दछौं। उद्देश्यअनुसार संस्थाले संचालन गर्न कार्यक्रमको योजना र
+          प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी पेश गरेको छ।
+        </div>
+
+        <div class="section-title">संस्थासम्बन्धी विवरण</div>
+
+        <div class="detail-line">(क) प्रस्तावित संस्था नामः <span class="value">${form.proposalName || ""}</span></div>
+        <div class="detail-line">(ख) ठेगाना: वडा नं. <span class="value">${form.wardNo || ""}</span></div>
+        <div class="detail-line">(ग) उद्देश्य: <span class="value">${form.purpose || ""}</span></div>
+        <div class="detail-line">(घ) गतिविधि: <span class="value">${form.activities || ""}</span></div>
+        <div class="detail-line">(ङ) मुख्य कार्यालय: <span class="value">${form.headOffice || ""}</span></div>
+        <div class="detail-line">(च) शाखा कार्यालय: <span class="value">${form.branchOffice || ""}</span></div>
+        <div class="detail-line">(छ) दायित्व: <span class="value">${form.liability || ""}</span></div>
+        <div class="detail-line">(ज) सदस्य संख्या: महिला: <span class="value">${form.femaleMembers || ""}</span> जना &nbsp; पुरुष: <span class="value">${form.maleMembers || ""}</span> जना</div>
+        <div class="detail-line">(झ) कुल शेयर पूँजीको रकमः <span class="value">${form.totalShareCapital || ""}</span></div>
+        <div class="detail-line">(ञ) प्राप्त प्रवेश शुल्कको रकमः <span class="value">${form.entranceFee || ""}</span></div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row">
+            <span class="field-label">नाम:</span>
+            <span class="field-val">${form.applicantName || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">ठेगाना:</span>
+            <span class="field-val">${form.applicantAddress || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">नागरिकता नं.:</span>
+            <span class="field-val">${form.applicantCitizenship || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">फोन:</span>
+            <span class="field-val">${form.applicantPhone || ""}</span>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   /* ───────────────────────────────────────────────────────────────────────────
@@ -448,8 +521,13 @@ const GovOrganizationReg = () => {
     <div className="gor-form-page">
       <style>{STYLES}</style>
 
-      <form className="gor-form-container" onSubmit={handleSubmit}>
-
+      <form
+        className="gor-form-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+      >
         {/* ── Top Bar ── */}
         <div className="gor-top-bar-title">
           सहकारी संस्था दर्ता सिफारिस ।
@@ -458,28 +536,53 @@ const GovOrganizationReg = () => {
           </span>
         </div>
 
-        {/* ── Letterhead Header ── */}
-        <div className="gor-form-header-section">
-          <div className="gor-header-logo">
-            <img src="/nepallogo.svg" alt="Nepal Emblem" />
-          </div>
-          <div className="gor-header-text">
-            <h1 className="gor-municipality-name">{MUNICIPALITY.name}</h1>
-            <h2 className="gor-ward-title">
-              {user?.role === "SUPERADMIN"
-                ? "सबै वडा कार्यालय"
-                : `${user?.ward || MUNICIPALITY.wardNumber} नं. वडा कार्यालय`}
-            </h2>
-            <p className="gor-address-text">{MUNICIPALITY.officeLine}</p>
-            <p className="gor-province-text">{MUNICIPALITY.provinceLine}</p>
-          </div>
-        </div>
+        {/* ── Letterhead Header (shared component) ── */}
+        <MunicipalityHeader />
 
         {/* ── Sub Header ── */}
         <div className="gor-sub-header">
           <span>अनुसूची २</span>
           <br />
           <span>दर्ता दरखास्तको नमुना</span>
+        </div>
+
+        {/* ── Meta row: patra sankhya (left), date + ref no (right) ── */}
+        <div className="gor-meta-row">
+          <div className="gor-meta-left">
+            <p>
+              पत्र संख्या :
+              <input
+                type="text"
+                className="gor-date-input"
+                name="letterNo"
+                placeholder="2082/83"
+                value={form.letterNo}
+                onChange={handleChange}
+              />
+            </p>
+          </div>
+          <div className="gor-meta-right">
+            <p>
+              मिति :
+              <input
+                name="date"
+                type="date"
+                className="gor-date-input"
+                value={form.date || ""}
+                onChange={handleChange}
+              />
+            </p>
+            <p>
+              सन्दर्भ नं. :
+              <StarInput
+                type="text"
+                className="gor-top-info-input"
+                name="refNo"
+                value={form.refNo}
+                onChange={handleChange}
+              />
+            </p>
+          </div>
         </div>
 
         {/* ── Addressee / Top Info ── */}
@@ -490,7 +593,7 @@ const GovOrganizationReg = () => {
               type="text"
               className="gor-top-info-input"
               name="officerName"
-              value={formData.officerName}
+              value={form.officerName}
               onChange={handleChange}
             />
             <span>ज्यू,</span>
@@ -501,33 +604,14 @@ const GovOrganizationReg = () => {
               type="text"
               className="gor-top-info-input"
               name="municipalityName"
-              value={formData.municipalityName}
+              value={form.municipalityName}
               onChange={handleChange}
             />
-            <span>, नगर कार्यपालिकाको कार्यालय</span>
-          </div>
-
-          <div className="gor-top-info-row">
-            <StarInput
-              type="text"
-              className="gor-top-info-input"
-              name="letterNo"
-              value={formData.letterNo}
-              onChange={handleChange}
-            />
-            <StarInput
-              type="text"
-              className="gor-top-info-input"
-              name="refNo"
-              placeholder="सन्दर्भ नं."
-              value={formData.refNo}
-              onChange={handleChange}
-            />
-            <span>।</span>
+            <span>, नगर कार्यपालिकाको कार्यालय ।</span>
           </div>
         </div>
 
-        {/* ── Subject ── */}
+        {/* ── Subject (centered) ── */}
         <h3 className="gor-subject">विषय : सहकारी संस्था दर्ता ।</h3>
 
         {/* ── Intro paragraph ── */}
@@ -537,8 +621,7 @@ const GovOrganizationReg = () => {
           <br />
           हामी देहायका व्यक्तिगत दर्ता भएको सहकारी संस्था दर्ता गरी पाउन निवेदन
           गर्दछौं। उद्देश्यअनुसार संस्थाले संचालन गर्न कार्यक्रमको योजना र
-          प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी पेश गरेको
-          छ।
+          प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी पेश गरेको छ।
         </p>
 
         {/* ── Section: Organization details ── */}
@@ -549,7 +632,7 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="proposalName"
-            value={formData.proposalName}
+            value={form.proposalName}
             onChange={handleChange}
           />
 
@@ -557,7 +640,7 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="wardNo"
-            value={formData.wardNo}
+            value={form.wardNo}
             onChange={handleChange}
           />
 
@@ -565,7 +648,7 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="purpose"
-            value={formData.purpose}
+            value={form.purpose}
             onChange={handleChange}
           />
 
@@ -573,7 +656,7 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="activities"
-            value={formData.activities}
+            value={form.activities}
             onChange={handleChange}
           />
 
@@ -581,7 +664,7 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="headOffice"
-            value={formData.headOffice}
+            value={form.headOffice}
             onChange={handleChange}
           />
 
@@ -589,7 +672,7 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="branchOffice"
-            value={formData.branchOffice}
+            value={form.branchOffice}
             onChange={handleChange}
           />
 
@@ -597,7 +680,7 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="liability"
-            value={formData.liability}
+            value={form.liability}
             onChange={handleChange}
           />
 
@@ -607,14 +690,14 @@ const GovOrganizationReg = () => {
             <StarInput
               type="text"
               name="femaleMembers"
-              value={formData.femaleMembers}
+              value={form.femaleMembers}
               onChange={handleChange}
             />{" "}
             जना &nbsp; पुरुष:{" "}
             <StarInput
               type="text"
               name="maleMembers"
-              value={formData.maleMembers}
+              value={form.maleMembers}
               onChange={handleChange}
             />{" "}
             जना
@@ -624,7 +707,7 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="totalShareCapital"
-            value={formData.totalShareCapital}
+            value={form.totalShareCapital}
             onChange={handleChange}
           />
 
@@ -632,30 +715,38 @@ const GovOrganizationReg = () => {
           <StarInput
             type="text"
             name="entranceFee"
-            value={formData.entranceFee}
+            value={form.entranceFee}
             onChange={handleChange}
           />
         </div>
 
         {/* ── Applicant Details (shared component) ── */}
-        <ApplicantDetailsNp formData={formData} handleChange={handleChange} />
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        {/* ── Footer ── */}
+        {/* ── Footer buttons ── */}
         <div className="gor-form-footer">
           <button
+            type="submit"
             className="gor-save-print-btn"
-            type="button"
-            onClick={handlePrint}
             disabled={loading}
+            style={{ marginRight: 12, backgroundColor: "#2c3e50" }}
           >
-            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="gor-save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
         <div className="gor-copyright-footer">
           © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
         </div>
-
       </form>
     </div>
   );
