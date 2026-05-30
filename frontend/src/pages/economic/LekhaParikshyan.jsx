@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { useWardForm } from "../../hooks/useWardForm";
 import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Styles — all classes scoped under .audit-container
+───────────────────────────────────────────────────────────────────────────── */
 const styles = `
   /* --- Main Container --- */
   .audit-container {
@@ -45,48 +49,6 @@ const styles = `
     font-weight: normal;
   }
 
-  /* --- Header Section --- */
-  .audit-container .form-header-section {
-    text-align: center;
-    margin-bottom: 20px;
-    position: relative;
-  }
-
-  .audit-container .header-logo img {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80px;
-  }
-
-  .audit-container .header-text {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .audit-container .municipality-name {
-    color: #e74c3c;
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: bold;
-    line-height: 1.2;
-  }
-
-  .audit-container .ward-title {
-    color: #e74c3c;
-    font-size: 2.5rem;
-    margin: 5px 0;
-    font-weight: bold;
-  }
-
-  .audit-container .address-text,
-  .audit-container .province-text {
-    color: #e74c3c;
-    margin: 0;
-    font-size: 1rem;
-  }
-
   /* --- Meta Data --- */
   .audit-container .meta-data-row {
     display: flex;
@@ -100,12 +62,13 @@ const styles = `
   .audit-container .meta-left p,
   .audit-container .meta-right p { margin: 5px 0; }
 
+  /* --- Meta input — was transparent; now white bg like body inputs --- */
   .audit-container .dotted-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 3px;
     outline: none;
-    padding: 2px 5px;
+    padding: 4px 8px;
     font-family: 'Kalimati', 'Kokila', sans-serif;
     font-size: 1rem;
   }
@@ -127,17 +90,20 @@ const styles = `
     gap: 4px;
   }
 
+  /* --- Addressee/bodartha input — was transparent; now white bg --- */
   .audit-container .line-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 3px;
     outline: none;
+    padding: 4px 8px;
     margin: 0 10px;
     font-family: 'Kalimati', 'Kokila', sans-serif;
+    font-size: 1rem;
   }
 
   .audit-container .medium-input { width: 250px; }
-  .audit-container .full-width-input { width: 100%; }
+  .audit-container .full-width-input { width: 100%; box-sizing: border-box; }
 
   /* --- Subject --- */
   .audit-container .subject-section {
@@ -168,7 +134,7 @@ const styles = `
     font-family: 'Kalimati', 'Kokila', sans-serif;
   }
 
-  .audit-container .tiny-box  { width: 40px;  text-align: center; }
+  .audit-container .tiny-box  { width: 60px;  text-align: center; }
   .audit-container .small-box { width: 100px; }
   .audit-container .medium-box{ width: 160px; }
   .audit-container .long-box  { width: 250px; }
@@ -194,7 +160,7 @@ const styles = `
 
   .audit-container .bodartha-input-container .line-input {
     width: 100%;
-    padding-right: 20px;
+    margin: 0;
     box-sizing: border-box;
   }
 
@@ -211,13 +177,18 @@ const styles = `
     text-align: center;
   }
 
-  .audit-container .signature-block .line-input {
+  /* signature signer_name keeps the signature-line look (no box) */
+  .audit-container .signature-block .sig-name-input {
     width: 100%;
     margin-bottom: 5px;
     border: none;
     border-bottom: 1px solid #000;
     outline: none;
     background: transparent;
+    font-family: 'Kalimati', 'Kokila', sans-serif;
+    font-size: 1rem;
+    padding: 4px 4px 4px 18px;
+    box-sizing: border-box;
   }
 
   .audit-container .signature-line {
@@ -234,14 +205,17 @@ const styles = `
     font-family: 'Kalimati', 'Kokila', sans-serif;
   }
 
-  /* --- Inline input wrapper (required star) --- */
-  .audit-container .inline-input-wrapper {
+  /* --- Red * wrapper — inline by default, block modifier for full-width contexts --- */
+  .audit-container .audit-req-wrap {
     position: relative;
     display: inline-block;
+  }
+  .audit-container .audit-req-wrap.audit-req-block {
+    display: block;
     width: 100%;
   }
 
-  .audit-container .input-required-star {
+  .audit-container .audit-req-star {
     position: absolute;
     left: 6px;
     top: 50%;
@@ -250,11 +224,10 @@ const styles = `
     font-weight: bold;
     pointer-events: none;
     font-size: 14px;
+    z-index: 1;
   }
 
-  .audit-container .inline-input-wrapper input {
-    padding-left: 18px;
-  }
+  .audit-container .audit-req-wrap input { padding-left: 18px; }
 
   /* --- Applicant Details Box --- */
   .audit-container .applicant-details-box {
@@ -298,8 +271,6 @@ const styles = `
     font-family: 'Kalimati', 'Kokila', sans-serif;
   }
 
-  .audit-container .bg-gray { background-color: #eef2f5; }
-
   /* --- Footer --- */
   .audit-container .form-footer { text-align: center; margin-top: 40px; }
 
@@ -314,7 +285,7 @@ const styles = `
     font-family: 'Kalimati', 'Kokila', sans-serif;
   }
 
-  .audit-container .save-print-btn:hover { background-color: #1a252f; }
+  .audit-container .save-print-btn:hover:not(:disabled) { background-color: #1a252f; }
   .audit-container .save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .audit-container .copyright-footer {
@@ -328,18 +299,7 @@ const styles = `
 
   /* ================= RESPONSIVE ================= */
   @media (max-width: 768px) {
-    .audit-container {
-      padding: 20px 16px;
-    }
-
-    .audit-container .header-logo img {
-      position: static;
-      display: block;
-      margin: 0 auto 10px;
-    }
-
-    .audit-container .municipality-name { font-size: 1.5rem; }
-    .audit-container .ward-title { font-size: 1.6rem; }
+    .audit-container { padding: 20px 16px; }
 
     .audit-container .form-body {
       font-size: 0.95rem;
@@ -367,49 +327,34 @@ const styles = `
       align-items: flex-start;
     }
 
-    .audit-container .bodartha-input-container {
-      width: 100%;
-    }
-
-    .audit-container .signature-section {
-      justify-content: center;
-    }
-
-    .audit-container .meta-data-row {
-      flex-direction: column;
-    }
-  }
-
-  /* ================= PRINT STYLES ================= */
-  @media print {
-    body * { visibility: hidden; }
-
-    .audit-container,
-    .audit-container * { visibility: visible; }
-
-    .audit-container {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 0;
-      background: white;
-    }
-
-    .audit-container .form-footer { display: none; }
-    .audit-container .top-bar-title { display: none; }
+    .audit-container .bodartha-input-container { width: 100%; }
+    .audit-container .signature-section { justify-content: center; }
+    .audit-container .meta-data-row { flex-direction: column; }
   }
 `;
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Initial state
+   - Hardcoded पत्र संख्या / मिति now editable
+   - ne_sa added (like DAIC's nepali_date_label)
+───────────────────────────────────────────────────────────────────────────── */
 const initialState = {
+  // Meta
+  patra_sankhya: "२०८२/८३",
   chalani_no: "",
+  issue_date: new Date().toISOString().slice(0, 10),
+  nepali_date_label: "",
+
+  // Subject (fixed)
+  subject: "लेखा परिक्षण सम्बन्धमा ।",
+
+  // Addressee
   subject_to: "",
   subject_org: "",
+
+  // Body
   office_name: "",
-  ward_no: "",
+  ward_no: MUNICIPALITY?.wardNumber || "",
   organization_name: "",
   organization_extra: "",
   fiscal_year: "",
@@ -419,70 +364,227 @@ const initialState = {
   auditor_org_name: "",
   auditor_org_extra: "",
   auditor_extra_role: "",
+
+  // Bodartha
   bodartha: "",
+
+  // Signature
   signer_name: "",
   signer_designation: "",
+
+  // ApplicantDetailsNp
   applicant_name: "",
   applicant_address: "",
   applicant_citizenship_no: "",
   applicant_phone: "",
 };
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Component
+───────────────────────────────────────────────────────────────────────────── */
 const LekhaParikshyan = () => {
   const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  /* ── Single save function — one POST, optionally print after ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (!form.subject_to?.trim()) {
+      alert("प्राप्तकर्ताको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.office_name?.trim()) {
+      alert("कार्यालयको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.organization_name?.trim()) {
+      alert("संस्थाको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.auditor_name?.trim()) {
+      alert("लेखा परिक्षकको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.signer_name?.trim()) {
+      alert("हस्ताक्षरकर्ताको नाम आवश्यक छ");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post("/api/forms/lekha-parikshyan", form);
       if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
+        if (shouldPrint) {
+          handleCleanPrint();
+        } else {
+          alert("सफलतापूर्वक सुरक्षित भयो! ID: " + res.data.id);
+        }
         setForm(initialState);
-      } else {
-        alert("Unexpected response: " + JSON.stringify(res.data));
       }
     } catch (err) {
-      console.error("Submit error:", err.response || err.message || err);
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
         err.message ||
         "Submission failed";
-      alert("Error: " + msg);
+      alert("त्रुटि: " + msg);
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePrint = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post("/api/forms/lekha-parikshyan", form);
-      if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
-        window.print();
-        setForm(initialState);
-      }
-    } catch (err) {
-      console.error(err);
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        err.message ||
-        "Submission failed";
-      alert("Error: " + msg);
-    } finally {
-      setLoading(false);
-    }
+  /* ── Clean print — isolated window, no surrounding UI ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>लेखा परिक्षण सम्बन्धमा</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .addressee { margin-bottom: 16px; font-size: 11pt; }
+          .body-text { font-size: 11pt; line-height: 2.2; text-align: justify; margin-bottom: 24px; }
+          /* value spans size to content — small values stay tight, long values don't merge */
+          .value { font-weight: bold; padding: 0 4px; white-space: nowrap; }
+          .bodartha { margin: 16px 0; font-size: 11pt; }
+          .bodartha-label { font-weight: bold; text-decoration: underline; margin-right: 8px; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 48px; margin-bottom: 24px; }
+          .sig-block { width: 200px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; margin-bottom: 4px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 20px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+          .field-val { flex: 1; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine}</div>
+        </div>
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value">${form.patra_sankhya || ""}</span></div>
+            <div>चलानी नं. : <span class="value">${form.chalani_no || ""}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value">${form.issue_date || ""}</span></div>
+            <div>ने.सं : <span class="value">${form.nepali_date_label || ""}</span></div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: ${form.subject}</div>
+
+        <div class="addressee">
+          श्री <span class="value">${form.subject_to || ""}</span><br/>
+          <span class="value">${form.subject_org || ""}</span> ।
+        </div>
+
+        <div class="body-text">
+          प्रस्तुत बिषयमा यस
+          <span class="value">${form.office_name || ""}</span>
+          वडा नं. <span class="value">${form.ward_no || ""}</span>
+          मा रहेको श्री
+          <span class="value">${form.organization_name || ""}</span>
+          <span class="value">${form.organization_extra || ""}</span>
+          को आ.व. <span class="value">${form.fiscal_year || ""}</span>
+          को लेखा परिक्षण गर्न… लेखा परिक्षक श्री
+          <span class="value">${form.auditor_name || ""}</span>
+          प्रमाण पत्र नं. <span class="value">${form.auditor_certificate_no || ""}</span>
+          संस्था दर्ता नम्बर <span class="value">${form.organization_reg_no || ""}</span>
+          भएको <span class="value">${form.auditor_org_name || ""}</span>
+          <span class="value">${form.auditor_org_extra || ""}</span>
+          का <span class="value">${form.auditor_extra_role || ""}</span>
+          लाई लेखा परिक्षणको अनुमति…
+        </div>
+
+        <div class="bodartha">
+          <span class="bodartha-label">बोधार्थ:</span>
+          <span class="value">${form.bodartha || ""}</span>
+        </div>
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${form.signer_name || ""}</div>
+            <div>${form.signer_designation || ""}</div>
+          </div>
+        </div>
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row">
+            <span class="field-label">नाम:</span>
+            <span class="field-val">${form.applicant_name || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">ठेगाना:</span>
+            <span class="field-val">${form.applicant_address || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">नागरिकता नं.:</span>
+            <span class="field-val">${form.applicant_citizenship_no || ""}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">फोन:</span>
+            <span class="field-val">${form.applicant_phone || ""}</span>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
+  /* ─────────────────────────────────────────────────────────────────────────
+     Render — root is now <form> so onSubmit fires (was <div>)
+  ───────────────────────────────────────────────────────────────────────── */
   return (
     <>
       <style>{styles}</style>
-      <div className="audit-container">
+
+      <form
+        className="audit-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+      >
         {/* Top Bar */}
         <div className="top-bar-title">
           लेखा परिक्षण सम्बन्धमा ।
@@ -491,40 +593,67 @@ const LekhaParikshyan = () => {
           </span>
         </div>
 
-        {/* Header */}
-        <div className="form-header-section">
-          <div className="header-logo">
-            <img src="/nepallogo.svg" alt="Nepal Emblem" />
-          </div>
-          <div className="header-text">
-            <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
-            <h2 className="ward-title">
-              वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
-            </h2>
-            <p className="address-text">{MUNICIPALITY.officeLine}</p>
-            <p className="province-text">{MUNICIPALITY.provinceLine}</p>
-          </div>
-        </div>
+        {/* Header — shared component replaces inline header block */}
+        <MunicipalityHeader />
 
-        {/* Meta */}
+        {/* Meta — all hardcoded values now editable */}
         <div className="meta-data-row">
           <div className="meta-left">
             <p>
-              पत्र संख्या : <span className="bold-text">२०८२/८३</span>
+              पत्र संख्या :{" "}
+              <span className="audit-req-wrap">
+                <span className="audit-req-star">*</span>
+                <input
+                  name="patra_sankhya"
+                  type="text"
+                  className="dotted-input small-input"
+                  value={form.patra_sankhya}
+                  onChange={handleChange}
+                />
+              </span>
             </p>
             <p>
-              चलानी नं.:{" "}
-              <input
-                name="chalani_no"
-                className="dotted-input small-input"
-                value={form.chalani_no}
-                onChange={handleChange}
-              />
+              चलानी नं. :{" "}
+              <span className="audit-req-wrap">
+                <span className="audit-req-star">*</span>
+                <input
+                  name="chalani_no"
+                  type="text"
+                  className="dotted-input small-input"
+                  value={form.chalani_no}
+                  onChange={handleChange}
+                />
+              </span>
             </p>
           </div>
           <div className="meta-right">
             <p>
-              मिति : <span className="bold-text">२०८२-०८-०६</span>
+              मिति :{" "}
+              <span className="audit-req-wrap">
+                <span className="audit-req-star">*</span>
+                <input
+                  name="issue_date"
+                  type="date"
+                  className="dotted-input small-input"
+                  value={form.issue_date || ""}
+                  onChange={handleChange}
+                />
+              </span>
+            </p>
+            <p>
+              ने.सं :{" "}
+              <span className="audit-req-wrap">
+                <span className="audit-req-star">*</span>
+                <input
+                  name="nepali_date_label"
+                  type="text"
+                  className="dotted-input"
+                  style={{ width: "220px" }}
+                  placeholder="जस्तै: 1146 थिंलाथ्व, 2 शनिवार"
+                  value={form.nepali_date_label || ""}
+                  onChange={handleChange}
+                />
+              </span>
             </p>
           </div>
         </div>
@@ -533,20 +662,30 @@ const LekhaParikshyan = () => {
         <div className="addressee-section">
           <div className="addressee-row">
             <span>श्री</span>
-            <input
-              name="subject_to"
-              className="line-input medium-input"
-              value={form.subject_to}
-              onChange={handleChange}
-            />
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="subject_to"
+                type="text"
+                className="line-input medium-input"
+                value={form.subject_to}
+                onChange={handleChange}
+                required
+              />
+            </span>
           </div>
           <div className="addressee-row">
-            <input
-              name="subject_org"
-              className="line-input medium-input"
-              value={form.subject_org}
-              onChange={handleChange}
-            />
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="subject_org"
+                type="text"
+                className="line-input medium-input"
+                value={form.subject_org}
+                onChange={handleChange}
+                required
+              />
+            </span>
           </div>
         </div>
 
@@ -554,88 +693,135 @@ const LekhaParikshyan = () => {
         <div className="subject-section">
           <p>
             विषय:{" "}
-            <span className="underline-text">लेखा परिक्षण सम्बन्धमा ।</span>
+            <span className="underline-text">{form.subject}</span>
           </p>
         </div>
 
-        {/* Main Body */}
+        {/* Main Body — every input wrapped with red * */}
         <div className="form-body">
           <p className="body-paragraph">
             प्रस्तुत बिषयमा यस{" "}
-            <input
-              name="office_name"
-              className="inline-box-input medium-box"
-              value={form.office_name}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="office_name"
+                type="text"
+                className="inline-box-input medium-box"
+                value={form.office_name}
+                onChange={handleChange}
+                required
+              />
+            </span>{" "}
             वडा नं.{" "}
-            <input
-              name="ward_no"
-              className="inline-box-input tiny-box"
-              value={form.ward_no}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="ward_no"
+                type="text"
+                className="inline-box-input tiny-box"
+                value={form.ward_no}
+                onChange={handleChange}
+              />
+            </span>{" "}
             मा रहेको श्री{" "}
-            <input
-              name="organization_name"
-              className="inline-box-input long-box"
-              value={form.organization_name}
-              onChange={handleChange}
-            />{" "}
-            <input
-              name="organization_extra"
-              className="inline-box-input medium-box"
-              value={form.organization_extra}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="organization_name"
+                type="text"
+                className="inline-box-input long-box"
+                value={form.organization_name}
+                onChange={handleChange}
+                required
+              />
+            </span>{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="organization_extra"
+                type="text"
+                className="inline-box-input medium-box"
+                value={form.organization_extra}
+                onChange={handleChange}
+              />
+            </span>{" "}
             को आ.व.{" "}
-            <input
-              name="fiscal_year"
-              className="inline-box-input small-box"
-              value={form.fiscal_year}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="fiscal_year"
+                type="text"
+                className="inline-box-input small-box"
+                value={form.fiscal_year}
+                onChange={handleChange}
+              />
+            </span>{" "}
             को लेखा परिक्षण गर्न… लेखा परिक्षक श्री{" "}
-            <input
-              name="auditor_name"
-              className="inline-box-input long-box"
-              value={form.auditor_name}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="auditor_name"
+                type="text"
+                className="inline-box-input long-box"
+                value={form.auditor_name}
+                onChange={handleChange}
+                required
+              />
+            </span>{" "}
             प्रमाण पत्र नं.{" "}
-            <input
-              name="auditor_certificate_no"
-              className="inline-box-input medium-box"
-              value={form.auditor_certificate_no}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="auditor_certificate_no"
+                type="text"
+                className="inline-box-input medium-box"
+                value={form.auditor_certificate_no}
+                onChange={handleChange}
+              />
+            </span>{" "}
             संस्था दर्ता नम्बर{" "}
-            <input
-              name="organization_reg_no"
-              className="inline-box-input medium-box"
-              value={form.organization_reg_no}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="organization_reg_no"
+                type="text"
+                className="inline-box-input medium-box"
+                value={form.organization_reg_no}
+                onChange={handleChange}
+              />
+            </span>{" "}
             भएको{" "}
-            <input
-              name="auditor_org_name"
-              className="inline-box-input long-box"
-              value={form.auditor_org_name}
-              onChange={handleChange}
-            />{" "}
-            <input
-              name="auditor_org_extra"
-              className="inline-box-input medium-box"
-              value={form.auditor_org_extra}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="auditor_org_name"
+                type="text"
+                className="inline-box-input long-box"
+                value={form.auditor_org_name}
+                onChange={handleChange}
+              />
+            </span>{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="auditor_org_extra"
+                type="text"
+                className="inline-box-input medium-box"
+                value={form.auditor_org_extra}
+                onChange={handleChange}
+              />
+            </span>{" "}
             का{" "}
-            <input
-              name="auditor_extra_role"
-              className="inline-box-input medium-box"
-              value={form.auditor_extra_role}
-              onChange={handleChange}
-            />{" "}
+            <span className="audit-req-wrap">
+              <span className="audit-req-star">*</span>
+              <input
+                name="auditor_extra_role"
+                type="text"
+                className="inline-box-input medium-box"
+                value={form.auditor_extra_role}
+                onChange={handleChange}
+              />
+            </span>{" "}
             लाई लेखा परिक्षणको अनुमति…
           </p>
         </div>
@@ -644,12 +830,16 @@ const LekhaParikshyan = () => {
         <div className="bodartha-section">
           <label className="bold-text underline-text">बोधार्थ:</label>
           <div className="bodartha-input-container">
-            <input
-              name="bodartha"
-              className="line-input full-width-input"
-              value={form.bodartha}
-              onChange={handleChange}
-            />
+            <span className="audit-req-wrap audit-req-block">
+              <span className="audit-req-star">*</span>
+              <input
+                name="bodartha"
+                type="text"
+                className="line-input full-width-input"
+                value={form.bodartha}
+                onChange={handleChange}
+              />
+            </span>
           </div>
         </div>
 
@@ -657,17 +847,17 @@ const LekhaParikshyan = () => {
         <div className="signature-section">
           <div className="signature-block">
             <div className="signature-line"></div>
-            <div className="inline-input-wrapper">
-              <span className="input-required-star">*</span>
+            <span className="audit-req-wrap audit-req-block">
+              <span className="audit-req-star">*</span>
               <input
                 name="signer_name"
                 type="text"
-                className="line-input full-width-input"
-                required
+                className="sig-name-input"
                 value={form.signer_name}
                 onChange={handleChange}
+                required
               />
-            </div>
+            </span>
             <select
               name="signer_designation"
               className="designation-select"
@@ -684,22 +874,31 @@ const LekhaParikshyan = () => {
 
         <ApplicantDetailsNp formData={form} handleChange={handleChange} />
 
-        {/* Footer */}
+        {/* Footer — Save (submit) + Save & Print (button) */}
         <div className="form-footer">
           <button
+            type="submit"
             className="save-print-btn"
-            type="button"
-            onClick={handlePrint}
             disabled={loading}
+            style={{ marginRight: 12, backgroundColor: "#2c3e50" }}
           >
-            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
         <div className="copyright-footer">
           © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
         </div>
-      </div>
+      </form>
     </>
   );
 };
