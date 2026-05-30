@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 
 /* ─────────────────────────────────────────────
    INITIAL STATE — matches forms.json columns
@@ -76,23 +78,6 @@ const styles = `
   color: #777;
   font-weight: normal;
 }
-
-.ssvg-form-header-section {
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-}
-.ssvg-header-logo img {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 80px;
-}
-.ssvg-header-text       { display: flex; flex-direction: column; align-items: center; }
-.ssvg-municipality-name { color: #e74c3c; font-size: 2.2rem; margin: 0; font-weight: bold; line-height: 1.2; }
-.ssvg-ward-title        { color: #e74c3c; font-size: 2.5rem; margin: 5px 0; font-weight: bold; }
-.ssvg-address-text,
-.ssvg-province-text     { color: #e74c3c; margin: 0; font-size: 1rem; }
 
 .ssvg-meta-data-row {
   display: flex;
@@ -329,14 +314,10 @@ const styles = `
    COMPONENT
 ───────────────────────────────────────────── */
 const SocialSecurityViaGuardian = () => {
-  const [form, setForm] = useState(initialState);
+  // FIX: was useState — now uses imported useWardForm hook
+  const { form, setForm, handleChange } = useWardForm(initialState);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
 
   const validate = () => {
     if (!form.addressee_line1?.trim()) return "प्राप्तकर्ताको नाम आवश्यक छ";
@@ -425,22 +406,8 @@ const SocialSecurityViaGuardian = () => {
             </span>
           </div>
 
-          {/* ── Header ── */}
-          <div className="ssvg-form-header-section">
-            <div className="ssvg-header-logo">
-              <img src="/nepallogo.svg" alt="Nepal Emblem" />
-            </div>
-            <div className="ssvg-header-text">
-              <h1 className="ssvg-municipality-name">{MUNICIPALITY.name}</h1>
-              <h2 className="ssvg-ward-title">
-                {user?.role === "SUPERADMIN"
-                  ? "सबै वडा कार्यालय"
-                  : `${user?.ward || " "} नं. वडा कार्यालय`}
-              </h2>
-              <p className="ssvg-address-text">{MUNICIPALITY.officeLine}</p>
-              <p className="ssvg-province-text">{MUNICIPALITY.provinceLine}</p>
-            </div>
-          </div>
+          {/* ── Header — shared component replaces inline block ── */}
+          <MunicipalityHeader />
 
           {/* ── Meta ── */}
           <div className="ssvg-meta-data-row">
