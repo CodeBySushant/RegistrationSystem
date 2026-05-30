@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { useWardForm } from "../../hooks/useWardForm";
 import axios from "../../utils/axiosInstance";
+import { useWardForm } from "../../hooks/useWardForm";
 import { MUNICIPALITY } from "../../config/municipalityConfig";
 import { useAuth } from "../../context/AuthContext";
 import ApplicantDetailsNp from "../../components/ApplicantDetailsNp";
+import MunicipalityHeader from "../../components/MunicipalityHeader.jsx";
 
+/* ─────────────────────────────────────────────
+   STYLES — scoped under .valuation-container
+───────────────────────────────────────────── */
 const styles = `
   /* --- Main Container --- */
   .valuation-container {
@@ -41,48 +45,6 @@ const styles = `
     font-weight: normal;
   }
 
-  /* --- Header Section --- */
-  .valuation-container .form-header-section {
-    text-align: center;
-    margin-bottom: 20px;
-    position: relative;
-  }
-
-  .valuation-container .header-logo img {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80px;
-  }
-
-  .valuation-container .header-text {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .valuation-container .municipality-name {
-    color: #e74c3c;
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: bold;
-    line-height: 1.2;
-  }
-
-  .valuation-container .ward-title {
-    color: #e74c3c;
-    font-size: 2.5rem;
-    margin: 5px 0;
-    font-weight: bold;
-  }
-
-  .valuation-container .address-text,
-  .valuation-container .province-text {
-    color: #e74c3c;
-    margin: 0;
-    font-size: 1rem;
-  }
-
   /* --- Meta Data --- */
   .valuation-container .meta-data-row {
     display: flex;
@@ -96,17 +58,19 @@ const styles = `
   .valuation-container .meta-left p,
   .valuation-container .meta-right p { margin: 5px 0; }
 
-  .valuation-container .bold-text { font-weight: bold; }
-
+  /* Meta input — was transparent; now white bg + border */
   .valuation-container .dotted-input {
-    border: none;
-    border-bottom: 1px dotted #000;
-    background: transparent;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 3px;
     outline: none;
+    padding: 4px 8px;
     font-family: 'Kalimati', 'Kokila', sans-serif;
+    font-size: 1rem;
   }
 
   .valuation-container .small-input { width: 120px; }
+  .valuation-container .date-input  { width: 170px; }
 
   /* --- Subject --- */
   .valuation-container .subject-section {
@@ -117,6 +81,7 @@ const styles = `
   }
 
   .valuation-container .underline-text { text-decoration: underline; }
+  .valuation-container .bold-text { font-weight: bold; }
 
   /* --- Fieldsets --- */
   .valuation-container fieldset {
@@ -137,7 +102,7 @@ const styles = `
   /* --- Grid Row --- */
   .valuation-container .grid-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 12px 20px;
     margin-bottom: 14px;
     align-items: center;
@@ -169,16 +134,6 @@ const styles = `
   }
 
   /* --- Table Section --- */
-  .valuation-container .tapashil-section {
-    margin-top: 20px;
-  }
-
-  .valuation-container .tapashil-section h4 {
-    text-decoration: underline;
-    margin-bottom: 10px;
-    font-size: 1rem;
-  }
-
   .valuation-container .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -204,6 +159,7 @@ const styles = `
   .valuation-container .valuation-table td {
     border: 1px solid #777;
     padding: 4px;
+    vertical-align: middle;
   }
 
   .valuation-container .table-input {
@@ -240,28 +196,56 @@ const styles = `
   .valuation-container .signature-section {
     display: flex;
     justify-content: flex-end;
-    margin-top: 40px;
-    margin-bottom: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
   }
 
   .valuation-container .signature-block {
-    width: 220px;
+    width: 240px;
     text-align: center;
   }
 
   .valuation-container .signature-line {
     border-bottom: 1px solid #ccc;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     width: 100%;
   }
 
-  .valuation-container .inline-input-wrapper {
+  /* Signer name — was transparent; now white bg + border + margin */
+  .valuation-container .sig-name-input {
+    width: 100%;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 3px;
+    padding: 6px 10px;
+    outline: none;
+    box-sizing: border-box;
+    font-family: 'Kalimati', 'Kokila', sans-serif;
+    font-size: 1rem;
+  }
+
+  .valuation-container .designation-select {
+    width: 100%;
+    margin-top: 4px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 3px;
+    font-family: 'Kalimati', 'Kokila', sans-serif;
+    font-size: 1rem;
+  }
+
+  /* --- Red * wrapper --- */
+  .valuation-container .val-req-wrap {
     position: relative;
     display: inline-block;
+  }
+  .valuation-container .val-req-wrap.val-req-block {
+    display: block;
     width: 100%;
   }
-
-  .valuation-container .input-required-star {
+  .valuation-container .val-req-star {
     position: absolute;
     left: 6px;
     top: 50%;
@@ -270,71 +254,33 @@ const styles = `
     font-weight: bold;
     pointer-events: none;
     font-size: 14px;
+    z-index: 1;
   }
+  .valuation-container .val-req-wrap input { padding-left: 18px; }
 
-  .valuation-container .sig-name-input {
-    width: 100%;
-    border: none;
-    border-bottom: 1px solid #000;
-    outline: none;
-    background: transparent;
-    padding-left: 18px;
-    font-family: 'Kalimati', 'Kokila', sans-serif;
-    box-sizing: border-box;
-  }
-
-  .valuation-container .designation-select {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    background: #fff;
-    font-family: 'Kalimati', 'Kokila', sans-serif;
-    margin-top: 6px;
-  }
-
-  /* --- Applicant Details Box --- */
-  .valuation-container .applicant-details-box {
-    border: 1px solid #ddd;
-    padding: 20px;
-    background-color: rgba(255,255,255,0.4);
+  /* --- Notes section (standalone) --- */
+  .valuation-container .notes-section {
     margin-top: 20px;
-    border-radius: 4px;
+    margin-bottom: 20px;
   }
-
-  .valuation-container .applicant-details-box h3 {
-    color: #777;
-    font-size: 1.1rem;
-    margin: 0 0 15px 0;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-  }
-
-  .valuation-container .applicant-details-box .details-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 18px !important;
-  }
-
-  .valuation-container .detail-group { display: flex; flex-direction: column; }
-
-  .valuation-container .detail-group label {
-    font-size: 0.9rem;
-    margin-bottom: 5px;
+  .valuation-container .notes-section label {
+    display: block;
     font-weight: bold;
     color: #333;
+    margin-bottom: 6px;
   }
-
-  .valuation-container .detail-input {
-    border: 1px solid #ddd;
-    padding: 8px;
-    border-radius: 4px;
-    max-width: 400px;
+  .valuation-container .notes-section textarea {
     width: 100%;
-    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    padding: 8px;
     font-family: 'Kalimati', 'Kokila', sans-serif;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 80px;
   }
-
-  .valuation-container .bg-gray { background-color: #eef2f5; }
 
   /* --- Footer --- */
   .valuation-container .form-footer { text-align: center; margin-top: 40px; }
@@ -350,7 +296,7 @@ const styles = `
     font-family: 'Kalimati', 'Kokila', sans-serif;
   }
 
-  .valuation-container .save-print-btn:hover { background-color: #1a252f; }
+  .valuation-container .save-print-btn:hover:not(:disabled) { background-color: #1a252f; }
   .valuation-container .save-print-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .valuation-container .copyright-footer {
@@ -364,57 +310,20 @@ const styles = `
 
   /* ================= RESPONSIVE ================= */
   @media (max-width: 768px) {
-    .valuation-container {
-      padding: 20px 16px;
-    }
-
-    .valuation-container .header-logo img {
-      position: static;
-      display: block;
-      margin: 0 auto 10px;
-    }
-
-    .valuation-container .municipality-name { font-size: 1.5rem; }
-    .valuation-container .ward-title { font-size: 1.6rem; }
-
-    .valuation-container .grid-row {
-      grid-template-columns: 1fr;
-    }
-
-    .valuation-container .signature-section {
-      justify-content: center;
-    }
-
-    .valuation-container .meta-data-row {
-      flex-direction: column;
-    }
-  }
-
-  /* ================= PRINT STYLES ================= */
-  @media print {
-    body * { visibility: hidden; }
-
-    .valuation-container,
-    .valuation-container * { visibility: visible; }
-
-    .valuation-container {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 0;
-      background: white;
-    }
-
-    .valuation-container .form-footer { display: none; }
-    .valuation-container .top-bar-title { display: none; }
+    .valuation-container { padding: 20px 16px; }
+    .valuation-container .grid-row { grid-template-columns: 1fr; }
+    .valuation-container .signature-section { justify-content: center; }
+    .valuation-container .meta-data-row { flex-direction: column; }
+    .valuation-container .small-input,
+    .valuation-container .date-input { width: 100% !important; }
+    .valuation-container .form-footer { display: flex; flex-direction: column; gap: 10px; }
+    .valuation-container .form-footer button { width: 100%; margin: 0 !important; }
   }
 `;
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
+/* ─────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────── */
 const emptyRow = () => ({
   owner_name: "",
   owner_sabik: "",
@@ -426,19 +335,22 @@ const emptyRow = () => ({
 });
 
 const initialState = {
-  // Meta
-  letter_no: "",
+  // Meta — defaults + ne_sa added for consistency with other forms
+  patra_sankhya: "२०८२/८३",
   chalani_no: "",
-  date: "",
+  issue_date: new Date().toISOString().slice(0, 10),
+  ne_sa: "",
 
-  // Main details
+  // Former location
   former_area: "",
   former_vdc_mun: "",
   former_ward: "",
-  current_municipality: MUNICIPALITY.name,
-  current_ward: MUNICIPALITY.wardNumber,
 
-  // Person
+  // Current location (defaults to current municipality)
+  current_municipality: MUNICIPALITY?.name || "",
+  current_ward: MUNICIPALITY?.wardNumber || "",
+
+  // Person / application
   person_title: "",
   person_name: "",
   application_to: "",
@@ -458,21 +370,16 @@ const initialState = {
   notes: "",
 };
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
+/* ─────────────────────────────────────────────
+   COMPONENT
+───────────────────────────────────────────── */
 const FixedAssetValuation = () => {
-  const [form, setForm] = useState(initialState);
+  const { form, setForm, handleChange } = useWardForm(initialState);
   const [rows, setRows] = useState([emptyRow()]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  // Generic form field updater
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Table row updaters
+  /* ── Table row handlers ── */
   const updateRow = (index, field, value) => {
     setRows((prev) =>
       prev.map((r, i) => (i === index ? { ...r, [field]: value } : r))
@@ -486,61 +393,219 @@ const FixedAssetValuation = () => {
     setRows((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Build full payload including rows
-  const buildPayload = () => ({ ...form, tapashil_rows: rows });
+  /* ── Single save function — one POST, optionally print after ── */
+  const handleSave = async (shouldPrint = false) => {
+    if (!form.person_name?.trim()) {
+      alert("निवेदकको नाम आवश्यक छ");
+      return;
+    }
+    if (!form.signature_name?.trim()) {
+      alert("हस्ताक्षरकर्ताको नाम आवश्यक छ");
+      return;
+    }
+    if (!rows.length || !rows[0].owner_name?.trim()) {
+      alert("कम्तीमा एक जग्गा धनीको विवरण आवश्यक छ");
+      return;
+    }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("/api/forms/fixed-asset-valuation", buildPayload());
+      const payload = { ...form, tapashil_rows: rows };
+      const res = await axios.post("/api/forms/fixed-asset-valuation", payload);
       if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
+        if (shouldPrint) {
+          handleCleanPrint();
+        } else {
+          alert("सफलतापूर्वक सुरक्षित भयो! ID: " + res.data.id);
+        }
         setForm(initialState);
         setRows([emptyRow()]);
-      } else {
-        alert("Unexpected response: " + JSON.stringify(res.data));
       }
     } catch (err) {
-      console.error("Submit error:", err.response || err.message || err);
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
         err.message ||
         "Submission failed";
-      alert("Error: " + msg);
+      alert("त्रुटि: " + msg);
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePrint = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post("/api/forms/fixed-asset-valuation", buildPayload());
-      if (res.status === 201) {
-        alert("Form submitted successfully! ID: " + res.data.id);
-        window.print();
-        setForm(initialState);
-        setRows([emptyRow()]);
-      }
-    } catch (err) {
-      console.error(err);
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        err.message ||
-        "Submission failed";
-      alert("Error: " + msg);
-    } finally {
-      setLoading(false);
-    }
+  /* ── Clean print — isolated window ── */
+  const handleCleanPrint = () => {
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const tableRowsHtml = rows
+      .map(
+        (r, i) => `
+        <tr>
+          <td style="border:1px solid #555; padding:6px; text-align:center;">${i + 1}</td>
+          <td style="border:1px solid #555; padding:6px;">${r.owner_name || ""}</td>
+          <td style="border:1px solid #555; padding:6px;">${r.owner_sabik || ""}</td>
+          <td style="border:1px solid #555; padding:6px; text-align:center;">${r.owner_ward || ""}</td>
+          <td style="border:1px solid #555; padding:6px;">${r.owner_kitta_no || ""}</td>
+          <td style="border:1px solid #555; padding:6px;">${r.owner_area || ""}</td>
+          <td style="border:1px solid #555; padding:6px;">${r.owner_rate || ""}</td>
+          <td style="border:1px solid #555; padding:6px;">${r.owner_remarks || ""}</td>
+        </tr>`
+      )
+      .join("");
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>अचल सम्पत्ति मुल्यांकन</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.7;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .meta { display: flex; justify-content: space-between; margin: 16px 0; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          /* value spans size to content — small values stay tight, long values don't merge */
+          .value { font-weight: bold; padding: 0 4px; white-space: nowrap; }
+          .section-box { border: 1px solid #999; padding: 14px; margin-top: 16px; border-radius: 3px; }
+          .section-title { font-weight: bold; text-decoration: underline; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; font-size: 11pt; }
+          .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 30px;
+            row-gap: 6px;
+          }
+          .field-row { display: flex; font-size: 10pt; margin-bottom: 4px; }
+          .field-label { min-width: 140px; font-weight: 600; }
+          .field-val { flex: 1; }
+          .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 10pt; }
+          .data-table th { background: #e0e0e0; border: 1px solid #555; padding: 6px; text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .signature { display: flex; justify-content: flex-end; margin-top: 40px; margin-bottom: 24px; }
+          .sig-block { width: 200px; text-align: center; }
+          .sig-line { border-top: 1px solid #000; padding-top: 6px; margin-bottom: 4px; }
+          .notes-box { margin-top: 16px; padding: 10px; border: 1px solid #ddd; border-radius: 3px; min-height: 40px; font-size: 10pt; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine}</div>
+        </div>
+
+        <div class="meta">
+          <div>
+            <div>पत्र संख्या : <span class="value">${form.patra_sankhya || ""}</span></div>
+            <div>चलानी नं. : <span class="value">${form.chalani_no || ""}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div>मिति : <span class="value">${form.issue_date || ""}</span></div>
+            <div>ने.सं : <span class="value">${form.ne_sa || ""}</span></div>
+          </div>
+        </div>
+
+        <div class="subject">विषय: अचल सम्पत्ति मुल्यांकन सम्बन्धमा।</div>
+
+        <div class="section-box">
+          <div class="section-title">मुख्य विवरण</div>
+          <div class="field-grid">
+            <div class="field-row"><span class="field-label">साविक जिल्ला/क्षेत्र:</span><span class="field-val">${form.former_area || ""}</span></div>
+            <div class="field-row"><span class="field-label">साविक गा.वि.स./नगर:</span><span class="field-val">${form.former_vdc_mun || ""}</span></div>
+            <div class="field-row"><span class="field-label">साविक वडा नं.:</span><span class="field-val">${form.former_ward || ""}</span></div>
+            <div class="field-row"><span class="field-label">हालको नगरपालिका:</span><span class="field-val">${form.current_municipality || ""}</span></div>
+            <div class="field-row"><span class="field-label">हालको वडा नं.:</span><span class="field-val">${form.current_ward || ""}</span></div>
+            <div class="field-row"><span class="field-label">निवेदक पद:</span><span class="field-val">${form.person_title || ""}</span></div>
+            <div class="field-row"><span class="field-label">निवेदकको नाम:</span><span class="field-val">${form.person_name || ""}</span></div>
+            <div class="field-row"><span class="field-label">सम्बोधन:</span><span class="field-val">${form.application_to || ""}</span></div>
+            <div class="field-row"><span class="field-label">सम्बोधन वडा:</span><span class="field-val">${form.application_ward || ""}</span></div>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <div class="section-title">तपशीिल — जमीन विवरण</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:5%">#</th>
+                <th style="width:18%">जग्गा धनी</th>
+                <th style="width:15%">साविक</th>
+                <th style="width:7%">वडा</th>
+                <th style="width:12%">कित्ता नं.</th>
+                <th style="width:12%">क्षेत्रफल</th>
+                <th style="width:14%">दर/प्रति कठ्ठा</th>
+                <th style="width:17%">कैफियत</th>
+              </tr>
+            </thead>
+            <tbody>${tableRowsHtml}</tbody>
+          </table>
+        </div>
+
+        <div class="signature">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <div>${form.signature_name || ""}</div>
+            <div>${form.signer_designation || ""}</div>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <div class="section-title">निवेदकको विवरण</div>
+          <div class="field-row"><span class="field-label">नाम:</span><span class="field-val">${form.applicant_name || ""}</span></div>
+          <div class="field-row"><span class="field-label">ठेगाना:</span><span class="field-val">${form.applicant_address || ""}</span></div>
+          <div class="field-row"><span class="field-label">नागरिकता नं.:</span><span class="field-val">${form.applicant_citizenship_no || ""}</span></div>
+          <div class="field-row"><span class="field-label">फोन:</span><span class="field-val">${form.applicant_phone || ""}</span></div>
+        </div>
+
+        ${form.notes?.trim() ? `
+        <div class="section-box">
+          <div class="section-title">कैफियत / नोट्स</div>
+          <div class="notes-box">${form.notes}</div>
+        </div>` : ""}
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
+  /* ─────────────────────────────────────────────
+     Render
+  ───────────────────────────────────────────── */
   return (
     <>
       <style>{styles}</style>
-      <div className="valuation-container">
+
+      <form
+        className="valuation-container"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave(false);
+        }}
+      >
         {/* --- Top Bar --- */}
         <div className="top-bar-title">
           अचल सम्पत्ति मुल्यांकन
@@ -549,61 +614,73 @@ const FixedAssetValuation = () => {
           </span>
         </div>
 
-        {/* --- Header --- */}
-        <div className="form-header-section">
-          <div className="header-logo">
-            <img src="/nepallogo.svg" alt="Nepal Emblem" />
-          </div>
-          <div className="header-text">
-            <h1 className="municipality-name">{MUNICIPALITY.name}</h1>
-            <h2 className="ward-title">
-              वडा नं. {MUNICIPALITY.wardNumber} वडा कार्यालय
-            </h2>
-            <p className="address-text">{MUNICIPALITY.officeLine}</p>
-            <p className="province-text">{MUNICIPALITY.provinceLine}</p>
-          </div>
-        </div>
+        {/* --- Header (shared component replaces inline block) --- */}
+        <MunicipalityHeader />
 
-        {/* --- Meta Data --- */}
+        {/* --- Meta Data — all hardcoded values now editable, ne_sa added --- */}
         <div className="meta-data-row">
           <div className="meta-left">
             <p>
               पत्र संख्या :{" "}
-              <input
-                name="letter_no"
-                type="text"
-                className="dotted-input small-input"
-                value={form.letter_no}
-                onChange={handleChange}
-              />
+              <span className="val-req-wrap">
+                <span className="val-req-star">*</span>
+                <input
+                  name="patra_sankhya"
+                  type="text"
+                  className="dotted-input small-input"
+                  value={form.patra_sankhya}
+                  onChange={handleChange}
+                />
+              </span>
             </p>
             <p>
               चलानी नं. :{" "}
-              <input
-                name="chalani_no"
-                type="text"
-                className="dotted-input small-input"
-                value={form.chalani_no}
-                onChange={handleChange}
-              />
+              <span className="val-req-wrap">
+                <span className="val-req-star">*</span>
+                <input
+                  name="chalani_no"
+                  type="text"
+                  className="dotted-input small-input"
+                  placeholder="जस्तै: ००१"
+                  value={form.chalani_no}
+                  onChange={handleChange}
+                />
+              </span>
             </p>
           </div>
           <div className="meta-right">
             <p>
               मिति :{" "}
-              <input
-                name="date"
-                type="text"
-                className="dotted-input small-input"
-                value={form.date}
-                onChange={handleChange}
-                placeholder="२०८२-०८-०६"
-              />
+              <span className="val-req-wrap">
+                <span className="val-req-star">*</span>
+                <input
+                  name="issue_date"
+                  type="date"
+                  className="dotted-input date-input"
+                  value={form.issue_date || ""}
+                  onChange={handleChange}
+                />
+              </span>
+            </p>
+            <p>
+              ने.सं :{" "}
+              <span className="val-req-wrap">
+                <span className="val-req-star">*</span>
+                <input
+                  name="ne_sa"
+                  type="text"
+                  className="dotted-input"
+                  style={{ width: "220px" }}
+                  placeholder="जस्तै: 1146 थिंलाथ्व, 2 शनिवार"
+                  value={form.ne_sa}
+                  onChange={handleChange}
+                />
+              </span>
             </p>
           </div>
         </div>
 
-        {/* --- Subject --- */}
+        {/* --- Subject (hardcoded) --- */}
         <div className="subject-section">
           <p>
             विषय:{" "}
@@ -619,65 +696,93 @@ const FixedAssetValuation = () => {
 
           <div className="grid-row">
             <label>साविक जिल्ला / क्षेत्र</label>
-            <input
-              name="former_area"
-              value={form.former_area}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="former_area"
+                value={form.former_area}
+                onChange={handleChange}
+              />
+            </span>
             <label>साविक (गा.वि.स./नगर)</label>
-            <input
-              name="former_vdc_mun"
-              value={form.former_vdc_mun}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="former_vdc_mun"
+                value={form.former_vdc_mun}
+                onChange={handleChange}
+              />
+            </span>
             <label>साविक वडा नं.</label>
-            <input
-              name="former_ward"
-              value={form.former_ward}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="former_ward"
+                value={form.former_ward}
+                onChange={handleChange}
+              />
+            </span>
           </div>
 
           <div className="grid-row">
             <label>हालको नगरपालिका</label>
-            <input
-              name="current_municipality"
-              value={form.current_municipality}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="current_municipality"
+                value={form.current_municipality}
+                onChange={handleChange}
+              />
+            </span>
             <label>हालको वडा नं.</label>
-            <input
-              name="current_ward"
-              value={form.current_ward}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="current_ward"
+                value={form.current_ward}
+                onChange={handleChange}
+              />
+            </span>
           </div>
 
           <div className="grid-row">
             <label>निवेदक पद</label>
-            <input
-              name="person_title"
-              value={form.person_title}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="person_title"
+                value={form.person_title}
+                onChange={handleChange}
+              />
+            </span>
             <label>निवेदकको नाम</label>
-            <input
-              name="person_name"
-              value={form.person_name}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="person_name"
+                value={form.person_name}
+                onChange={handleChange}
+                required
+              />
+            </span>
             <label>सम्बोधन (to)</label>
-            <input
-              name="application_to"
-              value={form.application_to}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="application_to"
+                value={form.application_to}
+                onChange={handleChange}
+              />
+            </span>
             <label>सम्बोधन वडा</label>
-            <input
-              name="application_ward"
-              value={form.application_ward}
-              onChange={handleChange}
-            />
+            <span className="val-req-wrap val-req-block">
+              <span className="val-req-star">*</span>
+              <input
+                name="application_ward"
+                value={form.application_ward}
+                onChange={handleChange}
+              />
+            </span>
           </div>
         </fieldset>
 
@@ -688,66 +793,81 @@ const FixedAssetValuation = () => {
             <table className="valuation-table">
               <thead>
                 <tr>
-                  <th>#</th>
+                  <th style={{ width: "30px" }}>#</th>
                   <th>जग्गा धनी</th>
                   <th>साविक</th>
-                  <th>वडा</th>
-                  <th>कित्ता नं.</th>
-                  <th>क्षेत्रफल</th>
-                  <th>दर/प्रति कठ्ठा</th>
+                  <th style={{ width: "60px" }}>वडा</th>
+                  <th style={{ width: "90px" }}>कित्ता नं.</th>
+                  <th style={{ width: "100px" }}>क्षेत्रफल</th>
+                  <th style={{ width: "110px" }}>दर/प्रति कठ्ठा</th>
                   <th>कैफियत</th>
-                  <th>कार्य</th>
+                  <th style={{ width: "80px" }}>कार्य</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r, i) => (
                   <tr key={i}>
-                    <td style={{ textAlign: "center", width: "30px" }}>{i + 1}</td>
+                    <td style={{ textAlign: "center" }}>{i + 1}</td>
                     <td>
-                      <input
-                        className="table-input"
-                        value={r.owner_name}
-                        onChange={(e) => updateRow(i, "owner_name", e.target.value)}
-                      />
+                      <span className="val-req-wrap val-req-block">
+                        <span className="val-req-star">*</span>
+                        <input
+                          className="table-input"
+                          value={r.owner_name}
+                          onChange={(e) => updateRow(i, "owner_name", e.target.value)}
+                          required
+                        />
+                      </span>
                     </td>
                     <td>
-                      <input
-                        className="table-input"
-                        value={r.owner_sabik}
-                        onChange={(e) => updateRow(i, "owner_sabik", e.target.value)}
-                      />
+                      <span className="val-req-wrap val-req-block">
+                        <span className="val-req-star">*</span>
+                        <input
+                          className="table-input"
+                          value={r.owner_sabik}
+                          onChange={(e) => updateRow(i, "owner_sabik", e.target.value)}
+                        />
+                      </span>
                     </td>
                     <td>
-                      <input
-                        className="table-input"
-                        style={{ width: "50px" }}
-                        value={r.owner_ward}
-                        onChange={(e) => updateRow(i, "owner_ward", e.target.value)}
-                      />
+                      <span className="val-req-wrap val-req-block">
+                        <span className="val-req-star">*</span>
+                        <input
+                          className="table-input"
+                          value={r.owner_ward}
+                          onChange={(e) => updateRow(i, "owner_ward", e.target.value)}
+                        />
+                      </span>
                     </td>
                     <td>
-                      <input
-                        className="table-input"
-                        style={{ width: "70px" }}
-                        value={r.owner_kitta_no}
-                        onChange={(e) => updateRow(i, "owner_kitta_no", e.target.value)}
-                      />
+                      <span className="val-req-wrap val-req-block">
+                        <span className="val-req-star">*</span>
+                        <input
+                          className="table-input"
+                          value={r.owner_kitta_no}
+                          onChange={(e) => updateRow(i, "owner_kitta_no", e.target.value)}
+                        />
+                      </span>
                     </td>
                     <td>
-                      <input
-                        className="table-input"
-                        style={{ width: "80px" }}
-                        value={r.owner_area}
-                        onChange={(e) => updateRow(i, "owner_area", e.target.value)}
-                      />
+                      <span className="val-req-wrap val-req-block">
+                        <span className="val-req-star">*</span>
+                        <input
+                          className="table-input"
+                          value={r.owner_area}
+                          onChange={(e) => updateRow(i, "owner_area", e.target.value)}
+                        />
+                      </span>
                     </td>
                     <td>
-                      <input
-                        className="table-input"
-                        style={{ width: "90px" }}
-                        value={r.owner_rate}
-                        onChange={(e) => updateRow(i, "owner_rate", e.target.value)}
-                      />
+                      <span className="val-req-wrap val-req-block">
+                        <span className="val-req-star">*</span>
+                        <input
+                          className="table-input"
+                          value={r.owner_rate}
+                          onChange={(e) => updateRow(i, "owner_rate", e.target.value)}
+                        />
+                      </span>
                     </td>
                     <td>
                       <input
@@ -762,6 +882,7 @@ const FixedAssetValuation = () => {
                         className="row-btn remove"
                         onClick={() => removeRow(i)}
                         disabled={rows.length === 1}
+                        title="पङ्क्ति हटाउनुहोस्"
                       >
                         −
                       </button>
@@ -770,6 +891,7 @@ const FixedAssetValuation = () => {
                           type="button"
                           className="row-btn add"
                           onClick={addRow}
+                          title="पङ्क्ति थप्नुहोस्"
                         >
                           +
                         </button>
@@ -782,16 +904,14 @@ const FixedAssetValuation = () => {
           </div>
         </fieldset>
 
-        {/* --- Signature & Applicant Fieldset --- */}
+        {/* --- Signature Fieldset (own fieldset, no longer merged with applicant) --- */}
         <fieldset>
-          <legend>हस्ताक्षर / निवेदक विवरण</legend>
-
-          {/* Signature block */}
+          <legend>हस्ताक्षर</legend>
           <div className="signature-section">
             <div className="signature-block">
               <div className="signature-line"></div>
-              <div className="inline-input-wrapper">
-                <span className="input-required-star">*</span>
+              <span className="val-req-wrap val-req-block">
+                <span className="val-req-star">*</span>
                 <input
                   name="signature_name"
                   type="text"
@@ -800,7 +920,7 @@ const FixedAssetValuation = () => {
                   value={form.signature_name}
                   onChange={handleChange}
                 />
-              </div>
+              </span>
               <select
                 name="signer_designation"
                 className="designation-select"
@@ -814,36 +934,47 @@ const FixedAssetValuation = () => {
               </select>
             </div>
           </div>
-
-          <ApplicantDetailsNp formData={form} handleChange={handleChange} />
-
-          {/* Notes */}
-          <div className="grid-row" style={{ marginTop: "16px" }}>
-            <label>कैफियत / नोट्स</label>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-            />
-          </div>
         </fieldset>
 
-        {/* --- Footer Actions --- */}
+        {/* --- Applicant Details (own container — no longer inside fieldset) --- */}
+        <ApplicantDetailsNp formData={form} handleChange={handleChange} />
+
+        {/* --- Notes (standalone section) --- */}
+        <div className="notes-section">
+          <label>कैफियत / नोट्स</label>
+          <textarea
+            name="notes"
+            value={form.notes}
+            onChange={handleChange}
+            placeholder="कुनै अतिरिक्त जानकारी..."
+          />
+        </div>
+
+        {/* --- Footer buttons --- */}
         <div className="form-footer">
           <button
+            type="submit"
             className="save-print-btn"
-            type="button"
-            onClick={handlePrint}
             disabled={loading}
+            style={{ marginRight: 12, backgroundColor: "#2c3e50" }}
           >
-            {loading ? "पठाइँ हुँदैछ..." : "रेकर्ड सेभ र प्रिन्ट गर्नुहोस्"}
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ गर्नुहोस्"}
+          </button>
+          <button
+            type="button"
+            className="save-print-btn"
+            disabled={loading}
+            onClick={() => handleSave(true)}
+            style={{ backgroundColor: "#1a6b3a" }}
+          >
+            {loading ? "पठाइँ हुँदैछ..." : "सेभ र प्रिन्ट गर्नुहोस्"}
           </button>
         </div>
 
         <div className="copyright-footer">
           © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
         </div>
-      </div>
+      </form>
     </>
   );
 };
