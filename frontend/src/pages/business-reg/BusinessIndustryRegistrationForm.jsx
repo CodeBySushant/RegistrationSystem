@@ -439,7 +439,7 @@ const BusinessIndustryRegistrationForm = () => {
           .section-label { font-weight: 700; margin: 12px 0 6px; }
           .line { margin-bottom: 6px; font-size: 11pt; }
           /* value sizes to content — small values stay tight, long ones don't clip/merge */
-          .value { font-weight: bold; padding: 0 4px; border-bottom: 1px solid #555; }
+          .value { font-weight: bold; padding: 0 4px; }
           .cap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin: 8px 0 16px; }
           .cap-row { font-size: 11pt; }
           .kaifiyat { margin-top: 12px; }
