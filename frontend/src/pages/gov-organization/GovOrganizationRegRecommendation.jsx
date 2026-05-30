@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import PrintPreviewModal from "../../components/PrintPreviewModal";
 import axios from "../../utils/axiosInstance";
+import { MUNICIPALITY } from "../../config/municipalityConfig";
+import { useAuth } from "../../context/AuthContext";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Styles (merged from GovOrganizationRegRecommendation.css)
-   All classes prefixed with "gorr-" to avoid global collisions.
-   Global * and body rules scoped into .gorr-page to avoid leaking.
+   Styles
 ───────────────────────────────────────────────────────────────────────────── */
 const STYLES = `
   /* ── Page ── */
@@ -82,7 +81,7 @@ const STYLES = `
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
-    min-width: 960px;
+    min-width: 1040px;
   }
   .gorr-table thead {
     background-color: #192236;
@@ -110,68 +109,49 @@ const STYLES = `
     text-overflow: ellipsis;
   }
 
-  /* ── Pending badge ── */
-  .gorr-pending-badge {
-    display: inline-block;
-    background-color: #856404;
-    color: #fff;
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-  }
-
-  /* ── Eye button ── */
-  .gorr-eye-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
+  /* ── Status icon (pending) ── */
+  .gorr-status-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: #fff3cd;
+    color: #856404;
+    font-size: 14px;
+    border: 1px solid #ffe69c;
   }
-  .gorr-eye-btn:hover { opacity: 0.65; }
 
-  /* ── Action buttons ── */
+  /* ── Action cell — one row of evenly-spaced buttons ── */
   .gorr-action-cell {
     display: flex;
     justify-content: center;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
-  .gorr-status-btn {
-    width: 26px;
-    height: 26px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    gap: 6px;
+    flex-wrap: nowrap;
   }
-  .gorr-status-btn.ok     { background-color: #1fa34a; color: #ffffff; }
-  .gorr-status-btn.cancel { background-color: #c82333; color: #ffffff; }
-  .gorr-status-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .gorr-edit-btn {
-    width: 26px;
-    height: 26px;
-    border-radius: 4px;
+  .gorr-act-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
     border: none;
     cursor: pointer;
     font-size: 15px;
-    background-color: #005f9e;
-    color: #fff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    color: #fff;
+    transition: filter 0.15s, opacity 0.15s;
   }
-  .gorr-edit-btn:hover { background-color: #004a7c; }
+  .gorr-act-btn:hover:not(:disabled) { filter: brightness(0.9); }
+  .gorr-act-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .gorr-act-btn.view   { background-color: #6f42c1; }
+  .gorr-act-btn.print  { background-color: #0a7d5a; }
+  .gorr-act-btn.ok     { background-color: #1fa34a; }
+  .gorr-act-btn.cancel { background-color: #c82333; }
+  .gorr-act-btn.edit   { background-color: #005f9e; }
 
   /* ── State messages ── */
   .gorr-state-msg {
@@ -188,8 +168,7 @@ const STYLES = `
     padding: 12px 24px;
     flex-wrap: wrap;
   }
-  .gorr-export-btn,
-  .gorr-print-btn {
+  .gorr-export-btn {
     padding: 7px 16px;
     border: none;
     border-radius: 3px;
@@ -197,11 +176,10 @@ const STYLES = `
     font-size: 13px;
     font-family: inherit;
     transition: background 0.15s;
+    background-color: #28a745;
+    color: #fff;
   }
-  .gorr-export-btn { background-color: #28a745; color: #fff; }
   .gorr-export-btn:hover { background-color: #218838; }
-  .gorr-print-btn  { background-color: #6c757d; color: #fff; }
-  .gorr-print-btn:hover  { background-color: #5a6268; }
 
   /* ── Footer ── */
   .gorr-footer {
@@ -303,7 +281,6 @@ const STYLES = `
     .gorr-search-btn { width: 100%; padding: 10px; }
     .gorr-table-wrapper { margin: 10px 8px 0; }
 
-    /* Stack rows on mobile */
     .gorr-table,
     .gorr-table thead,
     .gorr-table tbody,
@@ -342,12 +319,11 @@ const STYLES = `
     .gorr-bottom-bar { padding: 12px 8px; }
   }
 
-  /* ── Print ── */
+  /* ── Print (per-row print opens its own window) ── */
   @media print {
     .gorr-filter-bar,
     .gorr-bottom-bar,
     .gorr-action-cell,
-    .gorr-eye-btn,
     .gorr-footer { display: none !important; }
     .gorr-table { font-size: 11px; min-width: unset; }
   }
@@ -383,6 +359,8 @@ const EDITABLE_FIELDS = [
    Component
 ───────────────────────────────────────────────────────────────────────────── */
 const GovOrganizationRegRecommendation = () => {
+  const { user } = useAuth();
+
   const [rows, setRows]               = useState([]);
   const [filtered, setFiltered]       = useState([]);
   const [loading, setLoading]         = useState(false);
@@ -396,9 +374,6 @@ const GovOrganizationRegRecommendation = () => {
   const [editing, setEditing]   = useState(false);
   const [editRow, setEditRow]   = useState(null);
   const [saving, setSaving]     = useState(false);
-
-  // Print preview
-  const [previewRow, setPreviewRow] = useState(null);
 
   /* ── Fetch pending rows only ── */
   const fetchRows = async () => {
@@ -460,7 +435,6 @@ const GovOrganizationRegRecommendation = () => {
     }
     setSaving(true);
     try {
-      // Convert empty strings → null before sending to backend
       const payload = {};
       EDITABLE_FIELDS.forEach((k) => { payload[k] = editRow[k] === "" ? null : editRow[k]; });
 
@@ -469,7 +443,6 @@ const GovOrganizationRegRecommendation = () => {
         payload
       );
 
-      // Update both lists in state without a full refetch
       const updater = (prev) =>
         prev.map((r) => (r.id === editRow.id ? { ...r, ...payload } : r));
       setRows(updater);
@@ -504,34 +477,192 @@ const GovOrganizationRegRecommendation = () => {
     }
   };
 
-  /* ── CSV export with UTF-8 BOM for Excel ── */
+  /* ── Per-row detailed print — same full letter layout as the entry form ── */
+  const handleRowPrint = (row) => {
+    if (!row) return;
+
+    const wardTitle =
+      user?.role === "SUPERADMIN"
+        ? "सबै वडा कार्यालय"
+        : `${user?.ward || MUNICIPALITY.wardNumber || ""} नं. वडा कार्यालय`;
+
+    const v = (val) => (val === null || val === undefined ? "" : String(val));
+    const dateOnly = row.date ? v(row.date).slice(0, 10) : "";
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>सहकारी संस्था दर्ता सिफारिस</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Kalimati', 'Noto Sans Devanagari', sans-serif;
+            color: #000;
+            background: white;
+            padding: 15mm 20mm;
+            font-size: 11pt;
+            line-height: 1.8;
+          }
+          .header { text-align: center; margin-bottom: 20px; position: relative; min-height: 90px; }
+          .logo { position: absolute; left: 0; top: 0; width: 70px; }
+          .mun-name { color: #c0392b; font-size: 22pt; font-weight: 700; }
+          .ward-title { color: #c0392b; font-size: 18pt; font-weight: 700; margin: 4px 0; }
+          .addr { color: #c0392b; font-size: 10pt; }
+          .sub-header { text-align: center; font-size: 12pt; margin: 16px 0; line-height: 1.6; border-top: 1px solid #ccc; padding-top: 12px; }
+          .meta { display: flex; justify-content: space-between; align-items: flex-start; margin: 12px 0; font-size: 11pt; line-height: 1.8; }
+          .meta-left { text-align: left; }
+          .meta-right { text-align: right; }
+          .top-info { margin: 18px 0; font-size: 11pt; line-height: 2; }
+          .subject { text-align: center; font-weight: bold; font-size: 12pt; margin: 20px 0; text-decoration: underline; }
+          .paragraph { font-size: 11pt; line-height: 2; text-align: justify; margin-bottom: 20px; }
+          .section-title { font-weight: bold; font-size: 11pt; margin: 18px 0 10px; }
+          .detail-line { font-size: 11pt; line-height: 2; margin-bottom: 4px; }
+          .value { font-weight: bold; padding: 0 4px; }
+          .applicant-box { border: 1px solid #999; padding: 14px; margin-top: 24px; border-radius: 3px; }
+          .applicant-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+          .field-row { display: flex; margin-bottom: 8px; font-size: 10pt; }
+          .field-label { min-width: 160px; font-weight: 600; }
+          .field-val { flex: 1; }
+          .note-box { margin-top: 20px; font-size: 11pt; line-height: 1.8; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img class="logo" src="/nepallogo.svg" alt="Nepal" />
+          <div class="mun-name">${MUNICIPALITY.name}</div>
+          <div class="ward-title">${wardTitle}</div>
+          <div class="addr">${MUNICIPALITY.officeLine}</div>
+          <div class="addr">${MUNICIPALITY.provinceLine}</div>
+        </div>
+
+        <div class="sub-header">
+          अनुसूची २<br/>
+          दर्ता दरखास्तको नमुना
+        </div>
+
+        <div class="meta">
+          <div class="meta-left">
+            <div>पत्र संख्या : <span class="value">${v(row.letterNo) || "2082/83"}</span></div>
+          </div>
+          <div class="meta-right">
+            <div>मिति : <span class="value">${dateOnly}</span></div>
+            <div>सन्दर्भ नं. : <span class="value">${v(row.refNo)}</span></div>
+          </div>
+        </div>
+
+        <div class="top-info">
+          श्री दत्ता गर्ने अधिकारी
+          <span class="value">${v(row.officerName)}</span>
+          ज्यू,<br/>
+          <span class="value">${v(row.municipalityName)}</span>
+          , नगर कार्यपालिकाको कार्यालय ।
+        </div>
+
+        <div class="subject">विषय : सहकारी संस्था दर्ता ।</div>
+
+        <div class="paragraph">
+          महोदय,<br/><br/>
+          हामी देहायका व्यक्तिगत दर्ता भएको सहकारी संस्था दर्ता गरी पाउन निवेदन
+          गर्दछौं। उद्देश्यअनुसार संस्थाले संचालन गर्न कार्यक्रमको योजना र
+          प्रस्तावित संस्थाका विभिन्न विवरण सहित यसै साथ संलग्न राखी पेश गरेको छ।
+        </div>
+
+        <div class="section-title">संस्थासम्बन्धी विवरण</div>
+
+        <div class="detail-line">(क) प्रस्तावित संस्था नामः <span class="value">${v(row.proposalName)}</span></div>
+        <div class="detail-line">(ख) ठेगाना: वडा नं. <span class="value">${v(row.wardNo)}</span></div>
+        <div class="detail-line">(ग) उद्देश्य: <span class="value">${v(row.purpose)}</span></div>
+        <div class="detail-line">(घ) गतिविधि: <span class="value">${v(row.activities)}</span></div>
+        <div class="detail-line">(ङ) मुख्य कार्यालय: <span class="value">${v(row.headOffice)}</span></div>
+        <div class="detail-line">(च) शाखा कार्यालय: <span class="value">${v(row.branchOffice)}</span></div>
+        <div class="detail-line">(छ) दायित्व: <span class="value">${v(row.liability)}</span></div>
+        <div class="detail-line">(ज) सदस्य संख्या: महिला: <span class="value">${v(row.femaleMembers)}</span> जना &nbsp; पुरुष: <span class="value">${v(row.maleMembers)}</span> जना</div>
+        <div class="detail-line">(झ) कुल शेयर पूँजीको रकमः <span class="value">${v(row.totalShareCapital)}</span></div>
+        <div class="detail-line">(ञ) प्राप्त प्रवेश शुल्कको रकमः <span class="value">${v(row.entranceFee)}</span></div>
+
+        ${
+          v(row.recommendation_note)
+            ? `<div class="note-box"><strong>सिफारिस टिप्पणी:</strong> <span class="value">${v(row.recommendation_note)}</span></div>`
+            : ""
+        }
+
+        <div class="applicant-box">
+          <div class="applicant-title">निवेदकको विवरण</div>
+          <div class="field-row">
+            <span class="field-label">नाम:</span>
+            <span class="field-val">${v(row.applicantName)}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">ठेगाना:</span>
+            <span class="field-val">${v(row.applicantAddress)}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">नागरिकता नं.:</span>
+            <span class="field-val">${v(row.applicantCitizenship)}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">फोन:</span>
+            <span class="field-val">${v(row.applicantPhone)}</span>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    if (!printWindow) {
+      alert("कृपया पप-अप अनुमति दिनुहोस् (popup blocked).");
+      return;
+    }
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
+  /* ── CSV export — full field set, UTF-8 BOM for Excel ── */
   const toCSV = (rs) => {
     if (!rs?.length) return "";
-    const header = [
-      "sn", "regDate", "name", "address", "purpose",
-      "mainWork", "receivedShare", "receivedEntryFee", "status",
+
+    const columns = [
+      ["sn",                (r, i) => i + 1],
+      ["regDate",           (r) => (r.date ? r.date.slice(0, 10) : "")],
+      ["letterNo",          (r) => r.letterNo ?? ""],
+      ["refNo",             (r) => r.refNo ?? ""],
+      ["officerName",       (r) => r.officerName ?? ""],
+      ["municipalityName",  (r) => r.municipalityName ?? ""],
+      ["proposalName",      (r) => r.proposalName ?? ""],
+      ["wardNo",            (r) => r.wardNo ?? ""],
+      ["headOffice",        (r) => r.headOffice ?? ""],
+      ["branchOffice",      (r) => r.branchOffice ?? ""],
+      ["purpose",           (r) => r.purpose ?? ""],
+      ["activities",        (r) => r.activities ?? ""],
+      ["liability",         (r) => r.liability ?? ""],
+      ["femaleMembers",     (r) => r.femaleMembers ?? ""],
+      ["maleMembers",       (r) => r.maleMembers ?? ""],
+      ["totalShareCapital", (r) => r.totalShareCapital ?? ""],
+      ["entranceFee",       (r) => r.entranceFee ?? ""],
+      ["applicantName",     (r) => r.applicantName ?? ""],
+      ["applicantAddress",  (r) => r.applicantAddress ?? ""],
+      ["applicantCitizenship", (r) => r.applicantCitizenship ?? ""],
+      ["applicantPhone",    (r) => r.applicantPhone ?? ""],
+      ["recommendationNote", (r) => r.recommendation_note ?? ""],
+      ["status",            (r) => r.status ?? "pending"],
     ];
-    const rows = [header.join(",")].concat(
-      rs.map((r, idx) =>
-        header.map((h) => {
-          let v = "";
-          switch (h) {
-            case "sn":               v = idx + 1; break;
-            case "regDate":          v = r.date || ""; break;
-            case "name":             v = r.proposalName || ""; break;
-            case "address":          v = r.headOffice || ""; break;
-            case "purpose":          v = r.purpose || ""; break;
-            case "mainWork":         v = r.activities || ""; break;
-            case "receivedShare":    v = r.totalShareCapital || ""; break;
-            case "receivedEntryFee": v = r.entranceFee || ""; break;
-            case "status":           v = r.status || ""; break;
-            default:                 v = "";
-          }
-          return `"${String(v).replace(/"/g, '""')}"`;
-        }).join(",")
-      )
+
+    const esc = (val) => `"${String(val).replace(/"/g, '""')}"`;
+    const headerLine = columns.map(([h]) => esc(h)).join(",");
+    const bodyLines = rs.map((r, i) =>
+      columns.map(([, accessor]) => esc(accessor(r, i))).join(",")
     );
-    return rows.join("\r\n");
+
+    return [headerLine, ...bodyLines].join("\r\n");
   };
 
   const handleExport = () => {
@@ -616,7 +747,6 @@ const GovOrganizationRegRecommendation = () => {
                   <th>प्राप्त सेयर</th>
                   <th>प्राप्त प्रवेश शुल्क</th>
                   <th>स्थिति</th>
-                  <th>स्क्यान</th>
                   <th>कार्य</th>
                 </tr>
               </thead>
@@ -627,7 +757,7 @@ const GovOrganizationRegRecommendation = () => {
                     className={index % 2 === 0 ? "gorr-even" : "gorr-odd"}
                   >
                     <td data-label="क्र.स.">{index + 1}</td>
-                    <td data-label="दर्ता मिति">{row.date || "-"}</td>
+                    <td data-label="दर्ता मिति">{row.date ? row.date.slice(0, 10) : "-"}</td>
                     <td data-label="प्रस्तावित संस्था नाम">{row.proposalName || "-"}</td>
                     <td data-label="ठेगाना">{row.headOffice || "-"}</td>
                     <td data-label="उद्देश्य" className="gorr-ellipsis">
@@ -640,43 +770,49 @@ const GovOrganizationRegRecommendation = () => {
                     <td data-label="प्राप्त प्रवेश शुल्क">{row.entranceFee || "-"}</td>
 
                     <td data-label="स्थिति" className="gorr-center">
-                      <span className="gorr-pending-badge">— पेन्डिङ</span>
+                      <span className="gorr-status-icon" title="पेन्डिङ">⏳</span>
                     </td>
 
-                    <td data-label="स्क्यान" className="gorr-center">
-                      <button
-                        className="gorr-eye-btn"
-                        onClick={() => setPreviewRow(row)}
-                        title="प्रिन्ट पूर्वावलोकन"
-                      >
-                        👁
-                      </button>
-                    </td>
-
-                    <td data-label="कार्य" className="gorr-center gorr-action-cell">
-                      <button
-                        className="gorr-status-btn ok"
-                        disabled={processingId === row.id}
-                        onClick={() => updateStatus(row.id, STATUS.APPROVED)}
-                        title="Approve"
-                      >
-                        ✔
-                      </button>
-                      <button
-                        className="gorr-status-btn cancel"
-                        disabled={processingId === row.id}
-                        onClick={() => updateStatus(row.id, STATUS.REJECTED)}
-                        title="Reject"
-                      >
-                        ✖
-                      </button>
-                      <button
-                        className="gorr-edit-btn"
-                        onClick={() => openEdit(row)}
-                        title="Edit"
-                      >
-                        ✎
-                      </button>
+                    <td data-label="कार्य" className="gorr-center">
+                      <div className="gorr-action-cell">
+                        <button
+                          className="gorr-act-btn view"
+                          onClick={() => handleRowPrint(row)}
+                          title="पूर्वावलोकन"
+                        >
+                          👁
+                        </button>
+                        <button
+                          className="gorr-act-btn print"
+                          onClick={() => handleRowPrint(row)}
+                          title="प्रिन्ट / डाउनलोड"
+                        >
+                          🖨
+                        </button>
+                        <button
+                          className="gorr-act-btn ok"
+                          disabled={processingId === row.id}
+                          onClick={() => updateStatus(row.id, STATUS.APPROVED)}
+                          title="स्वीकृत"
+                        >
+                          ✔
+                        </button>
+                        <button
+                          className="gorr-act-btn cancel"
+                          disabled={processingId === row.id}
+                          onClick={() => updateStatus(row.id, STATUS.REJECTED)}
+                          title="अस्वीकृत"
+                        >
+                          ✖
+                        </button>
+                        <button
+                          className="gorr-act-btn edit"
+                          onClick={() => openEdit(row)}
+                          title="सम्पादन"
+                        >
+                          ✎
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -691,22 +827,11 @@ const GovOrganizationRegRecommendation = () => {
         <button onClick={handleExport} className="gorr-export-btn">
           📥 Export CSV
         </button>
-        <button onClick={() => window.print()} className="gorr-print-btn">
-          🖨 Print
-        </button>
       </div>
 
       <footer className="gorr-footer">
-        © सर्वाधिकार सुरक्षित नामगुन नगरपालिकाः
+        © सर्वाधिकार सुरक्षित {MUNICIPALITY.name}
       </footer>
-
-      {/* ── Print Preview Modal ── */}
-      {previewRow && (
-        <PrintPreviewModal
-          row={previewRow}
-          onClose={() => setPreviewRow(null)}
-        />
-      )}
 
       {/* ── Edit Modal ── */}
       {editing && editRow && (
